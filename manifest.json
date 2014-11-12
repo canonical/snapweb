@@ -1,0 +1,14 @@
+{
+    "description": "Snappy Server.",
+    "framework": "ubuntu-sdk-14.10",
+    "hooks": {
+        "ubuntu-tasks": {
+            "apparmor": "snappyd.json",
+            "desktop": "snappyd.desktop"
+        }
+    },
+    "maintainer": "Michael Frey <michael.frey@canonical.com>",
+    "name": "com.ubuntu.snappyd",
+    "title": "Snappy Server",
+    "version": "0.1"
+}
