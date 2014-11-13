@@ -29,8 +29,8 @@ import (
 
 	"launchpad.net/go-xdg/v0"
 
-	"launchpad.net/ubuntu-push/click/cappinfo"
-	"launchpad.net/ubuntu-push/click/cclick"
+	"launchpad.net/clapper/click/cappinfo"
+	"launchpad.net/clapper/click/cclick"
 )
 
 // AppId holds a parsed application id.
