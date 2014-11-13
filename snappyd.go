@@ -23,13 +23,13 @@ package main
 
 import (
 	"log"
-	"os"
 	"net/http"
+	"os"
 )
 
 var (
-	logger *log.Logger
-	httpAddr     string 
+	logger   *log.Logger
+	httpAddr string
 )
 
 func init() {

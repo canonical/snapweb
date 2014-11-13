@@ -26,11 +26,8 @@ import (
 	"net/http"
 )
 
-
 func handleMainPage(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Fprintf(w, "Snappy Main Page")
 
 }
-
-

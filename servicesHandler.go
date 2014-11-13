@@ -26,9 +26,6 @@ import (
 	"net/http"
 )
 
-
-
-
 func handleServicesPage(w http.ResponseWriter, r *http.Request) {
 
 	getClickServices()
@@ -38,7 +35,7 @@ func handleServicesPage(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	
+
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(js)
 	//fmt.Fprintf(w, "Snappy Services Page")

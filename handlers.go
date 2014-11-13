@@ -22,10 +22,9 @@
 package main
 
 import (
-	"net/http"
 	"log"
+	"net/http"
 )
-
 
 func InitURLHandlers(log *log.Logger) {
 
