@@ -31,5 +31,3 @@ func handleAdminPage(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Snappy Admin Page")
 
 }
-
-
