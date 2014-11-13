@@ -21,21 +21,18 @@
 
 package main
 
-
 type ClickService struct {
-	ID int
-	Name string
+	ID          int
+	Name        string
 	Description string
-	Author string
+	Author      string
 }
-
 
 var services []ClickService
 
 /*Query click services that are installed
-*/
-func getClickServices () {
+ */
+func getClickServices() {
 
-	services = append(services,ClickService{100, "Test", "This is a test service", "Michael Frey"})
+	services = append(services, ClickService{100, "Test", "This is a test service", "Michael Frey"})
 }
-
