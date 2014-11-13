@@ -62,7 +62,7 @@ import "C"
 import (
 	"unsafe"
 
-	"launchpad.net/ubuntu-push/click"
+	"launchpad.net/clapper/click"
 )
 
 // IsBlacklisted returns true if the application is in the gsettings blacklist
