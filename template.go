@@ -1,16 +1,13 @@
 /*
  * Copyright 2014 Canonical Ltd.
  *
- * Authors:
- * Michael Frey: michael.frey@canonical.com
- *
  * This file is part of snappy.
  *
- * usensord is free software; you can redistribute it and/or modify
+ * snappy is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; version 3.
  *
- * usensord is distributed in the hope that it will be useful,
+ * snappy is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -22,22 +19,27 @@
 package main
 
 import (
-	"encoding/json"
+	"html/template"
 	"net/http"
+	"os"
+	"path/filepath"
 )
 
-func handleServicesPage(w http.ResponseWriter, r *http.Request) {
+var layoutPath = filepath.Join("www", "templates", "layout.html")
 
-	getClickServices()
+func renderTemplate(html string, data *Page, w http.ResponseWriter) error {
 
-	js, err := json.Marshal(services)
-	if err != nil {
+	htmlPath := filepath.Join("www", "templates", html)
+	if _, err := os.Stat(htmlPath); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		return err
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(js)
-	//fmt.Fprintf(w, "Snappy Services Page")
+	t, err := template.ParseFiles(layoutPath, htmlPath)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return err
+	}
 
+	return t.Execute(w, *data)
 }
