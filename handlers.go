@@ -26,13 +26,86 @@ import (
 	"net/http"
 )
 
-func InitURLHandlers(log *log.Logger) {
+type slug string
+type pages map[slug]string
 
+/*
+func makeHandler(fn func(http.ResponseWriter, *http.Request, bytes.Buffer)) http.HandlerFunc {
+	var buf bytes.Buffer
+	t, _ := template.ParseFiles(filepath.Join("www", "templates", "navbar.html"))
+	t.Execute(buf, p)
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		fn(w, r, buf)
+	}
+}
+*/
+
+var p = pages{
+	"Main":     "/",
+	"Admin":    "/admin",
+	"Services": "/services",
+	"Store":    "/store",
+}
+
+type Page struct {
+	Pages  pages
+	Title  string
+	Params interface{}
+}
+
+func InitURLHandlers(log *log.Logger) {
 	log.Println("Initializing HTTP handlers...")
 
-	http.HandleFunc("/", handleMainPage)
-	http.HandleFunc("/admin", handleAdminPage)
-	http.HandleFunc("/services", handleServicesPage)
-	http.HandleFunc("/store", handleStorePage)
+	http.HandleFunc(p["Main"], handleMainPage)
+	http.HandleFunc(p["Admin"], handleAdminPage)
+	http.HandleFunc(p["Services"], handleServicesPage)
+	http.HandleFunc(p["Store"], handleStorePage)
+}
 
+func handleMainPage(w http.ResponseWriter, r *http.Request) {
+	data := Page{
+		Pages: p,
+		Title: "Main",
+	}
+
+	if err := renderTemplate("main.html", &data, w); err != nil {
+		log.Println(err)
+	}
+}
+
+func handleAdminPage(w http.ResponseWriter, r *http.Request) {
+	data := Page{
+		Pages: p,
+		Title: "Admin",
+	}
+
+	if err := renderTemplate("admin.html", &data, w); err != nil {
+		log.Println(err)
+	}
+}
+
+func handleServicesPage(w http.ResponseWriter, r *http.Request) {
+	services := getClickServices()
+
+	data := Page{
+		Pages:  p,
+		Title:  "Services",
+		Params: services,
+	}
+
+	if err := renderTemplate("services.html", &data, w); err != nil {
+		log.Println(err)
+	}
+}
+
+func handleStorePage(w http.ResponseWriter, r *http.Request) {
+	data := Page{
+		Pages: p,
+		Title: "Store",
+	}
+
+	if err := renderTemplate("store.html", &data, w); err != nil {
+		log.Println(err)
+	}
 }
