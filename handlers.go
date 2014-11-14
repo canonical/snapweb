@@ -42,7 +42,6 @@ func makeHandler(fn func(http.ResponseWriter, *http.Request, bytes.Buffer)) http
 */
 
 var p = pages{
-	"Main":     "/",
 	"Admin":    "/admin",
 	"Services": "/services",
 	"Store":    "/store",
@@ -57,13 +56,27 @@ type Page struct {
 func InitURLHandlers(log *log.Logger) {
 	log.Println("Initializing HTTP handlers...")
 
-	http.HandleFunc(p["Main"], handleMainPage)
+	http.Handle("/images/", loggingHandler(http.FileServer(http.Dir("./www/static"))))
+	http.Handle("/stylesheets/", loggingHandler(http.FileServer(http.Dir("./www/static"))))
+
+	http.HandleFunc("/", handleMainPage)
 	http.HandleFunc(p["Admin"], handleAdminPage)
 	http.HandleFunc(p["Services"], handleServicesPage)
 	http.HandleFunc(p["Store"], handleStorePage)
 }
 
+func loggingHandler(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Println(r.Method, r.URL.Path)
+		h.ServeHTTP(w, r)
+	})
+}
+
 func handleMainPage(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/" {
+		http.NotFound(w, r)
+		return
+	}
 	data := Page{
 		Pages: p,
 		Title: "Main",
