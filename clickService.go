@@ -26,13 +26,13 @@ type ClickService struct {
 	Name        string
 	Description string
 	Author      string
+	Running     bool
 }
 
-var services []ClickService
-
-/*Query click services that are installed
- */
-func getClickServices() {
-
-	services = append(services, ClickService{100, "Test", "This is a test service", "Michael Frey"})
+// getClickServices queries click services that are installed
+func getClickServices() []ClickService {
+	var services []ClickService
+	services = append(services, ClickService{100, "Test", "This is a test service", "Michael Frey", false})
+	services = append(services, ClickService{200, "Test2", "This is a better test service", "sergiusens", true})
+	return services
 }
