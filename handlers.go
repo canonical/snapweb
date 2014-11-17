@@ -24,6 +24,8 @@ package main
 import (
 	"log"
 	"net/http"
+
+	"launchpad.net/clapper/system"
 )
 
 type slug string
@@ -88,9 +90,13 @@ func handleMainPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleAdminPage(w http.ResponseWriter, r *http.Request) {
+
+	si, _ := system.New(conn, logger)
+
 	data := Page{
-		Pages: p,
-		Title: "Admin",
+		Pages:  p,
+		Title:  "Admin",
+		Params: si.Info,
 	}
 
 	if err := renderTemplate("admin.html", &data, w); err != nil {
