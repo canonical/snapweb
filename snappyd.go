@@ -25,19 +25,28 @@ import (
 	"log"
 	"net/http"
 	"os"
+
+	"launchpad.net/go-dbus/v1"
 )
 
 var (
 	logger   *log.Logger
 	httpAddr string
+	conn     *dbus.Connection
+	err      error
 )
 
 func init() {
 	logger = log.New(os.Stderr, "Snappy: ", log.Ldate|log.Ltime|log.Lshortfile)
-	httpAddr = "localhost:8080"
+	httpAddr = ":8080"
 }
 
 func main() {
+
+	logger.Println("Connecting to System Bus")
+	if conn, err = dbus.Connect(dbus.SystemBus); err != nil {
+		logger.Fatal("Connection error:", err)
+	}
 
 	InitURLHandlers(logger)
 
