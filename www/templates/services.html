@@ -1,19 +1,21 @@
 {{ define "content" }}
-<div class="datagrid"><table>
-<thead><tr><th>ID</th><th>Name</th><th>Description</th><th>Author</th><th>Status</th><th>Action</th></tr></thead>
+<div class="datagrid">
+<table style="table-layout: fixed; width: 100%">
+<thead><tr><th>Package</th><th>Service</th><th>Description</th><th>Author</th><th>Status</th><th>Action</th></tr></thead>
 <!-- <tfoot><tr><td colspan="6"><div id="paging"><ul><li><a href="#"><span>Previous</span></a></li><li><a href="#" class="active"><span>1</span></a></li><li><a href="#"><span>2</span></a></li><li><a href="#"><span>3</span></a></li><li><a href="#"><span>4</span></a></li><li><a href="#"><span>5</span></a></li><li><a href="#"><span>Next</span></a></li></ul></div></tr></tfoot> -->
 <tbody>
-{{ $services := . }}
-{{ range $services }}
+{{ $packages := . }}
+{{ range $pkg := $packages }}
+{{ range $serviceName, $service := $pkg.Services }}
 <tr>
-	<td>{{ .ID }}</td>
-	<td>{{ .Name }}</td>
-	<td>{{ .Description }}</td>
-	<td>{{ .Author }}</td>
-	<td>{{ if .Running }}Running{{ else }}Stopped{{ end }}</td>
-	<!-- Need to hook these up -->
-	<td><i>{{ if .Running }}Stop Restart{{ else }}Start{{ end }}</i></td>
+	<td>{{ $pkg.Name }}</td>
+	<td style="word-wrap: break-word">{{ $serviceName }} </td>
+	<td style="word-wrap: break-word">{{ $service.Description }}</td>
+	<td>{{ $pkg.Maintainer }}</td>
+	<td>{{ $service.State }}</td>
+	<td>Stop Restart</i></td>
 </tr>
+{{end}}
 {{end}}
 </tbody>
 </table></div>

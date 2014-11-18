@@ -25,26 +25,29 @@ import (
 	"log"
 	"net/http"
 	"os"
+
+	"launchpad.net/go-dbus/v1"
 )
 
-var (
-	logger   *log.Logger
-	httpAddr string
-)
+var logger *log.Logger
+
+const httpAddr string = ":8080"
 
 func init() {
 	logger = log.New(os.Stderr, "Snappy: ", log.Ldate|log.Ltime|log.Lshortfile)
-	httpAddr = "localhost:8080"
 }
 
 func main() {
+	conn, err := dbus.Connect(dbus.SystemBus)
+	if err != nil {
+		log.Fatal("Connection error: ", err)
+	}
 
-	InitURLHandlers(logger)
+	InitURLHandlers(conn, logger)
 
 	logger.Println("Snappy starting...")
 
 	if err := http.ListenAndServe(httpAddr, nil); err != nil {
 		logger.Printf("http.ListendAndServer() failed with %s\n", err)
 	}
-
 }

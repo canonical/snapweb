@@ -24,6 +24,9 @@ package main
 import (
 	"log"
 	"net/http"
+
+	"launchpad.net/clapper/click"
+	"launchpad.net/go-dbus/v1"
 )
 
 type slug string
@@ -53,8 +56,13 @@ type Page struct {
 	Params interface{}
 }
 
-func InitURLHandlers(log *log.Logger) {
+func InitURLHandlers(conn *dbus.Connection, log *log.Logger) {
 	log.Println("Initializing HTTP handlers...")
+
+	handleServicesPage, err := makeServicesPageHandler(conn)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	http.Handle("/images/", loggingHandler(http.FileServer(http.Dir("./www/static"))))
 	http.Handle("/stylesheets/", loggingHandler(http.FileServer(http.Dir("./www/static"))))
@@ -98,18 +106,28 @@ func handleAdminPage(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func handleServicesPage(w http.ResponseWriter, r *http.Request) {
-	services := getClickServices()
-
-	data := Page{
-		Pages:  p,
-		Title:  "Services",
-		Params: services,
+func makeServicesPageHandler(conn *dbus.Connection) (f http.HandlerFunc, err error) {
+	db, err := click.NewDatabase()
+	if err != nil {
+		return f, err
 	}
 
-	if err := renderTemplate("services.html", &data, w); err != nil {
-		log.Println(err)
-	}
+	return func(w http.ResponseWriter, r *http.Request) {
+		data := Page{
+			Pages: p,
+			Title: "Services",
+		}
+
+		if packages, err := db.Manifests(conn); err == nil {
+			data.Params = packages
+		} else {
+			log.Println(err)
+		}
+
+		if err := renderTemplate("services.html", &data, w); err != nil {
+			log.Println(err)
+		}
+	}, nil
 }
 
 func handleStorePage(w http.ResponseWriter, r *http.Request) {
