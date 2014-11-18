@@ -36,8 +36,10 @@ func (sd *SystemD) Unit(service string) (*Unit, error) {
 	mgrObject := sd.conn.Object(busName, busPath)
 
 	reply, err := mgrObject.Call(managerInterface, "LoadUnit", service)
-	if err != nil || reply.Type == dbus.TypeError {
+	if err != nil {
 		return nil, err
+	} else if reply.Type == dbus.TypeError {
+		return nil, reply.AsError()
 	}
 
 	var unitPath dbus.ObjectPath
@@ -82,8 +84,10 @@ func (u *Unit) getProperty(propertyName string) (propertyValue dbus.Variant, err
 	unitObj := u.conn.Object(busName, u.objectPath)
 
 	reply, err := unitObj.Call(propertyInterface, "Get", unitInterface, propertyName)
-	if err != nil || reply.Type == dbus.TypeError {
+	if err != nil {
 		return dbus.Variant{}, err
+	} else if reply.Type == dbus.TypeError {
+		return dbus.Variant{}, reply.AsError()
 	}
 
 	if err := reply.Args(&propertyValue); err != nil {
