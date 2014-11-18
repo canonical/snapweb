@@ -37,28 +37,21 @@ type System struct {
 	Info map[string]string
 }
 
-func New(conn *dbus.Connection, log *log.Logger) (*System, error) {
-
-	logger = log
-
-	logger.Println("Getting System Info")
+func New(conn *dbus.Connection) (*System, error) {
 	obj := conn.Object("com.canonical.SystemImage", "/Service")
-	reply, err := obj.Call("com.canonical.SystemImage", "Information")
 
-	if err != nil || reply.Type == dbus.TypeError {
+	reply, err := obj.Call("com.canonical.SystemImage", "Information")
+	if err != nil {
 		logger.Println("Error getting System Image Info %s", err)
 		return nil, err
+	} else if reply.Type == dbus.TypeError {
+		return nil, reply.AsError()
 	}
 
 	information := make(map[string]string)
 
 	if err := reply.Args(&information); err != nil {
-		logger.Println("Error getting System Image Info Properties")
 		return nil, err
-	}
-
-	for k, v := range information {
-		logger.Println(k, v)
 	}
 
 	return &System{conn: conn, Info: information}, nil
