@@ -102,7 +102,7 @@ func handleMainPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func makeAdminPageHandler(conn *dbus.Connection) (f http.HandlerFunc, err error) {
-	si, err := system.New(conn, logger)
+	si, err := system.New(conn)
 	if err != nil {
 		return f, err
 	}
