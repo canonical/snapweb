@@ -2,4 +2,16 @@
 <p>
 	Snappy Admin Page
 </p>
+<div class="datagrid"><table>
+<thead><tr><th>System Image Info</th></thead>
+<!-- <tfoot><tr><td colspan="1"><div id="paging"><ul><li><a href="#"><span>Previous</span></a></li><li><a href="#" class="active"><span>1</span></a></li><li><a href="#"><span>2</span></a></li><li><a href="#"><span>3</span></a></li><li><a href="#"><span>4</span></a></li><li><a href="#"><span>5</span></a></li><li><a href="#"><span>Next</span></a></li></ul></div></tr></tfoot> -->
+<tbody>
+{{ $si := . }}
+{{ range $key, $value := $si }}
+<tr>
+	<td>{{$key}}:{{$value}}</td>
+</tr>
+{{end}}
+</tbody>
+</table></div>
 {{ end }}
