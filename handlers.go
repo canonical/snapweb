@@ -26,6 +26,7 @@ import (
 	"net/http"
 
 	"launchpad.net/clapper/click"
+	"launchpad.net/clapper/system"
 	"launchpad.net/go-dbus/v1"
 )
 
@@ -64,6 +65,11 @@ func InitURLHandlers(conn *dbus.Connection, log *log.Logger) {
 		log.Fatal(err)
 	}
 
+	handleAdminPage, err := makeAdminPageHandler(conn)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	http.Handle("/images/", loggingHandler(http.FileServer(http.Dir("./www/static"))))
 	http.Handle("/stylesheets/", loggingHandler(http.FileServer(http.Dir("./www/static"))))
 
@@ -95,15 +101,23 @@ func handleMainPage(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func handleAdminPage(w http.ResponseWriter, r *http.Request) {
-	data := Page{
-		Pages: p,
-		Title: "Admin",
+func makeAdminPageHandler(conn *dbus.Connection) (f http.HandlerFunc, err error) {
+	si, err := system.New(conn, logger)
+	if err != nil {
+		return f, err
 	}
 
-	if err := renderTemplate("admin.html", &data, w); err != nil {
-		log.Println(err)
-	}
+	return func(w http.ResponseWriter, r *http.Request) {
+		data := Page{
+			Pages:  p,
+			Title:  "Admin",
+			Params: si.Info,
+		}
+
+		if err := renderTemplate("admin.html", &data, w); err != nil {
+			log.Println(err)
+		}
+	}, nil
 }
 
 func makeServicesPageHandler(conn *dbus.Connection) (f http.HandlerFunc, err error) {
