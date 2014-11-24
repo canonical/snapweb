@@ -1,0 +1,6 @@
+{
+    "unit_description": "snappy webserver",
+    "service_execstart": "${CLICK_PACKAGE_PATH}/snappyd",
+    "service_workingdirectory": "${CLICK_PACKAGE_PATH}",
+    "service_apparmorprofile": "${CLICK_PACKAGE_PATH}/snappyd.apparmor"
+}

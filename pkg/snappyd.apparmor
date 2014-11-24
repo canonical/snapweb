@@ -1,0 +1,29 @@
+#include <tunables/global>
+
+profile ${CLICK_PACKAGE_ID} ${CLICK_PACKAGE_PATH}/snappyd {
+        
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+  #include <abstractions/user-tmp>
+
+  # global namespaces
+  network inet stream,
+  network unix stream,
+  network inet6 stream,
+
+  # files
+  /etc/ld.so.cache    r,
+  /etc/writable/localtime r,
+  /lib/** r,
+  /dev/urandom r,
+  /proc/meminfo r,
+  /etc/mime.types r,
+
+  # glob for the ro install directory
+  ${CLICK_PACKAGE_PATH}/   r,
+  ${CLICK_PACKAGE_PATH}/** mrklix,
+
+  # system bus
+  /var/run/dbus/system_bus_socket rw,
+
+}
