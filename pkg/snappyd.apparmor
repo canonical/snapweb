@@ -5,6 +5,7 @@ profile ${CLICK_PACKAGE_ID} ${CLICK_PACKAGE_PATH}/snappyd {
   #include <abstractions/base>
   #include <abstractions/nameservice>
   #include <abstractions/user-tmp>
+  #include <abstractions/dbus-strict>
 
   # global namespaces
   network inet stream,
@@ -18,6 +19,22 @@ profile ${CLICK_PACKAGE_ID} ${CLICK_PACKAGE_PATH}/snappyd {
   /dev/urandom r,
   /proc/meminfo r,
   /etc/mime.types r,
+  /proc/sys/net/core/somaxconn r,
+
+  # for click
+  /etc/click/databases/ r,
+  /etc/click/databases/* r,
+  /opt/click.ubuntu.com/ r,
+  /opt/click.ubuntu.com/** r,
+
+  # for click but maybe all are scheduled for departure
+  /usr/bin/python3 ixr,
+  /usr/lib/python3** r,
+  /usr/bin/click ixr,
+  /usr/ r,
+  /usr/bin/ r,
+  /etc/apt/apt.conf.d/ r,
+  /etc/apt/apt.conf.d/* r,
 
   # glob for the ro install directory
   ${CLICK_PACKAGE_PATH}/   r,
@@ -25,5 +42,25 @@ profile ${CLICK_PACKAGE_ID} ${CLICK_PACKAGE_PATH}/snappyd {
 
   # system bus
   /var/run/dbus/system_bus_socket rw,
+  capability net_admin,
 
+  # system image
+  dbus (send)
+     bus=system
+     path=/Service
+     interface=com.canonical.SystemImage
+     member=Information,
+  
+  # systemd
+  dbus (send)
+     bus=system
+     path=/org/freedesktop/systemd1
+     interface=org.freedesktop.systemd1.Manager
+     member=LoadUnit,
+
+  dbus (send)
+     bus=system
+     path=/org/freedesktop/systemd1/unit/**
+     interface=org.freedesktop.DBus.Properties
+     member=Get,
 }
