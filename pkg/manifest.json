@@ -1,0 +1,14 @@
+{
+    "architecture": "amd64",
+    "description": "Snappy Server.",
+    "framework": "ubuntu-core-15.04-dev1",
+    "hooks": {
+        "httpd": {
+            "systemd": "snappyd.click-service"
+        }
+    },
+    "maintainer": "Michael Frey <michael.frey@canonical.com>",
+    "name": "com.ubuntu.snappy.snappyd",
+    "title": "Snappy Web Server",
+    "version": "0.2.2"
+}
