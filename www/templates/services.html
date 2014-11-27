@@ -6,7 +6,7 @@
 <tbody>
 {{ $packages := . }}
 {{ range $pkg := $packages }}
-{{ range $serviceName, $service := $pkg.Services }}
+{{ range $serviceName, $service := $pkg.Units }}
 <tr>
 	<td>{{ $pkg.Name }}</td>
 	<td style="word-wrap: break-word">{{ $serviceName }} </td>
