@@ -24,8 +24,8 @@ profile ${CLICK_PACKAGE_ID} ${CLICK_PACKAGE_PATH}/snappyd {
   # for click
   /etc/click/databases/ r,
   /etc/click/databases/* r,
-  /opt/click.ubuntu.com/ r,
-  /opt/click.ubuntu.com/** r,
+  /apps/ r,
+  /apps/** r,
 
   # for click but maybe all are scheduled for departure
   /usr/bin/python3 ixr,
