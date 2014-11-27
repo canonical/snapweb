@@ -2,6 +2,7 @@ package click
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os/exec"
 	"sync"
@@ -12,7 +13,7 @@ import (
 
 type hooks map[string]map[string]string
 
-type ClickPackage struct {
+type Package struct {
 	Description string `json:"description"`
 	Maintainer  string `json:"maintainer"`
 	Name        string `json:"name"`
@@ -42,18 +43,23 @@ func NewUser() (*ClickUser, error) {
 type ClickDatabase struct {
 	cdb  cClickDB
 	lock sync.Mutex
+	conn *dbus.Connection
 }
 
-func NewDatabase() (*ClickDatabase, error) {
+func NewDatabase(conn *dbus.Connection) (*ClickDatabase, error) {
 	db := new(ClickDatabase)
 	err := db.cdb.cInit(db)
 	if err != nil {
 		return nil, err
 	}
+	db.conn = conn
+
 	return db, nil
 }
 
-func (db *ClickDatabase) Manifests(conn *dbus.Connection) (packages []ClickPackage, err error) {
+// GetPackages returns the information relevant to pkg unless it is an empty string
+// where it returns the information for all packages.
+func (db *ClickDatabase) GetPackages(pkg string) (packages []Package, err error) {
 	//m, err := db.cdb.cGetManifests()
 	m, err := exec.Command("click", "list", "--manifest").CombinedOutput()
 	if err != nil {
@@ -64,8 +70,21 @@ func (db *ClickDatabase) Manifests(conn *dbus.Connection) (packages []ClickPacka
 		return nil, err
 	}
 
+	if pkg != "" {
+		for i := range packages {
+			if packages[i].Name == pkg {
+				packages = []Package{packages[i]}
+				break
+			}
+		}
+
+		if len(packages) != 1 {
+			return nil, errors.New("package not found")
+		}
+	}
+
 	for i := range packages {
-		if err := packages[i].GetServices(conn); err != nil {
+		if err := packages[i].getServices(db.conn); err != nil {
 			return nil, err
 		}
 	}
@@ -73,7 +92,7 @@ func (db *ClickDatabase) Manifests(conn *dbus.Connection) (packages []ClickPacka
 	return packages, nil
 }
 
-func (p *ClickPackage) GetServices(conn *dbus.Connection) error {
+func (p *Package) getServices(conn *dbus.Connection) error {
 	systemD := systemd.New(conn)
 
 	p.Units = make(map[string]*systemd.Unit)

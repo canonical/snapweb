@@ -19,9 +19,9 @@ type SystemD struct {
 }
 
 type Unit struct {
-	ServiceName string
-	State       string
-	Description string
+	ServiceName string `json:"name"`
+	State       string `json:"state"`
+	Description string `json:"description"`
 	objectPath  dbus.ObjectPath
 	conn        *dbus.Connection
 }
