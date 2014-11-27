@@ -19,7 +19,7 @@ type ClickPackage struct {
 	Title       string `json:"title"`
 	Version     string `json:"version"`
 	Hooks       hooks  `json:"hooks"`
-	Services    map[string]*systemd.Unit
+	Units       map[string]*systemd.Unit
 }
 
 // ClickUser exposes the click package registry for the user.
@@ -76,14 +76,14 @@ func (db *ClickDatabase) Manifests(conn *dbus.Connection) (packages []ClickPacka
 func (p *ClickPackage) GetServices(conn *dbus.Connection) error {
 	systemD := systemd.New(conn)
 
-	p.Services = make(map[string]*systemd.Unit)
+	p.Units = make(map[string]*systemd.Unit)
 
 	for k, v := range p.Hooks {
 		if _, ok := v["systemd"]; ok {
 			serviceName := fmt.Sprintf("clickowned_%s_%s_%s.service", p.Name, k, p.Version)
 
 			if unit, err := systemD.Unit(serviceName); err == nil {
-				p.Services[k] = unit
+				p.Units[k] = unit
 			} else {
 				return err
 			}
