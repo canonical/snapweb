@@ -1,0 +1,14 @@
+name: snappyd
+title: Snappy Web Server
+description: Manage a system with a snappy webui
+version: 0.2.4
+architecture: amd64
+framework: ubuntu-core-15.04-dev1
+hooks:
+    httpd:
+        systemd: meta/snappyd.click-service
+ports: 
+    required: 8080
+maintainer: Michael Frey <michael.frey@canonical.com>
+services: snappyd
+icon: meta/clap.png
