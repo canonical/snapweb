@@ -13,7 +13,16 @@
     <h1>{{ .Title }}</h1>
     {{ template "content" .Params }}
   </body>
-  <script src="/public/js/vendor/yui/yui/yui-min.js"></script>
+  <script>
+    YUI_config = {
+    debug: false,
+    combine: false,
+    maxURLLength: 2048,
+    comboBase: 'c',
+    root: '/public/vendor/yui'
+    };
+  </script>
+  <script src="/public/vendor/yui/yui/yui-min.js"></script>
   <script src="/public/js/config/modules.js"></script>
   <script src="/public/js/config/apis.js"></script>
   <script src="/public/js/init.js"></script>
