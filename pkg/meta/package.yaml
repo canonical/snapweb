@@ -1,7 +1,7 @@
 name: snappyd
 title: Snappy Web Server
 description: Manage a system with a snappy webui
-version: 0.2.13
+version: 0.2.14
 architecture: amd64
 framework: ubuntu-core-15.04-dev1
 hooks:
