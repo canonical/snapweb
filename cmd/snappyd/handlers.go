@@ -70,8 +70,7 @@ func InitURLHandlers(conn *dbus.Connection, log *log.Logger) {
 		log.Fatal(err)
 	}
 
-	http.Handle("/images/", loggingHandler(http.FileServer(http.Dir("./www/static"))))
-	http.Handle("/stylesheets/", loggingHandler(http.FileServer(http.Dir("./www/static"))))
+	http.Handle("/public/", loggingHandler(http.FileServer(http.Dir("./www/public"))))
 
 	http.HandleFunc("/", handleMainPage)
 	http.HandleFunc(p["Admin"], handleAdminPage)
