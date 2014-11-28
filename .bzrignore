@@ -1,1 +1,2 @@
-snappyd_0.2.6_amd64.snap
+*.snap
+node_modules

@@ -1,0 +1,18 @@
+<div class="settings-form">
+  <div><%= this.title %></div>
+  <form id="demo-settings">
+    <% Y.Array.each(this.data, function (data) { %>
+    <div>
+      <label for="<%= data.name %>"><%= data.label %></label>
+      <div class="help"></div>
+      <% if (!data.value) { %>
+      <input type="text" name="<%= data.name %>" />
+      <% } else { %>
+      <input type="text" name="<%= data.name %>" value="<%= data.value %>"/>
+      <% } %>
+    </div>
+    <% }); %>
+    <button class="btn" type="button" id="submit">Apply</button>
+    <button class="btn" type="button" id="cancel">Cancel</button>
+  </form>
+</div>
