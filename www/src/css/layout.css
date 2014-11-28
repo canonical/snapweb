@@ -1,0 +1,58 @@
+html, body {
+  height: 100%;
+  margin:0;
+}
+
+.layout-columns {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+.layout-body {
+  display: flex;
+  flex: 1;
+}
+
+.layout-content {
+  flex: 1;
+  padding: 0 5px;
+}
+
+.layout-content > div {
+  margin:5px;
+  border-top: 1px solid transparent;
+}
+.layout-content > div > div:first-child label {
+  margin-top:0;
+  padding-top:5px;
+}
+
+.layout-nav-proto, .layout-nav-deutero, .layout-aside-data {
+  flex: 0 0 160px;
+  padding: 0 5px;
+}
+
+.layout-nav-proto {
+  order: -2;
+}
+.layout-nav-deutero {
+  order: -1;
+}
+.layout-aside-data {
+}
+
+header, footer {
+  height:50px;
+}
+
+header {
+  display:flex;
+}
+
+footer {
+}
+
+.header-brand {
+  width:200px;
+}
