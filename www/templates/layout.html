@@ -1,9 +1,26 @@
 <!doctype html>
 <html>
   <head>
+    <title>DEMO UI | {{ .Title }}</title>
     <link rel="stylesheet" href="/public/css/demo.css" />
   </head>
-  <body>
+  <body class="layout layout-columns">
+    <header>
+    <div class="header-brand">
+    </div>
+    </header>
+    <div class="layout-body">
+      <main class="layout-content"></main>
+      <nav class="layout-nav-proto">
+      </nav>
+      <nav class="layout-nav-deutero">
+      </nav>
+      <aside class="layout-aside-data">
+      </aside>
+    </div>
+    <footer></footer>
+  </body>
+  <!--
     <ul>
       {{ $pages := .Pages }}
       {{ range $index, $element := $pages }}
@@ -12,6 +29,7 @@
     </ul>
     <h1>{{ .Title }}</h1>
     {{ template "content" .Params }}
+    -->
   </body>
   <script>
     YUI_config = {
@@ -23,9 +41,15 @@
       base: '/public/vendor/yui/'
     };
   </script>
+  <!-- config -->
   <script src="/public/vendor/yui/yui/yui-min.js"></script>
   <script src="/public/js/config/modules.js"></script>
   <script src="/public/js/config/apis.js"></script>
+  <!-- main app -->
   <script src="/public/js/main/app.js"></script>
+  <script src="/public/js/main/view.js"></script>
+  <script src="/public/js/main/tmpl/home.js"></script>
+  <script src="/public/js/main/tmpl/icons.js"></script>
+  <!-- run -->
   <script src="/public/js/init.js"></script>
 </html>

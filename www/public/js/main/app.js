@@ -1,1 +1,86 @@
-YUI.add("demo",function(e){"use strict";var n=e.one(".layout-nav-proto"),t=new e.Template,o=function(e,n){var t=[].slice.call(arguments,2);e.split(".").forEach(function(e){n=n[e]}),n.apply(n,t)};e.one("body").delegate("click",function(){var n=this.getData("module"),t=this.getData("fn"),a=this.getData("api");e.use(n,function(){t&&"string"==typeof t&&o(t,e,a)})},".icon");var a=e.namespace("DEMO").app=new e.App({viewContainer:".layout-content",serverRouting:!0,views:{home:{preserve:!0,type:"DEMO.VIEW.Home"}}});a.on("installedChange",function(o){var a=o.newVal,i=t.revive(e.DEMO.MAIN.TMPL.ICONS.template),s=i({icons:a});n.setHTML(s)});var i=function(e,n){a.set("installed",JSON.parse(n.response))},s=function(n,t,o){e.io("/mock-api/installed.json",{on:{success:i,failure:function(e,n){console.log("fail"),console.log(n)}}}),o()};a.route("*",s),a.route("/",function(){this.showView("home")}),a.route("*",function(){window.alert("404")}),a.render().dispatch()},"0.0.1",{requires:["node","app","template","node-event-delegate","demo-view-home","t-main-tmpl-icons"]});
+YUI.add('demo', function(Y) {
+  'use strict';
+
+  var ns = Y.one('.layout-nav-proto');
+  var mu = new Y.Template();
+
+  var stringToFunction = function(string, context /*, args */ ) {
+    var args = [].slice.call(arguments, 2);
+    string.split('.').forEach(function(prop) {
+      context = context[prop];
+    });
+    context.apply(context, args);
+  };
+
+  // lazy loading of modules
+  // load and execute views related to icons on click
+  Y.one('body').delegate('click', function() {
+    var module = this.getData('module');
+    var fn = this.getData('fn');
+    var api = this.getData('api');
+    Y.use(module, function() {
+      if (fn && typeof(fn) === 'string') {
+        stringToFunction(fn, Y, api);
+      }
+    });
+  }, '.icon');
+
+  var app = Y.namespace('DEMO').app = new Y.App({
+    viewContainer: '.layout-content',
+    serverRouting: true,
+    views: {
+      home: {
+        preserve: true,
+        type: 'DEMO.VIEW.Home'
+      }
+    }
+  });
+
+  app.on('installedChange', function(e) {
+    var data = e.newVal;
+    var template = mu.revive(Y.DEMO.MAIN.TMPL.ICONS.template);
+    var html = template({
+      icons: data
+    });
+    ns.setHTML(html);
+
+  });
+
+  var onInstalledList = function(id, res) {
+    app.set('installed', JSON.parse(res.response));
+  };
+
+  var xhrInstalled = function(req, res, next) {
+    Y.io('/mock-api/installed.json', {
+      on: {
+        success: onInstalledList,
+        failure: function(id, res) {
+          console.log('fail');
+          console.log(res);
+        }
+      }
+    });
+    next();
+  };
+
+  // routes
+  app.route('*', xhrInstalled);
+  app.route('/', function() {
+    this.showView('home');
+  });
+
+  app.route('*', function() {
+    window.alert('404');
+  });
+  app.render().dispatch();
+
+}, '0.0.1', {
+  requires: [
+    'node',
+    'app',
+    'template',
+    'node-event-delegate',
+    'demo-view-home',
+    't-main-tmpl-icons'
+  ]
+});

@@ -1,1 +1,1 @@
-YUI().use("demo");
+YUI().use('demo');
