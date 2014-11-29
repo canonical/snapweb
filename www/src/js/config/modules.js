@@ -5,8 +5,8 @@ YUI_config.groups = {
   core: {
     combine: false,
     comboBase: '/yui3?',
-    root: 'dist/js/core/',
-    base: '/dist/js/core/',
+    root: 'public/dist/js/core/',
+    base: '/public/dist/js/core/',
     modules: {
       'core-settings': {
         path: 'settings/index.js',
@@ -34,7 +34,8 @@ YUI_config.groups = {
   },
   vendor: {
     combine: false,
-    base: 'https://snappy.local:3001/dist/js/vendor/',
+    root: 'public/dist/js/core/',
+    base: '/public/dist/js/core/',
     modules: {
       'vendor-launcher': {
         path: 'launcher.js',

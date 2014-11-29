@@ -1,7 +1,6 @@
 // gulpfile.js - streaming build system for client side assets
 
 var autoprefixer = require('gulp-autoprefixer');
-var beep = require('beepbeep');
 var csso = require('gulp-csso');
 var del = require('del');
 var gulp = require('gulp');
