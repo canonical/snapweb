@@ -33,11 +33,11 @@ gulp.task('scripts', function() {
   })
   .pipe(jshint())
 //  .pipe(sourcemaps.init())
-  .pipe(uglify())
-  .on('error', function(err) {
-    gutil.log(gutil.colors.green(err));
-    this.emit('end');
-  })
+//  .pipe(uglify())
+//  .on('error', function(err) {
+//    gutil.log(gutil.colors.green(err));
+//    this.emit('end');
+//  })
 //  .pipe(sourcemaps.write({debug: false}))
   .pipe(gulp.dest('public/js'));
 });

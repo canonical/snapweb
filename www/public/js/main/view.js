@@ -1,1 +1,21 @@
-YUI.add("demo-view-home",function(e){"use strict";var t=new e.Template;e.namespace("DEMO.VIEW").Home=e.Base.create("home",e.View,[],{render:function(){var a=t.revive(e.DEMO.MAIN.TMPL.HOME.template),r=a();return this.get("container").setHTML(r),this}})},"0.0.1",{requires:["template","t-main-tmpl-home"]});
+YUI.add('demo-view-home', function(Y) {
+  'use strict';
+  var mu = new Y.Template();
+
+  Y.namespace('DEMO.VIEW').Home = Y.Base.create('home', Y.View, [], {
+
+    render: function() {
+
+      var template = mu.revive(Y.DEMO.MAIN.TMPL.HOME.template);
+      var html = template();
+      this.get('container').setHTML(html);
+
+      return this;
+    }
+  });
+}, '0.0.1', {
+  requires: [
+    'template',
+    't-main-tmpl-home'
+  ]
+});

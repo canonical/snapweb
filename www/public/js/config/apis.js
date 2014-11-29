@@ -1,1 +1,6 @@
-YUI.add("demo-config",function(s){"use strict";s.namespace("DEMO.CONFIG.SETTINGS").NETWORK={post:"//snappy.local:8000/mock-api/settings"}});
+YUI.add('demo-config', function(Y) {
+  'use strict';
+  Y.namespace('DEMO.CONFIG.SETTINGS').NETWORK = {
+    'post': '//snappy.local:8000/mock-api/settings'
+  };
+});

@@ -71,6 +71,7 @@ func InitURLHandlers(conn *dbus.Connection, log *log.Logger) {
 	}
 
 	http.Handle("/public/", loggingHandler(http.FileServer(http.Dir("./www"))))
+	http.Handle("/mock-api/", loggingHandler(http.FileServer(http.Dir("./www"))))
 
 	http.HandleFunc("/", handleMainPage)
 	http.HandleFunc(p["Admin"], handleAdminPage)
