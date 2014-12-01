@@ -60,9 +60,8 @@ type Page struct {
 func InitURLHandlers(conn *dbus.Connection, log *log.Logger) {
 	log.Println("Initializing HTTP handlers...")
 
-	if err := click.SetHandleFunc(conn); err != nil {
-		log.Fatal(err)
-	}
+	packageHandler := click.NewHandler(conn)
+	http.Handle("/api/v1/packages/", packageHandler.MakeMuxer("/api/v1/packages"))
 
 	handleServicesPage, err := makeServicesPageHandler(conn)
 	if err != nil {

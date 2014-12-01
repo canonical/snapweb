@@ -70,17 +70,16 @@ func (db *ClickDatabase) GetPackages(pkg string) (packages []Package, err error)
 		return nil, err
 	}
 
+	fmt.Println("packages", packages)
 	if pkg != "" {
 		for i := range packages {
 			if packages[i].Name == pkg {
 				packages = []Package{packages[i]}
-				break
+				return packages, nil
 			}
 		}
 
-		if len(packages) != 1 {
-			return nil, errors.New("package not found")
-		}
+		return nil, errors.New("package not found")
 	}
 
 	for i := range packages {
