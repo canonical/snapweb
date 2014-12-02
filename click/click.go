@@ -11,16 +11,15 @@ import (
 	"launchpad.net/go-dbus/v1"
 )
 
-type hooks map[string]map[string]string
+type services []map[string]string
 
 type Package struct {
-	Description string `json:"description"`
-	Maintainer  string `json:"maintainer"`
-	Name        string `json:"name"`
-	Title       string `json:"title"`
-	Version     string `json:"version"`
-	Hooks       hooks  `json:"hooks"`
-	Units       map[string]*systemd.Unit
+	Description string          `json:"description"`
+	Maintainer  string          `json:"maintainer"`
+	Name        string          `json:"name"`
+	Version     string          `json:"version"`
+	Services    services        `json:"services"`
+	Ports       map[string]uint `json:"ports"`
 }
 
 // ClickUser exposes the click package registry for the user.
@@ -70,7 +69,6 @@ func (db *ClickDatabase) GetPackages(pkg string) (packages []Package, err error)
 		return nil, err
 	}
 
-	fmt.Println("packages", packages)
 	if pkg != "" {
 		for i := range packages {
 			if packages[i].Name == pkg {
@@ -94,16 +92,18 @@ func (db *ClickDatabase) GetPackages(pkg string) (packages []Package, err error)
 func (p *Package) getServices(conn *dbus.Connection) error {
 	systemD := systemd.New(conn)
 
-	p.Units = make(map[string]*systemd.Unit)
-
-	for k, v := range p.Hooks {
-		if _, ok := v["systemd"]; ok {
-			serviceName := fmt.Sprintf("clickowned_%s_%s_%s.service", p.Name, k, p.Version)
+	for i := range p.Services {
+		if serviceName, ok := p.Services[i]["name"]; ok {
+			serviceName := fmt.Sprintf("%s_%s_%s.service", p.Name, serviceName, p.Version)
 
 			if unit, err := systemD.Unit(serviceName); err == nil {
-				p.Units[k] = unit
+				if status, err := unit.Status(); err == nil {
+					p.Services[i]["status"] = status
+				} else {
+					fmt.Println("error getting status:", err)
+				}
 			} else {
-				return err
+				fmt.Println("error loading unit:", err)
 			}
 		}
 	}
