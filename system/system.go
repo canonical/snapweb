@@ -22,28 +22,35 @@
 package system
 
 import (
-	"log"
-
+	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 
-	"launchpad.net/go-dbus/v1"
-
-	"encoding/json"
-
 	"github.com/gorilla/mux"
+	"launchpad.net/go-dbus/v1"
 )
 
 var (
 	conn   *dbus.Connection
 	logger *log.Logger
+	update UpdateStatus
 )
 
 type System struct {
-	conn           *dbus.Connection
-	Info           map[string]string
-	updateAvail    bool
-	w              *dbus.SignalWatch
+	conn   *dbus.Connection
+	Info   map[string]string
+	w      *dbus.SignalWatch
+	update *UpdateStatus
+}
+
+type UpdateStatus struct {
+	isAvail      bool
+	downloading  bool
+	availVersion string
+	updateSize   int32
+	lastUpdate   string
+	errorReason  string
 }
 
 func New(conn *dbus.Connection) (*System, error) {
@@ -63,27 +70,38 @@ func New(conn *dbus.Connection) (*System, error) {
 		return nil, err
 	}
 
-
 	w, err := conn.WatchSignal(&dbus.MatchRule{
 		Type:      dbus.TypeSignal,
 		Path:      "/Service",
 		Interface: "com.canonical.SystemImage",
 		Member:    "UpdateAvailableStatus"})
 
-	return &System{conn: conn, Info: information, w: w, updateAvail: false}, nil
+	systemInfo := System{conn: conn, Info: information, w: w, update: &update}
+
+	go signalWatcher(&systemInfo)
+
+	return &systemInfo, nil
 
 }
 
-func (systemInfo *System) Init(prefix string) http.Handler {
-	var m *mux.Router
-
+func signalWatcher(systemInfo *System) {
 	log.Println("Setting up message channel")
 
-	go func() {
-		for msg := range systemInfo.w.C {
-			log.Println("Got an update signal ", msg)
+	for msg := range systemInfo.w.C {
+		log.Println("Got an update signal ", msg)
+		if err := msg.Args(&systemInfo.update.isAvail, &systemInfo.update.downloading,
+			&systemInfo.update.availVersion, &systemInfo.update.updateSize,
+			&systemInfo.update.lastUpdate, &systemInfo.update.errorReason); err != nil {
+			log.Println("Error getting update status ", err)
 		}
-	}()
+		if systemInfo.update.isAvail {
+			log.Println("Update Avail: ", systemInfo.update.availVersion)
+		}
+	}
+}
+
+func (systemInfo *System) MakeMuxer(prefix string) http.Handler {
+	var m *mux.Router
 
 	if prefix == "" {
 		m = mux.NewRouter()
@@ -91,17 +109,17 @@ func (systemInfo *System) Init(prefix string) http.Handler {
 		m = mux.NewRouter().PathPrefix(prefix).Subrouter()
 	}
 
-	m.HandleFunc("/CheckForUpdate", systemInfo.CheckForUpdate).Methods("GET")
+	m.HandleFunc("/checkForUpdate", systemInfo.checkForUpdate).Methods("GET")
 
-	m.HandleFunc("/ApplyUpdate", systemInfo.ApplyUpdate).Methods("POST")
+	m.HandleFunc("/", systemInfo.applyUpdate).Methods("POST")
 
-	m.HandleFunc("/info", systemInfo.GetSystemInfo).Methods("GET")
+	m.HandleFunc("/", systemInfo.getSystemInfo).Methods("GET")
 
 	return m
 
 }
 
-func (systemInfo *System) GetSystemInfo(w http.ResponseWriter, r *http.Request) {
+func (systemInfo *System) getSystemInfo(w http.ResponseWriter, r *http.Request) {
 
 	log.Println("Getting System Info")
 
@@ -126,7 +144,7 @@ func (systemInfo *System) GetSystemInfo(w http.ResponseWriter, r *http.Request) 
 	}
 }
 
-func (systemInfo *System) CheckForUpdate(w http.ResponseWriter, r *http.Request) {
+func (systemInfo *System) checkForUpdate(w http.ResponseWriter, r *http.Request) {
 
 	log.Println("Checking for System Update")
 	obj := systemInfo.conn.Object("com.canonical.SystemImage", "/Service")
@@ -140,11 +158,10 @@ func (systemInfo *System) CheckForUpdate(w http.ResponseWriter, r *http.Request)
 
 }
 
-func (systemInfo *System) ApplyUpdate(w http.ResponseWriter, r *http.Request) {
+func (systemInfo *System) applyUpdate(w http.ResponseWriter, r *http.Request) {
 
-	log.Println("In Apply Update")
-
-	if systemInfo.updateAvail {
+	if systemInfo.update.isAvail {
+		log.Println("In Apply Update ", systemInfo.update)
 
 		obj := systemInfo.conn.Object("com.canonical.SystemImage", "/Service")
 		reply, err := obj.Call("com.canonical.SystemImage", "ApplyUpdate")
