@@ -24,7 +24,14 @@ package system
 import (
 	"log"
 
+	"fmt"
+	"net/http"
+
 	"launchpad.net/go-dbus/v1"
+
+	"encoding/json"
+
+	"github.com/gorilla/mux"
 )
 
 var (
@@ -33,8 +40,10 @@ var (
 )
 
 type System struct {
-	conn *dbus.Connection
-	Info map[string]string
+	conn           *dbus.Connection
+	Info           map[string]string
+	updateAvail    bool
+	w              *dbus.SignalWatch
 }
 
 func New(conn *dbus.Connection) (*System, error) {
@@ -54,6 +63,95 @@ func New(conn *dbus.Connection) (*System, error) {
 		return nil, err
 	}
 
-	return &System{conn: conn, Info: information}, nil
+
+	w, err := conn.WatchSignal(&dbus.MatchRule{
+		Type:      dbus.TypeSignal,
+		Path:      "/Service",
+		Interface: "com.canonical.SystemImage",
+		Member:    "UpdateAvailableStatus"})
+
+	return &System{conn: conn, Info: information, w: w, updateAvail: false}, nil
+
+}
+
+func (systemInfo *System) Init(prefix string) http.Handler {
+	var m *mux.Router
+
+	log.Println("Setting up message channel")
+
+	go func() {
+		for msg := range systemInfo.w.C {
+			log.Println("Got an update signal ", msg)
+		}
+	}()
+
+	if prefix == "" {
+		m = mux.NewRouter()
+	} else {
+		m = mux.NewRouter().PathPrefix(prefix).Subrouter()
+	}
+
+	m.HandleFunc("/CheckForUpdate", systemInfo.CheckForUpdate).Methods("GET")
+
+	m.HandleFunc("/ApplyUpdate", systemInfo.ApplyUpdate).Methods("POST")
+
+	m.HandleFunc("/info", systemInfo.GetSystemInfo).Methods("GET")
+
+	return m
+
+}
+
+func (systemInfo *System) GetSystemInfo(w http.ResponseWriter, r *http.Request) {
+
+	log.Println("Getting System Info")
+
+	obj := systemInfo.conn.Object("com.canonical.SystemImage", "/Service")
+
+	reply, err := obj.Call("com.canonical.SystemImage", "Information")
+	if err != nil {
+		fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
+	} else if reply.Type == dbus.TypeError {
+		fmt.Fprint(w, fmt.Sprintf("Error: %s", reply.AsError()))
+	}
+
+	information := make(map[string]string)
+
+	if err := reply.Args(&information); err != nil {
+		fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
+	}
+
+	enc := json.NewEncoder(w)
+	if err := enc.Encode(information); err != nil {
+		fmt.Fprint(w, "Error")
+	}
+}
+
+func (systemInfo *System) CheckForUpdate(w http.ResponseWriter, r *http.Request) {
+
+	log.Println("Checking for System Update")
+	obj := systemInfo.conn.Object("com.canonical.SystemImage", "/Service")
+	reply, err := obj.Call("com.canonical.SystemImage", "CheckForUpdate")
+
+	if err != nil || reply.Type == dbus.TypeError {
+		fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
+	}
+
+	fmt.Fprint(w, "Checking for System Update...")
+
+}
+
+func (systemInfo *System) ApplyUpdate(w http.ResponseWriter, r *http.Request) {
+
+	log.Println("In Apply Update")
+
+	if systemInfo.updateAvail {
+
+		obj := systemInfo.conn.Object("com.canonical.SystemImage", "/Service")
+		reply, err := obj.Call("com.canonical.SystemImage", "ApplyUpdate")
+
+		if err != nil || reply.Type == dbus.TypeError {
+			fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
+		}
+	}
 
 }
