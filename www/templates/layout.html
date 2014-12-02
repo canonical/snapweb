@@ -18,9 +18,7 @@
       <aside class="layout-aside-data">
       </aside>
     </div>
-    <footer></footer>
-  </body>
-  <!--
+    <footer>
     <ul>
       {{ $pages := .Pages }}
       {{ range $index, $element := $pages }}
@@ -29,7 +27,8 @@
     </ul>
     <h1>{{ .Title }}</h1>
     {{ template "content" .Params }}
-    -->
+    </footer>
+  </body>
   </body>
   <script>
     YUI_config = {
