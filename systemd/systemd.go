@@ -19,11 +19,8 @@ type SystemD struct {
 }
 
 type Unit struct {
-	ServiceName string
-	State       string
-	Description string
-	objectPath  dbus.ObjectPath
-	conn        *dbus.Connection
+	objectPath dbus.ObjectPath
+	conn       *dbus.Connection
 }
 
 func New(conn *dbus.Connection) *SystemD {
@@ -48,27 +45,19 @@ func (sd *SystemD) Unit(service string) (*Unit, error) {
 	}
 
 	unit := &Unit{
-		conn:        sd.conn,
-		objectPath:  unitPath,
-		ServiceName: service,
-		State:       "unkown",
+		conn:       sd.conn,
+		objectPath: unitPath,
 	}
-
-	state, err := unit.getStringProperty("ActiveState")
-	if err != nil {
-		return nil, err
-	}
-
-	unit.State = state
-
-	description, err := unit.getStringProperty("Description")
-	if err != nil {
-		return nil, err
-	}
-
-	unit.Description = description
 
 	return unit, nil
+}
+
+func (u *Unit) Status() (string, error) {
+	return u.getStringProperty("ActiveState")
+}
+
+func (u *Unit) Description() (string, error) {
+	return u.getStringProperty("Description")
 }
 
 func (u *Unit) getStringProperty(propertyName string) (string, error) {

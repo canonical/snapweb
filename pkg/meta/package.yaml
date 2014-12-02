@@ -1,14 +1,14 @@
 name: snappyd
-title: Snappy Web Server
+source: lp:clapper
 description: Manage a system with a snappy webui
-version: 0.2.14
+version: 0.2.7
 architecture: amd64
-framework: ubuntu-core-15.04-dev1
-hooks:
-    httpd:
-        systemd: meta/snappyd.click-service
+frameworks: ubuntu-core-15.04-dev1
+services:
+        - name: snappyd
+          start: snappyd
+          description: Manage your device
 ports: 
     required: 8080
 maintainer: Clapping Team
-services: snappyd
 icon: meta/clap.png

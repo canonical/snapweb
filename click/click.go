@@ -2,6 +2,7 @@ package click
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os/exec"
 	"sync"
@@ -10,16 +11,15 @@ import (
 	"launchpad.net/go-dbus/v1"
 )
 
-type hooks map[string]map[string]string
+type services []map[string]string
 
-type ClickPackage struct {
-	Description string `json:"description"`
-	Maintainer  string `json:"maintainer"`
-	Name        string `json:"name"`
-	Title       string `json:"title"`
-	Version     string `json:"version"`
-	Hooks       hooks  `json:"hooks"`
-	Units       map[string]*systemd.Unit
+type Package struct {
+	Description string          `json:"description"`
+	Maintainer  string          `json:"maintainer"`
+	Name        string          `json:"name"`
+	Version     string          `json:"version"`
+	Services    services        `json:"services"`
+	Ports       map[string]uint `json:"ports"`
 }
 
 // ClickUser exposes the click package registry for the user.
@@ -42,18 +42,23 @@ func NewUser() (*ClickUser, error) {
 type ClickDatabase struct {
 	cdb  cClickDB
 	lock sync.Mutex
+	conn *dbus.Connection
 }
 
-func NewDatabase() (*ClickDatabase, error) {
+func NewDatabase(conn *dbus.Connection) (*ClickDatabase, error) {
 	db := new(ClickDatabase)
 	err := db.cdb.cInit(db)
 	if err != nil {
 		return nil, err
 	}
+	db.conn = conn
+
 	return db, nil
 }
 
-func (db *ClickDatabase) Manifests(conn *dbus.Connection) (packages []ClickPackage, err error) {
+// GetPackages returns the information relevant to pkg unless it is an empty string
+// where it returns the information for all packages.
+func (db *ClickDatabase) GetPackages(pkg string) (packages []Package, err error) {
 	//m, err := db.cdb.cGetManifests()
 	m, err := exec.Command("click", "list", "--manifest").CombinedOutput()
 	if err != nil {
@@ -64,8 +69,19 @@ func (db *ClickDatabase) Manifests(conn *dbus.Connection) (packages []ClickPacka
 		return nil, err
 	}
 
+	if pkg != "" {
+		for i := range packages {
+			if packages[i].Name == pkg {
+				packages = []Package{packages[i]}
+				return packages, nil
+			}
+		}
+
+		return nil, errors.New("package not found")
+	}
+
 	for i := range packages {
-		if err := packages[i].GetServices(conn); err != nil {
+		if err := packages[i].getServices(db.conn); err != nil {
 			return nil, err
 		}
 	}
@@ -73,19 +89,21 @@ func (db *ClickDatabase) Manifests(conn *dbus.Connection) (packages []ClickPacka
 	return packages, nil
 }
 
-func (p *ClickPackage) GetServices(conn *dbus.Connection) error {
+func (p *Package) getServices(conn *dbus.Connection) error {
 	systemD := systemd.New(conn)
 
-	p.Units = make(map[string]*systemd.Unit)
-
-	for k, v := range p.Hooks {
-		if _, ok := v["systemd"]; ok {
-			serviceName := fmt.Sprintf("clickowned_%s_%s_%s.service", p.Name, k, p.Version)
+	for i := range p.Services {
+		if serviceName, ok := p.Services[i]["name"]; ok {
+			serviceName := fmt.Sprintf("%s_%s_%s.service", p.Name, serviceName, p.Version)
 
 			if unit, err := systemD.Unit(serviceName); err == nil {
-				p.Units[k] = unit
+				if status, err := unit.Status(); err == nil {
+					p.Services[i]["status"] = status
+				} else {
+					fmt.Println("error getting status:", err)
+				}
 			} else {
-				return err
+				fmt.Println("error loading unit:", err)
 			}
 		}
 	}
