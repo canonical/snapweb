@@ -60,6 +60,9 @@ type Page struct {
 func InitURLHandlers(conn *dbus.Connection, log *log.Logger) {
 	log.Println("Initializing HTTP handlers...")
 
+	packageHandler := click.NewHandler(conn)
+	http.Handle("/api/v1/packages/", packageHandler.MakeMuxer("/api/v1/packages"))
+
 	handleServicesPage, err := makeServicesPageHandler(conn)
 	if err != nil {
 		log.Fatal(err)
@@ -121,7 +124,7 @@ func makeAdminPageHandler(conn *dbus.Connection) (f http.HandlerFunc, err error)
 }
 
 func makeServicesPageHandler(conn *dbus.Connection) (f http.HandlerFunc, err error) {
-	db, err := click.NewDatabase()
+	db, err := click.NewDatabase(conn)
 	if err != nil {
 		return f, err
 	}
@@ -132,7 +135,7 @@ func makeServicesPageHandler(conn *dbus.Connection) (f http.HandlerFunc, err err
 			Title: "Services",
 		}
 
-		if packages, err := db.Manifests(conn); err == nil {
+		if packages, err := db.GetPackages(""); err == nil {
 			data.Params = packages
 		} else {
 			log.Println(err)
