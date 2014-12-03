@@ -80,4 +80,3 @@ gulp.task('watch', function() {
 });
 
 gulp.task('default', ['watch', 'scripts', 'styles', 'templates']);
-gulp.task('build', ['clean', 'yui', 'scripts', 'styles', 'templates']);
