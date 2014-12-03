@@ -2,4 +2,8 @@
   "name": "core-settings",
   "fn": "DEMO.CORE.SETTINGS.show",
   "title": "Settings"
+},{
+  "name": "core-manage",
+  "fn": "DEMO.CORE.MANAGE.show",
+  "title": "Manage"
 }]
