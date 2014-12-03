@@ -58,15 +58,35 @@ func (h *handler) get(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) add(w http.ResponseWriter, r *http.Request) {
-	/*
-		db, err := NewDatabase(h.conn)
-		if err != nil {
-			fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
+	decoder := json.NewDecoder(r.Body)
+
+	items := make(map[string]string)
+
+	if err := decoder.Decode(&items); err != nil {
+		fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
+		return
+	}
+
+	db, err := NewDatabase(h.conn)
+	if err != nil {
+		fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
+		return
+	}
+
+	for k, v := range items {
+		switch k {
+		case "package":
+			if err := db.Install(v); err != nil {
+				fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
+				return
+			}
+		default:
+			http.NotFound(w, r)
 			return
 		}
-	*/
+	}
 
-	// TODO
+	w.WriteHeader(http.StatusCreated)
 }
 
 func (h *handler) MakeMuxer(prefix string) http.Handler {

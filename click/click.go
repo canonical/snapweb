@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os/exec"
+	"strings"
 	"sync"
 
 	"launchpad.net/clapper/systemd"
@@ -87,6 +88,21 @@ func (db *ClickDatabase) GetPackages(pkg string) (packages []Package, err error)
 	}
 
 	return packages, nil
+}
+
+// Install installs pkg onto the system, if pkg has a .snap suffix it will
+// require to have a full path of the package to exist locally on the system.
+// In every other case, it will install from the store.
+func (db *ClickDatabase) Install(pkg string) error {
+	if strings.HasSuffix(pkg, ".snap") {
+		return errors.New("local installation not implemented")
+	}
+
+	if out, err := exec.Command("snappy", "install", pkg).CombinedOutput(); err != nil {
+		return fmt.Errorf("unable to install package: %s", out)
+	}
+
+	return nil
 }
 
 func (p *Package) getServices(conn *dbus.Connection) error {
