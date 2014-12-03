@@ -1,5 +1,7 @@
-<div class="snap-list">
-  <% Y.Array.each(this.snaps, function (snap) { %>
-  <div class="title"><%= snap.title %></div>
+<div class="icon-list">
+  <% Y.Array.each(this, function (icon) { %>
+  <div class="icon" data-snap="<%= icon.name %>">
+    <%= icon.name %>
+  </div>
   <% }); %>
 </div>

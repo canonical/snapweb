@@ -26,7 +26,7 @@ YUI.add('demo', function(Y) {
   }, '.icon');
 
   var app = Y.namespace('DEMO').app = new Y.App({
-    viewContainer: '.layout-content',
+    viewContainer: '.layout-app-container',
     serverRouting: true,
     views: {
       home: {
