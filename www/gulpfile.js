@@ -67,8 +67,8 @@ gulp.task('templates', function() {
 // create a smaller yui lib (leave out debug and raw)
 gulp.task('yui', function() {
   return gulp.src([
-    '../node_modules/yui/**/*-min.js',
-    '../node_modules/yui/**/*-min.css'
+    'node_modules/yui/**/*-min.js',
+    'node_modules/yui/**/*-min.css'
   ])
   .pipe(gulp.dest('public/vendor/yui'));
 });
