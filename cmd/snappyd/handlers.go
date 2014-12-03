@@ -110,6 +110,8 @@ func makeAdminPageHandler(conn *dbus.Connection) (f http.HandlerFunc, err error)
 		return f, err
 	}
 
+	http.Handle("/api/v1/systemimage/", si.MakeMuxer("/api/v1/systemimage"))
+
 	return func(w http.ResponseWriter, r *http.Request) {
 		data := Page{
 			Pages:  p,
