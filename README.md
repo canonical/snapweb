@@ -37,3 +37,19 @@ Given that the snappy system where it was installed on was created with
 
 Then pointing the browser to [http://localhost:8080] will take you to the
 portal.
+
+## API
+
+### /api/v1/packages/
+
+To install a package:
+
+     curl -H "Content-Type: application/json" -d '{"package":"com.ubuntu.developer.mvo.xkcd-webserver"}' http://localhost:8080/api/v1/packages/
+
+To list packages:
+
+     curl http://localhost:8080/api/v1/packages/
+
+To get a specific package:
+
+     curl http://localhost:8080/api/v1/packages/com.ubuntu.developer.mvo.xkcd-webserver
