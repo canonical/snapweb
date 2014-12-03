@@ -14,6 +14,13 @@ html, body {
   flex: 1;
 }
 
+.layout-app-container {
+  flex: 1;
+}
+.layout-app-container > div {
+  display: flex;
+}
+
 .layout-content {
   flex: 1;
   padding: 0 5px;

@@ -5,7 +5,14 @@ YUI.add('core-manage', function(Y) {
 
   var onSuccess = function(id, res) {
     console.log('success');
-    console.log(res);
+    console.log(res.responseText);
+
+    var snaps = JSON.parse(res.responseText);
+    var view = new Y.DEMO.CORE.MANAGE.View({
+      snapList: snaps,
+      snap: snaps[0]
+    });
+    app.showView(view, null, {render: true});
   };
 
   var show = function() {
