@@ -8,6 +8,7 @@ YUI_config.groups = {
     root: 'public/js/core/',
     base: '/public/js/core/',
     modules: {
+      // settings
       'core-settings': {
         path: 'settings/index.js',
         requires: [
@@ -29,7 +30,47 @@ YUI_config.groups = {
       't-core-settings-tmpl-form': {
         path: 'settings/tmpl/form.js',
         requires: ['template']
-      }
+      },
+      // manage
+      'core-manage': {
+        path: 'manage/index.js',
+        requires: [
+          'core-manage-views',
+        ]
+      },
+      'core-manage-views': {
+        path: 'manage/views/index.js',
+        requires: [
+        'view',
+        'io-base',
+        'core-manage-view-snaplist',
+        'core-manage-view-snap'
+        ]
+      },
+      'core-manage-view-snaplist': {
+        path: 'manage/views/_list.js',
+        requires: [
+        'view',
+        'template',
+        't-core-manage-tmpl-list'
+        ]
+      },
+      'core-manage-view-snap': {
+        path: 'manage/views/_snap.js',
+        requires: [
+        'view',
+        'template',
+        't-core-manage-tmpl-snap'
+        ]
+      },
+      't-core-manage-tmpl-list': {
+        path: 'manage/tmpl/list.js',
+        requires: ['template']
+      },
+      't-core-manage-tmpl-snap': {
+        path: 'manage/tmpl/snap.js',
+        requires: ['template']
+      },
     }
   },
   vendor: {
