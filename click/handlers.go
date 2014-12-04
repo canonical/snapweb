@@ -63,12 +63,14 @@ func (h *handler) add(w http.ResponseWriter, r *http.Request) {
 	items := make(map[string]string)
 
 	if err := decoder.Decode(&items); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
 		return
 	}
 
 	db, err := NewDatabase(h.conn)
 	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
 		return
 	}
@@ -77,6 +79,7 @@ func (h *handler) add(w http.ResponseWriter, r *http.Request) {
 		switch k {
 		case "package":
 			if err := db.Install(v); err != nil {
+				w.WriteHeader(http.StatusBadRequest)
 				fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
 				return
 			}
