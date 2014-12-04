@@ -76,7 +76,7 @@ gulp.task('yui', function() {
 gulp.task('watch', function() {
   gulp.watch(paths.js, ['scripts']);
   gulp.watch(paths.css, ['styles']);
-  gulp.watch(paths.tmpl, ['templates']);
+  gulp.watch(paths.templates, ['templates']);
 });
 
 gulp.task('default', ['watch', 'scripts', 'styles', 'templates']);
