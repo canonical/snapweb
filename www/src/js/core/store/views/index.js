@@ -36,17 +36,34 @@ YUI.add('core-store-views', function(Y) {
       var name = e.target.getData('pkg');
       Y.io('/api/v1/packages/', {
         method: 'POST',
-        data: 'package=' + name,
+        data: '{"package":"' + name + '"}',
         on: {
-          success: function(id, res) {
+          start: function(id, pkg) {
+            console.log('start');
+            console.log(pkg);
+          },
+          end: function(id, pkg) {
+            console.log('end');
+            console.log(pkg);
+          },
+          success: function(id, res, pkg) {
+            console.log('success');
+            console.log(pkg);
             console.log(res);
           },
-          failure: function(id, res) {
+          failure: function(id, res, pkg) {
+            console.log('fail');
+            console.log(pkg);
             console.log(res);
-            console.log('xhrSettings fail');
           }
         },
-        context: this
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        context: StoreView,
+        'arguments': {
+          pkg: name
+        }
       });
     },
 
