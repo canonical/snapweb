@@ -1,12 +1,19 @@
 <div class="package-list">
   <% Y.Array.each(this, function (pkg) { %>
-  <div class="package-pkg">
-    <img src="<%= pkg.icon_url %>" width=32 height=32 />
+  <div class="package-pkg uninstalled" data-pkg="<%= pkg.name %>">
+    <img src="<%= pkg.icon_url %>" width=128 height=128 />
     <p>Title: <%= pkg.title %>
     <p>Name: <%= pkg.name %>
-    <p>Publisher <%= pkg.publisher %>
+    <p>Publisher: <%= pkg.publisher %>
+    <div class="status">
+      <button disabled class="btn button-working">Working...</button>
+    </div>
     <div class="install">
-      <button class="button-install" data-pkg="<%= pkg.name %>">Install</button>
+      <button class="btn button-install" data-pkg="<%= pkg.name %>">Install</button>
+      <div class="install-response"></div>
+    </div>
+    <div class="uninstall">
+      <button class="btn button-uninstall" data-pkg="<%= pkg.name %>">Uninstall</button>
       <div class="install-response"></div>
     </div>
   </div>

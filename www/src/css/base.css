@@ -12,6 +12,10 @@ html, body {
   box-sizing: inherit;
 }
 
+button {
+  font:normal 300 14px/1.5 Ubuntu, Arial, Helvetica, sans-serif;
+}
+
 .icon, .title, .btn {
   padding:5px;
   margin:5px;
@@ -41,8 +45,51 @@ html, body {
   color:#333;
 }
 
+.button-uninstall {
+  background-color: #ccc;
+  border-color:#ccc;
+  color:#333;
+}
+.button-working {
+  background-color: transparent;
+  border-color:transparent;
+  color:#333;
+}
+
 .icon:hover {
   border-color:#1c2223;
   background-color:#17272a;
   color:white;
+}
+
+.install, .uninstall {
+  display:none;
+}
+
+.working .status {
+  display:block;
+}
+
+.working .install, .working .uninstall {
+  display:none;
+}
+
+.checked .installed .uninstall {
+  display:block;
+}
+
+.checked .installed .install, .checked .installed .status {
+  display:none;
+}
+
+.checked .uninstalled .install {
+  display:block;
+}
+
+.checked .uninstalled .uninstall, .checked .uninstalled .status {
+  display:none;
+}
+
+.package-pkg {
+  margin-bottom:2em;
 }

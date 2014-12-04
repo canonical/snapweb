@@ -18,14 +18,6 @@
       </aside>
     </div>
     <footer>
-    <ul>
-      {{ $pages := .Pages }}
-      {{ range $index, $element := $pages }}
-      <li class="first"><a href="{{ $element }}">{{ $index }}</a></li>
-      {{end}}
-    </ul>
-    <h1>{{ .Title }}</h1>
-    {{ template "content" .Params }}
     </footer>
   </body>
   </body>
