@@ -89,6 +89,24 @@ func (h *handler) add(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 }
 
+func (h *handler) remove(w http.ResponseWriter, r *http.Request) {
+	// Get the Key.
+	vars := mux.Vars(r)
+	pkgName := vars["pkg"]
+
+	db, err := NewDatabase(h.conn)
+	if err != nil {
+		fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
+		return
+	}
+
+	if err := db.Uninstall(pkgName); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
+		return
+	}
+}
+
 func (h *handler) MakeMuxer(prefix string) http.Handler {
 	var m *mux.Router
 
@@ -102,6 +120,8 @@ func (h *handler) MakeMuxer(prefix string) http.Handler {
 	m.HandleFunc("/", h.getAll).Methods("GET")
 	// Add a package
 	m.HandleFunc("/", h.add).Methods("POST")
+	// Remove a package
+	m.HandleFunc("/{pkg}", h.remove).Methods("DELETE")
 
 	// get specific package
 	m.HandleFunc("/{pkg}", h.get).Methods("GET")
