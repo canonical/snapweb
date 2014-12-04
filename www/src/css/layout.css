@@ -30,6 +30,11 @@ html, body {
   margin:5px;
   border-top: 1px solid transparent;
 }
+
+.layout-content > .icon-list {
+  margin-top:0;
+}
+
 .layout-content > div > div:first-child label {
   margin-top:0;
   padding-top:5px;
