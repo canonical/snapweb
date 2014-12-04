@@ -10,9 +10,6 @@ YUI.add('core-store', function(Y) {
   }];
 
   var onSuccess = function(id, res) {
-    console.log('success');
-    console.log(res.responseText);
-
     var snaps = JSON.parse(res.responseText);
     snaps = snaps._embedded['clickindex:package'];
 
@@ -20,7 +17,46 @@ YUI.add('core-store', function(Y) {
       list: snaps,
       nav: navData
     });
-    app.showView(view, null, {render: true});
+    app.showView(view, null, {
+      render: true,
+      callback: checkInstalled
+
+    });
+  };
+
+  var checkInstalled = function(view) {
+    Y.io('/api/v1/packages/', {
+      on: {
+        success: function(id, res, name) {
+          var installed = JSON.parse(res.responseText);
+          var view = Y.DEMO.app.get('activeView');
+          var apps = view.get('list');
+          var btns;
+          if (view.name === name) {
+
+            Y.Array.each(installed, function(item) {
+              var match = Y.Array.find(apps, function(app) {
+                return (item.name === app.name);
+              });
+
+              if (match) {
+                var selector = '[data-pkg="' + match.name + '"]';
+                view.get('container').one(selector).
+                replaceClass('uninstalled', 'installed');
+              }
+            });
+
+            view.get('container').addClass('checked');
+
+          } else {
+            console.log('no');
+          }
+        },
+        failure: function(id, res) {
+        }
+      },
+      'arguments': view.name
+    });
   };
 
   var show = function() {
