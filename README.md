@@ -46,6 +46,10 @@ To install a package:
 
      curl -H "Content-Type: application/json" -d '{"package":"com.ubuntu.developer.mvo.xkcd-webserver"}' http://localhost:8080/api/v1/packages/
 
+To uninstall a package:
+
+    curl -X DELETE http://localhost:8080/api/v1/packages/com.ubuntu.developer.mvo.xkcd-webserver
+
 To list packages:
 
      curl http://localhost:8080/api/v1/packages/

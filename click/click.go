@@ -105,6 +105,15 @@ func (db *ClickDatabase) Install(pkg string) error {
 	return nil
 }
 
+// Uninstall removes pkg from the system.
+func (db *ClickDatabase) Uninstall(pkg string) error {
+	if out, err := exec.Command("snappy", "uninstall", pkg).CombinedOutput(); err != nil {
+		return fmt.Errorf("unable to uninstall package: %s", out)
+	}
+
+	return nil
+}
+
 func (p *Package) getServices(conn *dbus.Connection) error {
 	systemD := systemd.New(conn)
 
