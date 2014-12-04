@@ -71,6 +71,46 @@ YUI_config.groups = {
         path: 'manage/tmpl/snap.js',
         requires: ['template']
       },
+      // store
+      'core-store': {
+        path: 'store/index.js',
+        requires: [
+          'core-store-views',
+        ]
+      },
+      'core-store-views': {
+        path: 'store/views/index.js',
+        requires: [
+        'view',
+        'io-base',
+        'core-store-view-list',
+        'core-store-view-nav'
+        ]
+      },
+      'core-store-view-list': {
+        path: 'store/views/_list.js',
+        requires: [
+        'view',
+        'template',
+        't-core-store-tmpl-list'
+        ]
+      },
+      'core-store-view-nav': {
+        path: 'store/views/_nav.js',
+        requires: [
+        'view',
+        'template',
+        't-core-store-tmpl-nav'
+        ]
+      },
+      't-core-store-tmpl-list': {
+        path: 'store/tmpl/list.js',
+        requires: ['template']
+      },
+      't-core-store-tmpl-nav': {
+        path: 'store/tmpl/nav.js',
+        requires: ['template']
+      },
     }
   },
   vendor: {

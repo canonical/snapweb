@@ -1,0 +1,14 @@
+<div class="package-list">
+  <% Y.Array.each(this, function (pkg) { %>
+  <div class="package-pkg">
+    <img src="<%= pkg.icon_url %>" width=32 height=32 />
+    <p>Title: <%= pkg.title %>
+    <p>Name: <%= pkg.name %>
+    <p>Publisher <%= pkg.publisher %>
+    <div class="install">
+      <button class="button-install" data-pkg="<%= pkg.name %>">Install</button>
+      <div class="install-response"></div>
+    </div>
+  </div>
+  <% }); %>
+</div>
