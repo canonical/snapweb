@@ -1,6 +1,24 @@
 <div class="snap-representation">
-  <h1>Hello, I am a snap.</h1>
+  <h1><%= this.name %></h1>
+  <p class="version">Ver. <%= this.version %>
+  <p>
+  <% if (this.description && this.description.length) { %>
   <%= this.description %>
-  <%= this.name %>
-  <%= this.version %>
+  <% } else { %>
+    This package has no description.
+  <% } %>
+  <div class="services">
+    <% if (this.services && this.services.length) { %>
+    <h1>Services</h1>
+    <% Y.Array.each(this.services, function (service) { %>
+    <ul>
+      <% Y.Object.each(service, function (v, k) { %>
+      <li><%= k %>: <%= v %></li>
+      <% }); %>
+    </ul>
+    <% }); %>
+    <% } else { %>
+      <p>This package has no services.
+    <% } %>
+  </div>
 </div>

@@ -30,8 +30,18 @@ YUI.add('core-manage-views', function(Y) {
     },
 
     showSnap: function(e) {
-      console.log(e.target.getData('snap'));
-      this.snapView.render();
+      var name = e.target.getData('snap');
+      Y.io('/api/v1/packages/' + name, {
+        on: {
+          success: function(id, res) {
+            this.snapView.set('snap', JSON.parse(res.responseText)).render();
+          },
+          failure: function() {
+            console.log('xhrSettings fail');
+          }
+        },
+        context: this
+      });
     },
 
     render: function() {
