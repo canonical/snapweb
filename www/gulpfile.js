@@ -11,6 +11,7 @@ var jshint = require('gulp-jshint');
 var precompile = require('./precompile.js');
 var rename = require('gulp-rename');
 var sourcemaps = require('gulp-sourcemaps');
+var svgSymbols = require('gulp-svg-symbols');
 var uglify = require('gulp-uglify');
 
 // where to find sources
@@ -62,6 +63,12 @@ gulp.task('templates', function() {
     extname: '.js'
   }))
   .pipe(gulp.dest('public/js'));
+});
+
+gulp.task('svg', function() {
+  return gulp.src('src/img/*.svg')
+  .pipe(svgSymbols())
+  .pipe(gulp.dest('public/svg'));
 });
 
 // create a smaller yui lib (leave out debug and raw)

@@ -49,17 +49,25 @@ html, body {
 .layout-aside-data {
 }
 
-header, footer {
-  height:50px;
-}
-
 header {
+  height:54px;
   display:flex;
-}
-
-footer {
+  background-color:#dd4814;
+  margin:0 0 2em 0;
 }
 
 .header-brand {
+  display:flex;
   width:200px;
+  padding:13px;
+  font-size:18px;
+  color:white;
+}
+
+.logo {
+  flex:0 0 36px;
+}
+
+.logotype {
+  flex:1;
 }

@@ -44,6 +44,8 @@ YUI.add('core-store', function(Y) {
                 var label = stateUI.one('label');
                 var input = stateUI.one('input');
 
+                var btn = stateUI.one('.pkg-show');
+
                 stateUI.removeClass('thinking');
 
                 if (apkg.name === ipkg.name) {
@@ -53,6 +55,13 @@ YUI.add('core-store', function(Y) {
                     checked: true,
                     disabled: false
                   });
+
+                  // XXX port property broken, fake it
+                  if (ipkg.port || ipkg.name === 'xkcd-webserver') {
+                    var port = ipkg.port || 80;
+                    btn.setAttr('href', '//localhost:' + port)
+                      .removeClass('hide');
+                  }
                   return false;
                 } else {
                   label.set('text', 'Install package');
