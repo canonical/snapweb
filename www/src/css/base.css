@@ -12,6 +12,11 @@ html, body {
   box-sizing: inherit;
 }
 
+.cof {
+  width:27px;
+  height:27px;
+}
+
 button {
   font:normal 300 14px/1.5 Ubuntu, Arial, Helvetica, sans-serif;
 }
@@ -23,12 +28,11 @@ button {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  border:1px solid #eee;
+  border:1px solid rgb(204,204,204);
   border-radius:3px;
 }
 
 .icon {
-  background-color:#eee;
 }
 
 .btn {
@@ -63,7 +67,10 @@ button {
 }
 
 .pkg {
-  margin-bottom:2em;
+  margin-bottom: 1em;
+  background: #F2F2F2;
+  padding: 1em 1em 1em 100px;
+  border-radius: 3px;
 }
 
 .pkg p {
@@ -78,4 +85,11 @@ button {
 
 .pkg-name {
   font-weight:400;
+}
+
+.pkg-show {
+}
+
+.pkg-show.hide {
+    display:none;
 }
