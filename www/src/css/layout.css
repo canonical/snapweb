@@ -35,11 +35,6 @@ html, body {
   margin-top:0;
 }
 
-.layout-content > div > div:first-child label {
-  margin-top:0;
-  padding-top:5px;
-}
-
 .layout-nav-proto, .layout-nav-deutero, .layout-aside-data {
   flex: 0 0 160px;
   padding: 0 5px;
