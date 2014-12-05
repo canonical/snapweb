@@ -25,38 +25,73 @@ YUI.add('core-store-views', function(Y) {
     },
 
     events: {
-      '.button-install': {
-        click: 'install'
-      },
-      '.button-uninstall': {
-        click: 'uninstall'
+      '.switch': {
+        change: 'install'
       }
     },
 
     install: function(e) {
-      var name = e.target.getData('pkg');
-      Y.one('[data-pkg="' + name + '"]')
-      .replaceClass('uninstalled', 'working');
+      e.stopPropagation();
+
+      var pkgEl = e.currentTarget;
+      var input = e.target;
+      var label = pkgEl.one('label');
+      var pkgId = input.get('id');
+      var state = input.get('checked');
+
+      pkgEl.addClass('thinking');
+      input.set('disabled', '');
+
+      if (state) {
+        label.set('text', 'Installing package…');
+      } else {
+        label.set('text', 'Removing package…');
+      }
 
       Y.io('/api/v1/packages/', {
         method: 'POST',
-        data: '{"package":"' + name + '"}',
+        data: '{"package":"' + pkgId + '"}',
         on: {
           success: function(id, res, pkg) {
-            Y.one('[data-pkg="' + pkg.name + '"]')
-            .replaceClass('working', 'installed');
+            var pkgEl = Y.one('[data-pkg="' + pkg.pkgId + '"] .switch');
+            var input = pkgEl.one('input');
+            var label = pkgEl.one('label');
+            var state = input.get('checked');
+
+            pkgEl.removeClass('thinking');
+
+            if (state) {
+              label.set('text', 'Package installed');
+            } else {
+              label.set('text', 'Package removed');
+            }
           },
           failure: function(id, res, pkg) {
-            Y.one('[data-pkg="' + pkg.name + '"]')
-            .replaceClass('working', 'uninstalled');
+            console.log(res);
+            var pkgEl = Y.one('[data-pkg="' + pkg.pkgId + '"] .switch');
+            var input = pkgEl.one('input');
+            var label = pkgEl.one('label');
+            var state = input.get('checked');
+
+            pkgEl.removeClass('thinking');
+
+            if (state) {
+              input.set('checked', false);
+              label.set('text', 'Install failure, see console for error.');
+            } else {
+              input.set('checked', true);
+              label.set('text',
+              'Package uninstall failure, see console for error.');
+            }
+
+            console.log(res.responseText);
           }
         },
         headers: {
           'Content-Type': 'application/json',
         },
-        context: StoreView,
         'arguments': {
-          name: name
+          pkgId: pkgId
         }
       });
     },

@@ -17,11 +17,12 @@ YUI.add('core-store', function(Y) {
       list: snaps,
       nav: navData
     });
+
     app.showView(view, null, {
       render: true,
       callback: checkInstalled
-
     });
+
   };
 
   var checkInstalled = function(view) {
@@ -30,20 +31,38 @@ YUI.add('core-store', function(Y) {
         success: function(id, res, name) {
           var installed = JSON.parse(res.responseText);
           var view = Y.DEMO.app.get('activeView');
-          var apps = view.get('list');
-          var btns;
+          var available = view.get('list');
+
           if (view.name === name) {
 
-            Y.Array.each(installed, function(item) {
-              var match = Y.Array.find(apps, function(app) {
-                return (item.name === app.name);
+            Y.Array.each(available, function(apkg) {
+              Y.Array.every(installed, function(ipkg) {
+
+                var sel = '[data-pkg="' + apkg.name + '"]';
+                var stateUI = view.get('container').one(sel + ' .switch');
+
+                var label = stateUI.one('label');
+                var input = stateUI.one('input');
+
+                stateUI.removeClass('thinking');
+
+                if (apkg.name === ipkg.name) {
+                  label.set('text', 'Package installed');
+                  input.setAttrs({
+                    checked: true,
+                    disabled: false
+                  });
+                  return false;
+                } else {
+                  label.set('text', 'Install package');
+                  input.setAttrs({
+                    checked: false,
+                    disabled: false
+                  });
+                  return true;
+                }
               });
 
-              if (match) {
-                var selector = '[data-pkg="' + match.name + '"]';
-                view.get('container').one(selector).
-                replaceClass('uninstalled', 'installed');
-              }
             });
 
             view.get('container').addClass('checked');
@@ -53,6 +72,8 @@ YUI.add('core-store', function(Y) {
           }
         },
         failure: function(id, res) {
+          window.alert('GET /api/v1/packages FAIL. Check console.');
+          console.log(res);
         }
       },
       'arguments': view.name

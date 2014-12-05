@@ -62,34 +62,20 @@ button {
   color:white;
 }
 
-.install, .uninstall {
-  display:none;
-}
-
-.working .status {
-  display:block;
-}
-
-.working .install, .working .uninstall {
-  display:none;
-}
-
-.checked .installed .uninstall {
-  display:block;
-}
-
-.checked .installed .install, .checked .installed .status {
-  display:none;
-}
-
-.checked .uninstalled .install {
-  display:block;
-}
-
-.checked .uninstalled .uninstall, .checked .uninstalled .status {
-  display:none;
-}
-
-.package-pkg {
+.pkg {
   margin-bottom:2em;
+}
+
+.pkg p {
+  margin:0;
+}
+
+.pkg-publisher {
+  font-size:11px;
+  text-transform:uppercase;
+  color:#ddd;
+}
+
+.pkg-name {
+  font-weight:400;
 }
