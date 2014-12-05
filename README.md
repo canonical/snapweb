@@ -57,3 +57,7 @@ To list packages:
 To get a specific package:
 
      curl http://localhost:8080/api/v1/packages/com.ubuntu.developer.mvo.xkcd-webserver
+
+To start or stop a service from a package:
+
+    curl -w "\nstatus code: %{http_code}\n" -d '{"status":0} 'http://localhost:8080/api/v1/packages/snappyd/snappyd
