@@ -40,7 +40,8 @@ YUI.add('core-store-views', function(Y) {
       var state = input.get('checked');
 
       pkgEl.addClass('thinking');
-      input.set('disabled', '');
+      input.set('disabled', true);
+      label.setAttribute('data-tt', '…');
 
       if (state) {
         label.set('text', 'Installing package…');
@@ -59,21 +60,25 @@ YUI.add('core-store-views', function(Y) {
             var state = input.get('checked');
 
             pkgEl.removeClass('thinking');
+            input.set('disabled', false);
 
             if (state) {
               label.set('text', 'Package installed');
+              label.setAttribute('data-tt', 'Click to remove package');
             } else {
-              label.set('text', 'Package removed');
+              label.set('text', 'Package uninstalled');
+              label.setAttribute('data-tt', 'Click to install again');
             }
           },
           failure: function(id, res, pkg) {
-            console.log(res);
             var pkgEl = Y.one('[data-pkg="' + pkg.pkgId + '"] .switch');
             var input = pkgEl.one('input');
             var label = pkgEl.one('label');
             var state = input.get('checked');
 
             pkgEl.removeClass('thinking');
+            input.set('disabled', false);
+            label.setAttribute('data-tt', 'Click to try again');
 
             if (state) {
               input.set('checked', false);
@@ -92,30 +97,6 @@ YUI.add('core-store-views', function(Y) {
         },
         'arguments': {
           pkgId: pkgId
-        }
-      });
-    },
-
-    uninstall: function(e) {
-      var name = e.target.getData('pkg');
-      Y.one('[data-pkg="' + name + '"]')
-      .replaceClass('installed', 'working');
-
-      Y.io('/api/v1/packages/' + name, {
-        method: 'DELETE',
-        on: {
-          success: function(id, res, pkg) {
-            Y.one('[data-pkg="' + pkg.name + '"]')
-            .replaceClass('working', 'uninstalled');
-          },
-          failure: function(id, res, pkg) {
-            Y.one('[data-pkg="' + pkg.name + '"]')
-            .replaceClass('working', 'installed');
-          }
-        },
-        context: StoreView,
-        'arguments': {
-          name: name
         }
       });
     },

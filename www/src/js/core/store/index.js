@@ -48,6 +48,7 @@ YUI.add('core-store', function(Y) {
 
                 if (apkg.name === ipkg.name) {
                   label.set('text', 'Package installed');
+                  label.setAttribute('data-tt', 'Click to remove package');
                   input.setAttrs({
                     checked: true,
                     disabled: false
@@ -55,6 +56,7 @@ YUI.add('core-store', function(Y) {
                   return false;
                 } else {
                   label.set('text', 'Install package');
+                  label.setAttribute('data-tt', 'Click to install');
                   input.setAttrs({
                     checked: false,
                     disabled: false

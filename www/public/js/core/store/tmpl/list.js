@@ -13,7 +13,7 @@ $e($v( pkg.title ))+
 $e($v( pkg.publisher ))+
 '\n    <div class="switch thinking">\n      <label for="'+
 $e($v( pkg.name ))+
-'">Checking status...</label>\n      <input disabled type="checkbox" id="'+
+'" class="tt-w" data-tt="…">Checking status...</label>\n      <input disabled type="checkbox" id="'+
 $e($v( pkg.name ))+
 '" />\n      <div class="thing"></div>\n    </div>\n  </div>\n  ';
  }); 
