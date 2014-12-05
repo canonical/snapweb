@@ -1,8 +1,8 @@
 <div class="package-list">
   <% Y.Array.each(this, function (pkg) { %>
   <div class="pkg" data-pkg="<%= pkg.name %>">
-    <img class="pkg-img" src="<%= pkg.icon_url %>" width=54 height=54 />
-    <p class="pkg-name"><%= pkg.name %>
+    <img class="pkg-img" src="<%= pkg.icon_url %>" />
+    <p class="pkg-name"><%= pkg.name %> <a class="pkg-show hide" href="">(SHOW)</a>
     <p class="pkg-title"><%= pkg.title %>
     <p class="pkg-publisher"><%= pkg.publisher %>
     <div class="switch thinking">
@@ -10,7 +10,6 @@
       <input disabled type="checkbox" id="<%= pkg.name %>" />
       <div class="thing"></div>
     </div>
-    <a class="pkg-show hide" href="">Show</a>
   </div>
   <% }); %>
 </div>

@@ -39,12 +39,13 @@ YUI.add('core-store', function(Y) {
               Y.Array.every(installed, function(ipkg) {
 
                 var sel = '[data-pkg="' + apkg.name + '"]';
-                var stateUI = view.get('container').one(sel + ' .switch');
+                var container = view.get('container');
+                var stateUI = container.one(sel + ' .switch');
 
                 var label = stateUI.one('label');
                 var input = stateUI.one('input');
 
-                var btn = stateUI.one('.pkg-show');
+                var btn = container.one(sel + ' .pkg-show');
 
                 stateUI.removeClass('thinking');
 
@@ -59,7 +60,7 @@ YUI.add('core-store', function(Y) {
                   // XXX port property broken, fake it
                   if (ipkg.port || ipkg.name === 'xkcd-webserver') {
                     var port = ipkg.port || 80;
-                    btn.setAttr('href', '//localhost:' + port)
+                    btn.setAttribute('href', '//localhost:' + port)
                       .removeClass('hide');
                   }
                   return false;
