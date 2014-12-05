@@ -69,12 +69,20 @@ button {
 .pkg {
   margin-bottom: 1em;
   background: #F2F2F2;
-  padding: 1em 1em 1em 100px;
+  padding: 1em 1em 1em 133px;
   border-radius: 3px;
+  position:relative;
 }
 
 .pkg p {
   margin:0;
+}
+
+.pkg-img {
+  position: absolute;
+  top: 16px;
+  left: 20px;
+  width: 92px;
 }
 
 .pkg-publisher {
@@ -88,6 +96,8 @@ button {
 }
 
 .pkg-show {
+  border-radius:3px;
+  text-decoration:none;
 }
 
 .pkg-show.hide {
