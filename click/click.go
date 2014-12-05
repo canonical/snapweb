@@ -114,6 +114,27 @@ func (db *ClickDatabase) Uninstall(pkg string) error {
 	return nil
 }
 
+func (p *Package) isService(serviceName string) bool {
+	for i := range p.Services {
+		if name, ok := p.Services[i]["name"]; ok {
+			if name == serviceName {
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
+// Service returns the full service name on systemd
+func (p *Package) Service(serviceName string) (string, error) {
+	if !p.isService(serviceName) {
+		return "", errors.New("service does not exist")
+	}
+
+	return fmt.Sprintf("%s_%s_%s.service", p.Name, serviceName, p.Version), nil
+}
+
 func (p *Package) getServices(conn *dbus.Connection) error {
 	systemD := systemd.New(conn)
 
