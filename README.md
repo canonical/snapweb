@@ -44,11 +44,11 @@ portal.
 
 To install a package:
 
-     curl -H "Content-Type: application/json" -d '{"package":"com.ubuntu.developer.mvo.xkcd-webserver"}' http://localhost:8080/api/v1/packages/
+     curl -H "Content-Type: application/json" -d '{"package":"xkcd-webserver"}' http://localhost:8080/api/v1/packages/
 
 To uninstall a package:
 
-    curl -X DELETE http://localhost:8080/api/v1/packages/com.ubuntu.developer.mvo.xkcd-webserver
+    curl -X DELETE http://localhost:8080/api/v1/packages/xkcd-webserver
 
 To list packages:
 
@@ -56,7 +56,7 @@ To list packages:
 
 To get a specific package:
 
-     curl http://localhost:8080/api/v1/packages/com.ubuntu.developer.mvo.xkcd-webserver
+     curl http://localhost:8080/api/v1/packages/xkcd-webserver
 
 To start or stop a service from a package:
 
