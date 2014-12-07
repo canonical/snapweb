@@ -12,6 +12,10 @@ html, body {
   box-sizing: inherit;
 }
 
+a {
+  color:#dd4814;
+}
+
 .cof {
   width:27px;
   height:27px;
@@ -49,6 +53,14 @@ button {
 }
 
 .pkg-show {
+  color:white;
+  background-color:#dd4814;
+  font-size:11px;
+  text-transform:uppercase;
+  padding:4px 1em;
+  display:inline-block;
+  vertical-align:middle;
+  margin-left:1em;
   border-radius:3px;
   text-decoration:none;
 }
