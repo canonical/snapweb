@@ -4,7 +4,7 @@
     <title>DEMO UI | {{ .Title }}</title>
     <link rel="stylesheet" href="/public/css/demo.css" />
   </head>
-  <body class="layout layout-columns">
+  <body class="layout">
     <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
     <symbol id="cof" viewBox="0 0 20 20">
     <title>cof icon</title>
@@ -23,15 +23,16 @@
     </div>
     </header>
     <div class="layout-body">
-      <nav class="layout-nav-proto">
+      <nav class="layout-nav-primary">
       </nav>
       <div class="layout-app-container">
       </div>
-      <aside class="layout-aside-data">
-      </aside>
     </div>
+    <!--
     <footer>
+      {{ template "content" .Params }}
     </footer>
+    -->
   </body>
   </body>
   <script>

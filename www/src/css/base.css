@@ -21,54 +21,8 @@ button {
   font:normal 300 14px/1.5 Ubuntu, Arial, Helvetica, sans-serif;
 }
 
-.icon, .title, .btn {
-  padding:5px;
-  margin:5px;
-  text-align:center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  border:1px solid rgb(204,204,204);
-  border-radius:3px;
-}
-
-.icon {
-}
-
-.btn {
-  padding:5px 25px;
-  margin:5px 0;
-  border-color:#dd4814;
-  background-color:#dd4814;
-  color:white;
-}
-
-.btn + .btn {
-  border-color:#ddd;
-  background-color:#ddd;
-  color:#333;
-}
-
-.button-uninstall {
-  background-color: #ccc;
-  border-color:#ccc;
-  color:#333;
-}
-.button-working {
-  background-color: transparent;
-  border-color:transparent;
-  color:#333;
-}
-
-.icon:hover {
-  border-color:#1c2223;
-  background-color:#17272a;
-  color:white;
-}
-
 .pkg {
   margin-bottom: 1em;
-  background: #F2F2F2;
   padding: 1em 1em 1em 133px;
   border-radius: 3px;
   position:relative;
@@ -80,7 +34,7 @@ button {
 
 .pkg-img {
   position: absolute;
-  top: 16px;
+  top: 20px;
   left: 20px;
   width: 92px;
 }
@@ -92,7 +46,7 @@ button {
 }
 
 .pkg-name {
-  font-weight:400;
+  font-size:30px;
 }
 
 .pkg-show {

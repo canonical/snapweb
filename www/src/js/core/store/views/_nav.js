@@ -5,7 +5,7 @@ YUI.add('core-store-view-nav', function(Y) {
 
   NavView = Y.Base.create('storeNav', Y.View, [], {
 
-    containerTemplate: '<nav class=layout-nav-deutero></nav>',
+    containerTemplate: '<nav class=layout-app-nav-primary></nav>',
 
     template: template,
 

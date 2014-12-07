@@ -1,7 +1,7 @@
 YUI.add('demo', function(Y) {
   'use strict';
 
-  var ns = Y.one('.layout-nav-proto');
+  var ns = Y.one('.layout-nav-primary');
   var mu = new Y.Template();
 
   var stringToFunction = function(string, context /*, args */ ) {
