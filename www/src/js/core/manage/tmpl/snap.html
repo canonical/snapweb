@@ -1,5 +1,4 @@
-<div class="pkg">
-  <img class="pkg-img" src="<%= this.icon_url %>" />
+<div class="services">
   <p class="pkg-name"><%= this.name %></h1>
   <p class="version">Ver. <%= this.version %>
   <p>
@@ -10,7 +9,7 @@
   <% } %>
   <div class="services">
     <% if (this.services && this.services.length) { %>
-    <h1>Services</h1>
+    <p>Services</p>
     <% Y.Array.each(this.services, function (service) { %>
     <ul>
       <% Y.Object.each(service, function (v, k) { %>

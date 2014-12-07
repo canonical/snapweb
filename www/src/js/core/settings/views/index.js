@@ -1,60 +1,47 @@
 YUI.add('core-settings-views', function(Y) {
   'use strict';
 
-  var template = new Y.Template();
-  template = template.revive(Y.DEMO.CORE.SETTINGS.TMPL.FORM.template);
+  var StoreView = Y.Base.create('settingsView', Y.View, [], {
 
-  var SettingsView = Y.Base.create('settingsView', Y.View, [], {
+    initializer: function() {
 
-    template: template,
-
-    events: {
-      '#submit': {
-        click: 'submit'
-      }
-    },
-
-    onSubmitSuccess: function(id, res) {
-      var data = JSON.parse(res.responseText);
-      window.alert(data.message);
-    },
-
-    submit: function() {
-
-      var postUri = this.get('data.api');
-      postUri = Y.namespace(postUri).post;
-
-      Y.io(postUri, {
-        method: 'POST',
-        form: {
-          id: 'demo-settings'
-        },
-        on: {
-          success: this.onSubmitSuccess,
-          failure: function(id, res) {
-            console.log('failure');
-            console.log(res);
-          }
-        }
+      this.listView = new ListView({
+        list: this.get('list')
+        });
+      this.navView = new NavView({
+        nav: this.get('nav')
       });
+
+      this.listView.addTarget(this);
+      this.navView.addTarget(this);
+    },
+
+    destructor: function() {
+      this.listView.destroy();
+      this.navView.destroy();
+
+      delete this.listView;
+      delete this.navView;
     },
 
     render: function() {
-      var settings = this.get('data');
-      var html = template(settings);
+      var content = Y.one(Y.config.doc.createDocumentFragment());
+      content.append(this.navView.render().get('container'));
+      content.append(this.listView.render().get('container'));
 
-      this.get('container').setHTML(html);
+      this.get('container').setHTML(content);
 
       return this;
     }
   });
 
-  Y.namespace('DEMO.CORE.SETTINGS').View = SettingsView;
+  Y.namespace('DEMO.CORE.SETTINGS').View = StoreView;
 
 }, '0.0.1', {
   requires: [
     'view',
-    'template',
-    'io-base'
+    'io-base',
+    'core-settings-view-list',
+    'core-settings-view-nav'
   ]
 });
