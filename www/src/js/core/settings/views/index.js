@@ -1,14 +1,16 @@
 YUI.add('core-settings-views', function(Y) {
   'use strict';
 
-  var StoreView = Y.Base.create('settingsView', Y.View, [], {
+  var SettingsView = Y.Base.create('settingsView', Y.View, [], {
 
     initializer: function() {
 
-      this.listView = new ListView({
+      var VIEWS = Y.DEMO.CORE.SETTINGS.VIEWS;
+
+      this.listView = new VIEWS.List({
         list: this.get('list')
         });
-      this.navView = new NavView({
+      this.navView = new VIEWS.Nav({
         nav: this.get('nav')
       });
 
@@ -35,7 +37,7 @@ YUI.add('core-settings-views', function(Y) {
     }
   });
 
-  Y.namespace('DEMO.CORE.SETTINGS').View = StoreView;
+  Y.namespace('DEMO.CORE.SETTINGS.VIEWS').Settings = SettingsView;
 
 }, '0.0.1', {
   requires: [

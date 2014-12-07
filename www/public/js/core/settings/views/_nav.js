@@ -3,7 +3,7 @@ YUI.add('core-settings-view-nav', function(Y) {
   var template = new Y.Template();
   template = template.revive(Y.DEMO.CORE.SETTINGS.TMPL.NAV.template);
 
-  NavView = Y.Base.create('settingsNav', Y.View, [], {
+  var NavView = Y.Base.create('settingsNav', Y.View, [], {
 
     containerTemplate: '<nav class=layout-app-nav-primary></nav>',
 
@@ -16,6 +16,8 @@ YUI.add('core-settings-view-nav', function(Y) {
       return this;
     }
   });
+
+  Y.namespace('DEMO.CORE.SETTINGS.VIEWS').Nav = NavView;
 
 }, '0.0.1', {
   requires: [

@@ -9,7 +9,7 @@ YUI.add('core-settings', function(Y) {
 
   var onSuccess = function(id, res) {
     var about = JSON.parse(res.responseText);
-    var view = new Y.DEMO.CORE.SETTINGS.View({
+    var view = new Y.DEMO.CORE.SETTINGS.VIEWS.Settings({
       list: about,
       nav: navData
     });

@@ -52,6 +52,27 @@ func (sd *SystemD) Unit(service string) (*Unit, error) {
 	return unit, nil
 }
 
+func (sd *SystemD) Stop(service, mode string) error {
+	return sd.startstop("StopUnit", service, mode)
+}
+
+func (sd *SystemD) Start(service, mode string) error {
+	return sd.startstop("StartUnit", service, mode)
+}
+
+func (sd *SystemD) startstop(action string, args ...interface{}) error {
+	mgrObject := sd.conn.Object(busName, busPath)
+
+	reply, err := mgrObject.Call(managerInterface, action, args...)
+	if err != nil {
+		return err
+	} else if reply.Type == dbus.TypeError {
+		return reply.AsError()
+	}
+
+	return nil
+}
+
 func (u *Unit) Status() (string, error) {
 	return u.getStringProperty("ActiveState")
 }
