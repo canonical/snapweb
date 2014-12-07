@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"os"
 	"os/exec"
 	"strings"
 	"sync"
@@ -19,8 +20,8 @@ type Package struct {
 	Maintainer  string          `json:"maintainer"`
 	Name        string          `json:"name"`
 	Version     string          `json:"version"`
-	Services    services        `json:"services"`
-	Ports       map[string]uint `json:"ports"`
+	Services    services        `json:"services,omitempty"`
+	Ports       map[string]uint `json:"ports,omitempty"`
 }
 
 // ClickUser exposes the click package registry for the user.
@@ -74,11 +75,12 @@ func (db *ClickDatabase) GetPackages(pkg string) (packages []Package, err error)
 		for i := range packages {
 			if packages[i].Name == pkg {
 				packages = []Package{packages[i]}
-				return packages, nil
 			}
 		}
 
-		return nil, errors.New("package not found")
+		if len(packages) != 1 {
+			return nil, errors.New("package not found")
+		}
 	}
 
 	for i := range packages {
@@ -138,18 +140,38 @@ func (p *Package) Service(serviceName string) (string, error) {
 func (p *Package) getServices(conn *dbus.Connection) error {
 	systemD := systemd.New(conn)
 
-	for i := range p.Services {
-		if serviceName, ok := p.Services[i]["name"]; ok {
-			serviceName := fmt.Sprintf("%s_%s_%s.service", p.Name, serviceName, p.Version)
+	f, err := os.Open("/var/lib/systemd/snappy")
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	services, err := f.Readdirnames(0)
+	if err != nil {
+		return err
+	}
+
+	for _, service := range services {
+		if strings.HasPrefix(service, p.Name) && strings.HasSuffix(service, p.Version) {
+			serviceParts := strings.Split(service, "_")
+			if len(serviceParts) != 3 {
+				return errors.New("invalid service in system")
+			}
+
+			serviceInfo := map[string]string{"name": serviceParts[1]}
+
+			serviceName := fmt.Sprintf("%s.service", service)
 
 			if unit, err := systemD.Unit(serviceName); err == nil {
 				if status, err := unit.Status(); err == nil {
-					p.Services[i]["status"] = status
+					serviceInfo["status"] = status
 				} else {
-					fmt.Println("error getting status:", err)
+					return fmt.Errorf("error getting status: %s", err)
 				}
+
+				p.Services = append(p.Services, serviceInfo)
 			} else {
-				fmt.Println("error loading unit:", err)
+				return fmt.Errorf("error loading unit: %s", err)
 			}
 		}
 	}
