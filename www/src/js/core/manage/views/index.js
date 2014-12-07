@@ -45,6 +45,7 @@ YUI.add('core-manage-views', function(Y) {
     },
 
     render: function() {
+      document.body.scrollTop = document.documentElement.scrollTop = 0;
       var content = Y.one(Y.config.doc.createDocumentFragment());
       content.append(this.snapListView.render().get('container'));
       content.append(this.snapView.render().get('container'));
