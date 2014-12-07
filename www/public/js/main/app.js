@@ -14,7 +14,7 @@ YUI.add('demo', function(Y) {
 
   // lazy loading of modules
   // load and execute views related to icons on click
-  Y.one('body').delegate('click', function() {
+  Y.one('body').delegate('click', function(e) {
     var module = this.getData('module');
     var fn = this.getData('fn');
     var api = this.getData('api');

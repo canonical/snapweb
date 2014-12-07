@@ -5,7 +5,6 @@ YUI.add('demo-view-home', function(Y) {
   Y.namespace('DEMO.VIEW').Home = Y.Base.create('home', Y.View, [], {
 
     render: function() {
-
       var template = mu.revive(Y.DEMO.MAIN.TMPL.HOME.template);
       var html = template();
       this.get('container').setHTML(html);
