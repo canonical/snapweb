@@ -1,8 +1,4 @@
 [{
-  "name": "core-settings",
-  "fn": "DEMO.CORE.SETTINGS.show",
-  "title": "System"
-},{
   "name": "core-manage",
   "fn": "DEMO.CORE.MANAGE.show",
   "title": "Manage Services"
