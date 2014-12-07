@@ -27,11 +27,18 @@
   /etc/click/databases/ r,
   /etc/click/databases/* r,
   @{CLICK_DIR}/ r,
-  @{CLICK_DIR}/** r,
+  @{CLICK_DIR}/** rwl,
+  /usr/bin/snappy ixr,
+  /usr/share/click/frameworks/ r,
+  /usr/share/click/frameworks/** r,
+  /usr/share/click/hooks/ r,
+  /usr/share/click/hooks/** r,
 
   # for click but maybe all are scheduled for departure
   /usr/bin/python3 ixr,
   /usr/lib/python3** r,
+  /usr/local/lib/python3.4/dist-packages/ r,
+  /usr/local/lib/python3.4/dist-packages/** r,
   /usr/bin/click ixr,
   /usr/ r,
   /usr/bin/ r,
@@ -39,6 +46,33 @@
   /etc/apt/apt.conf.d/* r,
   /var/lib/systemd/snappy/ r,
   /var/lib/systemd/snappy/** r,
+  /etc/lsb-release r,
+  /usr/lib/x86_64-linux-gnu/click/acquire/https ixr,
+  capability setgid,
+  capability setuid,
+  capability dac_override,
+  /var/lib/apparmor/clicks/ rw,
+  /var/lib/apparmor/clicks/** rwl,
+  /usr/bin/aa-clickhook ixr,
+  /usr/bin/aa-profile-hook ixr,
+
+  # dpkg for snappy
+  capability ipc_lock,
+  /usr/bin/dpkg ixr,
+  /etc/dpkg/dpkg.cfg.d/ r,
+  /etc/dpkg/dpkg.cfg.d/** r,
+  /etc/dpkg/dpkg.cfg r,
+  /usr/bin/debsig-verify ixr,
+  /bin/rm ixr,
+  /usr/bin/gpg ixr,
+  /etc/debsig/policies/ r,
+  /etc/debsig/policies/** r,
+  /usr/share/debsig/keyrings/ r,
+  /usr/share/debsig/keyrings/** r,
+  /bin/dash ixr,
+  /usr/bin/dpkg-split ixr,
+  /usr/bin/dpkg-deb ixr,
+  /bin/tar ixr,
 
   # glob for the ro install directory
   @{CLICK_DIR}/@{APP_PKGNAME}/ r,
@@ -56,6 +90,30 @@
      interface=com.canonical.SystemImage
      member=Information,
   
+  dbus (send)
+     bus=system
+     path=/Service
+     interface=com.canonical.SystemImage
+     member=UpdateAvailableStatus,
+
+  dbus (receive)
+     bus=system
+     path=/Service
+     interface=com.canonical.SystemImage
+     member=UpdateAvailableStatus,
+
+  dbus (send)
+     bus=system
+     path=/Service
+     interface=com.canonical.SystemImage
+     member=SetSetting,
+
+  dbus (send)
+     bus=system
+     path=/Service
+     interface=org.freedesktop.DBus.Introspectable
+     member=Introspect,
+
   # systemd
   dbus (send)
      bus=system
