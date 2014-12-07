@@ -7,6 +7,14 @@ YUI.add('core-store', function(Y) {
     name: 'All'
   }, {
     name: 'Installed'
+  }, {
+    name: 'Recommended'
+  }, {
+    name: 'Backup'
+  }, {
+    name: 'Media'
+  }, {
+    name: 'Utilities'
   }];
 
   var onSuccess = function(id, res) {

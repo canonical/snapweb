@@ -5,11 +5,19 @@ YUI.add('core-manage-view-snaplist', function(Y) {
 
   SnapListView = Y.Base.create('snapListView', Y.View, [], {
 
-    containerTemplate: '<nav class=layout-nav-deutero></nav>',
+    containerTemplate: '<nav class=layout-app-nav-primary></nav>',
 
     template: template,
 
     render: function() {
+      // XXX filter out snappyd
+      this.set('snapList',
+        Y.Array.filter(this.get('snapList'), function(item, i) {
+          if (item.name !== 'snappyd') {
+            return true;
+          }
+        }));
+
       var content = this.template(this.get('snapList'));
       this.get('container').setHTML(content);
 

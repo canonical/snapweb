@@ -46,8 +46,8 @@ YUI.add('core-manage-views', function(Y) {
 
     render: function() {
       var content = Y.one(Y.config.doc.createDocumentFragment());
-      content.append(this.snapView.render().get('container'));
       content.append(this.snapListView.render().get('container'));
+      content.append(this.snapView.render().get('container'));
 
       this.get('container').setHTML(content);
 

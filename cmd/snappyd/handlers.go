@@ -63,12 +63,7 @@ func InitURLHandlers(conn *dbus.Connection, log *log.Logger) {
 	packageHandler := click.NewHandler(conn)
 	http.Handle("/api/v1/packages/", packageHandler.MakeMuxer("/api/v1/packages"))
 
-	handleServicesPage, err := makeServicesPageHandler(conn)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	handleAdminPage, err := makeAdminPageHandler(conn)
+	handleMainPage, err := makeMainPageHandler(conn)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -77,9 +72,6 @@ func InitURLHandlers(conn *dbus.Connection, log *log.Logger) {
 	http.Handle("/mock-api/", loggingHandler(http.FileServer(http.Dir("./www"))))
 
 	http.HandleFunc("/", handleMainPage)
-	http.HandleFunc(p["Admin"], handleAdminPage)
-	http.HandleFunc(p["Services"], handleServicesPage)
-	http.HandleFunc(p["Store"], handleStorePage)
 }
 
 func loggingHandler(h http.Handler) http.Handler {
@@ -89,22 +81,7 @@ func loggingHandler(h http.Handler) http.Handler {
 	})
 }
 
-func handleMainPage(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
-		http.NotFound(w, r)
-		return
-	}
-	data := Page{
-		Pages: p,
-		Title: "Main",
-	}
-
-	if err := renderTemplate("main.html", &data, w); err != nil {
-		log.Println(err)
-	}
-}
-
-func makeAdminPageHandler(conn *dbus.Connection) (f http.HandlerFunc, err error) {
+func makeMainPageHandler(conn *dbus.Connection) (f http.HandlerFunc, err error) {
 	si, err := system.New(conn)
 	if err != nil {
 		return f, err
@@ -115,47 +92,12 @@ func makeAdminPageHandler(conn *dbus.Connection) (f http.HandlerFunc, err error)
 	return func(w http.ResponseWriter, r *http.Request) {
 		data := Page{
 			Pages:  p,
-			Title:  "Admin",
+			Title:  "Home",
 			Params: si.Info,
 		}
 
-		if err := renderTemplate("admin.html", &data, w); err != nil {
+		if err := renderTemplate("main.html", &data, w); err != nil {
 			log.Println(err)
 		}
 	}, nil
-}
-
-func makeServicesPageHandler(conn *dbus.Connection) (f http.HandlerFunc, err error) {
-	db, err := click.NewDatabase(conn)
-	if err != nil {
-		return f, err
-	}
-
-	return func(w http.ResponseWriter, r *http.Request) {
-		data := Page{
-			Pages: p,
-			Title: "Services",
-		}
-
-		if packages, err := db.GetPackages(""); err == nil {
-			data.Params = packages
-		} else {
-			log.Println(err)
-		}
-
-		if err := renderTemplate("services.html", &data, w); err != nil {
-			log.Println(err)
-		}
-	}, nil
-}
-
-func handleStorePage(w http.ResponseWriter, r *http.Request) {
-	data := Page{
-		Pages: p,
-		Title: "Store",
-	}
-
-	if err := renderTemplate("store.html", &data, w); err != nil {
-		log.Println(err)
-	}
 }

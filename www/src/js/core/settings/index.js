@@ -15,7 +15,7 @@ YUI.add('core-settings', function(Y) {
     var html = template({
       groups: data
     });
-    Y.one('.layout-nav-deutero').setHTML(html);
+    Y.one('.layout-app-nav-primary').setHTML(html);
   });
 
   // fired when the settings button is clicked, which was populated with data-attrs
