@@ -21,7 +21,7 @@ YUI.add('core-store', function(Y) {
     var snaps = JSON.parse(res.responseText);
     snaps = snaps._embedded['clickindex:package'];
 
-    var view = new Y.DEMO.CORE.STORE.View({
+    var view = new Y.DEMO.CORE.STORE.VIEWS.Store({
       list: snaps,
       nav: navData
     });

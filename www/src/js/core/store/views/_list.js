@@ -3,7 +3,7 @@ YUI.add('core-store-view-list', function(Y) {
   var template = new Y.Template();
   template = template.revive(Y.DEMO.CORE.STORE.TMPL.LIST.template);
 
-  ListView = Y.Base.create('storeList', Y.View, [], {
+  var ListView = Y.Base.create('storeList', Y.View, [], {
 
     containerTemplate: '<main class=layout-content></main>',
     template: template,
@@ -15,6 +15,8 @@ YUI.add('core-store-view-list', function(Y) {
       return this;
     }
   });
+
+  Y.namespace('DEMO.CORE.STORE.VIEWS').List = ListView;
 
 }, '0.0.1', {
   requires: [

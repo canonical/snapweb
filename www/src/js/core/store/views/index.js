@@ -5,10 +5,12 @@ YUI.add('core-store-views', function(Y) {
 
     initializer: function() {
 
-      this.listView = new ListView({
+      var VIEWS = Y.DEMO.CORE.STORE.VIEWS;
+
+      this.listView = new VIEWS.List({
         list: this.get('list')
         });
-      this.navView = new NavView({
+      this.navView = new VIEWS.Nav({
         nav: this.get('nav')
       });
 
@@ -112,7 +114,7 @@ YUI.add('core-store-views', function(Y) {
     }
   });
 
-  Y.namespace('DEMO.CORE.STORE').View = StoreView;
+  Y.namespace('DEMO.CORE.STORE.VIEWS').Store = StoreView;
 
 }, '0.0.1', {
   requires: [

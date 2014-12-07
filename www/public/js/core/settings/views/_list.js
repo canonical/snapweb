@@ -3,7 +3,7 @@ YUI.add('core-settings-view-list', function(Y) {
   var template = new Y.Template();
   template = template.revive(Y.DEMO.CORE.SETTINGS.TMPL.LIST.template);
 
-  ListView = Y.Base.create('settingsList', Y.View, [], {
+  var ListView = Y.Base.create('settingsList', Y.View, [], {
 
     containerTemplate: '<main class=layout-content></main>',
     template: template,
@@ -15,6 +15,8 @@ YUI.add('core-settings-view-list', function(Y) {
       return this;
     }
   });
+
+  Y.namespace('DEMO.CORE.SETTINGS.VIEWS').List = ListView;
 
 }, '0.0.1', {
   requires: [
