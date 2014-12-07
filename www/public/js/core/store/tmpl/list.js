@@ -7,7 +7,7 @@ $e($v( pkg.name ))+
 $e($v( pkg.icon_url ))+
 '" />\n    <p class="pkg-name">'+
 $e($v( pkg.name ))+
-' <a class="pkg-show hide" href="">(SHOW)</a>\n    <p class="pkg-title">'+
+' <a class="pkg-show hide" href="">SHOW</a>\n    <p class="pkg-title">'+
 $e($v( pkg.title ))+
 '\n    <p class="pkg-publisher">'+
 $e($v( pkg.publisher ))+
