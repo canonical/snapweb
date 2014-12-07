@@ -7,6 +7,7 @@ import (
 
 	"github.com/gorilla/mux"
 
+	"launchpad.net/clapper/systemd"
 	"launchpad.net/go-dbus/v1"
 )
 
@@ -99,6 +100,7 @@ func (h *handler) remove(w http.ResponseWriter, r *http.Request) {
 
 	db, err := NewDatabase(h.conn)
 	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
 		return
 	}
@@ -106,6 +108,70 @@ func (h *handler) remove(w http.ResponseWriter, r *http.Request) {
 	if err := db.Uninstall(pkgName); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
+		return
+	}
+}
+
+func (h *handler) setService(w http.ResponseWriter, r *http.Request) {
+	// Get the Key.
+	vars := mux.Vars(r)
+	pkgName := vars["pkg"]
+	serviceName := vars["service"]
+
+	decoder := json.NewDecoder(r.Body)
+
+	action := make(map[string]int)
+
+	if err := decoder.Decode(&action); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
+		return
+	}
+
+	db, err := NewDatabase(h.conn)
+	if err != nil {
+		fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
+		return
+	}
+
+	var service string
+	if pkgs, err := db.GetPackages(pkgName); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
+		return
+	} else {
+		if service, err = pkgs[0].Service(serviceName); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
+			return
+		}
+	}
+
+	sd := systemd.New(h.conn)
+
+	status, ok := action["status"]
+	if !ok {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprint(w, "Error")
+		return
+	}
+
+	switch status {
+	case 1:
+		if err := sd.Start(service, "reload"); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
+			return
+		}
+	case 0:
+		if err := sd.Stop(service, "reload"); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
+			return
+		}
+	default:
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprint(w, "Unsupported request")
 		return
 	}
 }
@@ -125,6 +191,9 @@ func (h *handler) MakeMuxer(prefix string) http.Handler {
 	m.HandleFunc("/", h.add).Methods("POST")
 	// Remove a package
 	m.HandleFunc("/{pkg}", h.remove).Methods("DELETE")
+
+	// Set the state for a service
+	m.HandleFunc("/{pkg}/{service}", h.setService).Methods("PUT")
 
 	// get specific package
 	m.HandleFunc("/{pkg}", h.get).Methods("GET")
