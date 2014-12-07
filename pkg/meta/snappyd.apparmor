@@ -1,6 +1,8 @@
 #include <tunables/global>
 
-profile ${CLICK_PACKAGE_ID} ${CLICK_PACKAGE_PATH}/snappyd {
+###VAR###
+
+###PROFILEATTACH### (attach_disconnected) {
         
   #include <abstractions/base>
   #include <abstractions/nameservice>
@@ -24,8 +26,8 @@ profile ${CLICK_PACKAGE_ID} ${CLICK_PACKAGE_PATH}/snappyd {
   # for click
   /etc/click/databases/ r,
   /etc/click/databases/* r,
-  /apps/ r,
-  /apps/** r,
+  @{CLICK_DIR}/ r,
+  @{CLICK_DIR}/** r,
 
   # for click but maybe all are scheduled for departure
   /usr/bin/python3 ixr,
@@ -35,10 +37,13 @@ profile ${CLICK_PACKAGE_ID} ${CLICK_PACKAGE_PATH}/snappyd {
   /usr/bin/ r,
   /etc/apt/apt.conf.d/ r,
   /etc/apt/apt.conf.d/* r,
+  /var/lib/systemd/snappy/ r,
+  /var/lib/systemd/snappy/** r,
 
   # glob for the ro install directory
-  ${CLICK_PACKAGE_PATH}/   r,
-  ${CLICK_PACKAGE_PATH}/** mrklix,
+  @{CLICK_DIR}/@{APP_PKGNAME}/ r,
+  @{CLICK_DIR}/@{APP_PKGNAME}/@{APP_VERSION}/ r,
+  @{CLICK_DIR}/@{APP_PKGNAME}/@{APP_VERSION}/** mrklix,
 
   # system bus
   /var/run/dbus/system_bus_socket rw,
