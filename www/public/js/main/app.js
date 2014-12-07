@@ -28,6 +28,7 @@ YUI.add('demo', function(Y) {
   var app = Y.namespace('DEMO').app = new Y.App({
     viewContainer: '.layout-app-container',
     serverRouting: true,
+    transitions: false,
     views: {
       home: {
         preserve: true,
