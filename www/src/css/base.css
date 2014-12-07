@@ -24,11 +24,10 @@ button {
 .pkg {
   margin-bottom: 1em;
   padding: 1em 1em 1em 133px;
-  border-radius: 3px;
   position:relative;
 }
 
-.pkg p {
+.services p, .pkg p, .about p {
   margin:0;
 }
 

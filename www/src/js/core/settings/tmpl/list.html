@@ -1,10 +1,5 @@
-<div class="icon-list">
-  <% Y.Array.each(this.groups, function (group) { %>
-  <div class="title"><%= group.title %></div>
-  <% Y.Array.each(group.items, function (icon) { %>
-  <div class="icon" data-module="<%= icon.name %>" data-fn="<%= icon.fn %>" data-api="<%= icon.api %>">
-    <%= icon.title %>
-  </div>
-  <% }); %>
+<div class="about">
+  <% Y.Object.each(this, function (val, key) { %>
+  <p><%= key %>: <%= val %>
   <% }); %>
 </div>

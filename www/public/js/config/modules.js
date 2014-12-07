@@ -19,16 +19,33 @@ YUI_config.groups = {
         path: 'settings/views/index.js',
         requires: [
         'view',
+        'io-base',
+        'core-settings-view-list',
+        'core-settings-view-nav'
+        ]
+      },
+      'core-settings-view-list': {
+        path: 'settings/views/_list.js',
+        requires: [
+        'view',
         'template',
-        't-core-settings-tmpl-form'
+        't-core-settings-tmpl-list'
+        ]
+      },
+      'core-settings-view-nav': {
+        path: 'settings/views/_nav.js',
+        requires: [
+        'view',
+        'template',
+        't-core-settings-tmpl-nav'
         ]
       },
       't-core-settings-tmpl-list': {
         path: 'settings/tmpl/list.js',
         requires: ['template']
       },
-      't-core-settings-tmpl-form': {
-        path: 'settings/tmpl/form.js',
+      't-core-settings-tmpl-nav': {
+        path: 'settings/tmpl/nav.js',
         requires: ['template']
       },
       // manage
