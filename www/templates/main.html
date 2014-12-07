@@ -1,5 +1,7 @@
 {{ define "content" }}
-<p>
-This is the main page
-</p>
+<p> System Data
+{{ $si := . }}
+{{ range $key, $value := $si }}
+<p>{{$key}}:{{$value}}
+{{end}}
 {{ end }}

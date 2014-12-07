@@ -1,0 +1,70 @@
+html {
+  box-sizing: border-box;
+}
+
+html, body {
+  font:normal 300 14px/1.5 Ubuntu, Arial, Helvetica, sans-serif;
+  background-color:white;
+  color:#333;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+a {
+  color:#dd4814;
+}
+
+.cof {
+  width:27px;
+  height:27px;
+}
+
+button {
+  font:normal 300 14px/1.5 Ubuntu, Arial, Helvetica, sans-serif;
+}
+
+.pkg {
+  margin-bottom: 1em;
+  padding: 1em 1em 1em 133px;
+  position:relative;
+}
+
+.services p, .pkg p, .about p {
+  margin:0;
+}
+
+.pkg-img {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 92px;
+}
+
+.pkg-publisher {
+  font-size:11px;
+  text-transform:uppercase;
+  color:#aaa;
+}
+
+.pkg-name {
+  font-size:30px;
+}
+
+.pkg-show {
+  color:white;
+  background-color:#dd4814;
+  font-size:11px;
+  text-transform:uppercase;
+  padding:4px 1em;
+  display:inline-block;
+  vertical-align:middle;
+  margin-left:1em;
+  border-radius:3px;
+  text-decoration:none;
+}
+
+.pkg-show.hide {
+    display:none;
+}

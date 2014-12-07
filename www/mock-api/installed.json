@@ -1,0 +1,13 @@
+[{
+  "name": "core-store",
+  "fn": "DEMO.CORE.STORE.show",
+  "title": "Snappy Store"
+},{
+  "name": "core-manage",
+  "fn": "DEMO.CORE.MANAGE.show",
+  "title": "Manage Services"
+},{
+  "name": "core-settings",
+  "fn": "DEMO.CORE.SETTINGS.show",
+  "title": "Settings"
+}]

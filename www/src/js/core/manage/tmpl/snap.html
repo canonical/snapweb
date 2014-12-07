@@ -1,0 +1,24 @@
+<div class="services">
+  <p class="pkg-name"><%= this.name %></h1>
+  <p class="version">Ver. <%= this.version %>
+  <p>
+  <% if (this.description && this.description.length) { %>
+  <%= this.description %>
+  <% } else { %>
+    This package has no description.
+  <% } %>
+  <div class="services">
+    <% if (this.services && this.services.length) { %>
+    <p>Services</p>
+    <% Y.Array.each(this.services, function (service) { %>
+    <ul>
+      <% Y.Object.each(service, function (v, k) { %>
+      <li><%= k %>: <%= v %></li>
+      <% }); %>
+    </ul>
+    <% }); %>
+    <% } else { %>
+      <p>This package has no services.
+    <% } %>
+  </div>
+</div>
