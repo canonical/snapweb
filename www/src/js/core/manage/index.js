@@ -6,14 +6,12 @@ YUI.add('core-manage', function(Y) {
   var onSuccess = function(id, res) {
 
     var snaps = JSON.parse(res.responseText);
-    /**
     // XXX filter out snappyd
     snaps = Y.Array.filter(snaps, function(item, i) {
       if (item.name !== 'snappyd') {
         return true;
       }
     });
-    **/
 
     if (snaps && snaps.length) {
       var view = new Y.DEMO.CORE.MANAGE.View({
