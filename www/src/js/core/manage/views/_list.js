@@ -10,13 +10,6 @@ YUI.add('core-manage-view-snaplist', function(Y) {
     template: template,
 
     render: function() {
-      // XXX filter out snappyd
-      this.set('snapList',
-        Y.Array.filter(this.get('snapList'), function(item, i) {
-          if (item.name !== 'snappyd') {
-            return true;
-          }
-        }));
 
       var content = this.template(this.get('snapList'));
       this.get('container').setHTML(content);

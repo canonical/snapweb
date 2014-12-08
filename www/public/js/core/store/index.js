@@ -67,7 +67,7 @@ YUI.add('core-store', function(Y) {
 
                   // XXX port property broken, fake it
                   if (ipkg.port || ipkg.name === 'xkcd-webserver') {
-                    var port = ipkg.port || 8090;
+                    var port = ipkg.port || 80;
                     btn.setAttribute('href', [YUI.Env.demoUrl, port].join(':'))
                       .removeClass('hide');
                   }
