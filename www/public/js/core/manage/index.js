@@ -4,15 +4,24 @@ YUI.add('core-manage', function(Y) {
   var app = Y.DEMO.app;
 
   var onSuccess = function(id, res) {
-    console.log('success');
-    console.log(res.responseText);
 
     var snaps = JSON.parse(res.responseText);
-    var view = new Y.DEMO.CORE.MANAGE.View({
-      snapList: snaps,
-      snap: snaps[0]
+    // XXX filter out snappyd
+    snaps = Y.Array.filter(snaps, function(item, i) {
+      if (item.name !== 'snappyd') {
+        return true;
+      }
     });
-    app.showView(view, null, {render: true});
+
+    if (snaps && snaps.length) {
+      var view = new Y.DEMO.CORE.MANAGE.View({
+        snapList: snaps,
+        snap: snaps[0]
+      });
+      app.showView(view, null, {render: true});
+    } else {
+      window.alert('No running services');
+    }
   };
 
   var show = function() {

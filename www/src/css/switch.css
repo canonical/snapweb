@@ -20,6 +20,7 @@
   height:1.5em;
   vertical-align:bottom;
   border-radius:3px;
+  background-color:#eee;
 }
 .switch .thing::before, .switch .thing::after {
   box-sizing:border-box;
