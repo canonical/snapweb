@@ -4,29 +4,41 @@ YUI.add('core-manage-views', function(Y) {
   var ManageView = Y.Base.create('manageView', Y.View, [], {
 
     initializer: function() {
-      this.snapListView = new SnapListView({
-        snapList: this.get('snapList')
+
+      var snapList = this.get('snapList');
+      if (snapList && snapList.length) {
+        this.snapListView = new SnapListView({
+          snapList: snapList
         });
+        this.snapListView.addTarget(this);
+      }
+
       this.snapView = new SnapView({
         snap: this.get('snap')
       });
-
-      this.snapListView.addTarget(this);
       this.snapView.addTarget(this);
     },
 
     destructor: function() {
-      this.snapListView.destroy();
-      this.snapView.destroy();
+      if (this.snapListView) {
+        this.snapListView.destroy();
+        delete this.snapListView;
+      }
 
-      delete this.snapListView;
+      this.snapView.destroy();
       delete this.snapView;
     },
 
     events: {
       '.icon': {
         click: 'showSnap'
+      },
+      '.switch': {
+        change: 'stopstart'
       }
+    },
+
+    stopstart: {
     },
 
     showSnap: function(e) {
@@ -47,7 +59,9 @@ YUI.add('core-manage-views', function(Y) {
     render: function() {
       document.body.scrollTop = document.documentElement.scrollTop = 0;
       var content = Y.one(Y.config.doc.createDocumentFragment());
-      content.append(this.snapListView.render().get('container'));
+      if (this.snapListView) {
+        content.append(this.snapListView.render().get('container'));
+      }
       content.append(this.snapView.render().get('container'));
 
       this.get('container').setHTML(content);
