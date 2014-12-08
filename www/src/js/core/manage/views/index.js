@@ -5,13 +5,10 @@ YUI.add('core-manage-views', function(Y) {
 
     initializer: function() {
 
-      var snapList = this.get('snapList');
-      if (snapList && snapList.length) {
-        this.snapListView = new SnapListView({
-          snapList: snapList
-        });
-        this.snapListView.addTarget(this);
-      }
+      this.snapListView = new SnapListView({
+        snapList: this.get('snapList')
+      });
+      this.snapListView.addTarget(this);
 
       this.snapView = new SnapView({
         snap: this.get('snap')
@@ -20,10 +17,8 @@ YUI.add('core-manage-views', function(Y) {
     },
 
     destructor: function() {
-      if (this.snapListView) {
-        this.snapListView.destroy();
-        delete this.snapListView;
-      }
+      this.snapListView.destroy();
+      delete this.snapListView;
 
       this.snapView.destroy();
       delete this.snapView;
@@ -32,9 +27,6 @@ YUI.add('core-manage-views', function(Y) {
     events: {
       '.icon': {
         click: 'showSnap'
-      },
-      '.switch': {
-        change: 'stopstart'
       }
     },
 
