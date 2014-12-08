@@ -61,3 +61,18 @@ To get a specific package:
 To start or stop a service from a package:
 
     curl -w "\nstatus code: %{http_code}\n" -d '{"status":0} 'http://localhost:8080/api/v1/packages/snappyd/snappyd
+
+## Web Front End
+
+To install gulp tools:
+
+    sudo apt-get install nodejs-legacy npm
+    sudo npm install -g gulp
+    cd ./www
+    npm install
+
+To build (& watch):
+    gulp
+
+Set hostname (YUI.Env.demoUrl):
+    edit www/templates/layout.html
