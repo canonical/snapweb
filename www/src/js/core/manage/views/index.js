@@ -27,10 +27,63 @@ YUI.add('core-manage-views', function(Y) {
     events: {
       '.icon': {
         click: 'showSnap'
+      },
+      '.switch': {
+        change: 'stopstart'
       }
     },
 
-    stopstart: {
+    stopstart: function(e) {
+      e.stopPropagation();
+
+      var pkgEl = e.currentTarget;
+      var input = e.target;
+      var label = pkgEl.one('label');
+      var pkgId = input.getAttribute('data-pkg');
+      var serviceId = input.get('id');
+      var state = input.get('checked');
+
+      console.log(state);
+
+      if (state) {
+        label.set('text', 'Starting service…');
+      } else {
+        label.set('text', 'Stopping service…');
+      }
+
+      this.setService(pkgId, serviceId, 'status', +!state);
+    },
+
+    setService: function(pkg, service, key, value) {
+      Y.io(['/api/v1/packages', pkg, service].join('/'), {
+        method: 'POST',
+        data: '{"' + key + '":' + value + '}',
+        on: {
+          success: this.onServiceSuccess,
+          failure: this.onServiceFailure,
+        },
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        'arguments': {
+          pkgId: pkg,
+          serviceId: service
+        },
+        context: this
+      });
+    },
+
+    onServiceSuccess: function(id, res, pkg, service) {
+      console.log(pkg);
+      console.log(service);
+      console.log(res);
+    },
+
+    onServiceFailure: function() {
+      console.log('failure');
+    },
+
+    startService: function(pkg, service) {
     },
 
     showSnap: function(e) {

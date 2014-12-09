@@ -15,16 +15,32 @@ $t+='\n  <div class="services">\n    ';
  if (this.services && this.services.length) { 
 $t+='\n    <p>Services</p>\n    ';
  Y.Array.each(this.services, function (service) { 
-$t+='\n    <ul>\n      ';
- Y.Object.each(service, function (v, k) { 
-$t+='\n      <li>'+
-$e($v( k ))+
-': '+
-$e($v( v ))+
-'</li>\n      ';
- }); 
-$t+='\n    </ul>\n    ';
- }); 
+$t+='\n    ';
+ if (service.status === 'active') { 
+$t+='\n    <div class="switch">\n      <label for="'+
+$e($v( service.name ))+
+'" class="tt-w" data-tt="Click to deactivate service">'+
+$e($v( service.name ))+
+' '+
+$e($v( service.status ))+
+'</label>\n      <input data-pkg="'+
+$e($v( this.name ))+
+'" checked type="checkbox" id="'+
+$e($v( service.name ))+
+'" />\n      <div class="thing"></div>\n    </div>\n    ';
+ } else { 
+$t+='\n    <div class="switch">\n      <label for="'+
+$e($v( service.name ))+
+'" class="tt-w" data-tt="Click to deactivate service">'+
+$e($v( service.name ))+
+' '+
+$e($v( service.status ))+
+'</label>\n      <input type="checkbox" id="'+
+$e($v( service.name ))+
+'" />\n      <div class="thing"></div>\n    </div>\n    ';
+ } 
+$t+='\n    ';
+ }, this); 
 $t+='\n    ';
  } else { 
 $t+='\n      <p>This package has no services.\n    ';
