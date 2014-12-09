@@ -51,6 +51,12 @@
      interface=com.canonical.SystemImage
      member=UpdateAvailableStatus,
 
+  dbus (send)
+     bus=system
+     path=/Service
+     interface=com.canonical.SystemImage
+     member=CheckForUpdate,
+
   dbus (receive)
      bus=system
      path=/Service
