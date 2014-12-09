@@ -11,12 +11,20 @@
     <% if (this.services && this.services.length) { %>
     <p>Services</p>
     <% Y.Array.each(this.services, function (service) { %>
-    <ul>
-      <% Y.Object.each(service, function (v, k) { %>
-      <li><%= k %>: <%= v %></li>
-      <% }); %>
-    </ul>
-    <% }); %>
+    <% if (service.status === 'active') { %>
+    <div class="switch">
+      <label for="<%= service.name %>" class="tt-w" data-tt="Click to deactivate service"><%= service.name %> <%= service.status %></label>
+      <input data-pkg="<%= this.name %>" checked type="checkbox" id="<%= service.name %>" />
+      <div class="thing"></div>
+    </div>
+    <% } else { %>
+    <div class="switch">
+      <label for="<%= service.name %>" class="tt-w" data-tt="Click to deactivate service"><%= service.name %> <%= service.status %></label>
+      <input type="checkbox" id="<%= service.name %>" />
+      <div class="thing"></div>
+    </div>
+    <% } %>
+    <% }, this); %>
     <% } else { %>
       <p>This package has no services.
     <% } %>
