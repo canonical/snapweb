@@ -81,4 +81,8 @@
      path=/org/freedesktop/systemd1/unit/**
      interface=org.freedesktop.DBus.Properties
      member=Get,
+
+  /var/lib/systemd/ r,
+  /var/lib/systemd/** r,
+
 }
