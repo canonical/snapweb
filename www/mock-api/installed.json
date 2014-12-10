@@ -5,7 +5,7 @@
 },{
   "name": "core-manage",
   "fn": "DEMO.CORE.MANAGE.show",
-  "title": "Manage Services"
+  "title": "Apps"
 },{
   "name": "core-settings",
   "fn": "DEMO.CORE.SETTINGS.show",
