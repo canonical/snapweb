@@ -13,14 +13,24 @@ YUI.add('core-manage', function(Y) {
       }
     });
 
+    var showMe = snaps[0];
+
+    // XXX fake xkcd port
+    if (showMe && showMe.name === 'xkcd-webserver' && !showMe.ports) {
+      showMe.ports = {
+        required: '80'
+      };
+      showMe.url = [YUI.Env.demoUrl, showMe.ports.required].join(':');
+    }
+
     if (snaps && snaps.length) {
       var view = new Y.DEMO.CORE.MANAGE.View({
         snapList: snaps,
-        snap: snaps[0]
+        snap: showMe
       });
       app.showView(view, null, {render: true});
     } else {
-      window.alert('No running services');
+      window.alert('Nothing installed running, visit the store!');
     }
   };
 
