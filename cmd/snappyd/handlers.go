@@ -87,6 +87,8 @@ func makeMainPageHandler(conn *dbus.Connection) (f http.HandlerFunc, err error) 
 		return f, err
 	}
 
+	si.Init()
+
 	http.Handle("/api/v1/systemimage/", si.MakeMuxer("/api/v1/systemimage"))
 
 	return func(w http.ResponseWriter, r *http.Request) {
