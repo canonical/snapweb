@@ -219,8 +219,10 @@ func (systemInfo *System) applyUpdate(w http.ResponseWriter, r *http.Request) {
 		obj := systemInfo.conn.Object("com.canonical.SystemImage", "/Service")
 		reply, err := obj.Call("com.canonical.SystemImage", "ApplyUpdate")
 
-		if err != nil || reply.Type == dbus.TypeError {
+		if err != nil {
 			fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
+		} else if reply.Type == dbus.TypeError {
+			fmt.Fprint(w, fmt.Sprintf("Error: %s", reply.AsError()))
 		}
 	}
 
