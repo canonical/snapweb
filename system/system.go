@@ -32,16 +32,19 @@ import (
 )
 
 var (
-	conn   *dbus.Connection
-	logger *log.Logger
-	update UpdateStatus
+	conn     *dbus.Connection
+	logger   *log.Logger
+	update   UpdateStatus
+	progress UpdateProgress
 )
 
 type System struct {
-	conn   *dbus.Connection
-	Info   map[string]string
-	w      *dbus.SignalWatch
-	update *UpdateStatus
+	conn             *dbus.Connection
+	Info             map[string]string
+	update           *UpdateStatus
+	progress         *UpdateProgress
+	updateDownloaded bool
+	rebooting        bool
 }
 
 type UpdateStatus struct {
@@ -51,6 +54,11 @@ type UpdateStatus struct {
 	updateSize   int32
 	lastUpdate   string
 	errorReason  string
+}
+
+type UpdateProgress struct {
+	percentage int32
+	eta        float64
 }
 
 func New(conn *dbus.Connection) (*System, error) {
@@ -70,34 +78,67 @@ func New(conn *dbus.Connection) (*System, error) {
 		return nil, err
 	}
 
-	w, err := conn.WatchSignal(&dbus.MatchRule{
-		Type:      dbus.TypeSignal,
-		Path:      "/Service",
-		Interface: "com.canonical.SystemImage",
-		Member:    "UpdateAvailableStatus"})
-
-	systemInfo := System{conn: conn, Info: information, w: w, update: &update}
-
-	go signalWatcher(&systemInfo)
+	systemInfo := System{conn: conn, Info: information, update: &update, progress: &progress}
 
 	return &systemInfo, nil
 
 }
 
-func signalWatcher(systemInfo *System) {
-	log.Println("Setting up message channel")
+func (systemInfo *System) Init() {
 
-	for msg := range systemInfo.w.C {
-		log.Println("Got an update signal ", msg)
-		if err := msg.Args(&systemInfo.update.isAvail, &systemInfo.update.downloading,
-			&systemInfo.update.availVersion, &systemInfo.update.updateSize,
-			&systemInfo.update.lastUpdate, &systemInfo.update.errorReason); err != nil {
-			log.Println("Error getting update status ", err)
+	updateAvailStatus, _ := systemInfo.conn.WatchSignal(&dbus.MatchRule{
+		Type:      dbus.TypeSignal,
+		Path:      "/Service",
+		Interface: "com.canonical.SystemImage",
+		Member:    "UpdateAvailableStatus"})
+
+	updateProgress, _ := systemInfo.conn.WatchSignal(&dbus.MatchRule{
+		Type:      dbus.TypeSignal,
+		Path:      "/Service",
+		Interface: "com.canonical.SystemImage",
+		Member:    "UpdateProgress"})
+
+	updateDownloaded, _ := systemInfo.conn.WatchSignal(&dbus.MatchRule{
+		Type:      dbus.TypeSignal,
+		Path:      "/Service",
+		Interface: "com.canonical.SystemImage",
+		Member:    "UpdateDownloaded"})
+
+	rebooting, _ := systemInfo.conn.WatchSignal(&dbus.MatchRule{
+		Type:      dbus.TypeSignal,
+		Path:      "/Service",
+		Interface: "com.canonical.SystemImage",
+		Member:    "Rebooting"})
+
+	go func() {
+		for {
+			select {
+			case a := <-updateAvailStatus.C:
+				if err := a.Args(&systemInfo.update.isAvail, &systemInfo.update.downloading,
+					&systemInfo.update.availVersion, &systemInfo.update.updateSize,
+					&systemInfo.update.lastUpdate, &systemInfo.update.errorReason); err != nil {
+					log.Println("Error getting update status ", err)
+				}
+				if systemInfo.update.isAvail {
+					log.Println("Update Avail: ", systemInfo.update.availVersion)
+				}
+			case b := <-updateProgress.C:
+				if err := b.Args(&systemInfo.progress.percentage, &systemInfo.progress.eta); err != nil {
+					log.Println("Error getting update progress")
+				}
+			case <-updateDownloaded.C:
+				systemInfo.updateDownloaded = true
+			case c := <-rebooting.C:
+				if err := c.Args(&systemInfo.rebooting); err != nil {
+					log.Println("Error getting update progress")
+				}
+				log.Println("Rebooting status ", systemInfo.rebooting)
+			}
 		}
-		if systemInfo.update.isAvail {
-			log.Println("Update Avail: ", systemInfo.update.availVersion)
-		}
-	}
+		close(updateAvailStatus.C)
+		close(updateProgress.C)
+		close(updateDownloaded.C)
+	}()
 }
 
 func (systemInfo *System) MakeMuxer(prefix string) http.Handler {
@@ -111,6 +152,8 @@ func (systemInfo *System) MakeMuxer(prefix string) http.Handler {
 
 	m.HandleFunc("/checkForUpdate", systemInfo.checkForUpdate).Methods("GET")
 
+	m.HandleFunc("/downloadUpdate", systemInfo.downloadUpdate).Methods("GET")
+
 	m.HandleFunc("/", systemInfo.applyUpdate).Methods("POST")
 
 	m.HandleFunc("/", systemInfo.getSystemInfo).Methods("GET")
@@ -120,8 +163,6 @@ func (systemInfo *System) MakeMuxer(prefix string) http.Handler {
 }
 
 func (systemInfo *System) getSystemInfo(w http.ResponseWriter, r *http.Request) {
-
-	log.Println("Getting System Info")
 
 	obj := systemInfo.conn.Object("com.canonical.SystemImage", "/Service")
 
@@ -146,7 +187,6 @@ func (systemInfo *System) getSystemInfo(w http.ResponseWriter, r *http.Request) 
 
 func (systemInfo *System) checkForUpdate(w http.ResponseWriter, r *http.Request) {
 
-	log.Println("Checking for System Update")
 	obj := systemInfo.conn.Object("com.canonical.SystemImage", "/Service")
 	reply, err := obj.Call("com.canonical.SystemImage", "CheckForUpdate")
 
@@ -155,6 +195,19 @@ func (systemInfo *System) checkForUpdate(w http.ResponseWriter, r *http.Request)
 	}
 
 	fmt.Fprint(w, "Checking for System Update...")
+
+}
+
+func (systemInfo *System) downloadUpdate(w http.ResponseWriter, r *http.Request) {
+
+	obj := systemInfo.conn.Object("com.canonical.SystemImage", "/Service")
+	reply, err := obj.Call("com.canonical.SystemImage", "DownloadUpdate")
+
+	if err != nil || reply.Type == dbus.TypeError {
+		fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
+	}
+
+	fmt.Fprint(w, "Downloading System Update...")
 
 }
 
