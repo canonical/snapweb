@@ -57,6 +57,18 @@
      interface=com.canonical.SystemImage
      member=CheckForUpdate,
 
+  dbus (send)
+     bus=system
+     path=/Service
+     interface=com.canonical.SystemImage
+     member=DownloadUpdate,
+
+  dbus (send)
+     bus=system
+     path=/Service
+     interface=com.canonical.SystemImage
+     member=ApplyUpdate,
+
   dbus (receive)
      bus=system
      path=/Service
