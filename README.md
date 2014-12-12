@@ -40,6 +40,20 @@ portal.
 
 ## API
 
+### api/v1/systemimage/
+
+To retrieve current system image info:
+
+     curl http://localhost:8080/api/v1/systemimage/
+
+To check for system image update:
+
+     curl http://localhost:8080/api/v1/systemimage/checkForUpdate
+
+To apply system image update:
+
+     curl --data "" http://localhost:8080/api/v1/systemimage/
+
 ### /api/v1/packages/
 
 To install a package:
