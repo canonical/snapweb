@@ -35,14 +35,6 @@ YUI.add('core-manage', function(Y) {
   };
 
   var show = function() {
-    Y.io('/api/v1/packages', {
-      on: {
-        success: onSuccess,
-        failure: function() {
-          console.log('xhrSettings fail');
-        }
-      }
-    });
   };
 
   Y.namespace('DEMO.CORE.MANAGE').show = show;

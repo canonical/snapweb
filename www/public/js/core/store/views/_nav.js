@@ -1,8 +1,9 @@
-YUI.add('core-store-view-nav', function(Y) {
+YUI.add('iot-views-store-nav', function(Y) {
 
-  var template = new Y.Template();
-  template = template.revive(Y.DEMO.CORE.STORE.TMPL.NAV.template);
-
+  var views = Y.namespace('iot.views');
+  var tmpls = Y.namespace('iot.tmpls');
+  var mu = new Y.Template();
+  var template = mu.revive(tmpls.store.nav.compiled);
   var NavView = Y.Base.create('storeNav', Y.View, [], {
 
     containerTemplate: '<nav class=layout-app-nav-primary></nav>',
@@ -17,11 +18,12 @@ YUI.add('core-store-view-nav', function(Y) {
     }
   });
 
-  Y.namespace('DEMO.CORE.STORE.VIEWS').Nav = NavView;
+  Y.namespace('iot.views.store').Nav = NavView;
 
 }, '0.0.1', {
   requires: [
     'view',
-    'template'
+    'template',
+    't-tmpls-store-nav'
   ]
 });

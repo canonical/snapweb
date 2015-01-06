@@ -10,6 +10,7 @@ var jscs = require('gulp-jscs');
 var jshint = require('gulp-jshint');
 var precompile = require('./precompile.js');
 var rename = require('gulp-rename');
+var scp = require('gulp-scp');
 var sourcemaps = require('gulp-sourcemaps');
 var svgSymbols = require('gulp-svg-symbols');
 var uglify = require('gulp-uglify');
