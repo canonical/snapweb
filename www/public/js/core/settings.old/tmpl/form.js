@@ -1,4 +1,4 @@
-YUI.add("t-core-settings.old-tmpl-form", function(Y) { Y.namespace("DEMO.CORE.SETTINGS.OLD.TMPL.FORM").template = function (Y, $e, data) {
+YUI.add("t-core-settings.old-tmpl-form", function(Y) { Y.namespace("iot.core.settings.old.tmpl.form").compiled = function (Y, $e, data) {
 var $b='', $v=function (v){return v || v === 0 ? v : $b;}, $t='<div class="settings-form">\n  <div>'+
 $e($v( this.title ))+
 '</div>\n  <form id="demo-settings">\n    ';

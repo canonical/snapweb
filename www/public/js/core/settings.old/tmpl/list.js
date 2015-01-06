@@ -1,4 +1,4 @@
-YUI.add("t-core-settings.old-tmpl-list", function(Y) { Y.namespace("DEMO.CORE.SETTINGS.OLD.TMPL.LIST").template = function (Y, $e, data) {
+YUI.add("t-core-settings.old-tmpl-list", function(Y) { Y.namespace("iot.core.settings.old.tmpl.list").compiled = function (Y, $e, data) {
 var $b='', $v=function (v){return v || v === 0 ? v : $b;}, $t='<div class="icon-list">\n  ';
  Y.Array.each(this.groups, function (group) { 
 $t+='\n  <div class="title">'+

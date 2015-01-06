@@ -1,16 +1,20 @@
-YUI.add('core-store-views', function(Y) {
+YUI.add('iot-views-store', function(Y) {
   'use strict';
 
-  var StoreView = Y.Base.create('storeView', Y.View, [], {
+  var views = Y.namespace('iot.views.store');
+  var tmpls = Y.namespace('iot.tmpls');
+  var mu = new Y.Template();
+
+  views.Index = Y.Base.create('store', Y.View, [], {
 
     initializer: function() {
 
-      var VIEWS = Y.DEMO.CORE.STORE.VIEWS;
+      console.log(views);
 
-      this.listView = new VIEWS.List({
+      this.listView = new views.List({
         list: this.get('list')
         });
-      this.navView = new VIEWS.Nav({
+      this.navView = new views.Nav({
         nav: this.get('nav')
       });
 
@@ -138,13 +142,11 @@ YUI.add('core-store-views', function(Y) {
     }
   });
 
-  Y.namespace('DEMO.CORE.STORE.VIEWS').Store = StoreView;
-
 }, '0.0.1', {
   requires: [
     'view',
     'io-base',
-    'core-store-view-list',
-    'core-store-view-nav'
+    'iot-views-store-list',
+    'iot-views-store-nav'
   ]
 });

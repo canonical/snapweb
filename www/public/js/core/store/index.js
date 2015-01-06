@@ -1,7 +1,7 @@
-YUI.add('core-store', function(Y) {
+YUI.add('iot-store', function(Y) {
   'use strict';
 
-  var app = Y.DEMO.app;
+  var app = Y.iot.app;
 
   var navData = [{
     name: 'All'
@@ -21,12 +21,12 @@ YUI.add('core-store', function(Y) {
     var snaps = JSON.parse(res.responseText);
     snaps = snaps._embedded['clickindex:package'];
 
-    var view = new Y.DEMO.CORE.STORE.VIEWS.Store({
+    var view = new Y.iot.views.store.Index({
       list: snaps,
       nav: navData
     });
 
-    app.showView(view, null, {
+    Y.iot.app.showView(view, null, {
       render: true,
       callback: checkInstalled
     });
@@ -38,7 +38,7 @@ YUI.add('core-store', function(Y) {
       on: {
         success: function(id, res, name) {
           var installed = JSON.parse(res.responseText);
-          var view = Y.DEMO.app.get('activeView');
+          var view = Y.iot.app.get('activeView');
           var available = view.get('list');
 
           if (view.name === name) {
@@ -101,6 +101,7 @@ YUI.add('core-store', function(Y) {
   };
 
   var show = function() {
+    console.log('store');
     Y.io('/mock-api/store.json', {
       on: {
         success: onSuccess,
@@ -111,11 +112,11 @@ YUI.add('core-store', function(Y) {
     });
   };
 
-  Y.namespace('DEMO.CORE.STORE').show = show;
+  Y.namespace('iot.core.store').show = show;
 
 }, '0.0.1', {
   requires: [
     'io',
-    'core-store-views'
+    'iot-views-store'
   ]
 });

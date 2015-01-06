@@ -1,4 +1,4 @@
-YUI.add("t-core-manage-tmpl-snap", function(Y) { Y.namespace("DEMO.CORE.MANAGE.TMPL.SNAP").template = function (Y, $e, data) {
+YUI.add("t-core-manage-tmpl-snap", function(Y) { Y.namespace("iot.core.manage.tmpl.snap").compiled = function (Y, $e, data) {
 var $b='', $v=function (v){return v || v === 0 ? v : $b;}, $t='<div class="services-pkg" data-pkg="'+
 $e($v( this.name ))+
 '">\n  <h1 class="pkg-name">'+
