@@ -10,11 +10,9 @@ var jscs = require('gulp-jscs');
 var jshint = require('gulp-jshint');
 var precompile = require('./precompile.js');
 var rename = require('gulp-rename');
-var scp = require('gulp-scp');
 var sourcemaps = require('gulp-sourcemaps');
 var svgSymbols = require('gulp-svg-symbols');
 var uglify = require('gulp-uglify');
-var image = require('gulp-image');
 
 // where to find sources
 var paths = {
@@ -30,7 +28,6 @@ gulp.task('clean', function(cb) {
 
 gulp.task('image', function () {
   gulp.src(paths.imgs)
-    .pipe(image())
     .pipe(gulp.dest('public/images'));
 });
 

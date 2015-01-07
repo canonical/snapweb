@@ -101,7 +101,6 @@ YUI.add('iot-store', function(Y) {
   };
 
   var show = function() {
-    console.log('store');
     Y.io('/mock-api/store.json', {
       on: {
         success: onSuccess,
