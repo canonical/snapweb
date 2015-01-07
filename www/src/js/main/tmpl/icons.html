@@ -1,7 +1,7 @@
-<div class="icon-list">
   <% Y.Array.each(this.icons, function (icon) { %>
-  <div class="icon" data-module="<%= icon.name %>" data-fn="<%= icon.fn %>">
+  <li>
+  <a href="" class="icon" data-module="<%= icon.name %>" data-fn="<%= icon.fn %>">
     <%= icon.title %>
-  </div>
+  </a>
+  </li>
   <% }); %>
-</div>
