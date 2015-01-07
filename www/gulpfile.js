@@ -14,16 +14,24 @@ var scp = require('gulp-scp');
 var sourcemaps = require('gulp-sourcemaps');
 var svgSymbols = require('gulp-svg-symbols');
 var uglify = require('gulp-uglify');
+var image = require('gulp-image');
 
 // where to find sources
 var paths = {
   js: ['src/js/**/*.js'],
   css: ['src/css/**/*.css'],
+  imgs: ['src/images/**/*'],
   templates: ['src/js/**/*.html'] // html to be compiled to js tmpl func
 };
 
 gulp.task('clean', function(cb) {
   del(['public'], cb);
+});
+
+gulp.task('image', function () {
+  gulp.src(paths.imgs)
+    .pipe(image())
+    .pipe(gulp.dest('public/images'));
 });
 
 gulp.task('scripts', function() {
@@ -84,7 +92,8 @@ gulp.task('yui', function() {
 gulp.task('watch', function() {
   gulp.watch(paths.js, ['scripts']);
   gulp.watch(paths.css, ['styles']);
+  gulp.watch(paths.imgs, ['image']);
   gulp.watch(paths.templates, ['templates']);
 });
 
-gulp.task('default', ['watch', 'scripts', 'styles', 'templates']);
+gulp.task('default', ['watch', 'scripts', 'styles', 'image', 'templates']);
