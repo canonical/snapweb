@@ -1,8 +1,9 @@
-YUI.add('core-settings-view-list', function(Y) {
+YUI.add('iot-views-settings-list', function(Y) {
 
-  var template = new Y.Template();
-  template = template.revive(Y.DEMO.CORE.SETTINGS.TMPL.LIST.template);
-
+  var views = Y.namespace('iot.views');
+  var tmpls = Y.namespace('iot.tmpls');
+  var mu = new Y.Template();
+  var template = mu.revive(tmpls.settings.list.compiled);
   var ListView = Y.Base.create('settingsList', Y.View, [], {
 
     containerTemplate: '<main class=layout-content></main>',
@@ -16,11 +17,12 @@ YUI.add('core-settings-view-list', function(Y) {
     }
   });
 
-  Y.namespace('DEMO.CORE.SETTINGS.VIEWS').List = ListView;
+  Y.namespace('iot.views.settings').List = ListView;
 
 }, '0.0.1', {
   requires: [
     'view',
-    'template'
+    'template',
+    't-tmpls-settings-list'
   ]
 });
