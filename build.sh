@@ -20,5 +20,3 @@ go build launchpad.net/clapper/cmd/snappyd
 cd -
 
 snappy build $builddir
-
-snappy-remote --url ssh://localhost:8022 install snappyd_0.3_amd64.snap
