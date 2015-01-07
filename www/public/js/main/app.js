@@ -8,8 +8,11 @@ YUI.add('demo', function(Y) {
   };
 
   var showStore = function(req, res, next) {
-    console.log('showStore');
     iot.core.store.show();
+  };
+
+  var showSettings = function(req, res, next) {
+    iot.core.settings.show();
   };
 
   var app = Y.namespace('iot').app = new Y.App({
@@ -24,11 +27,16 @@ YUI.add('demo', function(Y) {
       store: {
         preserve: false,
         type: 'iot.views.store'
+      },
+      settings: {
+        preserve: false,
+        type: 'iot.views.settings'
       }
     },
     routes: [
       {path: '/', callbacks: showHome},
       {path: '/store', callbacks: showStore},
+      {path: '/system-settings', callbacks: showSettings}
     ]
   });
 
@@ -40,6 +48,7 @@ YUI.add('demo', function(Y) {
     'app',
     'template',
     'iot-views-home',
-    'iot-store'
+    'iot-store',
+    'iot-settings'
   ]
 });

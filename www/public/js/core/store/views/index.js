@@ -2,14 +2,10 @@ YUI.add('iot-views-store', function(Y) {
   'use strict';
 
   var views = Y.namespace('iot.views.store');
-  var tmpls = Y.namespace('iot.tmpls');
-  var mu = new Y.Template();
 
   views.Index = Y.Base.create('store', Y.View, [], {
 
     initializer: function() {
-
-      console.log(views);
 
       this.listView = new views.List({
         list: this.get('list')
