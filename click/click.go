@@ -7,7 +7,6 @@ import (
 	"os"
 	"os/exec"
 	"strings"
-	"sync"
 
 	"launchpad.net/clapper/systemd"
 	"launchpad.net/go-dbus/v1"
@@ -24,38 +23,13 @@ type Package struct {
 	Ports       map[string]uint `json:"ports,omitempty"`
 }
 
-// ClickUser exposes the click package registry for the user.
-type ClickUser struct {
-	ccu  cClickUser
-	lock sync.Mutex
-}
-
-// User makes a new ClickUser object for the current user.
-func NewUser() (*ClickUser, error) {
-	cu := new(ClickUser)
-	err := cu.ccu.cInit(cu)
-	if err != nil {
-		return nil, err
-	}
-	return cu, nil
-}
-
 // ClickDatabase exposes the click package database for the user.
 type ClickDatabase struct {
-	cdb  cClickDB
-	lock sync.Mutex
 	conn *dbus.Connection
 }
 
-func NewDatabase(conn *dbus.Connection) (*ClickDatabase, error) {
-	db := new(ClickDatabase)
-	err := db.cdb.cInit(db)
-	if err != nil {
-		return nil, err
-	}
-	db.conn = conn
-
-	return db, nil
+func NewDatabase(conn *dbus.Connection) *ClickDatabase {
+	return &ClickDatabase{conn: conn}
 }
 
 // GetPackages returns the information relevant to pkg unless it is an empty string

@@ -4,10 +4,6 @@
 
 This assumes you have a working go environment with a GOPATH env var setup.
 
-You also need to
-
-    sudo apt install libclick-0.4-dev pkg-config
-
 ## Building
 
 To branch this project run
@@ -17,6 +13,10 @@ To branch this project run
     bzr branch lp:clapper
     cd clapper
     ./build.sh
+
+To build the arm version do
+
+    GOARCH=arm ./build.sh
 
 # Installing
 

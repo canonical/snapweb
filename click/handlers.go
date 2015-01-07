@@ -20,11 +20,7 @@ func NewHandler(systemConnection *dbus.Connection) *handler {
 }
 
 func (h *handler) getAll(w http.ResponseWriter, r *http.Request) {
-	db, err := NewDatabase(h.conn)
-	if err != nil {
-		fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
-		return
-	}
+	db := NewDatabase(h.conn)
 
 	if pkgs, err := db.GetPackages(""); err != nil {
 		fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
@@ -37,11 +33,7 @@ func (h *handler) getAll(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) get(w http.ResponseWriter, r *http.Request) {
-	db, err := NewDatabase(h.conn)
-	if err != nil {
-		fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
-		return
-	}
+	db := NewDatabase(h.conn)
 
 	// Get the Key.
 	vars := mux.Vars(r)
@@ -69,12 +61,7 @@ func (h *handler) add(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	db, err := NewDatabase(h.conn)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
-		return
-	}
+	db := NewDatabase(h.conn)
 
 	for k, v := range items {
 		switch k {
@@ -98,12 +85,7 @@ func (h *handler) remove(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	pkgName := vars["pkg"]
 
-	db, err := NewDatabase(h.conn)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
-		return
-	}
+	db := NewDatabase(h.conn)
 
 	if err := db.Uninstall(pkgName); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -128,11 +110,7 @@ func (h *handler) setService(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	db, err := NewDatabase(h.conn)
-	if err != nil {
-		fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
-		return
-	}
+	db := NewDatabase(h.conn)
 
 	var service string
 	if pkgs, err := db.GetPackages(pkgName); err != nil {
