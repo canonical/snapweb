@@ -11,6 +11,21 @@ YUI.add('demo', function(Y) {
     iot.core.store.show();
   };
 
+  var showApp = function(req, res, next) {
+    var name = req.params.name;
+    console.log(name);
+  };
+
+  var showAppReviews = function(req, res, next) {
+    var name = req.params.name;
+    console.log(name);
+  };
+
+  var showAppSettings = function(req, res, next) {
+    var name = req.params.name;
+    console.log(name);
+  };
+
   var showSettings = function(req, res, next) {
     iot.core.settings.show();
   };
@@ -36,6 +51,9 @@ YUI.add('demo', function(Y) {
     routes: [
       {path: '/', callbacks: showHome},
       {path: '/store', callbacks: showStore},
+      {path: '/store/:name', callbacks: showApp},
+      {path: '/store/:name/reviews', callbacks: showAppReviews},
+      {path: '/store/:name/settings', callbacks: showAppSettings},
       {path: '/system-settings', callbacks: showSettings}
     ]
   });
