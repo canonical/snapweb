@@ -1,11 +1,12 @@
 // gulpfile.js - streaming build system for client side assets
 
 var autoprefixer = require('gulp-autoprefixer');
+var concat = require('gulp-concat');
 var csso = require('gulp-csso');
 var del = require('del');
 var gulp = require('gulp');
 var gutil = require('gulp-util');
-var concat = require('gulp-concat');
+var imagemin = require('gulp-imagemin');
 var jscs = require('gulp-jscs');
 var jshint = require('gulp-jshint');
 var precompile = require('./precompile.js');
@@ -13,7 +14,6 @@ var rename = require('gulp-rename');
 var sourcemaps = require('gulp-sourcemaps');
 var svgSymbols = require('gulp-svg-symbols');
 var uglify = require('gulp-uglify');
-var image = require('gulp-image');
 
 // where to find sources
 var paths = {
@@ -29,8 +29,8 @@ gulp.task('clean', function(cb) {
 
 gulp.task('image', function () {
   gulp.src(paths.imgs)
-    .pipe(image())
-    .pipe(gulp.dest('public/images'));
+  .pipe(imagemin())
+  .pipe(gulp.dest('public/images'));
 });
 
 gulp.task('scripts', function() {
