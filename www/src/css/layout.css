@@ -9,15 +9,6 @@ html, body {
 .layout-body {
 }
 
-.layout-nav-primary {
-  position:fixed;
-  top:54px;
-  bottom:0;
-  background-color:#333;
-  color:#eee;
-  width:180px;
-}
-
 .layout-nav-primary .icon {
   padding: 1em 1em 1em 3em;
   white-space: nowrap;
@@ -71,8 +62,7 @@ header {
 
 .header-brand {
   display:flex;
-  width:200px;
-  padding:13px;
+  padding:16px 0 0 16px;
   font-size:18px;
   color:white;
   text-decoration:none;
@@ -84,5 +74,34 @@ header {
 }
 
 .header-brand .logotype {
+  margin-right: 1.3em;
   flex:1;
 }
+
+header.banner .nav-primary ul.layout-nav-primary,
+header form.search-form {
+  float: right;
+}
+header form.search-form {
+    width: auto;
+}
+header form.search-form input[type="search"] {
+  color: #fff;
+  margin-left: 0;
+  transition: width 0.3s;
+  width: 325px;
+}
+header form.search-form input[type="search"]:focus {
+  width: 500px;
+}
+
+header.banner nav.nav-primary ul li a.settings-link:link {
+  padding-top: 16px;
+  padding-bottom: 8px;
+}
+
+.layout-nav-primary .settings-icon {
+  width: 30px;
+  height: 30px;
+}
+
