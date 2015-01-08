@@ -1,8 +1,9 @@
-YUI.add('core-store-view-list', function(Y) {
+YUI.add('iot-views-store-list', function(Y) {
 
-  var template = new Y.Template();
-  template = template.revive(Y.DEMO.CORE.STORE.TMPL.LIST.template);
-
+  var views = Y.namespace('iot.views');
+  var tmpls = Y.namespace('iot.tmpls');
+  var mu = new Y.Template();
+  var template = mu.revive(tmpls.store.list.compiled);
   var ListView = Y.Base.create('storeList', Y.View, [], {
 
     containerTemplate: '<main class=layout-content></main>',
@@ -16,11 +17,12 @@ YUI.add('core-store-view-list', function(Y) {
     }
   });
 
-  Y.namespace('DEMO.CORE.STORE.VIEWS').List = ListView;
+  Y.namespace('iot.views.store').List = ListView;
 
 }, '0.0.1', {
   requires: [
     'view',
-    'template'
+    'template',
+    't-tmpls-store-list'
   ]
 });
