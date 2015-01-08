@@ -1,4 +1,4 @@
-YUI.add("t-core-store-tmpl-list", function(Y) { Y.namespace("DEMO.CORE.STORE.TMPL.LIST").template = function (Y, $e, data) {
+YUI.add("t-tmpls-store-list", function(Y) { Y.namespace("iot.tmpls.store.list").compiled = function (Y, $e, data) {
 var $b='', $v=function (v){return v || v === 0 ? v : $b;}, $t='<div class="package-list">\n  ';
  Y.Array.each(this, function (pkg) { 
 $t+='\n  <div class="pkg" data-pkg="'+

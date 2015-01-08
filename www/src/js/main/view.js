@@ -1,11 +1,14 @@
-YUI.add('demo-view-home', function(Y) {
+YUI.add('iot-views-home', function(Y) {
   'use strict';
+
+  var views = Y.namespace('iot.views');
+  var tmpls = Y.namespace('iot.tmpls');
   var mu = new Y.Template();
 
-  Y.namespace('DEMO.VIEW').Home = Y.Base.create('home', Y.View, [], {
+  views.home = Y.Base.create('home', Y.View, [], {
 
     render: function() {
-      var template = mu.revive(Y.DEMO.MAIN.TMPL.HOME.template);
+      var template = mu.revive(tmpls.home.compiled);
       var html = template();
       this.get('container').setHTML(html);
 
@@ -15,6 +18,6 @@ YUI.add('demo-view-home', function(Y) {
 }, '0.0.1', {
   requires: [
     'template',
-    't-main-tmpl-home'
+    't-tmpls-home'
   ]
 });
