@@ -1,4 +1,4 @@
-YUI.add("t-main-tmpl-icons", function(Y) { Y.namespace("DEMO.MAIN.TMPL.ICONS").template = function (Y, $e, data) {
+YUI.add("t-main-tmpl-icons", function(Y) { Y.namespace("iot.main.tmpl.icons").compiled = function (Y, $e, data) {
 var $b='', $v=function (v){return v || v === 0 ? v : $b;}, $t='  ';
  Y.Array.each(this.icons, function (icon) { 
 $t+='\n  <li>\n  <a href="" class="icon" data-module="'+
