@@ -15,15 +15,15 @@ YUI.add('iot-views-store', function(Y) {
       });
 
       this.listView.addTarget(this);
-      this.navView.addTarget(this);
+      //this.navView.addTarget(this);
     },
 
     destructor: function() {
       this.listView.destroy();
-      this.navView.destroy();
+      //this.navView.destroy();
 
       delete this.listView;
-      delete this.navView;
+      //delete this.navView;
     },
 
     events: {
@@ -129,7 +129,7 @@ YUI.add('iot-views-store', function(Y) {
     render: function() {
       document.body.scrollTop = document.documentElement.scrollTop = 0;
       var content = Y.one(Y.config.doc.createDocumentFragment());
-      content.append(this.navView.render().get('container'));
+      //content.append(this.navView.render().get('container'));
       content.append(this.listView.render().get('container'));
 
       this.get('container').setHTML(content);

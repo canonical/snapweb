@@ -15,6 +15,10 @@ YUI.add('demo', function(Y) {
     iot.core.settings.show();
   };
 
+  var showSearch = function(req, res, next) {
+    iot.core.search.show();
+  };
+
   var app = Y.namespace('iot').app = new Y.App({
     viewContainer: '.layout-app-container',
     serverRouting: true,
@@ -31,12 +35,17 @@ YUI.add('demo', function(Y) {
       settings: {
         preserve: false,
         type: 'iot.views.settings'
+      },
+      search: {
+        preserve: true,
+        type: 'iot.views.search'
       }
     },
     routes: [
       {path: '/', callbacks: showHome},
       {path: '/store', callbacks: showStore},
-      {path: '/system-settings', callbacks: showSettings}
+      {path: '/system-settings', callbacks: showSettings},
+      {path: '/q', callbacks: showSearch}
     ]
   });
 
@@ -49,6 +58,7 @@ YUI.add('demo', function(Y) {
     'template',
     'iot-views-home',
     'iot-store',
-    'iot-settings'
+    'iot-settings',
+    'iot-search'
   ]
 });
