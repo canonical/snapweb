@@ -1,15 +1,15 @@
-YUI.add('iot-views-settings', function(Y) {
+YUI.add('iot-views-search', function(Y) {
   'use strict';
 
-  var views = Y.namespace('iot.views.settings');
+  var views = Y.namespace('iot.views.search');
 
-  views.Index = Y.Base.create('settingsView', Y.View, [], {
+  views.Index = Y.Base.create('search', Y.View, [], {
 
     initializer: function() {
 
       this.listView = new views.List({
         list: this.get('list')
-        });
+      });
 
       this.listView.addTarget(this);
     },
@@ -22,7 +22,6 @@ YUI.add('iot-views-settings', function(Y) {
 
     render: function() {
       document.body.scrollTop = document.documentElement.scrollTop = 0;
-
       var content = Y.one(Y.config.doc.createDocumentFragment());
       content.append(this.listView.render().get('container'));
 
@@ -36,6 +35,6 @@ YUI.add('iot-views-settings', function(Y) {
   requires: [
     'view',
     'io-base',
-    'iot-views-settings-list'
+    'iot-views-search-list'
   ]
 });
