@@ -3,15 +3,10 @@ YUI.add('iot-settings', function(Y) {
 
   var app = Y.iot.app;
 
-  var navData = [{
-    name: 'About'
-  }];
-
   var onSuccess = function(id, res) {
     var about = JSON.parse(res.responseText);
     var view = new Y.iot.views.settings.Index({
-      list: about,
-      nav: navData
+      list: about
     });
 
     Y.iot.app.showView(view, null, {
