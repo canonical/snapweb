@@ -36,25 +36,25 @@
             </div>
           </a>
         </div>
+
+        <div class="search-wrapper">
+          <ul>
+            <li><a href="store">Store</a></li>
+          </ul>
+          <form class="search-form" action="/q" method="GET">
+            <input type="search" name="text" class="form-text" placeholder="Search the store" value="" />
+            <button type="submit"></button>
+          </form>
+        </div>
+
         <ul class="layout-nav-primary">
-          <li><a href="">Log in</a></li>
-          <li><a href="/settings" class="settings-link"><img src="/public/images/settings.svg" alt="Settings" class="settings-icon" /></a></li>
+          <li><a href="/">Sign in</a></li>
+          <li><a href="/system-settings" class="settings-link"><img src="/public/images/settings.svg" alt="Settings" class="settings-icon" /></a></li>
         </ul>
-        <form class="search-form" action="/q" method="GET">
-          <input
-              type="search" name="text"
-              class="form-text" placeholder="Search the store"
-              value=""
-          />
-          <button type="submit">
-          </button>
-        </form>
-        <ul class="layout-nav-primary">
-          <li><a href="store">Store</a></li>
-        </ul>
+      </nav>
     </header>
     <div class="wrapper">
-      <div id="main-content" class="inner-wrapper">
+      <div id="main-content">
         <div class="layout-body">
           <div class="layout-app-container">
           </div>
@@ -97,6 +97,11 @@
   <script src="/public/js/core/settings/views/_nav.js"></script>
   <script src="/public/js/tmpls/settings/list.js"></script>
   <script src="/public/js/tmpls/settings/nav.js"></script>
+  <!-- search -->
+  <script src="/public/js/core/search/index.js"></script>
+  <script src="/public/js/core/search/views/index.js"></script>
+  <script src="/public/js/core/search/views/_list.js"></script>
+  <script src="/public/js/tmpls/search/list.js"></script>
 
   <!-- run -->
   <script src="/public/js/init.js"></script>
