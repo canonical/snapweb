@@ -1,0 +1,23 @@
+<div class="snap">
+  <h1><%= this.title %></h1>
+  <!-- this is just to list out the props in the model for convienience -->
+  <img src="<%= this.icon_url %>" />
+  <% Y.Object.each(this, function (value, key) { %>
+  <p><%= key %>:
+  <% if (Y.Lang.isObject(value)) { %>
+  <% Y.Object.each(value, function (value, key) { %>
+  <p><%= key %>: <%= value %>
+  <% }); %>
+  <% } else { %>
+  <%= value %>
+  <% } %>
+  <% }); %>
+
+</div>
+<nav>
+<ul>
+  <li><a class="active" href="/apps/<%= this.name %>/">Details</a></li>
+  <li><a href="/apps/<%= this.name %>/reviews">Reviews</a></li>
+  <li><a href="/apps/<%= this.name %>/settings">Settings</a></li>
+</ul>
+</nav>

@@ -1,29 +1,26 @@
-YUI.add('iot-views-store-nav', function(Y) {
+YUI.add('iot-views-snap-details', function(Y) {
 
-  var views = Y.namespace('iot.views');
   var tmpls = Y.namespace('iot.tmpls');
   var mu = new Y.Template();
-  var template = mu.revive(tmpls.store.nav.compiled);
-  var NavView = Y.Base.create('storeNav', Y.View, [], {
 
-    containerTemplate: '<nav class=layout-app-nav-primary></nav>',
+  var DetailsView = Y.Base.create('detailsView', Y.View, [], {
 
-    template: template,
+    template: mu.revive(tmpls.snap.details.compiled),
 
     render: function() {
-      var content = this.template(this.get('nav'));
+      var content = this.template(this.get('model').getAttrs());
       this.get('container').setHTML(content);
 
       return this;
     }
   });
 
-  Y.namespace('iot.views.store').Nav = NavView;
+  Y.namespace('iot.views.snap').details = DetailsView;
 
 }, '0.0.1', {
   requires: [
     'view',
     'template',
-    't-tmpls-store-nav'
+    't-tmpls-snap-details'
   ]
 });

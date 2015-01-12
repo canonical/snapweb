@@ -13,17 +13,39 @@ YUI.add('demo', function(Y) {
 
   var showApp = function(req, res, next) {
     var name = req.params.name;
-    console.log(name);
+    var snap = new Y.iot.models.Snap({id: name});
+
+    snap.load(function() {
+      Y.iot.app.showView('snap', {
+        model: snap
+      });
+    });
   };
 
   var showAppReviews = function(req, res, next) {
     var name = req.params.name;
-    console.log(name);
+    var snap = new Y.iot.models.Snap({id: name});
+
+    snap.load(function() {
+      Y.iot.app.showView('snap', {
+        model: snap,
+        // get as model, wrap loads in promise, promise all -> showView
+        reviews: true
+      });
+    });
   };
 
   var showAppSettings = function(req, res, next) {
     var name = req.params.name;
-    console.log(name);
+    var snap = new Y.iot.models.Snap({id: name});
+
+    snap.load(function() {
+      Y.iot.app.showView('snap', {
+        model: snap,
+        // get as model, wrap loads in promise, promise all -> showView
+        settings: true
+      });
+    });
   };
 
   var showSettings = function(req, res, next) {
@@ -41,7 +63,11 @@ YUI.add('demo', function(Y) {
       },
       store: {
         preserve: false,
-        type: 'iot.views.store'
+        type: 'iot.views.store.Index'
+      },
+      snap: {
+        preserve: false,
+        type: 'iot.views.snap.snap'
       },
       settings: {
         preserve: false,
@@ -51,9 +77,9 @@ YUI.add('demo', function(Y) {
     routes: [
       {path: '/', callbacks: showHome},
       {path: '/store', callbacks: showStore},
-      {path: '/store/:name', callbacks: showApp},
-      {path: '/store/:name/reviews', callbacks: showAppReviews},
-      {path: '/store/:name/settings', callbacks: showAppSettings},
+      {path: '/apps/:name', callbacks: showApp},
+      {path: '/apps/:name/reviews', callbacks: showAppReviews},
+      {path: '/apps/:name/settings', callbacks: showAppSettings},
       {path: '/system-settings', callbacks: showSettings}
     ]
   });
@@ -66,7 +92,9 @@ YUI.add('demo', function(Y) {
     'app',
     'template',
     'iot-views-home',
+    'iot-views-snap',
     'iot-store',
-    'iot-settings'
+    'iot-settings',
+    'iot-models-snap'
   ]
 });
