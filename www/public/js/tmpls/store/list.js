@@ -5,7 +5,7 @@ $t+='\n  <div class="pkg" data-pkg="'+
 $e($v( pkg.name ))+
 '">\n    <img class="pkg-img" src="'+
 $e($v( pkg.icon_url ))+
-'" />\n    <p class="pkg-name">\n      <a href="/store/'+
+'" />\n    <p class="pkg-name">\n      <a href="/apps/'+
 $e($v( pkg.name ))+
 '">'+
 $e($v( pkg.name ))+
