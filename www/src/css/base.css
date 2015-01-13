@@ -36,10 +36,7 @@ button {
 }
 
 .pkg-img {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  width: 92px;
+  width: 40px;
 }
 
 .pkg-publisher {

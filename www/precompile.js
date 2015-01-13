@@ -25,7 +25,7 @@ function gulpPrecompiler() {
       var name = path.relative(file.base, file.path);
       var ns;
       ns = name = name.replace(path.extname(name), '').split(path.sep);
-      ns = ['DEMO'].concat(ns).join('.').toUpperCase();
+      ns = ['iot'].concat(ns).join('.').toLowerCase();
 
       name.unshift('t');
       name = name.join('-');
@@ -33,7 +33,7 @@ function gulpPrecompiler() {
       gutil.log('  with namespace: ', gutil.colors.yellow(ns));
 
       var text = 'YUI.add("' + name +
-        '", function(Y) { Y.namespace("' + ns + '").template = ';
+        '", function(Y) { Y.namespace("' + ns + '").compiled = ';
       var prefixText = new Buffer(text);
 
       file.contents = Buffer.concat([
