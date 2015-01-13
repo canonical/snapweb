@@ -18,33 +18,49 @@
     <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
       <symbol id="cof" viewBox="0 0 20 20">
       <title>cof icon</title>
-      <circle fill="#fff" cx="10" cy="10" r="10"/><path fill="#DD4814" d="M3.763 8.798c-.664 0-1.2.538-1.2 1.202 0 .662.536 1.2 1.2 1.2.665 0 1.202-.538 1.202-1.2 0-.664-.537-1.202-1.202-1.202zm8.58 5.462c-.576.33-.772 1.065-.44 1.638.33.576 1.065.772 1.64.44.575-.33.772-1.065.44-1.64s-1.067-.77-1.64-.438zM6.372 10c0-1.188.59-2.238 1.492-2.872l-.878-1.473c-1.05.702-1.834 1.777-2.16 3.035.38.31.622.78.622 1.31 0 .527-.24.997-.623 1.308.325 1.258 1.108 2.33 2.16 3.033l.877-1.47c-.902-.635-1.49-1.682-1.49-2.87zm3.51-3.51c1.834 0 3.337 1.405 3.495 3.2l1.712-.028c-.084-1.322-.662-2.51-1.55-3.384-.458.172-.986.147-1.442-.117-.455-.263-.742-.706-.82-1.19-.446-.123-.913-.19-1.396-.19-.83 0-1.616.196-2.312.54l.834 1.497c.45-.21.95-.328 1.478-.328zm0 7.018c-.53 0-1.03-.116-1.48-.326l-.833 1.496c.696.346 1.48.54 2.312.54.483 0 .95-.066 1.395-.19.08-.482.366-.926.82-1.19.458-.263.985-.288 1.442-.114.888-.875 1.466-2.063 1.55-3.387l-1.712-.024c-.158 1.79-1.66 3.195-3.496 3.195zm2.46-7.768c.573.33 1.308.135 1.64-.44.33-.574.134-1.31-.44-1.64-.575-.33-1.31-.135-1.64.44-.332.573-.136 1.308.44 1.64z"/>
+      <circle fill="#fff" cx="10" cy="10" r="10"/><path fill="#000" d="M3.763 8.798c-.664 0-1.2.538-1.2 1.202 0 .662.536 1.2 1.2 1.2.665 0 1.202-.538 1.202-1.2 0-.664-.537-1.202-1.202-1.202zm8.58 5.462c-.576.33-.772 1.065-.44 1.638.33.576 1.065.772 1.64.44.575-.33.772-1.065.44-1.64s-1.067-.77-1.64-.438zM6.372 10c0-1.188.59-2.238 1.492-2.872l-.878-1.473c-1.05.702-1.834 1.777-2.16 3.035.38.31.622.78.622 1.31 0 .527-.24.997-.623 1.308.325 1.258 1.108 2.33 2.16 3.033l.877-1.47c-.902-.635-1.49-1.682-1.49-2.87zm3.51-3.51c1.834 0 3.337 1.405 3.495 3.2l1.712-.028c-.084-1.322-.662-2.51-1.55-3.384-.458.172-.986.147-1.442-.117-.455-.263-.742-.706-.82-1.19-.446-.123-.913-.19-1.396-.19-.83 0-1.616.196-2.312.54l.834 1.497c.45-.21.95-.328 1.478-.328zm0 7.018c-.53 0-1.03-.116-1.48-.326l-.833 1.496c.696.346 1.48.54 2.312.54.483 0 .95-.066 1.395-.19.08-.482.366-.926.82-1.19.458-.263.985-.288 1.442-.114.888-.875 1.466-2.063 1.55-3.387l-1.712-.024c-.158 1.79-1.66 3.195-3.496 3.195zm2.46-7.768c.573.33 1.308.135 1.64-.44.33-.574.134-1.31-.44-1.64-.575-.33-1.31-.135-1.64.44-.332.573-.136 1.308.44 1.64z"/>
       </symbol>
     </svg>
-    <header>
-      <a href="/" class="header-brand">
+    <header class="banner global" role="banner">
+      <nav role="navigation" class="nav-primary nav-right">
+        <span id="main-navigation-link"><a href="#main-navigation">Jump to site nav</a></span>
         <div class="logo">
-          <svg role="img" class="cof">
-            <use xlink:href="#cof"></use>
-          </svg>
+          <a href="/" class="header-brand">
+            <div class="logo">
+              <svg role="img" class="cof">
+                <use xlink:href="#cof"></use>
+              </svg>
+            </div>
+            <div class="logotype">
+              Ubuntu
+            </div>
+          </a>
         </div>
-        <div class="logotype">
-          Ubuntu
+
+        <div class="search-wrapper">
+          <ul>
+            <li><a href="store">Store</a></li>
+          </ul>
+          <form class="search-form" action="/q" method="GET">
+            <input type="search" name="text" class="form-text" placeholder="Search the store" value="" />
+            <button type="submit"></button>
+          </form>
         </div>
-      </a>
-    </header>
-    <div class="layout-body">
-      <nav class="layout-nav-primary">
+
+        <ul class="layout-nav-primary">
+          <li><a href="/">Sign in</a></li>
+          <li><a href="/system-settings" class="settings-link"><img src="/public/images/settings.svg" alt="Settings" class="settings-icon" /></a></li>
+        </ul>
       </nav>
-      <div class="layout-app-container">
+    </header>
+    <div class="wrapper">
+      <div id="main-content">
+        <div class="layout-body">
+          <div class="layout-app-container">
+          </div>
+        </div>
       </div>
     </div>
-    <!--
-    <footer>
-      {{ template "content" .Params }}
-    </footer>
-    -->
-  </body>
   </body>
   <script>
     YUI_config = {
@@ -94,6 +110,11 @@
   <script src="/public/js/core/settings/views/_nav.js"></script>
   <script src="/public/js/tmpls/settings/list.js"></script>
   <script src="/public/js/tmpls/settings/nav.js"></script>
+  <!-- search -->
+  <script src="/public/js/core/search/index.js"></script>
+  <script src="/public/js/core/search/views/index.js"></script>
+  <script src="/public/js/core/search/views/_list.js"></script>
+  <script src="/public/js/tmpls/search/list.js"></script>
 
   <!-- run -->
   <script src="/public/js/init.js"></script>

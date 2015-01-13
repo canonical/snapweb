@@ -3,7 +3,7 @@ var $b='', $v=function (v){return v || v === 0 ? v : $b;}, $t='<div class="snap"
 $e($v( this.title ))+
 '</h1>\n  <!-- this is just to list out the props in the model for convienience -->\n  <img src="'+
 $e($v( this.icon_url ))+
-'" />\n  ';
+'" width="256" height="256" />\n  ';
  Y.Object.each(this, function (value, key) { 
 $t+='\n  <p>'+
 $e($v( key ))+
@@ -25,9 +25,9 @@ $e($v( value ))+
  } 
 $t+='\n  ';
  }); 
-$t+='\n\n</div>\n<nav>\n<ul>\n  <li><a class="active" href="/apps/'+
+$t+='\n\n</div>\n<nav class="snap-nav-detail">\n<ul>\n  <li><a class="active" href="/apps/'+
 $e($v( this.name ))+
-'/">Details</a></li>\n  <li><a href="/apps/'+
+'/details">Details</a></li>\n  <li><a href="/apps/'+
 $e($v( this.name ))+
 '/reviews">Reviews</a></li>\n  <li><a href="/apps/'+
 $e($v( this.name ))+
