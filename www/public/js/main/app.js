@@ -1,78 +1,109 @@
 YUI.add('demo', function(Y) {
   'use strict';
 
-  var ns = Y.one('.layout-nav-primary');
-  var mu = new Y.Template();
+  var iot = Y.namespace('iot');
 
-  var stringToFunction = function(string, context /*, args */ ) {
-    var args = [].slice.call(arguments, 2);
-    string.split('.').forEach(function(prop) {
-      context = context[prop];
-    });
-    context.apply(context, args);
+  var showHome = function(req, res, next) {
+    this.showView('home');
   };
 
-  // lazy loading of modules
-  // load and execute views related to icons on click
-  Y.one('body').delegate('click', function(e) {
-    var module = this.getData('module');
-    var fn = this.getData('fn');
-    var api = this.getData('api');
-    Y.use(module, function() {
-      if (fn && typeof(fn) === 'string') {
-        stringToFunction(fn, Y, api);
-      }
-    });
-  }, '.icon');
+  var showStore = function(req, res, next) {
+    iot.core.store.show();
+  };
 
-  var app = Y.namespace('DEMO').app = new Y.App({
+  var showApp = function(req, res, next) {
+    var name = req.params.name;
+    var snap = new Y.iot.models.Snap({id: name});
+
+    snap.load(function() {
+      Y.iot.app.showView('snap', {
+        model: snap
+      });
+    });
+  };
+
+  var showAppDetails = function(req, res, next) {
+    var name = req.params.name;
+    var snap = new Y.iot.models.Snap({id: name});
+
+    console.log('yyy');
+
+    snap.load(function() {
+      Y.iot.app.showView('snap', {
+        model: snap
+      }, function(view) {
+        view.get('container').one('.snap-nav-detail').scrollIntoView(true);
+      });
+    });
+  };
+
+  var showAppReviews = function(req, res, next) {
+    var name = req.params.name;
+    var snap = new Y.iot.models.Snap({id: name});
+
+    snap.load(function() {
+      Y.iot.app.showView('snap', {
+        model: snap,
+        // get as model, wrap loads in promise, promise all -> showView
+        reviews: true
+      }, function(view) {
+        view.get('container').one('.snap-nav-detail').scrollIntoView(true);
+      });
+    });
+  };
+
+  var showAppSettings = function(req, res, next) {
+    var name = req.params.name;
+    var snap = new Y.iot.models.Snap({id: name});
+
+    snap.load(function() {
+      Y.iot.app.showView('snap', {
+        model: snap,
+        // get as model, wrap loads in promise, promise all -> showView
+        settings: true
+      }, function(view) {
+        view.get('container').one('.snap-nav-detail').scrollIntoView(true);
+      });
+    });
+  };
+
+  var showSettings = function(req, res, next) {
+    iot.core.settings.show();
+  };
+
+  var app = Y.namespace('iot').app = new Y.App({
     viewContainer: '.layout-app-container',
     serverRouting: true,
     transitions: false,
     views: {
       home: {
         preserve: true,
-        type: 'DEMO.VIEW.Home'
+        type: 'iot.views.home'
+      },
+      store: {
+        preserve: false,
+        type: 'iot.views.store.Index'
+      },
+      snap: {
+        preserve: false,
+        type: 'iot.views.snap.snap'
+      },
+      settings: {
+        preserve: false,
+        type: 'iot.views.settings'
       }
-    }
+    },
+    routes: [
+      {path: '/', callbacks: showHome},
+      {path: '/store', callbacks: showStore},
+      {path: '/apps/:name', callbacks: showApp},
+      {path: '/apps/:name/details', callbacks: showAppDetails},
+      {path: '/apps/:name/reviews', callbacks: showAppReviews},
+      {path: '/apps/:name/settings', callbacks: showAppSettings},
+      {path: '/system-settings', callbacks: showSettings}
+    ]
   });
 
-  app.on('installedChange', function(e) {
-    var data = e.newVal;
-    var template = mu.revive(Y.DEMO.MAIN.TMPL.ICONS.template);
-    var html = template({
-      icons: data
-    });
-    ns.setHTML(html);
-
-  });
-
-  var onInstalledList = function(id, res) {
-    app.set('installed', JSON.parse(res.response));
-  };
-
-  var xhrInstalled = function(req, res, next) {
-    Y.io('/mock-api/installed.json', {
-      on: {
-        success: onInstalledList,
-        failure: function(id, res) {
-          console.log('fail');
-          console.log(res);
-        }
-      }
-    });
-    next();
-  };
-
-  // routes
-  app.route('*', xhrInstalled);
-  app.route('/', function() {
-    this.showView('home');
-  });
-
-  app.route('*', function() {
-    window.alert('404');
-  });
   app.render().dispatch();
 
 }, '0.0.1', {
@@ -80,8 +111,10 @@ YUI.add('demo', function(Y) {
     'node',
     'app',
     'template',
-    'node-event-delegate',
-    'demo-view-home',
-    't-main-tmpl-icons'
+    'iot-views-home',
+    'iot-views-snap',
+    'iot-store',
+    'iot-settings',
+    'iot-models-snap'
   ]
 });

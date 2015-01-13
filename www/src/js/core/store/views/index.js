@@ -1,29 +1,23 @@
-YUI.add('core-store-views', function(Y) {
+YUI.add('iot-views-store', function(Y) {
   'use strict';
 
-  var StoreView = Y.Base.create('storeView', Y.View, [], {
+  var views = Y.namespace('iot.views.store');
+
+  views.Index = Y.Base.create('store', Y.View, [], {
 
     initializer: function() {
 
-      var VIEWS = Y.DEMO.CORE.STORE.VIEWS;
-
-      this.listView = new VIEWS.List({
-        list: this.get('list')
-        });
-      this.navView = new VIEWS.Nav({
-        nav: this.get('nav')
+      this.listView = new views.List({
+        modelList: this.get('modelList')
       });
 
       this.listView.addTarget(this);
-      this.navView.addTarget(this);
     },
 
     destructor: function() {
       this.listView.destroy();
-      this.navView.destroy();
 
       delete this.listView;
-      delete this.navView;
     },
 
     events: {
@@ -129,7 +123,6 @@ YUI.add('core-store-views', function(Y) {
     render: function() {
       document.body.scrollTop = document.documentElement.scrollTop = 0;
       var content = Y.one(Y.config.doc.createDocumentFragment());
-      content.append(this.navView.render().get('container'));
       content.append(this.listView.render().get('container'));
 
       this.get('container').setHTML(content);
@@ -138,13 +131,11 @@ YUI.add('core-store-views', function(Y) {
     }
   });
 
-  Y.namespace('DEMO.CORE.STORE.VIEWS').Store = StoreView;
-
 }, '0.0.1', {
   requires: [
     'view',
     'io-base',
-    'core-store-view-list',
-    'core-store-view-nav'
+    'iot-views-store-list',
+    'iot-views-store-nav'
   ]
 });

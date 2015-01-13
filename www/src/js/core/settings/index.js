@@ -1,20 +1,15 @@
-YUI.add('core-settings', function(Y) {
+YUI.add('iot-settings', function(Y) {
   'use strict';
 
-  var app = Y.DEMO.app;
-
-  var navData = [{
-    name: 'About'
-  }];
+  var app = Y.iot.app;
 
   var onSuccess = function(id, res) {
     var about = JSON.parse(res.responseText);
-    var view = new Y.DEMO.CORE.SETTINGS.VIEWS.Settings({
-      list: about,
-      nav: navData
+    var view = new Y.iot.views.settings.Index({
+      list: about
     });
 
-    app.showView(view, null, {
+    Y.iot.app.showView(view, null, {
       render: true
     });
 
@@ -31,11 +26,11 @@ YUI.add('core-settings', function(Y) {
     });
   };
 
-  Y.namespace('DEMO.CORE.SETTINGS').show = show;
+  Y.namespace('iot.core.settings').show = show;
 
 }, '0.0.1', {
   requires: [
     'io',
-    'core-settings-views'
+    'iot-views-settings'
   ]
 });

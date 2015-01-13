@@ -1,11 +1,12 @@
 // gulpfile.js - streaming build system for client side assets
 
 var autoprefixer = require('gulp-autoprefixer');
+var concat = require('gulp-concat');
 var csso = require('gulp-csso');
 var del = require('del');
 var gulp = require('gulp');
 var gutil = require('gulp-util');
-var concat = require('gulp-concat');
+var imagemin = require('gulp-imagemin');
 var jscs = require('gulp-jscs');
 var jshint = require('gulp-jshint');
 var precompile = require('./precompile.js');
@@ -18,11 +19,18 @@ var uglify = require('gulp-uglify');
 var paths = {
   js: ['src/js/**/*.js'],
   css: ['src/css/**/*.css'],
+  imgs: ['src/images/**/*'],
   templates: ['src/js/**/*.html'] // html to be compiled to js tmpl func
 };
 
 gulp.task('clean', function(cb) {
   del(['public'], cb);
+});
+
+gulp.task('image', function () {
+  gulp.src(paths.imgs)
+  .pipe(imagemin())
+  .pipe(gulp.dest('public/images'));
 });
 
 gulp.task('scripts', function() {
@@ -83,7 +91,8 @@ gulp.task('yui', function() {
 gulp.task('watch', function() {
   gulp.watch(paths.js, ['scripts']);
   gulp.watch(paths.css, ['styles']);
+  gulp.watch(paths.imgs, ['image']);
   gulp.watch(paths.templates, ['templates']);
 });
 
-gulp.task('default', ['watch', 'scripts', 'styles', 'templates']);
+gulp.task('default', ['watch', 'scripts', 'styles', 'image', 'templates']);
