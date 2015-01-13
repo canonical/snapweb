@@ -17,9 +17,9 @@ $e($v( pkg.publisher ))+
 $e($v( pkg.name ))+
 '" class="tt-w" data-tt="…">Checking status...</label>\n      <input disabled type="checkbox" id="'+
 $e($v( pkg.name ))+
-'" />\n      <div class="thing"></div>\n    </div>\n    <p><a href="/store/'+
+'" />\n      <div class="thing"></div>\n    </div>\n    <p><a href="/apps/'+
 $e($v( pkg.name ))+
-'/reviews">Reviews</a>\n    <p><a href="/store/'+
+'/reviews">Reviews</a>\n    <p><a href="/apps/'+
 $e($v( pkg.name ))+
 '/settings">Settings</a>\n  </div>\n  ';
  }); 
