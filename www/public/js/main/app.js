@@ -7,6 +7,19 @@ YUI.add('demo', function(Y) {
     this.showView('home');
   };
 
+  var search = function(req, res, next) {
+    var query = req.query.q || '';
+    var list = new Y.iot.models.SnapList({
+      url: YUI.Env.iot.search + '?q=' + query
+    });
+
+    list.load(function() {
+      Y.iot.app.showView('search', {
+        modelList: list
+      });
+    });
+  };
+
   var showStore = function(req, res, next) {
     iot.core.store.show();
   };
@@ -88,6 +101,10 @@ YUI.add('demo', function(Y) {
         preserve: false,
         type: 'iot.views.snap.snap'
       },
+      search: {
+        preserve: false,
+        type: 'iot.views.search'
+      },
       settings: {
         preserve: false,
         type: 'iot.views.settings'
@@ -96,6 +113,7 @@ YUI.add('demo', function(Y) {
     routes: [
       {path: '/', callbacks: showHome},
       {path: '/store', callbacks: showStore},
+      {path: '/search', callbacks: search},
       {path: '/apps/:name', callbacks: showApp},
       {path: '/apps/:name/details', callbacks: showAppDetails},
       {path: '/apps/:name/reviews', callbacks: showAppReviews},
@@ -104,6 +122,8 @@ YUI.add('demo', function(Y) {
     ]
   });
 
+  console.log(app);
+
   app.render().dispatch();
 
 }, '0.0.1', {
@@ -111,10 +131,13 @@ YUI.add('demo', function(Y) {
     'node',
     'app',
     'template',
+    'iot-config',
     'iot-views-home',
     'iot-views-snap',
+    'iot-views-search',
     'iot-store',
     'iot-settings',
-    'iot-models-snap'
+    'iot-models-snap',
+    'iot-models-snap-list'
   ]
 });

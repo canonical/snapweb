@@ -1,7 +1,10 @@
-YUI.add('demo-config', function(Y) {
+YUI.add('iot-config', function(Y) {
   'use strict';
-  Y.namespace('DEMO.CONFIG.SETTINGS').NETWORK = {
-    'post': '//snappy.local:8000/mock-api/settings'
-  };
+
+  var root = 'https://search.apps.staging.ubuntu.com/api/v1/';
+  YUI.Env.iot = {};
+  YUI.Env.iot.root = root;
+  YUI.Env.iot.search = root + 'search';
+  YUI.Env.iot.package = root + 'package/';
 
 });
