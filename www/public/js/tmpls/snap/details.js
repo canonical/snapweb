@@ -1,26 +1,26 @@
 YUI.add("t-tmpls-snap-details", function(Y) { Y.namespace("iot.tmpls.snap.details").compiled = function (Y, $e, data) {
-var $b='', $v=function (v){return v || v === 0 ? v : $b;}, $t='<!-- same model data available in details template -->\n  ';
+var $b='', $v=function (v){return v || v === 0 ? v : $b;}, $t='<div class="row details">\n  <div class="inner-wrapper">\n    ';
  Y.Object.each(this, function (value, key) { 
-$t+='\n  <p>'+
+$t+='\n    <p>'+
 $e($v( key ))+
-':\n  ';
+':</p>\n    ';
  if (Y.Lang.isObject(value)) { 
-$t+='\n  ';
+$t+='\n    ';
  Y.Object.each(value, function (value, key) { 
-$t+='\n  <p>'+
+$t+='\n    <p>'+
 $e($v( key ))+
 ': '+
 $e($v( value ))+
-'\n  ';
+'</p>\n    ';
  }); 
-$t+='\n  ';
+$t+='\n    ';
  } else { 
-$t+='\n  '+
+$t+='\n    '+
 $e($v( value ))+
-'\n  ';
+'\n    ';
  } 
-$t+='\n  ';
+$t+='\n    ';
  }); 
-$t+='\n';
+$t+='\n  </div>\n</div>';
 return $t;
 }});

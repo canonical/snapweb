@@ -1,11 +1,14 @@
-<!-- same model data available in details template -->
-  <% Y.Object.each(this, function (value, key) { %>
-  <p><%= key %>:
-  <% if (Y.Lang.isObject(value)) { %>
-  <% Y.Object.each(value, function (value, key) { %>
-  <p><%= key %>: <%= value %>
-  <% }); %>
-  <% } else { %>
-  <%= value %>
-  <% } %>
-  <% }); %>
+<div class="row details">
+  <div class="inner-wrapper">
+    <% Y.Object.each(this, function (value, key) { %>
+    <p><%= key %>:</p>
+    <% if (Y.Lang.isObject(value)) { %>
+    <% Y.Object.each(value, function (value, key) { %>
+    <p><%= key %>: <%= value %></p>
+    <% }); %>
+    <% } else { %>
+    <%= value %>
+    <% } %>
+    <% }); %>
+  </div>
+</div>
