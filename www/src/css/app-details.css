@@ -1,0 +1,36 @@
+.app-details.row-hero {
+	background: #fff;
+	box-shadow: 0 1px 1px 0 rgba(0,0,0,0.15);
+}
+
+.app__icon {
+	border-radius: 14px;
+	height: 96px;
+	width: 96px;
+	margin-bottom: 20px;
+	vertical-align: top;
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.app__details {
+	display: inline-block;
+	margin-top: -10px;
+}
+
+.app__details-title {
+	color: #333;
+	font-size: 2.8125em;
+	margin-bottom: 0;
+	display: inline-block;
+}
+
+.row.settings,
+.row.details,
+.row.reviews {
+	background: transparent;
+}
+
+.app__details-nav {
+	padding: 20px;
+}

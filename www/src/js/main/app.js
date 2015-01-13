@@ -26,8 +26,6 @@ YUI.add('demo', function(Y) {
     var name = req.params.name;
     var snap = new Y.iot.models.Snap({id: name});
 
-    console.log('yyy');
-
     snap.load(function() {
       Y.iot.app.showView('snap', {
         model: snap
