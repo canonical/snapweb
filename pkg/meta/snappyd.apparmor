@@ -29,6 +29,13 @@
   /usr/bin/snappy Uxr,
   /usr/bin/click Uxr,
 
+  # for the fat
+  /bin/uname Uxr,
+  /usr/bin/basename Uxr,
+  /usr/bin/realpath Uxr,
+  /usr/bin/dirname Uxr,
+  /bin/sed Uxr,
+
   # glob for the ro install directory
   @{CLICK_DIR}/@{APP_PKGNAME}/ r,
   @{CLICK_DIR}/@{APP_PKGNAME}/@{APP_VERSION}/ r,
