@@ -17,7 +17,7 @@ YUI.add('iot-views-search', function(Y) {
         return snap;
       });
       var content = this.template(listData);
-      this.get('container').setHTML(content);
+      Y.one('.search-results').setHTML(content);
 
       return this;
     }

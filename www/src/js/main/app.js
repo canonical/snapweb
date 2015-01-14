@@ -117,7 +117,24 @@ YUI.add('demo', function(Y) {
       {path: '/apps/:name/reviews', callbacks: showAppReviews},
       {path: '/apps/:name/settings', callbacks: showAppSettings},
       {path: '/system-settings', callbacks: showSettings}
-    ]
+    ],
+    events: {
+      '.search-form': {
+        'submit': function(e) {
+          e.preventDefault();
+          var query = e.target.one('input').get('value');
+          var list = new Y.iot.models.SnapList({
+            url: YUI.Env.iot.search + '?q=' + query
+          });
+
+          list.load(function() {
+            Y.iot.app.createView('search', {
+              modelList: list
+            }).render();
+          });
+        }
+      }
+    }
   });
 
   app.render().dispatch();
