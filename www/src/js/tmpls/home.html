@@ -1,5 +1,37 @@
 <div class="row row-hero">
-	<div class="inner-wrapper">
-		<h1>Welcome the snappy</h1>
-	</div>
+    <div class="inner-wrapper">
+        <section id="apps">
+            <% if (this.apps.length == 0) { %>
+            <div class="header--get-apps">
+                <h1>No apps installed</h1>
+                <p>Search the store to get some now</p>
+            </div>
+            <img class="icon--get-apps" src="/public/images/curly-arrow.png" alt="Get some apps here" />
+            <% } else { %>
+            <ul class="list--apps">
+                <% for (var index = 0; index < this.apps.length; index++) { %>
+                <% var app = this.apps[index] %>
+                <li class="three-col <% if (index % 4 == 3) { %>last-col<% } %>">
+                    <%
+                        var url;
+                        if (app.url) {
+                            url = app.url;
+                        } else {
+                            url = "/apps/" + app.name + "/settings";
+                        }
+                    %>
+                    <a href="<%= url %>" class="link--app">
+                        <img
+                            src="<%= app.iconUrl || '/public/images/app-placeholder.svg' %>"
+                            alt="<%= app.name %> icon"
+                            class="icon--app-icon"
+                        />
+                        <label class="label--app-name"><%= app.name %></label>
+                    </a>
+                </li>
+                <% } %>
+            </ul>
+            <% } %>
+        </section>
+    </div>
 </div>

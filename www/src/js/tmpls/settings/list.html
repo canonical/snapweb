@@ -1,7 +1,49 @@
-<div class="row">
-<div class="inner-wrapper">
-  <% Y.Object.each(this, function (val, key) { %>
-  <p><%= key %>: <%= val %>
-  <% }); %>
+<div class="row row-hero">
+    <div class="inner-wrapper">
+        <h1>System settings</h1>
+    </div>
 </div>
+<div class="row strip-white">
+    <div class="inner-wrapper">
+        <main class="seven-col append-one">
+            <h2><%= this.system.device_name %></h2>
+            <p class="intro">Current build: <%= this.system.current_build_number %></p>
+            <ul class="list">
+                <li>Last updated: <%= this.system.last_update_date %></li>
+                <li>Last checked: <%= this.system.last_check_date %></li>
+                <li>Channel: <%= this.system.channel_name %></li>
+                <li>Target build number: <%= this.system.target_build_number %></li>
+            </ul>
+        </main>
+    </div>
+</div>
+<div class="row">
+    <div class="inner-wrapper">
+        <section id="apps">
+            <h2>App settings</h2>
+            <% if (this.apps.length == 0) { %>
+            <div class="header--get-apps">
+                <h1>No apps installed</h1>
+                <p>Search the store to get some now</p>
+            </div>
+            <img class="icon--get-apps" src="/public/images/curly-arrow.png" alt="Get some apps here" />
+            <% } else { %>
+            <ul class="list--apps">
+                <% for (var index = 0; index < this.apps.length; index++) { %>
+                <% var app = this.apps[index] %>
+                <li class="two-col <% if (index % 6 == 5) { %>last-col<% } %>">
+                    <a href="/apps/<%= app.name %>/settings" class="link--app">
+                        <img
+                            src="<%= app.iconUrl || '/public/images/app-placeholder.svg' %>"
+                            alt="<%= app.name %> icon"
+                            class="icon--app-icon"
+                        />
+                        <label class="label--app-name"><%= app.name %></label>
+                    </a>
+                </li>
+                <% } %>
+            </ul>
+            <% } %>
+        </section>
+    <div class="inner-wrapper">
 </div>
