@@ -6,18 +6,18 @@
         <h1 class="app__details-title<% if(this.title.length > 25) { %> app__details-title--smaller<% } %>"><%= this.title %></h1>
         <p>By <a href="<%= this.support_url %>"><%= this.developer_name %></a></p>
         <ul class="app__details-list">
-          <li>Version: <%= this.version %></li>
-          <li>Size: <% if (this.binary_filesize > 1000) { %><%= this.binary_filesize / 1000 %> KB<% } else { %><%= this.binary_filesize %> Bits<% } %></li>
+          <li><strong>Version:</strong> <%= this.version %></li>
+          <li><strong>Size:</strong> <% if (this.binary_filesize > 1000) { %><%= this.binary_filesize / 1000 %> KB<% } else { %><%= this.binary_filesize %> Bits<% } %></li>
         </ul>
       </div>
-      <ul class="no-bullets">
+      <ul class="no-bullets inline">
         <% Y.Object.each(this.department, function (value, key) { %>
-          <li><%= value %></li>
+          <li><%= value %>, </li>
         <% }); %>
       </ul>
     </div>
     <div class="four-col last-col ">
-      <p>Rating: <%= this.ratings_average %>/5</p>
+      <p class="right">Rating: <%= this.ratings_average %>/5</p>
       <a href="" class="link-cta-positive">Install (<% if (this.price > 0) { %>&dollar;<%= this.price %><% } else { %>Free<% } %>)</a>
     </div>
   </div>
