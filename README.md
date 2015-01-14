@@ -74,7 +74,7 @@ To get a specific package:
 
 To start or stop a service from a package:
 
-    curl -w "\nstatus code: %{http_code}\n" -d '{"status":0}' http://localhost:8080/api/v1/packages/snappyd/snappyd
+    curl -w "\nstatus code: %{http_code}\n" -d '{"status":0}' http://localhost:8080/api/v1/packages/webdm/snappyd
 
 ### /api/v1/store
 
