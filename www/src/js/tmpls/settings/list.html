@@ -28,7 +28,7 @@
                 <% for (var index = 0; index < this.apps.length; index++) { %>
                 <% var app = this.apps[index] %>
                 <li class="two-col <% if (index % 6 == 5) { %>last-col<% } %>">
-                    <a href="/apps/<%= app.title %>/settings" class="link--app">
+                <a href="<%= app.url %>" class="link--app">
                         <img
                             src="<%= app.iconUrl || '/public/images/app-placeholder.svg' %>"
                             alt="<%= app.name %> icon"

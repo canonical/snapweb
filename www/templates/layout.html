@@ -77,7 +77,17 @@
   <!-- config -->
   <script src="/public/vendor/yui/yui/yui-min.js"></script>
   <script>
-    YUI.Env.demoUrl = 'http://192.168.122.44';
+    var url = 'http://192.168.234.192:8080';
+
+    YUI.Env.iot = {
+      url: url,
+      api: {
+        packages: url + '/api/v1/packages',
+        store: url + '/api/v1/store/package',
+        search: url + '/api/v1/store/search',
+        settings: url + '/api/v1/systemimage/'
+      }
+    };
   </script>
   <script src="/public/js/config/modules.js"></script>
   <script src="/public/js/config/apis.js"></script>
@@ -88,6 +98,8 @@
   <!-- models -->
   <script src="/public/js/models/snap.js"></script>
   <script src="/public/js/models/snap-list.js"></script>
+  <script src="/public/js/models/installed.js"></script>
+  <script src="/public/js/models/installed-list.js"></script>
   <!-- apps -->
   <script src="/public/js/core/store/views/snap.js"></script>
   <script src="/public/js/core/store/views/_body.js"></script>

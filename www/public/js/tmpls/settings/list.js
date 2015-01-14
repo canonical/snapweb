@@ -23,9 +23,9 @@ $t+='\n                <li class="two-col ';
  if (index % 6 == 5) { 
 $t+='last-col';
  } 
-$t+='">\n                    <a href="/apps/'+
-$e($v( app.title ))+
-'/settings" class="link--app">\n                        <img\n                            src="'+
+$t+='">\n                <a href="'+
+$e($v( app.url ))+
+'" class="link--app">\n                        <img\n                            src="'+
 $e($v( app.iconUrl || '/public/images/app-placeholder.svg' ))+
 '"\n                            alt="'+
 $e($v( app.name ))+

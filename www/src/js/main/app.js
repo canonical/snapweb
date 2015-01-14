@@ -4,7 +4,13 @@ YUI.add('demo', function(Y) {
   var iot = Y.namespace('iot');
 
   var showHome = function(req, res, next) {
-    this.showView('home');
+    var installed = new Y.iot.models.InstalledList();
+
+    installed.load(function() {
+      Y.iot.app.showView('home', {
+        modelList: installed
+      });
+    });
   };
 
   var search = function(req, res, next) {
@@ -78,7 +84,41 @@ YUI.add('demo', function(Y) {
   };
 
   var showSettings = function(req, res, next) {
-    iot.core.settings.show();
+    var installed = new Y.iot.models.InstalledList();
+
+    var getSnaps = new Y.Promise(function(resolve) {
+      installed.load(function() {
+        resolve(installed);
+      });
+    });
+
+    var getSettings = new Y.Promise(function(resolve, reject) {
+      Y.io(YUI.Env.iot.api.settings, {
+        on: {
+          success: function(id, response) {
+            resolve(JSON.parse(response.responseText));
+          },
+          failure: function() {
+            reject(new Error('getSettings request failed: ' + response));
+          }
+        }
+      });
+    });
+
+    Y.Promise.all([
+      getSnaps,
+      getSettings
+    ]).then(function(data) {
+
+      var view = new Y.iot.views.settings({
+        modelList: data[0],
+        settings: data[1]
+      });
+
+      Y.iot.app.showView(view, null, {
+        render: true
+      });
+    });
   };
 
   var app = Y.namespace('iot').app = new Y.App({
@@ -146,14 +186,17 @@ YUI.add('demo', function(Y) {
   requires: [
     'node',
     'app',
+    'promise',
     'template',
     'iot-config',
     'iot-views-home',
     'iot-views-snap',
     'iot-views-search',
+    'iot-views-settings',
     'iot-store',
-    'iot-settings',
     'iot-models-snap',
-    'iot-models-snap-list'
+    'iot-models-snap-list',
+    'iot-models-installed',
+    'iot-models-installed-list'
   ]
 });
