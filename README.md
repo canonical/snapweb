@@ -80,7 +80,10 @@ To start or stop a service from a package:
 
 This basically is a proxy to the store
 
-    curl http://localhost:8080/api/v1/store/
+    curl http://localhost:8080/api/v1/store/search
+    curl http://localhost:8080/api/v1/store/search?q=xkcd
+
+    curl http://localhost:8080/api/v1/store/package/com.ubuntu.snappy.xkcd-webserver
 
 ## Web Front End
 
