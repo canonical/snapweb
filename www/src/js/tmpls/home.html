@@ -12,14 +12,22 @@
                 <% for (var index = 0; index < this.apps.length; index++) { %>
                 <% var app = this.apps[index] %>
                 <li class="three-col <% if (index == this.apps.length - 1) { %>last-col<% } %>">
-                    <% if (app.url) { %><a href="<%= app.url %>"><% } %>
-                    <img
-                        src="<%= app.iconUrl || '/public/images/app-placeholder.svg' %>"
-                        alt="<%= app.name %> icon"
-                        class="icon--app-icon"
-                    />
-                    <label class="label--app-name"><%= app.name %></label>
-                    <% if (app.url) { %></a><% } %>
+                    <%
+                        var url;
+                        if (app.url) {
+                            url = app.url;
+                        } else {
+                            url = "/apps/" + app.name + "/settings";
+                        }
+                    %>
+                    <a href="<%= url %>">
+                        <img
+                            src="<%= app.iconUrl || '/public/images/app-placeholder.svg' %>"
+                            alt="<%= app.name %> icon"
+                            class="icon--app-icon"
+                        />
+                        <label class="label--app-name"><%= app.name %></label>
+                    </a>
                 </li>
                 <% } %>
             </ul>
