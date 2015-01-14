@@ -21,28 +21,6 @@ $t+='\n          <li class="smaller">'+
 $e($v( value ))+
 '</li>\n          ';
  }); 
-$t+='\n        </ul>\n      </div>\n    </aside>\n\n    <!--\n    ';
- Y.Object.each(this, function (value, key) { 
-$t+='\n    <p>'+
-$e($v( key ))+
-':</p>\n    ';
- if (Y.Lang.isObject(value)) { 
-$t+='\n    ';
- Y.Object.each(value, function (value, key) { 
-$t+='\n    <p>'+
-$e($v( key ))+
-': '+
-$e($v( value ))+
-'</p>\n    ';
- }); 
-$t+='\n    ';
- } else { 
-$t+='\n    '+
-$e($v( value ))+
-'\n    ';
- } 
-$t+='\n    ';
- }); 
-$t+='\n    -->\n  </div>\n</div>';
+$t+='\n        </ul>\n      </div>\n    </aside>\n  </div>\n</div>';
 return $t;
 }});
