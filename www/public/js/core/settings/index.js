@@ -18,11 +18,12 @@ mockAppData = [
         "description": "An Calculator application package",
         "maintainer": "Someone <someone@example.com",
         "name": "Calculator application",
+        "title": "com.ubuntu.developer.jonas.drange.ubuntu-calculator",
         "version": "0.3",
         "iconUrl": "https://developer.staging.ubuntu.com/site_media/appmedia/2014/02/calc.png",
         "services": [
             {
-                "name": "Calculator application",
+                "name": "Calculator333333 application",
                 "status": "active"
             }
         ],
@@ -33,7 +34,8 @@ mockAppData = [
     {
         "description": "This is meant as a fun example for a snappy package.\n",
         "maintainer": "Michael Vogt <michael.vogt@ubuntu.com>",
-        "name": "delta",
+        "name": "Delta",
+        "title": "com.ubuntu.developer.dobey.delta-web",
         "version": "0.3.1",
         "iconUrl": "https://developer.staging.ubuntu.com/site_media/appmedia/2014/05/delta-web.png",
         "services": [
@@ -47,6 +49,7 @@ mockAppData = [
         "description": "An TripAdvisor package",
         "maintainer": "Someone <someone@example.com",
         "name": "TripAdvisor",
+        "title": "ar.com.kirkner.tripadvisor",
         "version": "0.3",
         "iconUrl": "https://developer.staging.ubuntu.com/site_media/appmedia/2014/05/tripadvisor_1.png",
         "services": [
@@ -63,6 +66,7 @@ mockAppData = [
         "description": "This is meant as a fun example for a snappy package.\n",
         "maintainer": "Michael Vogt <michael.vogt@ubuntu.com>",
         "name": "CSR Racing",
+        "title": "com.ubuntu.developer.jonas.drange.csr-racing",
         "version": "0.3.1",
         "iconUrl": "https://developer.staging.ubuntu.com/site_media/appmedia/2014/05/racing.png",
         "services": [
