@@ -1,19 +1,17 @@
-<div class="package-list">
-  <% Y.Array.each(this, function (pkg) { %>
-  <div class="pkg" data-pkg="<%= pkg.name %>">
-    <img class="pkg-img" src="<%= pkg.icon_url %>" />
-    <p class="pkg-name">
-      <a href="/apps/<%= pkg.name %>"><%= pkg.name %></a>
-      <a class="pkg-show hide" href="" target="_blank">SHOW</a>
-    <p class="pkg-title"><%= pkg.title %>
-    <p class="pkg-publisher"><%= pkg.publisher %>
-    <div class="switch thinking">
-      <label for="<%= pkg.name %>" class="tt-w" data-tt="…">Checking status...</label>
-      <input disabled type="checkbox" id="<%= pkg.name %>" />
-      <div class="thing"></div>
-    </div>
-    <p><a href="/apps/<%= pkg.name %>/reviews">Reviews</a>
-    <p><a href="/apps/<%= pkg.name %>/settings">Settings</a>
+
+<div class="row">
+  <div class="inner-wrapper">
+    <ul class="search-results__list">
+      <% Y.Array.each(this, function (pkg) { %>
+      <li class="box search-results__list--item">
+      <a href="/apps/<%= pkg.name %>" class="search-results__tags--link"></a>
+      <div class="one-col"><img class="pkg-img" src="<%= pkg.icon_url %>" /></div>
+      <div class="four-col"><h3><%= pkg.title %></h3></div>
+      <div class="two-col"><%= pkg.publisher %></div>
+      <div class="five-col last-col"><%= pkg.title %></div>
+      </li>
+      <% }); %>
+    </ul>
   </div>
-  <% }); %>
 </div>
+
