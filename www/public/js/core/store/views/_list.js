@@ -10,14 +10,12 @@ YUI.add('iot-views-store-list', function(Y) {
 
     render: function() {
       var list = this.get('modelList');
-      var listData;
-      var content;
 
-      listData = list.map(function(snap) {
+      var listData = list.map(function(snap) {
         return snap;
       });
 
-      content = this.template(listData);
+      var content = this.template(listData);
       this.get('container').setHTML(content);
 
       return this;

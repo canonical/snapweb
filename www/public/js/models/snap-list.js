@@ -4,7 +4,7 @@ YUI.add('iot-models-snap-list', function(Y) {
   var SnapList = Y.Base.create('snaps', Y.LazyModelList, [Y.ModelSync.REST], {
     // By convention `Y.User`'s `root` will be used for the lists' URL.
     model: Y.iot.models.Snap,
-    url: 'https://search.apps.staging.ubuntu.com/api/v1/search',
+    url: YUI.Env.iot.api.search,
     parseIOResponse: function(res) {
       var data = JSON.parse(res.responseText);
 
