@@ -7,6 +7,19 @@ YUI.add('demo', function(Y) {
     this.showView('home');
   };
 
+  var search = function(req, res, next) {
+    var query = req.query.q || '';
+    var list = new Y.iot.models.SnapList({
+      url: YUI.Env.iot.search + '?q=' + query
+    });
+
+    list.load(function() {
+      Y.iot.app.showView('search', {
+        modelList: list
+      });
+    });
+  };
+
   var showStore = function(req, res, next) {
     iot.core.store.show();
   };
@@ -59,6 +72,11 @@ YUI.add('demo', function(Y) {
     });
   };
 
+  var hideSearch = function(req, res, next) {
+    Y.one('.search-results').setHTML();
+    next();
+  };
+
   var showSettings = function(req, res, next) {
     iot.core.settings.show();
   };
@@ -80,20 +98,46 @@ YUI.add('demo', function(Y) {
         preserve: false,
         type: 'iot.views.snap.snap'
       },
+      search: {
+        preserve: false,
+        type: 'iot.views.search'
+      },
       settings: {
         preserve: false,
         type: 'iot.views.settings'
       }
     },
+
     routes: [
-      {path: '/', callbacks: showHome},
-      {path: '/store', callbacks: showStore},
-      {path: '/apps/:name', callbacks: showApp},
-      {path: '/apps/:name/details', callbacks: showAppDetails},
-      {path: '/apps/:name/reviews', callbacks: showAppReviews},
-      {path: '/apps/:name/settings', callbacks: showAppSettings},
-      {path: '/system-settings', callbacks: showSettings}
-    ]
+      {path: '/', callbacks: [hideSearch, showHome]},
+      {path: '/store', callbacks: [hideSearch, showStore]},
+      {path: '/search', callbacks: [search]},
+      {path: '/apps/:name', callbacks: [hideSearch, showApp]},
+      {path: '/apps/:name/details', callbacks: [hideSearch, showAppDetails]},
+      {path: '/apps/:name/reviews', callbacks: [hideSearch, showAppReviews]},
+      {path: '/apps/:name/settings', callbacks: [hideSearch, showAppSettings]},
+      {path: '/system-settings', callbacks: [hideSearch, showSettings]}
+    ],
+
+    events: {
+      '.search-form button': {
+        'click': function(e) {
+          e.preventDefault();
+
+          var query = e.target.ancestor().one('input').get('value');
+          var list = new Y.iot.models.SnapList({
+            url: YUI.Env.iot.search + '?q=' + query
+          });
+
+          list.load(function() {
+            Y.iot.app.createView('search', {
+              modelList: list,
+              queryString: query
+            }).render();
+          });
+        }
+      }
+    }
   });
 
   app.render().dispatch();
@@ -103,10 +147,13 @@ YUI.add('demo', function(Y) {
     'node',
     'app',
     'template',
+    'iot-config',
     'iot-views-home',
     'iot-views-snap',
+    'iot-views-search',
     'iot-store',
     'iot-settings',
-    'iot-models-snap'
+    'iot-models-snap',
+    'iot-models-snap-list'
   ]
 });
