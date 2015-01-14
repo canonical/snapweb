@@ -18,7 +18,7 @@
 }
 .list--apps li {
     padding: 0 20px;
-    margin-bottom: 40px;
+    margin: 20px 0;
 }
 .label--app-name {
     font-weight: 400;
