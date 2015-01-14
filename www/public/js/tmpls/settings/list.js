@@ -24,7 +24,7 @@ $t+='\n                <li class="two-col ';
 $t+='last-col';
  } 
 $t+='">\n                    <a href="/apps/'+
-$e($v( app.name ))+
+$e($v( app.title ))+
 '/settings" class="link--app">\n                        <img\n                            src="'+
 $e($v( app.iconUrl || '/public/images/app-placeholder.svg' ))+
 '"\n                            alt="'+
