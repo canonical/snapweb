@@ -1,3 +1,11 @@
+.search-results {
+  position:absolute;
+  top:60px;
+  left:0;
+  right:0;
+  background-color:#fff;
+  z-index:100;
+}
 .search-results__list {
     margin-left: 0;
     margin-bottom: 1em;

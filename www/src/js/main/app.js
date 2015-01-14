@@ -78,6 +78,11 @@ YUI.add('demo', function(Y) {
     });
   };
 
+  var hideSearch = function(req, res, next) {
+    Y.one('.search-results').setHTML();
+    next();
+  };
+
   var showSettings = function(req, res, next) {
     iot.core.settings.show();
   };
@@ -108,28 +113,32 @@ YUI.add('demo', function(Y) {
         type: 'iot.views.settings'
       }
     },
+
     routes: [
-      {path: '/', callbacks: showHome},
-      {path: '/store', callbacks: showStore},
-      {path: '/search', callbacks: search},
-      {path: '/apps/:name', callbacks: showApp},
-      {path: '/apps/:name/details', callbacks: showAppDetails},
-      {path: '/apps/:name/reviews', callbacks: showAppReviews},
-      {path: '/apps/:name/settings', callbacks: showAppSettings},
-      {path: '/system-settings', callbacks: showSettings}
+      {path: '/', callbacks: [hideSearch, showHome]},
+      {path: '/store', callbacks: [hideSearch, showStore]},
+      {path: '/search', callbacks: [search]},
+      {path: '/apps/:name', callbacks: [hideSearch, showApp]},
+      {path: '/apps/:name/details', callbacks: [hideSearch, showAppDetails]},
+      {path: '/apps/:name/reviews', callbacks: [hideSearch, showAppReviews]},
+      {path: '/apps/:name/settings', callbacks: [hideSearch, showAppSettings]},
+      {path: '/system-settings', callbacks: [hideSearch, showSettings]}
     ],
+
     events: {
-      '.search-form': {
-        'submit': function(e) {
+      '.search-form button': {
+        'click': function(e) {
           e.preventDefault();
-          var query = e.target.one('input').get('value');
+
+          var query = e.target.ancestor().one('input').get('value');
           var list = new Y.iot.models.SnapList({
             url: YUI.Env.iot.search + '?q=' + query
           });
 
           list.load(function() {
             Y.iot.app.createView('search', {
-              modelList: list
+              modelList: list,
+              queryString: query
             }).render();
           });
         }
