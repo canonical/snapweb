@@ -87,7 +87,6 @@ YUI.add('iot-store', function(Y) {
 
   var show = function() {
 
-    Y.iot.app.showView('home');
     var list = new Y.iot.models.SnapList();
 
     list.load(function() {

@@ -1,40 +1,45 @@
 YUI.add('iot-views-search', function(Y) {
   'use strict';
 
-  var views = Y.namespace('iot.views.search');
+  var tmpls = Y.namespace('iot.tmpls');
+  var mu = new Y.Template();
 
-  views.Index = Y.Base.create('search', Y.View, [], {
+  var SearchView = Y.Base.create('search', Y.View, [], {
 
-    initializer: function() {
-
-      this.listView = new views.List({
-        list: this.get('list')
-      });
-
-      this.listView.addTarget(this);
-    },
-
-    destructor: function() {
-      this.listView.destroy();
-
-      delete this.listView;
-    },
+    template: mu.revive(tmpls.search.list.compiled),
 
     render: function() {
-      document.body.scrollTop = document.documentElement.scrollTop = 0;
-      var content = Y.one(Y.config.doc.createDocumentFragment());
-      content.append(this.listView.render().get('container'));
 
-      this.get('container').setHTML(content);
+      document.body.scrollTop = document.documentElement.scrollTop = 0;
+
+      var list = this.get('modelList');
+
+      var queryString = this.get('queryString');
+      console.log('searchString');
+
+      if (list.isEmpty()) {
+        Y.one('.search-results')
+        .setHTML('<p>Sorry, no results found for "' + queryString + '"');
+        return this;
+      }
+
+      var listData = list.map(function(snap) {
+        return snap;
+      });
+
+      var content = this.template(listData);
+      Y.one('.search-results').setHTML(content);
 
       return this;
     }
   });
 
+  Y.namespace('iot.views').search = SearchView;
+
 }, '0.0.1', {
   requires: [
     'view',
     'io-base',
-    'iot-views-search-list'
+    't-tmpls-search-list'
   ]
 });
