@@ -3305,6 +3305,7 @@ form.search-form input {
 }
 form.search-form input:focus {
     border-color: #dd4814;
+    background: #222;
 }
 form.search-form button[type=submit], form.search-form button[type=submit]:hover {
     position: absolute;

@@ -1,26 +1,22 @@
-<div class="row row-hero">
+<div class="row strip-trans">
     <div class="inner-wrapper">
         <h1>System settings</h1>
-    </div>
-</div>
-<div class="row strip-white">
-    <div class="inner-wrapper">
-        <main class="seven-col append-one">
+        <main class="eight-col box append-four">
             <h2><%= this.system.device_name %></h2>
-            <p class="intro">Current build: <%= this.system.current_build_number %></p>
             <ul class="list">
-                <li>Last updated: <%= this.system.last_update_date %></li>
-                <li>Last checked: <%= this.system.last_check_date %></li>
-                <li>Channel: <%= this.system.channel_name %></li>
-                <li>Target build number: <%= this.system.target_build_number %></li>
+                <li><strong>Current build:</strong> <%= this.system.current_build_number %></li>
+                <li><strong>Last updated:</strong> <%= this.system.last_update_date %></li>
+                <li><strong>Last checked:</strong> <%= this.system.last_check_date %></li>
+                <li><strong>Channel:</strong> <%= this.system.channel_name %></li>
+                <li><strong>Target build number:</strong> <%= this.system.target_build_number %></li>
             </ul>
         </main>
     </div>
 </div>
 <div class="row">
-    <div class="inner-wrapper">
+<div class="inner-wrapper">
         <section id="apps">
-            <h2>App settings</h2>
+            <h2>Installed app settings</h2>
             <% if (this.apps.length == 0) { %>
             <div class="header--get-apps">
                 <h1>No apps installed</h1>

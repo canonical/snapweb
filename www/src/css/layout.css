@@ -85,7 +85,7 @@ header form.search-form input[type="search"] {
   font-size: 14px;
 }
 header form.search-form input[type="search"]:focus {
-  width: 90%;
+  width: 50%;
 }
 
 header.banner nav.nav-primary ul li a.settings-link:link {
