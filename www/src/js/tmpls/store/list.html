@@ -4,16 +4,16 @@
     <ul class="search-results__list">
       <% Y.Array.each(this, function (pkg) { %>
       <li class="box search-results__list--item">
-      <a href="/apps/<%= pkg.name %>" class="search-results__tags--link"></a>
-      <div class="one-col"><img class="pkg-img" src="<%= pkg.icon_url %>" /></div>
-      <div class="four-col"><h3><%= pkg.title %></h3></div>
-      <div class="two-col"><%= pkg.publisher %></div>
-      <div class="five-col last-col">
-      <ul>
-      <% Y.Object.each(pkg.department, function (value, key) { %>
-          <li><%= value %></li>
-        <% }); %>
-      </ul>
+        <a href="/apps/<%= pkg.name %>" class="search-results__tags--link"></a>
+        <div class="one-col"><img class="pkg-img" src="<%= pkg.icon_url %>" /></div>
+        <div class="five-col"><h3><%= pkg.title %></h3></div>
+        <div class="three-col"><%= pkg.publisher %></div>
+        <div class="three-col last-col">
+          <% if (pkg.price == 0) { %>
+            Free
+          <% } else { %>
+            &dollar;<%= pkg.price %>
+          <% } %>
         </div>
       </li>
       <% }); %>

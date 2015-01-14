@@ -17,7 +17,7 @@ $t+='">\n                    ';
                         if (app.url) {
                             url = app.url;
                         } else {
-                            url = "/apps/" + app.name + "/settings";
+                            url = "/apps/" + app.title + "/settings";
                         }
                     
 $t+='\n                    <a href="'+
