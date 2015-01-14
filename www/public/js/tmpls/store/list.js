@@ -1,28 +1,18 @@
 YUI.add("t-tmpls-store-list", function(Y) { Y.namespace("iot.tmpls.store.list").compiled = function (Y, $e, data) {
-var $b='', $v=function (v){return v || v === 0 ? v : $b;}, $t='<div class="package-list">\n  ';
+var $b='', $v=function (v){return v || v === 0 ? v : $b;}, $t='\n<div class="row">\n  <div class="inner-wrapper">\n    <ul class="search-results__list">\n      ';
  Y.Array.each(this, function (pkg) { 
-$t+='\n  <div class="pkg" data-pkg="'+
+$t+='\n      <li class="box search-results__list--item">\n      <a href="/apps/'+
 $e($v( pkg.name ))+
-'">\n    <img class="pkg-img" src="'+
+'" class="search-results__tags--link"></a>\n      <div class="one-col"><img class="pkg-img" src="'+
 $e($v( pkg.icon_url ))+
-'" />\n    <p class="pkg-name">\n      <a href="/apps/'+
-$e($v( pkg.name ))+
-'">'+
-$e($v( pkg.name ))+
-'</a>\n      <a class="pkg-show hide" href="" target="_blank">SHOW</a>\n    <p class="pkg-title">'+
+'" /></div>\n      <div class="four-col"><h3>'+
 $e($v( pkg.title ))+
-'\n    <p class="pkg-publisher">'+
+'</h3></div>\n      <div class="two-col">'+
 $e($v( pkg.publisher ))+
-'\n    <div class="switch thinking">\n      <label for="'+
-$e($v( pkg.name ))+
-'" class="tt-w" data-tt="…">Checking status...</label>\n      <input disabled type="checkbox" id="'+
-$e($v( pkg.name ))+
-'" />\n      <div class="thing"></div>\n    </div>\n    <p><a href="/apps/'+
-$e($v( pkg.name ))+
-'/reviews">Reviews</a>\n    <p><a href="/apps/'+
-$e($v( pkg.name ))+
-'/settings">Settings</a>\n  </div>\n  ';
+'</div>\n      <div class="five-col last-col">'+
+$e($v( pkg.title ))+
+'</div>\n      </li>\n      ';
  }); 
-$t+='\n</div>\n';
+$t+='\n    </ul>\n  </div>\n</div>\n\n';
 return $t;
 }});
