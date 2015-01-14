@@ -11,7 +11,7 @@
             <ul class="list--apps">
                 <% for (var index = 0; index < this.apps.length; index++) { %>
                 <% var app = this.apps[index] %>
-                <li class="three-col <% if (index == this.apps.length - 1) { %>last-col<% } %>">
+                <li class="three-col <% if (index % 4 == 3) { %>last-col<% } %>">
                     <%
                         var url;
                         if (app.url) {
@@ -20,7 +20,7 @@
                             url = "/apps/" + app.name + "/settings";
                         }
                     %>
-                    <a href="<%= url %>">
+                    <a href="<%= url %>" class="link--app">
                         <img
                             src="<%= app.iconUrl || '/public/images/app-placeholder.svg' %>"
                             alt="<%= app.name %> icon"
