@@ -25,6 +25,26 @@
 	display: inline-block;
 }
 
+.app__details-list {
+	margin-left: 0;
+}
+
+.app__details-list li {
+	display: inline;
+	list-style: ;
+}
+
+.app__details-list li:after {
+	color: #888;
+	content: "•";
+	vertical-align: middle;
+	margin: 0 5px 0 10px;
+}
+
+.app__details-list li:last-of-type:after {
+	content: "";
+}
+
 .row.settings,
 .row.details,
 .row.reviews {

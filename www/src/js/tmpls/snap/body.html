@@ -5,7 +5,10 @@
       <div class="app__details">
         <h1 class="app__details-title<% if(this.title.length > 25) { %> app__details-title--smaller<% } %>"><%= this.title %></h1>
         <p>By <a href="<%= this.support_url %>"><%= this.developer_name %></a></p>
-        <p>Version <%= this.version %></p>
+        <ul class="app__details-list">
+          <li>Version: <%= this.version %></li>
+          <li>Size: <% if (this.binary_filesize > 1000) { %><%= this.binary_filesize / 1000 %> KB<% } else { %><%= this.binary_filesize %> Bits<% } %></li>
+        </ul>
       </div>
       <ul class="no-bullets">
         <% Y.Object.each(this.department, function (value, key) { %>
@@ -15,9 +18,7 @@
     </div>
     <div class="four-col last-col ">
       <p>Rating: <%= this.ratings_average %>/5</p>
-      <p><% if (this.price > 0) { %>&dollar;<%= this.price %><% } else { %>Free<% } %></p>
-      <a href="" class="link-cta-positive">Install</a>
-      <p class="right"><% if (this.binary_filesize > 1000) { %><%= this.binary_filesize / 1000 %> KB<% } else { %><%= this.binary_filesize %> Bits<% } %></p>
+      <a href="" class="link-cta-positive">Install (<% if (this.price > 0) { %>&dollar;<%= this.price %><% } else { %>Free<% } %>)</a>
     </div>
   </div>
 </div>

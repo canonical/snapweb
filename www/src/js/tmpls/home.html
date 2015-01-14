@@ -1,13 +1,16 @@
-<div class="row row-hero">
+<div class="row row-hero strip-trans">
     <div class="inner-wrapper">
         <section id="apps">
             <% if (this.apps.length == 0) { %>
-            <div class="header--get-apps">
-                <h1>No apps installed</h1>
-                <p>Search the store to get some now</p>
+            <div class="one-col">
+                <img src="/public/images/picto-upload-warmgrey.png" alt="Get some apps here" />
             </div>
-            <img class="icon--get-apps" src="/public/images/curly-arrow.png" alt="Get some apps here" />
+            <div class="ten-col last-col header--get-apps">
+                <h1>No apps installed</h1>
+                <p><a href="/store">Search the store to get some now &rsaquo;</a></p>
+            </div>
             <% } else { %>
+            <h1>Installed apps</h1>
             <ul class="list--apps">
                 <% for (var index = 0; index < this.apps.length; index++) { %>
                 <% var app = this.apps[index] %>

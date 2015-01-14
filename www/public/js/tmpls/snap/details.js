@@ -1,5 +1,5 @@
 YUI.add("t-tmpls-snap-details", function(Y) { Y.namespace("iot.tmpls.snap.details").compiled = function (Y, $e, data) {
-var $b='', $v=function (v){return v || v === 0 ? v : $b;}, $t='<div class="row details">\n  <div class="inner-wrapper">\n\n    <main class="seven-col append-one">\n\n      <div class="app__details-description">\n        <h2>Description</h2>\n        <p>'+
+var $b='', $v=function (v){return v || v === 0 ? v : $b;}, $t='<div class="row details">\n  <div class="inner-wrapper">\n\n    <main class="seven-col append-one">\n\n      <div class="app__details-description">\n        <h2>Details</h2>\n        <p>'+
 $e($v( this.description ))+
 '</p>\n      </div>\n\n      ';
  if (this.screenshot_urls.length > 0) { 
