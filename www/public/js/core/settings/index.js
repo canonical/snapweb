@@ -15,13 +15,14 @@ mockAppData = [
         }
     },
     {
-        "description": "An example package",
+        "description": "An Calculator application package",
         "maintainer": "Someone <someone@example.com",
-        "name": "example",
+        "name": "Calculator application",
         "version": "0.3",
+        "iconUrl": "https://developer.staging.ubuntu.com/site_media/appmedia/2014/02/calc.png",
         "services": [
             {
-                "name": "example",
+                "name": "Calculator application",
                 "status": "active"
             }
         ],
@@ -32,16 +33,49 @@ mockAppData = [
     {
         "description": "This is meant as a fun example for a snappy package.\n",
         "maintainer": "Michael Vogt <michael.vogt@ubuntu.com>",
-        "name": "xkcd-webserver",
+        "name": "delta",
         "version": "0.3.1",
+        "iconUrl": "https://developer.staging.ubuntu.com/site_media/appmedia/2014/05/delta-web.png",
         "services": [
             {
-                "name": "xkcd-webserver",
+                "name": "Delta",
+                "status": "active"
+            }
+        ]
+    },
+    {
+        "description": "An TripAdvisor package",
+        "maintainer": "Someone <someone@example.com",
+        "name": "TripAdvisor",
+        "version": "0.3",
+        "iconUrl": "https://developer.staging.ubuntu.com/site_media/appmedia/2014/05/tripadvisor_1.png",
+        "services": [
+            {
+                "name": "TripAdvisor",
+                "status": "active"
+            }
+        ],
+        "ports": {
+            "required": 8080
+        }
+    },
+    {
+        "description": "This is meant as a fun example for a snappy package.\n",
+        "maintainer": "Michael Vogt <michael.vogt@ubuntu.com>",
+        "name": "CSR Racing",
+        "version": "0.3.1",
+        "iconUrl": "https://developer.staging.ubuntu.com/site_media/appmedia/2014/05/racing.png",
+        "services": [
+            {
+                "name": "CSR Racing",
                 "status": "active"
             }
         ]
     }
 ]
+
+
+
 
 YUI.add('iot-settings', function(Y) {
   'use strict';
