@@ -1,19 +1,19 @@
-<div class="row">
-  <div class="inner-wrapper">
-    <div class="package-list">
-    <% Y.Array.each(this, function (pkg) { %>
-    <div class="pkg" data-pkg="<%= pkg.name %>">
-      <img class="pkg-img" src="<%= pkg.icon_url %>" />
-      <p class="pkg-name"><%= pkg.name %> <a class="pkg-show hide" href="" target="_blank">SHOW</a></p>
-      <p class="pkg-title"><%= pkg.title %></p>
-      <p class="pkg-publisher"><%= pkg.publisher %></p>
-      <div class="switch thinking">
-        <label for="<%= pkg.name %>" class="tt-w" data-tt="…">Checking status...</label>
-        <input disabled type="checkbox" id="<%= pkg.name %>" />
-        <div class="thing"></div>
-      </div>
+<div class="package-list">
+  <% Y.Array.each(this, function (pkg) { %>
+  <div class="pkg" data-pkg="<%= pkg.name %>">
+    <img class="pkg-img" src="<%= pkg.icon_url %>" />
+    <p class="pkg-name">
+      <a href="/apps/<%= pkg.name %>"><%= pkg.name %></a>
+      <a class="pkg-show hide" href="" target="_blank">SHOW</a>
+    <p class="pkg-title"><%= pkg.title %>
+    <p class="pkg-publisher"><%= pkg.publisher %>
+    <div class="switch thinking">
+      <label for="<%= pkg.name %>" class="tt-w" data-tt="…">Checking status...</label>
+      <input disabled type="checkbox" id="<%= pkg.name %>" />
+      <div class="thing"></div>
     </div>
-    <% }); %>
+    <p><a href="/apps/<%= pkg.name %>/reviews">Reviews</a>
+    <p><a href="/apps/<%= pkg.name %>/settings">Settings</a>
   </div>
-  </div>
+  <% }); %>
 </div>

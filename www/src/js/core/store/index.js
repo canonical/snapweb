@@ -3,27 +3,12 @@ YUI.add('iot-store', function(Y) {
 
   var app = Y.iot.app;
 
-  var navData = [{
-    name: 'All'
-  }, {
-    name: 'Installed'
-  }, {
-    name: 'Recommended'
-  }, {
-    name: 'Backup'
-  }, {
-    name: 'Media'
-  }, {
-    name: 'Utilities'
-  }];
-
   var onSuccess = function(id, res) {
     var snaps = JSON.parse(res.responseText);
     snaps = snaps._embedded['clickindex:package'];
 
     var view = new Y.iot.views.store.Index({
-      list: snaps,
-      nav: navData
+      list: snaps
     });
 
     Y.iot.app.showView(view, null, {
@@ -101,7 +86,20 @@ YUI.add('iot-store', function(Y) {
   };
 
   var show = function() {
-    Y.io('/mock-api/store.json', {
+
+    Y.iot.app.showView('home');
+    var list = new Y.iot.models.SnapList();
+
+    list.load(function() {
+      Y.iot.app.showView('store', {
+        modelList: list
+      }, {
+        callback: checkInstalled
+      });
+    });
+
+    /**
+    Y.io('/api/v1/store/', {
       on: {
         success: onSuccess,
         failure: function() {
@@ -109,6 +107,7 @@ YUI.add('iot-store', function(Y) {
         }
       }
     });
+    **/
   };
 
   Y.namespace('iot.core.store').show = show;
@@ -116,6 +115,7 @@ YUI.add('iot-store', function(Y) {
 }, '0.0.1', {
   requires: [
     'io',
-    'iot-views-store'
+    'iot-views-store',
+    'iot-models-snap-list'
   ]
 });

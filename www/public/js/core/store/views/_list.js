@@ -1,16 +1,23 @@
 YUI.add('iot-views-store-list', function(Y) {
 
-  var views = Y.namespace('iot.views');
   var tmpls = Y.namespace('iot.tmpls');
   var mu = new Y.Template();
-  var template = mu.revive(tmpls.store.list.compiled);
+
   var ListView = Y.Base.create('storeList', Y.View, [], {
 
     containerTemplate: '<main class=layout-content></main>',
-    template: template,
+    template: mu.revive(tmpls.store.list.compiled),
 
     render: function() {
-      var content = this.template(this.get('list'));
+      var list = this.get('modelList');
+      var listData;
+      var content;
+
+      listData = list.map(function(snap) {
+        return snap;
+      });
+
+      content = this.template(listData);
       this.get('container').setHTML(content);
 
       return this;
