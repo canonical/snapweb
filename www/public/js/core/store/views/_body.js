@@ -1,11 +1,11 @@
-YUI.add('iot-views-snap-details', function(Y) {
+YUI.add('iot-views-snap-body', function(Y) {
 
   var tmpls = Y.namespace('iot.tmpls');
   var mu = new Y.Template();
 
-  var DetailsView = Y.Base.create('detailsView', Y.View, [], {
+  var BodyView = Y.Base.create('bodyView', Y.View, [], {
 
-    template: mu.revive(tmpls.snap.details.compiled),
+    template: mu.revive(tmpls.snap.body.compiled),
 
     render: function() {
       var content = this.template(this.get('model').getAttrs());
@@ -15,12 +15,12 @@ YUI.add('iot-views-snap-details', function(Y) {
     }
   });
 
-  Y.namespace('iot.views.snap').details = DetailsView;
+  Y.namespace('iot.views.snap').body = BodyView;
 
 }, '0.0.1', {
   requires: [
     'view',
     'template',
-    't-tmpls-snap-details'
+    't-tmpls-snap-body'
   ]
 });

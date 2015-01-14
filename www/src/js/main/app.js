@@ -11,12 +11,64 @@ YUI.add('demo', function(Y) {
     iot.core.store.show();
   };
 
-  var showSettings = function(req, res, next) {
-    iot.core.settings.show();
+  var showApp = function(req, res, next) {
+    var name = req.params.name;
+    var snap = new Y.iot.models.Snap({id: name});
+
+    snap.load(function() {
+      Y.iot.app.showView('snap', {
+        model: snap
+      });
+    });
   };
 
-  var showSearch = function(req, res, next) {
-    iot.core.search.show();
+  var showAppDetails = function(req, res, next) {
+    var name = req.params.name;
+    var snap = new Y.iot.models.Snap({id: name});
+
+    console.log('yyy');
+
+    snap.load(function() {
+      Y.iot.app.showView('snap', {
+        model: snap
+      }, function(view) {
+        view.get('container').one('.snap-nav-detail').scrollIntoView(true);
+      });
+    });
+  };
+
+  var showAppReviews = function(req, res, next) {
+    var name = req.params.name;
+    var snap = new Y.iot.models.Snap({id: name});
+
+    snap.load(function() {
+      Y.iot.app.showView('snap', {
+        model: snap,
+        // get as model, wrap loads in promise, promise all -> showView
+        reviews: true
+      }, function(view) {
+        view.get('container').one('.snap-nav-detail').scrollIntoView(true);
+      });
+    });
+  };
+
+  var showAppSettings = function(req, res, next) {
+    var name = req.params.name;
+    var snap = new Y.iot.models.Snap({id: name});
+
+    snap.load(function() {
+      Y.iot.app.showView('snap', {
+        model: snap,
+        // get as model, wrap loads in promise, promise all -> showView
+        settings: true
+      }, function(view) {
+        view.get('container').one('.snap-nav-detail').scrollIntoView(true);
+      });
+    });
+  };
+
+  var showSettings = function(req, res, next) {
+    iot.core.settings.show();
   };
 
   var app = Y.namespace('iot').app = new Y.App({
@@ -30,22 +82,25 @@ YUI.add('demo', function(Y) {
       },
       store: {
         preserve: false,
-        type: 'iot.views.store'
+        type: 'iot.views.store.Index'
+      },
+      snap: {
+        preserve: false,
+        type: 'iot.views.snap.snap'
       },
       settings: {
         preserve: false,
         type: 'iot.views.settings'
-      },
-      search: {
-        preserve: true,
-        type: 'iot.views.search'
       }
     },
     routes: [
       {path: '/', callbacks: showHome},
       {path: '/store', callbacks: showStore},
-      {path: '/system-settings', callbacks: showSettings},
-      {path: '/q', callbacks: showSearch}
+      {path: '/apps/:name', callbacks: showApp},
+      {path: '/apps/:name/details', callbacks: showAppDetails},
+      {path: '/apps/:name/reviews', callbacks: showAppReviews},
+      {path: '/apps/:name/settings', callbacks: showAppSettings},
+      {path: '/system-settings', callbacks: showSettings}
     ]
   });
 
@@ -57,8 +112,9 @@ YUI.add('demo', function(Y) {
     'app',
     'template',
     'iot-views-home',
+    'iot-views-snap',
     'iot-store',
     'iot-settings',
-    'iot-search'
+    'iot-models-snap'
   ]
 });

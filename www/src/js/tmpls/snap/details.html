@@ -1,0 +1,11 @@
+<!-- same model data available in details template -->
+  <% Y.Object.each(this, function (value, key) { %>
+  <p><%= key %>:
+  <% if (Y.Lang.isObject(value)) { %>
+  <% Y.Object.each(value, function (value, key) { %>
+  <p><%= key %>: <%= value %>
+  <% }); %>
+  <% } else { %>
+  <%= value %>
+  <% } %>
+  <% }); %>
