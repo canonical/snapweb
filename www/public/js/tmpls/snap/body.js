@@ -11,25 +11,9 @@ $e($v( this.title ))+
 $e($v( this.support_url ))+
 '">'+
 $e($v( this.developer_name ))+
-'</a></p>\n        <p>Version '+
+'</a></p>\n        <ul class="app__details-list">\n          <li><strong>Version:</strong> '+
 $e($v( this.version ))+
-'</p>\n      </div>\n      <ul class="no-bullets">\n        ';
- Y.Object.each(this.department, function (value, key) { 
-$t+='\n          <li>'+
-$e($v( value ))+
-'</li>\n        ';
- }); 
-$t+='\n      </ul>\n    </div>\n    <div class="four-col last-col ">\n      <p>Rating: '+
-$e($v( this.ratings_average ))+
-'/5</p>\n      <p>';
- if (this.price > 0) { 
-$t+='&dollar;'+
-$e($v( this.price ))+
-'';
- } else { 
-$t+='Free';
- } 
-$t+='</p>\n      <a href="" class="link-cta-positive">Install</a>\n      <p class="right">';
+'</li>\n          <li><strong>Size:</strong> ';
  if (this.binary_filesize > 1000) { 
 $t+=''+
 $e($v( this.binary_filesize / 1000 ))+
@@ -39,7 +23,23 @@ $t+=''+
 $e($v( this.binary_filesize ))+
 ' Bits';
  } 
-$t+='</p>\n    </div>\n  </div>\n</div>\n\n<div class="row app__details-nav">\n  <div class="inner-wrapper">\n    <nav class="twelve-col no-margin-bottom ">\n      <ul class="inline-icons">\n        <li><a ';
+$t+='</li>\n        </ul>\n      </div>\n      <ul class="no-bullets inline">\n        ';
+ Y.Object.each(this.department, function (value, key) { 
+$t+='\n          <li>'+
+$e($v( value ))+
+', </li>\n        ';
+ }); 
+$t+='\n      </ul>\n    </div>\n    <div class="four-col last-col ">\n      <p class="right">Rating: '+
+$e($v( this.ratings_average ))+
+'/5</p>\n      <a href="" class="link-cta-positive">Install (';
+ if (this.price > 0) { 
+$t+='&dollar;'+
+$e($v( this.price ))+
+'';
+ } else { 
+$t+='Free';
+ } 
+$t+=')</a>\n    </div>\n  </div>\n</div>\n\n<div class="row app__details-nav">\n  <div class="inner-wrapper">\n    <nav class="twelve-col no-margin-bottom ">\n      <ul class="inline-icons">\n        <li><a ';
  if(/[^/]+$/.exec(location.pathname)[0] != 'reviews' && /[^/]+$/.exec(location.pathname)[0] != 'settings') { 
 $t+='class="active" ';
  } 

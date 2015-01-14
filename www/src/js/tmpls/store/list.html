@@ -8,7 +8,13 @@
       <div class="one-col"><img class="pkg-img" src="<%= pkg.icon_url %>" /></div>
       <div class="four-col"><h3><%= pkg.title %></h3></div>
       <div class="two-col"><%= pkg.publisher %></div>
-      <div class="five-col last-col"><%= pkg.title %></div>
+      <div class="five-col last-col">
+      <ul>
+      <% Y.Object.each(pkg.department, function (value, key) { %>
+          <li><%= value %></li>
+        <% }); %>
+      </ul>
+        </div>
       </li>
       <% }); %>
     </ul>
