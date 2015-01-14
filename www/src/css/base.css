@@ -3,7 +3,7 @@ html {
 }
 
 html, body {
-  font:normal 300 14px/1.5 Ubuntu, Arial, Helvetica, sans-serif;
+  font-family: Ubuntu, Arial, 'libra sans', sans-serif;
   background-color:white;
   color:#333;
 }
@@ -19,10 +19,6 @@ a {
 .cof {
   width:27px;
   height:27px;
-}
-
-button {
-  font:normal 300 14px/1.5 Ubuntu, Arial, Helvetica, sans-serif;
 }
 
 .pkg {

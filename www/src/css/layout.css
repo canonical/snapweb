@@ -70,6 +70,7 @@ header {
 
 .header-brand .logotype {
   margin-right: 1.3em;
+  padding-top: 3px;
   flex:1;
 }
 
