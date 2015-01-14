@@ -1,23 +1,35 @@
-<div class="snap">
-  <h1><%= this.title %></h1>
-  <!-- this is just to list out the props in the model for convienience -->
-  <img src="<%= this.icon_url %>" width="256" height="256" />
-  <% Y.Object.each(this, function (value, key) { %>
-  <p><%= key %>:
-  <% if (Y.Lang.isObject(value)) { %>
-  <% Y.Object.each(value, function (value, key) { %>
-  <p><%= key %>: <%= value %>
-  <% }); %>
-  <% } else { %>
-  <%= value %>
-  <% } %>
-  <% }); %>
-
+<div class="row-hero app-details">
+  <div class="inner-wrapper">
+    <div class="eight-col">
+      <img src="<%= this.icon_url %>" width="96" height="96" class="app__icon" />
+      <div class="app__details">
+        <h1 class="app__details-title<% if(this.title.length > 25) { %> app__details-title--smaller<% } %>"><%= this.title %></h1>
+        <p>By <a href="<%= this.support_url %>"><%= this.developer_name %></a></p>
+        <p>Version <%= this.version %></p>
+      </div>
+      <ul class="no-bullets">
+        <% Y.Object.each(this.department, function (value, key) { %>
+          <li><%= value %></li>
+        <% }); %>
+      </ul>
+    </div>
+    <div class="four-col last-col ">
+      <p>Rating: <%= this.ratings_average %>/5</p>
+      <p><% if (this.price > 0) { %>&dollar;<%= this.price %><% } else { %>Free<% } %></p>
+      <a href="" class="link-cta-positive">Install</a>
+      <p class="right"><% if (this.binary_filesize > 1000) { %><%= this.binary_filesize / 1000 %> KB<% } else { %><%= this.binary_filesize %> Bits<% } %></p>
+    </div>
+  </div>
 </div>
-<nav class="snap-nav-detail">
-<ul>
-  <li><a class="active" href="/apps/<%= this.name %>/details">Details</a></li>
-  <li><a href="/apps/<%= this.name %>/reviews">Reviews</a></li>
-  <li><a href="/apps/<%= this.name %>/settings">Settings</a></li>
-</ul>
-</nav>
+
+<div class="row app__details-nav">
+  <div class="inner-wrapper">
+    <nav class="twelve-col no-margin-bottom ">
+      <ul class="inline-icons">
+        <li><a <% if(/[^/]+$/.exec(location.pathname)[0] != 'reviews' && /[^/]+$/.exec(location.pathname)[0] != 'settings') { %>class="active" <% } %>href="/apps/<%= this.name %>/details">Details</a></li>
+        <li><a <% if (/[^/]+$/.exec(location.pathname)[0] == 'reviews') { %>class="active" <% } %>href="/apps/<%= this.name %>/reviews">Reviews</a></li>
+        <li><a <% if (/[^/]+$/.exec(location.pathname)[0] == 'settings') { %>class="active" <% } %>href="/apps/<%= this.name %>/settings">Settings</a></li>
+      </ul>
+    </nav>
+  </div>
+</div>

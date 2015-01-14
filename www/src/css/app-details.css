@@ -1,0 +1,71 @@
+.app-details.row-hero {
+	background: #fff;
+	box-shadow: 0 1px 1px 0 rgba(0,0,0,0.15);
+}
+
+.app__icon {
+	border-radius: 14px;
+	height: 96px;
+	width: 96px;
+	margin-bottom: 20px;
+	vertical-align: top;
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.app__details {
+	display: inline-block;
+	margin-top: -10px;
+}
+
+.app__details-title {
+	color: #333;
+	font-size: 2.8125em;
+	margin-bottom: 0;
+	display: inline-block;
+}
+
+.row.settings,
+.row.details,
+.row.reviews {
+	background: transparent;
+}
+
+.row.app__details-nav {
+	padding: 20px;
+}
+
+.app__details-title--smaller {
+	font-size: 2.5em;
+}
+
+.app__details-nav .inline-icons li {
+	margin-bottom: 0;
+}
+
+.app__details-nav a:link,
+.app__details-nav a:visited {
+	box-sizing: border-box;
+	color: #333;
+	border-bottom: 2px solid transparent;
+	padding: 20px;
+}
+
+.app__details-nav a:hover {
+	color: #dd4814;
+	text-decoration: none;
+}
+
+.app__details-nav a.active {
+	border-bottom: 2px solid #dd4814;
+}
+
+.app__details-screenshots .inline-icons img {
+	max-width: none;
+	max-height: none;
+	width: 100%;
+}
+
+.app__details-screenshots {
+	margin-top: 20px;
+}

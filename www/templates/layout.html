@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <title>{{ .Title }} | Snappy</title>
+    <title>Snappy</title>
 
     <meta charset="UTF-8" />
     <meta name="description" content="" />
@@ -14,7 +14,7 @@
 
     <link rel="stylesheet" href="/public/css/demo.css" />
   </head>
-  <body class="layout {{ .Title }}-page">
+  <body class="layout">
     <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
       <symbol id="cof" viewBox="0 0 20 20">
       <title>cof icon</title>
@@ -39,7 +39,7 @@
 
         <div class="search-wrapper">
           <ul>
-            <li><a href="store">Store</a></li>
+            <li><a href="/store">Store</a></li>
           </ul>
           <form class="search-form" action="/q" method="GET">
             <input type="search" name="text" class="form-text" placeholder="Search the store" value="" />
