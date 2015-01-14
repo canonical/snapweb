@@ -3,7 +3,7 @@
     <div class="eight-col">
       <img src="<%= this.icon_url %>" width="96" height="96" class="app__icon" />
       <div class="app__details">
-        <h1 class="app__details-title"><%= this.title %></h1>
+        <h1 class="app__details-title<% if(this.title.length > 25) { %> app__details-title--smaller<% } %>"><%= this.title %></h1>
         <p>By <a href="<%= this.support_url %>"><%= this.developer_name %></a></p>
         <p>Version <%= this.version %></p>
       </div>
@@ -15,19 +15,20 @@
     </div>
     <div class="four-col last-col ">
       <p>Rating: <%= this.ratings_average %>/5</p>
+      <p><% if (this.price > 0) { %>&dollar;<%= this.price %><% } else { %>Free<% } %></p>
       <a href="" class="link-cta-positive">Install</a>
-      <p class="right"><%= this.binary_filesize %> Bits</p>
+      <p class="right"><% if (this.binary_filesize > 1000) { %><%= this.binary_filesize / 1000 %> KB<% } else { %><%= this.binary_filesize %> Bits<% } %></p>
     </div>
   </div>
 </div>
 
 <div class="row app__details-nav">
   <div class="inner-wrapper">
-    <nav class="twelve-col ">
+    <nav class="twelve-col no-margin-bottom ">
       <ul class="inline-icons">
-        <li><a class="active" href="/apps/<%= this.name %>/details">Details</a></li>
-        <li><a href="/apps/<%= this.name %>/reviews">Reviews</a></li>
-        <li><a href="/apps/<%= this.name %>/settings">Settings</a></li>
+        <li><a <% if(/[^/]+$/.exec(location.pathname)[0] != 'reviews' && /[^/]+$/.exec(location.pathname)[0] != 'settings') { %>class="active" <% } %>href="/apps/<%= this.name %>/details">Details</a></li>
+        <li><a <% if (/[^/]+$/.exec(location.pathname)[0] == 'reviews') { %>class="active" <% } %>href="/apps/<%= this.name %>/reviews">Reviews</a></li>
+        <li><a <% if (/[^/]+$/.exec(location.pathname)[0] == 'settings') { %>class="active" <% } %>href="/apps/<%= this.name %>/settings">Settings</a></li>
       </ul>
     </nav>
   </div>
