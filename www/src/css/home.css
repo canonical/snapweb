@@ -8,7 +8,6 @@
     width: 100%;
     box-sizing: border-box;
     padding: 1em;
-    margin-bottom: 1em;
     border: 5px solid #EFEFEF;
     border-radius: 20px;
 }
@@ -19,10 +18,17 @@
 }
 .list--apps li {
     padding: 0 20px;
+    margin-bottom: 40px;
 }
 .label--app-name {
     font-weight: 400;
     text-align: center;
     display: block;
     cursor: pointer;
+}
+.link--app,
+.link--app:link,
+.link--app:hover,
+.link--app:visited {
+    color: #333333;
 }
