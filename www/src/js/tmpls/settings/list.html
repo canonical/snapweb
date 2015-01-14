@@ -1,7 +1,14 @@
 <div class="row">
-<div class="inner-wrapper">
-  <% Y.Object.each(this, function (val, key) { %>
-  <p><%= key %>: <%= val %>
-  <% }); %>
-</div>
+	<div class="inner-wrapper">
+		<main class="seven-col append-one">
+			<h1><%= this.device_name %></h1>
+			<p class="intro">Current build: <%= this.current_build_number %></p>
+			<ul class="list">
+				<li>Last updated: <%= this.last_update_date %></li>
+				<li>Last checked: <%= this.last_check_date %></li>
+				<li>Channel: <%= this.channel_name %></li>
+				<li>Target build number: <%= this.target_build_number %></li>
+			</ul>
+		</main>
+	</div>
 </div>
