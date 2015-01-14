@@ -8,7 +8,7 @@ $t+='\n            <ul class="list--apps">\n                ';
 $t+='\n                ';
  var app = this.apps[index] 
 $t+='\n                <li class="three-col ';
- if (index == this.apps.length - 1) { 
+ if (index % 4 == 3) { 
 $t+='last-col';
  } 
 $t+='">\n                    ';
@@ -22,7 +22,7 @@ $t+='">\n                    ';
                     
 $t+='\n                    <a href="'+
 $e($v( url ))+
-'">\n                        <img\n                            src="'+
+'" class="link--app">\n                        <img\n                            src="'+
 $e($v( app.iconUrl || '/public/images/app-placeholder.svg' ))+
 '"\n                            alt="'+
 $e($v( app.name ))+
