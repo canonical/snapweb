@@ -26,13 +26,9 @@ YUI.add('demo', function(Y) {
     var name = req.params.name;
     var snap = new Y.iot.models.Snap({id: name});
 
-    console.log('yyy');
-
     snap.load(function() {
       Y.iot.app.showView('snap', {
         model: snap
-      }, function(view) {
-        view.get('container').one('.snap-nav-detail').scrollIntoView(true);
       });
     });
   };
@@ -46,8 +42,6 @@ YUI.add('demo', function(Y) {
         model: snap,
         // get as model, wrap loads in promise, promise all -> showView
         reviews: true
-      }, function(view) {
-        view.get('container').one('.snap-nav-detail').scrollIntoView(true);
       });
     });
   };
@@ -61,8 +55,6 @@ YUI.add('demo', function(Y) {
         model: snap,
         // get as model, wrap loads in promise, promise all -> showView
         settings: true
-      }, function(view) {
-        view.get('container').one('.snap-nav-detail').scrollIntoView(true);
       });
     });
   };
