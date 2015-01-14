@@ -2,7 +2,7 @@
 
 set -e
 
-build() {
+gobuild() {
     arch=$1
 
     case $arch in
@@ -37,8 +37,8 @@ cd $builddir
 sed -i 's/\(architecture: \)UNKNOWN_ARCH/\1[amd64, armhf]/' \
     $builddir/meta/package.yaml
 
-build arm
-build amd64
+gobuild arm
+gobuild amd64
 
 cd "$orig_pwd"
 
