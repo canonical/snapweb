@@ -29,8 +29,6 @@ YUI.add('demo', function(Y) {
     snap.load(function() {
       Y.iot.app.showView('snap', {
         model: snap
-      }, function(view) {
-
       });
     });
   };
@@ -44,8 +42,6 @@ YUI.add('demo', function(Y) {
         model: snap,
         // get as model, wrap loads in promise, promise all -> showView
         reviews: true
-      }, function(view) {
-
       });
     });
   };
@@ -59,8 +55,6 @@ YUI.add('demo', function(Y) {
         model: snap,
         // get as model, wrap loads in promise, promise all -> showView
         settings: true
-      }, function(view) {
-
       });
     });
   };
