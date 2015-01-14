@@ -1,5 +1,37 @@
 <div class="row details">
   <div class="inner-wrapper">
+
+    <main class="seven-col append-one">
+
+      <div class="app__details-description">
+        <h2>Description</h2>
+        <p><%= this.description %></p>
+      </div>
+
+      <% if (this.screenshot_urls.length > 0) { %>
+      <div class="app__details-screenshots">
+        <h3>Screenshots</h3>
+        <ul class="inline">
+          <% Y.Object.each(this.screenshot_urls, function (value, key) { %>
+            <li class="three-col<% if(key % 2) { %> last-col<% } %>"><img src="<%= value %>" /></li>
+          <% }); %>
+        </ul>
+      </div>
+      <% } %>
+    </main>
+
+    <aside class="four-col last-col">
+      <div class="frameworks box four-col">
+        <h3>Frameworks</h3>
+        <ul class="no-bullets">
+          <% Y.Object.each(this.click_framework, function (value, key) { %>
+          <li class="smaller"><%= value %></li>
+          <% }); %>
+        </ul>
+      </div>
+    </aside>
+
+    <!--
     <% Y.Object.each(this, function (value, key) { %>
     <p><%= key %>:</p>
     <% if (Y.Lang.isObject(value)) { %>
@@ -10,5 +42,6 @@
     <%= value %>
     <% } %>
     <% }); %>
+    -->
   </div>
 </div>

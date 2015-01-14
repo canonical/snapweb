@@ -30,7 +30,7 @@ YUI.add('demo', function(Y) {
       Y.iot.app.showView('snap', {
         model: snap
       }, function(view) {
-        view.get('container').one('.snap-nav-detail').scrollIntoView(true);
+        //view.get('container').one('.snap-nav-detail').scrollIntoView(true);
       });
     });
   };
@@ -45,7 +45,7 @@ YUI.add('demo', function(Y) {
         // get as model, wrap loads in promise, promise all -> showView
         reviews: true
       }, function(view) {
-        view.get('container').one('.snap-nav-detail').scrollIntoView(true);
+        //view.get('container').one('.snap-nav-detail').scrollIntoView(true);
       });
     });
   };
@@ -60,7 +60,7 @@ YUI.add('demo', function(Y) {
         // get as model, wrap loads in promise, promise all -> showView
         settings: true
       }, function(view) {
-        view.get('container').one('.snap-nav-detail').scrollIntoView(true);
+        //view.get('container').one('.snap-nav-detail').scrollIntoView(true);
       });
     });
   };
