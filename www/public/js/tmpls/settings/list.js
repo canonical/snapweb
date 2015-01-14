@@ -1,17 +1,17 @@
 YUI.add("t-tmpls-settings-list", function(Y) { Y.namespace("iot.tmpls.settings.list").compiled = function (Y, $e, data) {
-var $b='', $v=function (v){return v || v === 0 ? v : $b;}, $t='<div class="row row-hero">\n    <div class="inner-wrapper">\n        <h1>System settings</h1>\n    </div>\n</div>\n<div class="row strip-white">\n    <div class="inner-wrapper">\n        <main class="seven-col append-one">\n            <h2>'+
+var $b='', $v=function (v){return v || v === 0 ? v : $b;}, $t='<div class="row strip-trans">\n    <div class="inner-wrapper">\n        <h1>System settings</h1>\n        <main class="eight-col box append-four">\n            <h2>'+
 $e($v( this.system.device_name ))+
-'</h2>\n            <p class="intro">Current build: '+
+'</h2>\n            <ul class="list">\n                <li><strong>Current build:</strong> '+
 $e($v( this.system.current_build_number ))+
-'</p>\n            <ul class="list">\n                <li>Last updated: '+
+'</li>\n                <li><strong>Last updated:</strong> '+
 $e($v( this.system.last_update_date ))+
-'</li>\n                <li>Last checked: '+
+'</li>\n                <li><strong>Last checked:</strong> '+
 $e($v( this.system.last_check_date ))+
-'</li>\n                <li>Channel: '+
+'</li>\n                <li><strong>Channel:</strong> '+
 $e($v( this.system.channel_name ))+
-'</li>\n                <li>Target build number: '+
+'</li>\n                <li><strong>Target build number:</strong> '+
 $e($v( this.system.target_build_number ))+
-'</li>\n            </ul>\n        </main>\n    </div>\n</div>\n<div class="row">\n    <div class="inner-wrapper">\n        <section id="apps">\n            <h2>App settings</h2>\n            ';
+'</li>\n            </ul>\n        </main>\n    </div>\n</div>\n<div class="row">\n<div class="inner-wrapper">\n        <section id="apps">\n            <h2>Installed app settings</h2>\n            ';
  if (this.apps.length == 0) { 
 $t+='\n            <div class="header--get-apps">\n                <h1>No apps installed</h1>\n                <p>Search the store to get some now</p>\n            </div>\n            <img class="icon--get-apps" src="/public/images/curly-arrow.png" alt="Get some apps here" />\n            ';
  } else { 

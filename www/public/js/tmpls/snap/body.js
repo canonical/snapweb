@@ -11,9 +11,9 @@ $e($v( this.title ))+
 $e($v( this.support_url ))+
 '">'+
 $e($v( this.developer_name ))+
-'</a></p>\n        <ul class="app__details-list">\n          <li>Version: '+
+'</a></p>\n        <ul class="app__details-list">\n          <li><strong>Version:</strong> '+
 $e($v( this.version ))+
-'</li>\n          <li>Size: ';
+'</li>\n          <li><strong>Size:</strong> ';
  if (this.binary_filesize > 1000) { 
 $t+=''+
 $e($v( this.binary_filesize / 1000 ))+
@@ -23,13 +23,13 @@ $t+=''+
 $e($v( this.binary_filesize ))+
 ' Bits';
  } 
-$t+='</li>\n        </ul>\n      </div>\n      <ul class="no-bullets">\n        ';
+$t+='</li>\n        </ul>\n      </div>\n      <ul class="no-bullets inline">\n        ';
  Y.Object.each(this.department, function (value, key) { 
 $t+='\n          <li>'+
 $e($v( value ))+
-'</li>\n        ';
+', </li>\n        ';
  }); 
-$t+='\n      </ul>\n    </div>\n    <div class="four-col last-col ">\n      <p>Rating: '+
+$t+='\n      </ul>\n    </div>\n    <div class="four-col last-col ">\n      <p class="right">Rating: '+
 $e($v( this.ratings_average ))+
 '/5</p>\n      <a href="" class="link-cta-positive">Install (';
  if (this.price > 0) { 

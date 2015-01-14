@@ -9,9 +9,13 @@ $e($v( pkg.icon_url ))+
 $e($v( pkg.title ))+
 '</h3></div>\n      <div class="two-col">'+
 $e($v( pkg.publisher ))+
-'</div>\n      <div class="five-col last-col">'+
-$e($v( pkg.title ))+
-'</div>\n      </li>\n      ';
+'</div>\n      <div class="five-col last-col">\n      <ul>\n      ';
+ Y.Object.each(pkg.department, function (value, key) { 
+$t+='\n          <li>'+
+$e($v( value ))+
+'</li>\n        ';
+ }); 
+$t+='\n      </ul>\n        </div>\n      </li>\n      ';
  }); 
 $t+='\n    </ul>\n  </div>\n</div>\n\n';
 return $t;
