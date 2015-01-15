@@ -11,11 +11,11 @@ $e($v( this.system.last_check_date ))+
 $e($v( this.system.channel_name ))+
 '</li>\n                <li><strong>Target build number:</strong> '+
 $e($v( this.system.target_build_number ))+
-'</li>\n            </ul>\n        </main>\n    </div>\n</div>\n<div class="row">\n<div class="inner-wrapper">\n        <section id="apps">\n            <h2>Installed app settings</h2>\n            ';
+'</li>\n            </ul>\n        </main>\n    </div>\n</div>\n<div class="row">\n<div class="inner-wrapper">\n        <section id="apps">\n            ';
  if (this.apps.length == 0) { 
-$t+='\n            <div class="header--get-apps">\n                <h1>No apps installed</h1>\n                <p>Search the store to get some now</p>\n            </div>\n            <img class="icon--get-apps" src="/public/images/curly-arrow.png" alt="Get some apps here" />\n            ';
+$t+='\n            <div class="one-col">\n                <img src="/public/images/picto-upload-warmgrey.png" alt="Get some apps here" />\n            </div>\n            <div class="ten-col last-col header--get-apps">\n                <h1>No apps installed</h1>\n                <p><a href="/store">Visit the store to get some &rsaquo;</a></p>\n            </div>\n            ';
  } else { 
-$t+='\n            <ul class="list--apps">\n                ';
+$t+='\n            <h2>Installed app settings</h2>\n            <ul class="list--apps">\n                ';
  for (var index = 0; index < this.apps.length; index++) { 
 $t+='\n                ';
  var app = this.apps[index] 
