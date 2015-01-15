@@ -3,7 +3,11 @@ package click
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
+	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/gorilla/mux"
 
@@ -29,6 +33,42 @@ func (h *handler) getAll(w http.ResponseWriter, r *http.Request) {
 		if err := enc.Encode(pkgs); err != nil {
 			fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
 		}
+	}
+}
+
+func (h *handler) getIcon(w http.ResponseWriter, r *http.Request) {
+	db := NewDatabase(h.conn)
+
+	// Get the Key.
+	vars := mux.Vars(r)
+	pkgName := vars["pkg"]
+
+	pkgs, err := db.GetPackages(pkgName)
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
+
+	iconPath := filepath.Join("/apps", pkgName, "current", pkgs[0].Icon)
+
+	icon, err := os.Open(iconPath)
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
+	defer icon.Close()
+
+	// all icons are SVGs
+	if strings.HasPrefix(iconPath, "png") {
+		w.Header().Set("Content-Type", "image/png")
+	} else if strings.HasPrefix(iconPath, "svg") {
+		w.Header().Set("Content-Type", "image/svg+xml")
+	}
+
+	//http.ServeContent(w, r, "icon", time.Time{}, icon)
+	if _, err := io.Copy(w, icon); err != nil {
+		http.NotFound(w, r)
+		return
 	}
 }
 
@@ -175,6 +215,9 @@ func (h *handler) MakeMuxer(prefix string) http.Handler {
 
 	// get specific package
 	m.HandleFunc("/{pkg}", h.get).Methods("GET")
+
+	// get specific package icon.
+	m.HandleFunc("/{pkg}/icon", h.getIcon).Methods("GET")
 
 	return m
 }
