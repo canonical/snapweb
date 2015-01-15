@@ -11,7 +11,6 @@ YUI.add('iot-views-snap-body', function(Y) {
       var model = this.get('model');
       var installed = model.get('installed');
       var name = model.get('name').replace('com.ubuntu.snappy.', '');
-      console.log(name + ' is ' + installed);
       var content = this.template(this.get('model').getAttrs());
       this.get('container').setHTML(content);
 
@@ -29,7 +28,6 @@ YUI.add('iot-views-snap-body', function(Y) {
       var model = this.get('model');
       var installed = model.get('installed');
       var name = model.get('name').replace('com.ubuntu.snappy.', '');
-      console.log(name + ' is ' + installed);
       e.target.addClass('thinking');
       if (installed) {
         this.removeSnap(name);
@@ -39,7 +37,6 @@ YUI.add('iot-views-snap-body', function(Y) {
     },
 
     installSnap: function(name) {
-      console.log('installSnap');
       Y.io('/api/v1/packages/', {
         method: 'POST',
         data: '{"package":"' + name + '"}',
@@ -55,7 +52,6 @@ YUI.add('iot-views-snap-body', function(Y) {
     },
 
     removeSnap: function(name) {
-      console.log('removeSnap');
       Y.io('/api/v1/packages/' + name, {
         method: 'DELETE',
         on: {
@@ -72,13 +68,10 @@ YUI.add('iot-views-snap-body', function(Y) {
       model.set('installed', !installed);
       var btn = this.get('container').one('.link-cta-positive');
       if (installed) {
-        console.log('Uninstall');
-        btn.set('text', 'Uninstall');
+        btn.set('text', 'Uninstall').removeClass('thinking');
       } else {
-        console.log('Install');
-        btn.set('text', 'Install');
+        btn.set('text', 'Install').removeClass('thinking');
       }
-      btn.removeClass('thinking');
     },
 
     onInstallFailure: function() {

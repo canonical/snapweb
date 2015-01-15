@@ -33,7 +33,7 @@ $t+='\n      </ul>\n    </div>\n    <div class="four-col last-col ">\n      <p c
 $e($v( this.ratings_average ))+
 '/5</p>\n      ';
  if (this.installed) { 
-$t+='\n      <a href="" class="link-cta-positive">Uninstall (';
+$t+='\n      <a class="link-cta-positive">Uninstall (';
  if (this.price > 0) { 
 $t+='&dollar;'+
 $e($v( this.price ))+
@@ -43,7 +43,7 @@ $t+='Free';
  } 
 $t+=')</a>\n      ';
  } else { 
-$t+='\n      <a href="" class="link-cta-positive">Install</a>\n      ';
+$t+='\n      <a class="link-cta-positive">Install</a>\n      ';
  } 
 $t+='\n    </div>\n  </div>\n</div>\n\n<div class="row app__details-nav">\n  <div class="inner-wrapper">\n    <nav class="twelve-col no-margin-bottom ">\n      <ul class="inline-icons">\n        <li><a ';
  if(/[^/]+$/.exec(location.pathname)[0] != 'reviews' && /[^/]+$/.exec(location.pathname)[0] != 'settings') { 
