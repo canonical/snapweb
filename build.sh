@@ -60,11 +60,11 @@ prov_avahi() {
 
     echo Fetching $avahi_url
     # Download avahi
-    [ -f "$avahi_dir/$avahi_deb" ] || wget -q --show-progress -P $avahi_dir -c $avahi_url
+    [ -f "$avahi_dir/$avahi_deb" ] || wget -q -P $avahi_dir -c $avahi_url
 
     echo Fetching $libdaemon0_url
     # Download libdaemon0
-    [ -f "$avahi_dir/$libdaemon0_deb" ] || wget -q --show-progress -P $avahi_dir -c $libdaemon0_url
+    [ -f "$avahi_dir/$libdaemon0_deb" ] || wget -q -P $avahi_dir -c $libdaemon0_url
 
     # Extract
     dpkg-deb -x $avahi_dir/$avahi_deb $avahi_dir/avahi
