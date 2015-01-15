@@ -1,7 +1,7 @@
 YUI.add("t-tmpls-home", function(Y) { Y.namespace("iot.tmpls.home").compiled = function (Y, $e, data) {
 var $b='', $v=function (v){return v || v === 0 ? v : $b;}, $t='<div class="row row-hero strip-trans">\n    <div class="inner-wrapper">\n        <section id="apps">\n            ';
  if (this.apps.length == 0) { 
-$t+='\n            <div class="one-col">\n                <img src="/public/images/picto-upload-warmgrey.png" alt="Get some apps here" />\n            </div>\n            <div class="ten-col last-col header--get-apps">\n                <h1>No apps installed</h1>\n                <p><a href="/store">Search the store to get some now &rsaquo;</a></p>\n            </div>\n            ';
+$t+='\n            <div class="one-col">\n                <img src="/public/images/picto-upload-warmgrey.png" alt="Get some apps here" />\n            </div>\n            <div class="ten-col last-col header--get-apps">\n                <h1>No apps installed</h1>\n                <p><a href="/store">Visit the store to get some &rsaquo;</a></p>\n            </div>\n            ';
  } else { 
 $t+='\n            <h1>Installed apps</h1>\n            <ul class="list--apps">\n                ';
  for (var index = 0; index < this.apps.length; index++) { 
