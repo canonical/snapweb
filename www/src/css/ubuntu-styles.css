@@ -3481,7 +3481,8 @@ a.link-cta-positive, a.link-cta-negative {
     padding: 8px 14px;
     text-align: center;
     transition: background .2s;
-    width: 100%
+    width: 100%;
+    cursor: pointer;
 }
 a.link-cta-positive:hover, a:hover.link-cta-negative {
     background-color: #ae3910;

@@ -20,6 +20,9 @@ YUI.add('iot-views-snap-body', function(Y) {
     events: {
       '.link-cta-positive': {
         click: 'install'
+      },
+      '.link-cta-negative': {
+        click: 'install'
       }
     },
 
@@ -28,12 +31,13 @@ YUI.add('iot-views-snap-body', function(Y) {
       var model = this.get('model');
       var installed = model.get('installed');
       var name = model.get('name').replace('com.ubuntu.snappy.', '');
+      this.get('container').one('.status').set('text', '');
       e.target.addClass('thinking');
       if (installed) {
-        console.log('snap is installed, removing...');
+        e.target.set('text', 'Uninstalling...');
         this.removeSnap(name);
       } else {
-        console.log('snap is uninstalled, installing...');
+        e.target.set('text', 'Installing...');
         this.installSnap(name);
       }
     },
@@ -68,17 +72,24 @@ YUI.add('iot-views-snap-body', function(Y) {
       var model = this.get('model');
       var installed = !model.get('installed');
       model.set('installed', installed);
-      console.log('onInstallSuccess: installed state: ' + installed);
-      var btn = this.get('container').one('.link-cta-positive');
+      var btn = null;
+      var status = this.get('container').one('.status');
       if (installed) {
+        btn = this.get('container').one('.link-cta-positive');
         btn.set('text', 'Uninstall').removeClass('thinking');
+        btn.replaceClass('link-cta-positive', 'link-cta-negative');
+        status.set('text', 'Successfully installed');
       } else {
+        btn = this.get('container').one('.link-cta-negative');
         btn.set('text', 'Install').removeClass('thinking');
+        btn.replaceClass('link-cta-negative', 'link-cta-positive');
+        status.set('text', 'Successfully uninstalled');
       }
     },
 
     onInstallFailure: function() {
-      console.log('onInstallFailure');
+      var status = this.get('container').one('.status');
+      status.set('text', 'There was an error installing');
     },
   });
 

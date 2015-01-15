@@ -17,9 +17,10 @@
       </ul>
     </div>
     <div class="four-col last-col ">
+      <p class="left status"></p>
       <p class="right">Rating: <%= this.ratings_average %>/5</p>
       <% if (this.installed) { %>
-      <a class="link-cta-positive">Uninstall (<% if (this.price > 0) { %>&dollar;<%= this.price %><% } else { %>Free<% } %>)</a>
+      <a class="link-cta-positive">Uninstall</a>
       <% } else { %>
       <a class="link-cta-positive">Install</a>
       <% } %>
