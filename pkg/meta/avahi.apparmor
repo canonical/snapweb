@@ -1,0 +1,49 @@
+#include <tunables/global>
+
+###VAR###
+
+###PROFILEATTACH### (attach_disconnected) {
+        
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+  #include <abstractions/user-tmp>
+  #include <abstractions/dbus-strict>
+
+  # Read-only for the install directory
+  @{CLICK_DIR}/@{APP_PKGNAME}/                   r,
+  @{CLICK_DIR}/@{APP_PKGNAME}/@{APP_VERSION}/    r,
+  @{CLICK_DIR}/@{APP_PKGNAME}/@{APP_VERSION}/**  mrklix,
+
+  # global namespaces
+  network inet stream,
+  network unix stream,
+  network inet6 stream,
+  network netlink dgram,
+
+  # files
+  /etc/ld.so.cache    r,
+  /etc/writable/localtime r,
+  /lib/** r,
+  /dev/urandom r,
+  /proc/meminfo r,
+  /etc/mime.types r,
+  /proc/sys/net/core/somaxconn r,
+
+  # for the fat
+  /bin/uname Uxr,
+  /usr/bin/basename Uxr,
+  /usr/bin/realpath Uxr,
+  /usr/bin/dirname Uxr,
+  /bin/sed Uxr,
+
+  # daemon
+  /run/avahi-daemon/       rw,
+  /run/avahi-daemon/**     rw,
+
+  # system bus
+  capability net_admin,
+  capability setgid,
+  capability setuid,
+  capability chown,
+
+}

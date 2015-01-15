@@ -1,7 +1,7 @@
 name: webdm
 source: lp:clapper
 description: Manage a system with a snappy webui
-version: 0.4
+version: 0.5
 type: framework
 architecture: UNKNOWN_ARCH
 frameworks: ubuntu-core-15.04-dev1
@@ -10,10 +10,15 @@ integration:
         framework: meta/webdm.framework
     snappyd:
         apparmor-profile: meta/snappyd.apparmor
+    avahi:
+        apparmor-profile: meta/avahi.apparmor
 services:
     - name: snappyd
       start: snappyd
       description: Snappy WebDM
+    - name: avahi
+      start: avahi-daemon -f avahi-daemon.conf
+      description: Avahi daemon
 ports:
     required: 8080
 maintainer: Clapping Team
