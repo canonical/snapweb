@@ -11,7 +11,11 @@ $t+='last-col';
  } 
 $t+='">\n                    <a href="'+
 $e($v( app.url ))+
-'" class="link--app">\n                        <img\n                            src="'+
+'" class="link--app"\n                        ';
+ if (app.launchable) { 
+$t+=' target="_blank" ';
+ } 
+$t+='\n                    >\n                        <img\n                            src="'+
 $e($v( app.iconUrl || '/public/images/app-placeholder.svg' ))+
 '"\n                            alt="'+
 $e($v( app.name ))+
