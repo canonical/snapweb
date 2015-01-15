@@ -6,7 +6,6 @@ YUI.add('iot-views-settings-list', function(Y) {
   var template = mu.revive(tmpls.settings.list.compiled);
   var ListView = Y.Base.create('settingsList', Y.View, [], {
 
-    containerTemplate: '<main class=layout-content></main>',
     template: template,
 
     render: function() {

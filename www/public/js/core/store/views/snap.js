@@ -34,7 +34,6 @@ YUI.add('iot-views-snap', function(Y) {
     },
 
     render: function() {
-
       var content = Y.one(Y.config.doc.createDocumentFragment());
       content.append(this.bodyView.render().get('container'));
 
@@ -52,6 +51,7 @@ YUI.add('iot-views-snap', function(Y) {
 
   });
 
+  // XXX change this
   Y.namespace('iot.views.snap').snap = SnapView;
 
 }, '0.0.1', {
