@@ -34,7 +34,6 @@ YUI.add('iot-views-snap', function(Y) {
     },
 
     render: function() {
-
       var content = Y.one(Y.config.doc.createDocumentFragment());
       content.append(this.bodyView.render().get('container'));
 
