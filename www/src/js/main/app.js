@@ -4,33 +4,80 @@ YUI.add('demo', function(Y) {
   var iot = Y.namespace('iot');
 
   var showHome = function(req, res, next) {
-    this.showView('home');
+    var installed = new Y.iot.models.InstalledList();
+
+    installed.load(function() {
+      Y.iot.app.showView('home', {
+        modelList: installed
+      });
+    });
   };
 
   var search = function(req, res, next) {
     var query = req.query.q || '';
     var list = new Y.iot.models.SnapList({
-      url: YUI.Env.iot.search + '?q=' + query
+      url: YUI.Env.iot.api.search + '?q=' + query
     });
 
     list.load(function() {
       Y.iot.app.showView('search', {
-        modelList: list
+        modelList: list,
+        queryString: query
       });
     });
   };
 
   var showStore = function(req, res, next) {
-    iot.core.store.show();
+    var list = new Y.iot.models.SnapList();
+
+    list.load(function() {
+      Y.iot.app.showView('store', {
+        modelList: list
+      });
+    });
+  };
+
+  var getLocalSnapPromise = function(name) {
+    name = name.replace('com.ubuntu.snappy.', '');
+    return new Y.Promise(function(resolve, reject) {
+      Y.io(YUI.Env.iot.api.packages + name, {
+        on: {
+          success: function(id, response) {
+            resolve(JSON.parse(response.responseText));
+          },
+          failure: function() {
+            resolve(false);
+          }
+        }
+      });
+    });
+  };
+
+  var getStoreSnapPromise = function(name) {
+    return new Y.Promise(function(resolve, reject) {
+      var snap = new Y.iot.models.Snap({id: name});
+      snap.load(function() {
+        resolve(snap);
+      });
+    });
   };
 
   var showApp = function(req, res, next) {
     var name = req.params.name;
-    var snap = new Y.iot.models.Snap({id: name});
 
-    snap.load(function() {
-      Y.iot.app.showView('snap', {
-        model: snap
+    Y.Promise.all([
+      getStoreSnapPromise(name),
+      getLocalSnapPromise(name)
+    ]).then(function(data) {
+
+      data[0].set('installed', !!data[1]);
+
+      var view = new Y.iot.views.snap.snap({
+        model: data[0]
+      });
+
+      Y.iot.app.showView(view, null, {
+        render: true
       });
     });
   };
@@ -78,7 +125,41 @@ YUI.add('demo', function(Y) {
   };
 
   var showSettings = function(req, res, next) {
-    iot.core.settings.show();
+    var installed = new Y.iot.models.InstalledList();
+
+    var getSnaps = new Y.Promise(function(resolve) {
+      installed.load(function() {
+        resolve(installed);
+      });
+    });
+
+    var getSettings = new Y.Promise(function(resolve, reject) {
+      Y.io(YUI.Env.iot.api.settings, {
+        on: {
+          success: function(id, response) {
+            resolve(JSON.parse(response.responseText));
+          },
+          failure: function() {
+            reject(new Error('getSettings request failed: ' + response));
+          }
+        }
+      });
+    });
+
+    Y.Promise.all([
+      getSnaps,
+      getSettings
+    ]).then(function(data) {
+
+      var view = new Y.iot.views.settings({
+        modelList: data[0],
+        settings: data[1]
+      });
+
+      Y.iot.app.showView(view, null, {
+        render: true
+      });
+    });
   };
 
   var app = Y.namespace('iot').app = new Y.App({
@@ -87,7 +168,7 @@ YUI.add('demo', function(Y) {
     transitions: false,
     views: {
       home: {
-        preserve: true,
+        preserve: false,
         type: 'iot.views.home'
       },
       store: {
@@ -126,7 +207,7 @@ YUI.add('demo', function(Y) {
 
           var query = e.target.ancestor().one('input').get('value');
           var list = new Y.iot.models.SnapList({
-            url: YUI.Env.iot.search + '?q=' + query
+            url: YUI.Env.iot.api.search + '?q=' + query
           });
 
           list.load(function() {
@@ -146,14 +227,18 @@ YUI.add('demo', function(Y) {
   requires: [
     'node',
     'app',
+    'promise',
     'template',
     'iot-config',
     'iot-views-home',
     'iot-views-snap',
+    'iot-views-store',
     'iot-views-search',
+    'iot-views-settings',
     'iot-store',
-    'iot-settings',
     'iot-models-snap',
-    'iot-models-snap-list'
+    'iot-models-snap-list',
+    'iot-models-installed',
+    'iot-models-installed-list'
   ]
 });

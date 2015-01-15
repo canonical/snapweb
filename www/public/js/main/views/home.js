@@ -1,39 +1,37 @@
-
-
 YUI.add('iot-views-home', function(Y) {
   'use strict';
 
-  var views = Y.namespace('iot.views');
   var tmpls = Y.namespace('iot.tmpls');
   var mu = new Y.Template();
 
-  views.home = Y.Base.create('home', Y.View, [], {
+  var HomeView = Y.Base.create('home', Y.View, [], {
+
+    template: mu.revive(tmpls.home.compiled),
 
     render: function() {
-      var template = mu.revive(tmpls.home.compiled);
-
-      var appData = [];
-      for (var index = 0; index < mockAppData.length; index++) {
-        var app = mockAppData[index];
-
-        // Fake xkcd port
-        if (app.name == 'xkcd-webserver') {
-          app.url = location.protocol + '//' + location.hostname + ':8090';
+      var list = this.get('modelList');
+      var listData = list.filter(function(snap) {
+        if (snap.name === 'webdm' || snap.name === 'snappyd') {
+          return false;
         }
+        //XXX hacks all the way down
+        var longName = 'com.ubuntu.snappy.' + snap.name;
+        snap.url = '/apps/' + longName;
+        return snap;
+      });
+      var content = this.template(listData);
 
-        // Don't add snappyd
-        if (app.name != 'snappyd') {
-          appData.push(app);
-        }
-      }
-      var html = template({'apps': appData});
-      this.get('container').setHTML(html);
+      this.get('container').setHTML(content);
 
       return this;
     }
   });
+
+  Y.namespace('iot.views').home = HomeView;
+
 }, '0.0.1', {
   requires: [
+    'view',
     'template',
     't-tmpls-home'
   ]

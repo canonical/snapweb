@@ -81,7 +81,7 @@ trap 'rm -rf "$builddir"' EXIT
 
 cp -r pkg/. $builddir
 mkdir $builddir/www
-cp -r www/public www/templates www/mock-api $builddir/www
+cp -r www/public www/templates $builddir/www
 cd $builddir
 
 sed -i 's/\(architecture: \)UNKNOWN_ARCH/\1[amd64, armhf]/' \

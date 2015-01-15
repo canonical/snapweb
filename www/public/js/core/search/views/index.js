@@ -15,7 +15,6 @@ YUI.add('iot-views-search', function(Y) {
       var list = this.get('modelList');
 
       var queryString = this.get('queryString');
-      console.log('searchString');
 
       if (list.isEmpty()) {
         Y.one('.search-results')
