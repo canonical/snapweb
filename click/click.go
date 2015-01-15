@@ -19,6 +19,7 @@ type Package struct {
 	Maintainer  string   `json:"maintainer"`
 	Name        string   `json:"name"`
 	Version     string   `json:"version"`
+	Icon        string   `json:"icon,omitempty"`
 	Services    services `json:"services,omitempty"`
 	Ports       struct {
 		Required uint `json:"required,omitempty"`
@@ -48,15 +49,18 @@ func (db *ClickDatabase) GetPackages(pkg string) (packages []Package, err error)
 	}
 
 	if pkg != "" {
+		var singlePackage []Package
 		for i := range packages {
 			if packages[i].Name == pkg {
-				packages = []Package{packages[i]}
+				singlePackage = append(singlePackage, packages[i])
 			}
 		}
 
-		if len(packages) != 1 {
+		if len(singlePackage) != 1 {
 			return nil, errors.New("package not found")
 		}
+
+		packages = singlePackage
 	}
 
 	for i := range packages {
