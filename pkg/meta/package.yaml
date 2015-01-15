@@ -1,17 +1,20 @@
-name: snappyd
+name: webdm
 source: lp:clapper
 description: Manage a system with a snappy webui
-version: 0.3
-architecture: amd64
+version: 0.4
+type: framework
+architecture: UNKNOWN_ARCH
 frameworks: ubuntu-core-15.04-dev1
 integration:
-        snappyd:
-                apparmor-profile: meta/snappyd.apparmor
+    framework:
+        framework: meta/webdm.framework
+    snappyd:
+        apparmor-profile: meta/snappyd.apparmor
 services:
-        - name: snappyd
-          start: snappyd
-          description: Manage your device
-ports: 
+    - name: snappyd
+      start: snappyd
+      description: Snappy WebDM
+ports:
     required: 8080
 maintainer: Clapping Team
 icon: meta/clap.png

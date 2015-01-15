@@ -15,12 +15,14 @@ import (
 type services []map[string]string
 
 type Package struct {
-	Description string          `json:"description"`
-	Maintainer  string          `json:"maintainer"`
-	Name        string          `json:"name"`
-	Version     string          `json:"version"`
-	Services    services        `json:"services,omitempty"`
-	Ports       map[string]uint `json:"ports,omitempty"`
+	Description string   `json:"description"`
+	Maintainer  string   `json:"maintainer"`
+	Name        string   `json:"name"`
+	Version     string   `json:"version"`
+	Services    services `json:"services,omitempty"`
+	Ports       struct {
+		Required uint `json:"required,omitempty"`
+	} `json:"ports,omitempty"`
 }
 
 // ClickDatabase exposes the click package database for the user.

@@ -3,21 +3,6 @@ YUI.add('iot-store', function(Y) {
 
   var app = Y.iot.app;
 
-  var onSuccess = function(id, res) {
-    var snaps = JSON.parse(res.responseText);
-    snaps = snaps._embedded['clickindex:package'];
-
-    var view = new Y.iot.views.store.Index({
-      list: snaps
-    });
-
-    Y.iot.app.showView(view, null, {
-      render: true,
-      callback: checkInstalled
-    });
-
-  };
-
   var checkInstalled = function(view) {
     Y.io('/api/v1/packages/', {
       on: {

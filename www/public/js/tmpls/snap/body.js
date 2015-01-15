@@ -31,7 +31,9 @@ $e($v( value ))+
  }); 
 $t+='\n      </ul>\n    </div>\n    <div class="four-col last-col ">\n      <p class="right">Rating: '+
 $e($v( this.ratings_average ))+
-'/5</p>\n      <a href="" class="link-cta-positive">Install (';
+'/5</p>\n      ';
+ if (this.installed) { 
+$t+='\n      <a href="" class="link-cta-positive">Uninstall (';
  if (this.price > 0) { 
 $t+='&dollar;'+
 $e($v( this.price ))+
@@ -39,7 +41,11 @@ $e($v( this.price ))+
  } else { 
 $t+='Free';
  } 
-$t+=')</a>\n    </div>\n  </div>\n</div>\n\n<div class="row app__details-nav">\n  <div class="inner-wrapper">\n    <nav class="twelve-col no-margin-bottom ">\n      <ul class="inline-icons">\n        <li><a ';
+$t+=')</a>\n      ';
+ } else { 
+$t+='\n      <a href="" class="link-cta-positive">Install</a>\n      ';
+ } 
+$t+='\n    </div>\n  </div>\n</div>\n\n<div class="row app__details-nav">\n  <div class="inner-wrapper">\n    <nav class="twelve-col no-margin-bottom ">\n      <ul class="inline-icons">\n        <li><a ';
  if(/[^/]+$/.exec(location.pathname)[0] != 'reviews' && /[^/]+$/.exec(location.pathname)[0] != 'settings') { 
 $t+='class="active" ';
  } 
@@ -57,6 +63,6 @@ $t+='class="active" ';
  } 
 $t+='href="/apps/'+
 $e($v( this.name ))+
-'/settings">Settings</a></li>\n      </ul>\n    </nav>\n  </div>\n</div>';
+'/settings">Settings</a></li>\n      </ul>\n    </nav>\n  </div>\n</div>\n';
 return $t;
 }});

@@ -135,7 +135,6 @@ YUI.add('iot-views-store', function(Y) {
   requires: [
     'view',
     'io-base',
-    'iot-views-store-list',
-    'iot-views-store-nav'
+    'iot-views-store-list'
   ]
 });

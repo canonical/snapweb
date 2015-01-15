@@ -52,6 +52,7 @@ YUI.add('iot-views-snap', function(Y) {
 
   });
 
+  // XXX change this
   Y.namespace('iot.views.snap').snap = SnapView;
 
 }, '0.0.1', {
