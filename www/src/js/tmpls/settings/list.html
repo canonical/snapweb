@@ -16,14 +16,16 @@
 <div class="row">
 <div class="inner-wrapper">
         <section id="apps">
-            <h2>Installed app settings</h2>
             <% if (this.apps.length == 0) { %>
-            <div class="header--get-apps">
-                <h1>No apps installed</h1>
-                <p>Search the store to get some now</p>
+            <div class="one-col">
+                <img src="/public/images/picto-upload-warmgrey.png" alt="Get some apps here" />
             </div>
-            <img class="icon--get-apps" src="/public/images/curly-arrow.png" alt="Get some apps here" />
+            <div class="ten-col last-col header--get-apps">
+                <h1>No apps installed</h1>
+                <p><a href="/store">Visit the store to get some &rsaquo;</a></p>
+            </div>
             <% } else { %>
+            <h2>Installed app settings</h2>
             <ul class="list--apps">
                 <% for (var index = 0; index < this.apps.length; index++) { %>
                 <% var app = this.apps[index] %>
