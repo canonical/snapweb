@@ -16,27 +16,68 @@ YUI.add('demo', function(Y) {
   var search = function(req, res, next) {
     var query = req.query.q || '';
     var list = new Y.iot.models.SnapList({
-      url: YUI.Env.iot.search + '?q=' + query
+      url: YUI.Env.iot.api.search + '?q=' + query
     });
 
     list.load(function() {
       Y.iot.app.showView('search', {
-        modelList: list
+        modelList: list,
+        queryString: query
       });
     });
   };
 
   var showStore = function(req, res, next) {
-    iot.core.store.show();
+    var list = new Y.iot.models.SnapList();
+
+    list.load(function() {
+      Y.iot.app.showView('store', {
+        modelList: list
+      });
+    });
+  };
+
+  var getLocalSnapPromise = function(name) {
+    name = name.replace('com.ubuntu.snappy.', '');
+    return new Y.Promise(function(resolve, reject) {
+      Y.io(YUI.Env.iot.api.packages + name, {
+        on: {
+          success: function(id, response) {
+            resolve(JSON.parse(response.responseText));
+          },
+          failure: function() {
+            resolve(false);
+          }
+        }
+      });
+    });
+  };
+
+  var getStoreSnapPromise = function(name) {
+    return new Y.Promise(function(resolve, reject) {
+      var snap = new Y.iot.models.Snap({id: name});
+      snap.load(function() {
+        resolve(snap);
+      });
+    });
   };
 
   var showApp = function(req, res, next) {
     var name = req.params.name;
-    var snap = new Y.iot.models.Snap({id: name});
 
-    snap.load(function() {
-      Y.iot.app.showView('snap', {
-        model: snap
+    Y.Promise.all([
+      getStoreSnapPromise(name),
+      getLocalSnapPromise(name)
+    ]).then(function(data) {
+
+      data[0].set('installed', !!data[1]);
+
+      var view = new Y.iot.views.snap.snap({
+        model: data[0]
+      });
+
+      Y.iot.app.showView(view, null, {
+        render: true
       });
     });
   };
@@ -127,7 +168,7 @@ YUI.add('demo', function(Y) {
     transitions: false,
     views: {
       home: {
-        preserve: true,
+        preserve: false,
         type: 'iot.views.home'
       },
       store: {
@@ -166,7 +207,7 @@ YUI.add('demo', function(Y) {
 
           var query = e.target.ancestor().one('input').get('value');
           var list = new Y.iot.models.SnapList({
-            url: YUI.Env.iot.search + '?q=' + query
+            url: YUI.Env.iot.api.search + '?q=' + query
           });
 
           list.load(function() {
@@ -191,6 +232,7 @@ YUI.add('demo', function(Y) {
     'iot-config',
     'iot-views-home',
     'iot-views-snap',
+    'iot-views-store',
     'iot-views-search',
     'iot-views-settings',
     'iot-store',
