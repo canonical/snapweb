@@ -29,19 +29,11 @@ $t+='\n          <li>'+
 $e($v( value ))+
 ', </li>\n        ';
  }); 
-$t+='\n      </ul>\n    </div>\n    <div class="four-col last-col ">\n      <p class="right">Rating: '+
+$t+='\n      </ul>\n    </div>\n    <div class="four-col last-col ">\n      <p class="left status"></p>\n      <p class="right">Rating: '+
 $e($v( this.ratings_average ))+
 '/5</p>\n      ';
  if (this.installed) { 
-$t+='\n      <a class="link-cta-positive">Uninstall (';
- if (this.price > 0) { 
-$t+='&dollar;'+
-$e($v( this.price ))+
-'';
- } else { 
-$t+='Free';
- } 
-$t+=')</a>\n      ';
+$t+='\n      <a class="link-cta-positive">Uninstall</a>\n      ';
  } else { 
 $t+='\n      <a class="link-cta-positive">Install</a>\n      ';
  } 
