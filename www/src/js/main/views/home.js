@@ -15,10 +15,17 @@ YUI.add('iot-views-home', function(Y) {
           return false;
         }
         //XXX hacks all the way down
-        var longName = 'com.ubuntu.snappy.' + snap.name;
-        snap.url = '/apps/' + longName;
+        snap.launchable = false;
+        if (snap.ports.required !== undefined) {
+          snap.launchable = true;
+          snap.url = location.protocol + '//' + location.hostname + ':' + snap.ports.required;
+        } else {
+          var longName = 'com.ubuntu.snappy.' + snap.name;
+          snap.url = '/apps/' + longName;
+        }
         return snap;
       });
+
       var content = this.template(listData);
 
       this.get('container').setHTML(content);

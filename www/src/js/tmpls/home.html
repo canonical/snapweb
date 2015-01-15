@@ -14,7 +14,9 @@
             <ul class="list--apps">
               <% Y.Array.each(this, function(app, index) { %>
                 <li class="three-col <% if (index % 4 === 3) { %>last-col<% } %>">
-                    <a href="<%= app.url %>" class="link--app">
+                    <a href="<%= app.url %>" class="link--app"
+                        <% if (app.launchable) { %> target="_blank" <% } %>
+                    >
                         <img
                             src="<%= app.iconUrl || '/public/images/app-placeholder.svg' %>"
                             alt="<%= app.name %> icon"
