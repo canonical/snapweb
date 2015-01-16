@@ -3,15 +3,6 @@ YUI.add('demo', function(Y) {
 
   var iot = Y.namespace('iot');
 
-  var showOverlay = function(hide) {
-    var overlay = app.get('overlay');
-    if (hide) {
-      overlay.replaceClass('app-overlay--show', 'app-overlay--hide');
-    } else {
-      overlay.replaceClass('app-overlay--hide', 'app-overlay--show');
-    }
-  };
-
   var showHome = function(req, res, next) {
     var installed = new Y.iot.models.InstalledList();
 
@@ -37,7 +28,18 @@ YUI.add('demo', function(Y) {
     });
   };
 
+  var showOverlay = function(hide) {
+    console.log('showOverlay:', hide);
+    var overlay = app.get('overlay');
+    if (hide) {
+      overlay.replaceClass('app-overlay--show', 'app-overlay--hide');
+    } else {
+      overlay.replaceClass('app-overlay--hide', 'app-overlay--show');
+    }
+  };
+
   var hideSearch = function(req, res, next) {
+    console.log('hideSearch');
     var view = app.get('searchView');
     showOverlay(true);
     if (view) {
@@ -101,11 +103,6 @@ YUI.add('demo', function(Y) {
         render: true
       });
     });
-  };
-
-  var hideSearch = function(req, res, next) {
-    Y.one('.search-results').setHTML();
-    next();
   };
 
   var showSettings = function(req, res, next) {
