@@ -83,6 +83,7 @@ YUI.add('demo', function(Y) {
 
   var showApp = function(req, res, next) {
     var name = req.params.name;
+    var section = req.params.section;
 
     Y.Promise.all([
       getStoreSnapPromise(name),
@@ -92,7 +93,8 @@ YUI.add('demo', function(Y) {
       data[0].set('installed', !!data[1]);
 
       var view = new Y.iot.views.snap.snap({
-        model: data[0]
+        model: data[0],
+        section: section
       });
 
       Y.iot.app.showView(view, null, {
@@ -101,41 +103,9 @@ YUI.add('demo', function(Y) {
     });
   };
 
-  var showAppDetails = function(req, res, next) {
-    var name = req.params.name;
-    var snap = new Y.iot.models.Snap({id: name});
-
-    snap.load(function() {
-      Y.iot.app.showView('snap', {
-        model: snap
-      });
-    });
-  };
-
-  var showAppReviews = function(req, res, next) {
-    var name = req.params.name;
-    var snap = new Y.iot.models.Snap({id: name});
-
-    snap.load(function() {
-      Y.iot.app.showView('snap', {
-        model: snap,
-        // get as model, wrap loads in promise, promise all -> showView
-        reviews: true
-      });
-    });
-  };
-
-  var showAppSettings = function(req, res, next) {
-    var name = req.params.name;
-    var snap = new Y.iot.models.Snap({id: name});
-
-    snap.load(function() {
-      Y.iot.app.showView('snap', {
-        model: snap,
-        // get as model, wrap loads in promise, promise all -> showView
-        settings: true
-      });
-    });
+  var hideSearch = function(req, res, next) {
+    Y.one('.search-results').setHTML();
+    next();
   };
 
   var showSettings = function(req, res, next) {
@@ -208,9 +178,7 @@ YUI.add('demo', function(Y) {
       {path: '/store', callbacks: [hideSearch, showStore]},
       {path: '/search', callbacks: [search]},
       {path: '/apps/:name', callbacks: [hideSearch, showApp]},
-      {path: '/apps/:name/details', callbacks: [hideSearch, showAppDetails]},
-      {path: '/apps/:name/reviews', callbacks: [hideSearch, showAppReviews]},
-      {path: '/apps/:name/settings', callbacks: [hideSearch, showAppSettings]},
+      {path: '/apps/:name/:section', callbacks: [hideSearch, showApp]},
       {path: '/system-settings', callbacks: [hideSearch, showSettings]}
     ],
 
