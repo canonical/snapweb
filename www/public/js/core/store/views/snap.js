@@ -59,6 +59,7 @@ YUI.add('iot-views-snap', function(Y) {
       }
 
       this.get('container').setHTML(content);
+      Y.all('.nav-primary a.active').removeClass('active');
 
       return this;
     },

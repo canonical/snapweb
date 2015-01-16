@@ -1,6 +1,7 @@
 .app-details.row-hero {
 	background: #fff;
 	box-shadow: 0 1px 1px 0 rgba(0,0,0,0.15);
+	padding: 20px 10px 0;
 }
 
 .app__icon {
@@ -52,7 +53,7 @@
 }
 
 .row.app__details-nav {
-	padding: 20px;
+	padding: 15px;
 }
 
 .app__details-title--smaller {
@@ -68,7 +69,17 @@
 	box-sizing: border-box;
 	color: #333;
 	border-bottom: 2px solid transparent;
-	padding: 20px;
+	padding: 15px 0;
+}
+
+@media only screen and (min-width: 768px) {
+	.app__details-nav a:link,
+	.app__details-nav a:visited {
+		padding: 20px;
+	}
+	.row.app__details-nav {
+		padding: 20px;
+	}
 }
 
 .app__details-nav a:hover {
