@@ -17,10 +17,14 @@ $t+='\n        </ul>\n      </div>\n      ';
  } 
 $t+='\n    </main>\n\n    <aside class="four-col last-col">\n      <div class="frameworks box four-col">\n        <h3>Frameworks</h3>\n        <ul class="no-bullets">\n          ';
  Y.Object.each(this.click_framework, function (value, key) { 
+$t+='\n          ';
+ if (!/^ubuntu-core-/.test(value)) { 
 $t+='\n          <li class="smaller">'+
 $e($v( value ))+
 '</li>\n          ';
+ } 
+$t+='\n          ';
  }); 
-$t+='\n        </ul>\n      </div>\n    </aside>\n  </div>\n</div>';
+$t+='\n        </ul>\n      </div>\n    </aside>\n  </div>\n</div>\n';
 return $t;
 }});

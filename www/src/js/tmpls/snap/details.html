@@ -25,7 +25,9 @@
         <h3>Frameworks</h3>
         <ul class="no-bullets">
           <% Y.Object.each(this.click_framework, function (value, key) { %>
+          <% if (!/^ubuntu-core-/.test(value)) { %>
           <li class="smaller"><%= value %></li>
+          <% } %>
           <% }); %>
         </ul>
       </div>
