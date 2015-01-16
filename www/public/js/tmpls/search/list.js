@@ -1,5 +1,5 @@
 YUI.add("t-tmpls-search-list", function(Y) { Y.namespace("iot.tmpls.search.list").compiled = function (Y, $e, data) {
-var $b='', $v=function (v){return v || v === 0 ? v : $b;}, $t='\n<div class="search-modal-overlay"></div>\n\n<div class="search-background">\n  <div class="row">\n    <div class="inner-wrapper">\n      <ul class="search-results__list">\n        ';
+var $b='', $v=function (v){return v || v === 0 ? v : $b;}, $t='\n<div class="search-background">\n  <div class="row">\n    <div class="inner-wrapper">\n      <ul class="search-results__list">\n        ';
  Y.Array.each(this, function (pkg) { 
 $t+='\n        <li class="box search-results__list--item">\n        <a href="/apps/'+
 $e($v( pkg.name ))+
