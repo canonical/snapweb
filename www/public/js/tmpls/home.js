@@ -16,7 +16,7 @@ $e($v( app.url ))+
 $t+=' target="_blank" ';
  } 
 $t+='\n                    >\n                        <img\n                            src="'+
-$e($v( app.iconUrl || '/public/images/app-placeholder.svg' ))+
+$e($v( YUI.Env.iot.icons[app.name] || '/public/images/app-placeholder.svg' ))+
 '"\n                            alt="'+
 $e($v( app.name ))+
 ' icon"\n                            class="icon--app-icon"\n                        />\n                        <p class="label--app-name">'+
