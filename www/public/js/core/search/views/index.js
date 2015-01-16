@@ -10,6 +10,7 @@ YUI.add('iot-views-search', function(Y) {
 
     destroy: function() {
       this.get('container').setHTML();
+      Y.one('header.banner').removeClass('to-close');
       return Y.View.superclass.destroy.call(this);
     },
 
@@ -21,6 +22,8 @@ YUI.add('iot-views-search', function(Y) {
       var listData;
       var queryString = this.get('queryString');
       var content;
+
+      Y.one('header.banner').addClass('to-close');
 
       if (list.isEmpty()) {
         content =
