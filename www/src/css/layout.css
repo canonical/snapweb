@@ -106,6 +106,22 @@ header.banner nav.nav-primary ul li a.settings-link:link {
   padding-bottom: 8px;
 }
 
+header.banner .close {
+  position: absolute;
+  left: 15px;
+  top: 15px;
+  display: none;
+  cursor: pointer;
+}
+
+header.banner.to-close .close {
+  display: block;
+}
+
+header.banner.to-close .logo{
+  display: none;
+}
+
 .layout-nav-primary .settings-icon {
   width: 30px;
   height: 30px;

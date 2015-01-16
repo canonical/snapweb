@@ -205,6 +205,8 @@ YUI.add('demo', function(Y) {
 
   app.render().dispatch();
 
+  Y.one('.close').on('click', hideSearch);
+
 }, '0.0.1', {
   requires: [
     'node',
