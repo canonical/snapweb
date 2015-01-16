@@ -19,9 +19,9 @@ $t+='\n                    >\n                        <img\n                    
 $e($v( app.iconUrl || '/public/images/app-placeholder.svg' ))+
 '"\n                            alt="'+
 $e($v( app.name ))+
-' icon"\n                            class="icon--app-icon"\n                        />\n                        <label class="label--app-name">'+
+' icon"\n                            class="icon--app-icon"\n                        />\n                        <p class="label--app-name">'+
 $e($v( app.name ))+
-'</label>\n                    </a>\n                </li>\n                ';
+'</p>\n                    </a>\n                </li>\n                ';
  }); 
 $t+='\n            </ul>\n            ';
  } 

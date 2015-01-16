@@ -25,8 +25,8 @@ YUI.add('iot-views-search', function(Y) {
       if (list.isEmpty()) {
         content =
         '<div class="row"><div class="inner-wrapper"><p>' +
-        'Sorry, no results found for "' +
-        queryString + '"</p></div></div>';
+          'Sorry, no results found for "' +
+          queryString + '"</p></div></div>';
       } else {
         listData = list.map(function(snap) {
           return snap;
