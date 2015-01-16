@@ -126,7 +126,25 @@ header.banner nav.nav-primary ul li a.settings-link:link {
   float: none;
 }
 
+.app-overlay {
+  display:none;
+  position:absolute;
+  top:60px;
+  left:0;
+  bottom:0;
+  right:0;
+  background-color: rgba(0,0,0,0.5);
+  z-index:99;
+}
+
+.app-overlay.app-overlay--show {
+  display:block;
+}
+
+.app-overlay.app-overlay--hide {
+  display:none;
+}
 
 .layout-body {
-    padding-bottom: 30px;
+  padding-bottom: 30px;
 }

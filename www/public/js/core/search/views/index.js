@@ -8,30 +8,42 @@ YUI.add('iot-views-search', function(Y) {
 
     template: mu.revive(tmpls.search.list.compiled),
 
+    destroy: function() {
+      this.get('container').setHTML();
+      return Y.View.superclass.destroy.call(this);
+    },
+
     render: function() {
 
       document.body.scrollTop = document.documentElement.scrollTop = 0;
 
       var list = this.get('modelList');
-
+      var listData;
       var queryString = this.get('queryString');
+      var content;
 
       if (list.isEmpty()) {
-        Y.one('.search-results')
-        .setHTML('<div class="row"><div class="inner-wrapper">' +
-                 '<p>Sorry, no results found for "' + queryString + '"</p>' +
-                 '</div></div>');
-        return this;
+        content =
+        '<div class="row"><div class="inner-wrapper"><p>' +
+          'Sorry, no results found for "' +
+          queryString + '"</p></div></div>';
+      } else {
+        listData = list.map(function(snap) {
+          return snap;
+        });
+        content = this.template(listData);
       }
 
-      var listData = list.map(function(snap) {
-        return snap;
-      });
-
-      var content = this.template(listData);
-      Y.one('.search-results').setHTML(content);
-
+      this.get('container').setHTML(content);
       return this;
+    }
+  }, {
+    ATTRS: {
+      container: {
+        valueFn: function() {
+          return Y.one('.search-results');
+        }
+      }
     }
   });
 
