@@ -18,7 +18,10 @@ YUI.add('iot-views-search', function(Y) {
 
       if (list.isEmpty()) {
         Y.one('.search-results')
-        .setHTML('<div class="row"><div class="inner-wrapper"><p>Sorry, no results found for "' + queryString + '"</p></div></div>');
+        .setHTML(
+        '<div class="row"><div class="inner-wrapper"><p>' +
+        'Sorry, no results found for "' +
+        queryString + '"</p></div></div>');
         return this;
       }
 

@@ -18,7 +18,8 @@ YUI.add('iot-views-home', function(Y) {
         snap.launchable = false;
         if (snap.ports.required !== undefined) {
           snap.launchable = true;
-          snap.url = location.protocol + '//' + location.hostname + ':' + snap.ports.required;
+          snap.url = location.protocol +
+          '//' + location.hostname + ':' + snap.ports.required;
         } else {
           var longName = 'com.ubuntu.snappy.' + snap.name;
           snap.url = '/apps/' + longName;
