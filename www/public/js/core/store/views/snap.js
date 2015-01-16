@@ -71,7 +71,6 @@ YUI.add('iot-views-snap', function(Y) {
     },
 
     install: function(e) {
-      console.log('install');
       e.preventDefault();
       var model = this.get('model');
       var installed = model.get('installed');
