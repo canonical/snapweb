@@ -8,7 +8,9 @@ YUI.add('iot-views-snap-settings', function(Y) {
     template: mu.revive(tmpls.snap.settings.compiled),
 
     render: function() {
-      var content = this.template();
+      var model = this.get('model');
+
+      var content = this.template(this.get('model').getAttrs());
       this.get('container').setHTML(content);
 
       return this;
