@@ -18,6 +18,21 @@
     margin: 0;
     overflow: hidden;
 }
+.list--apps .three-col,
+.list--apps .two-col {
+    width: 48.9362%;
+    margin-right: 0;
+}
+@media only screen and (min-width: 768px) {
+    .list--apps .three-col {
+        width: 23.3%;
+        margin-right: 2.12766%;
+    }
+    .list--apps .two-col {
+        width: 14.8936%;
+        margin-right: 2.12766%;
+    }
+}
 .label--app-name {
     font-weight: 400;
     text-align: center;
@@ -29,6 +44,5 @@
 .link--app:link,
 .link--app:hover,
 .link--app:visited {
-
     color: #333333;
 }

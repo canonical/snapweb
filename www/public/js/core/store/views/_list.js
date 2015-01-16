@@ -18,6 +18,9 @@ YUI.add('iot-views-store-list', function(Y) {
       var content = this.template(listData);
       this.get('container').setHTML(content);
 
+      Y.all('.nav-primary a.active').removeClass('active');
+      Y.one('.nav-primary a.store-link').addClass('active');
+
       return this;
     }
   });

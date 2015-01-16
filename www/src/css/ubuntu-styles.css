@@ -1853,7 +1853,6 @@ header.banner .nav-primary {
     overflow: hidden;
 }
 header.banner .nav-primary ul {
-    border-right: 1px solid #ed6637;
     float: left;
     margin: 0;
     position: relative;
@@ -1885,6 +1884,12 @@ header.banner .nav-primary ul a.active {
     background: #B83A10;
     border-left: 1px solid #ec5b29;
 }
+header.banner nav.nav-primary ul li a:hover {
+    background-color: #dd4814;
+}
+header.banner nav.nav-primary ul li a.settings-link.active:link {
+    padding-bottom: 6px;
+}
 header.banner .nav-primary ul li a:hover {
     background: #e1662f;
     border-top: 0;
@@ -1893,29 +1898,12 @@ header.banner .nav-primary ul li a:hover {
 #main-navigation-link {
     display: none;
 }
-header.banner .nav-toggle {
-    position: absolute;
-    right: 0;
-    display: block;
-    width: 48px;
-    height: 48px;
-    text-indent: -99999px;
-    background-image: url("../images/navigation-menu-plain.svg");
-    background-size: 25px auto;
-    background-repeat: no-repeat;
-    background-position: center center;
-    cursor: pointer;
-}
-header.banner .no-script {
-    display: none;
-}
-.opera-mini header.banner .nav-toggle, .no-svg header.banner .nav-toggle {
-    background-image: url("../images/navigation-menu-plain.png");
-}
-header.banner nav ul {
-    background-color: #f0f0f0;
-    display: none;
-    float: left;
+@media only screen and (min-width: 768px) {
+    header.banner nav ul {
+        background-color: #f0f0f0;
+        /*display: none;*/
+        float: left;
+    }
 }
 header.banner .nav-primary.active {
     box-shadow: 0 1px 2px 1px rgba(120, 120, 120, 0.2);
@@ -1935,9 +1923,6 @@ header.banner .nav-primary ul li a:hover {
     box-shadow: none;
     background-color: #d0d0d0;
 }
-header.banner .nav-primary ul li a.active {
-    background-color: #ddd;
-}
 header.banner .nav-primary ul li {
     border-bottom: 1px solid #F2F2F4;
     font-size: 16px;
@@ -1951,23 +1936,6 @@ header.banner nav.nav-primary ul li a:link, header.banner .nav-primary ul li a:v
 }
 header.banner nav.nav-primary ul.active li ul {
     display: none;
-}
-#menu.active:after {
-    background-image: url("../images/nav-arrow.svg");
-    background-repeat: no-repeat;
-    background-position: 50% 26px;
-    content: "";
-    display: block;
-    height: 23px;
-    margin-left: 0;
-    padding-bottom: 17px;
-    position: relative;
-    top: -3px;
-    width: 48px;
-    z-index: 999;
-}
-html.no-svg #menu.active:after, .opera-mini #menu.active:after {
-    background-image: url("../images/nav-arrow.png");
 }
 .nav-secondary {
     border-bottom: 1px solid #dfdcd9;
@@ -2026,6 +1994,7 @@ header.banner .logo {
     border-left: 0;
     float: left;
     overflow: hidden;
+    padding-right: .5em;
 }
 @media only screen and (max-width: 768px) {
     header.banner .nav-primary {
@@ -2041,10 +2010,6 @@ header nav ul.active {
 header nav ul.active li:last-child a:link, header nav ul.active li:last-child a:visited {
     border-bottom: 0;
 }
-header.banner .nav-primary ul {
-    position: relative;
-    width: 100%
-}
 header.banner .nav-primary ul li.active a:link, header.banner .nav-primary ul li.active a:visited {
     color: #333;
     font-weight: 700;
@@ -2058,34 +2023,6 @@ header.banner .nav-primary ul li, header.banner .nav-primary ul li a:link, heade
     margin: 0;
     padding: 0;
     width: 100%
-}
-header.banner .nav-primary ul li a:link, header.banner .nav-primary ul li a:visited, header.banner .nav-primary ul li a:hover, header.banner .nav-primary ul li a:active {
-    background-color: #f0f0f0;
-    border-bottom: 1px solid #d4d7d4;
-    color: #333333;
-    font-size: 1em;
-}
-header.banner .nav-primary ul li:nth-last-child(-n+2) a:link, header.banner .nav-primary ul li:nth-last-child(-n+2) a:visited {
-    border: 0;
-}
-header.banner .nav-primary ul li a:hover {
-    box-shadow: none;
-    background: #f8f8f8;
-}
-header.banner .nav-primary ul li a.active {
-    background-color: #ddd;
-}
-header.banner nav.nav-primary ul li a:link, header.banner .nav-primary ul li a:visited, header.banner .nav-primary ul li a:hover, header.banner .nav-primary ul li a:active {
-    padding: 8px 10px;
-    text-align: left;
-}
-header.banner .nav-primary ul li {
-    box-sizing: border-box;
-    background: transparent;
-    border-bottom: 0;
-    border-right: 1px solid #d4d7d4;
-    float: left;
-    width: 50%
 }
 .nav-secondary {
     background: #fff;
@@ -3283,9 +3220,9 @@ input[type="search"]::-webkit-search-decoration, input[type="search"]::-webkit-s
 
 form.search-form {
     overflow: hidden;
-    width: 50%;
+    width: 45%;
     position: relative;
-    display: inline;
+    display: inline-block;
 }
 form.search-form input {
     border-radius: 0;
@@ -3303,6 +3240,10 @@ form.search-form input {
     background-color: transparent;
     -webkit-appearance: none;
 }
+form.search-form input:-webkit-autofill {
+   -webkit-box-shadow: 0 0 0px 1000px #222 inset;
+   -webkit-text-fill-color: #fff;
+}
 form.search-form input:focus {
     border-color: #dd4814;
     background: #222;
@@ -3310,8 +3251,8 @@ form.search-form input:focus {
 form.search-form button[type=submit], form.search-form button[type=submit]:hover {
     position: absolute;
     top: 13px;
-    right: 10px;
-    display: block;
+    right: 20px;
+    display: inline-block;
     height: 30px;
     width: 30px;
     padding: 0;
@@ -3323,8 +3264,33 @@ form.search-form button[type=submit], form.search-form button[type=submit]:hover
     background-repeat: no-repeat;
     background-position: center center;
 }
+@media only screen and (min-width: 768px) {
+    form.search-form button[type=submit], form.search-form button[type=submit]:hover {
+        position: relative;
+        top: 13px;
+        left: -40px;
+        display: inline-block;
+        height: 30px;
+        width: 30px;
+        padding: 0;
+        line-height: 0;
+        -webkit-appearance: none;
+        background: transparent;
+        background-image: url("../images/search.svg");
+        background-size: 25px;
+        background-repeat: no-repeat;
+        background-position: center center;
+    }
+}
 form.search-form button img {
     height: 16px;
+}
+
+header.banner nav.nav-primary ul li a.active {
+    padding-bottom: 16px;
+    background-color: #0e0c0b;
+    border-bottom: 3px solid #dd4814;
+    border-left: 1px solid #262626;
 }
 @media only screen and (min-width : 769px) {
     header.banner .nav-primary ul li,
@@ -3336,12 +3302,6 @@ form.search-form button img {
     header.banner nav.nav-primary li a:visited {
         border-left: 1px solid #262626;
         font-weight: 400;
-    }
-    header.banner nav.nav-primary ul li a.active {
-        padding-bottom: 10px;
-        background-color: #0e0c0b;
-        border-bottom: 3px solid #dd4814;
-        border-left: 1px solid #262626;
     }
     header.banner nav.nav-primary ul li {
         border-left: 1px solid #262626;
@@ -3436,22 +3396,13 @@ img.touch-border {
 }
 }
 .box {
-    border-radius: 0;
-    box-shadow: none;
     display: block;
-    margin-bottom: 0;
-    border-top: 0;
-    border-left: 0;
-    border-right: 0;
-    padding-left: 0;
-    padding-right: 0;
 }
 .box-dim {
     background-color: #fafafa;
 }
 @media only screen and (min-width : 768px) {
     .box {
-    border-radius: 4px;
     box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.15);
     display: inline-block;
     margin-bottom: 20px;
@@ -3506,6 +3457,7 @@ code.language-bash .comment {
 #main-content .row-hero {
     padding-top: 20px;
     margin-top: 0;
+    margin-bottom: 0;
 }
 #main-content .row-hero .intro {
     font-size: 16px;
