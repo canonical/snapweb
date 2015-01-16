@@ -18,7 +18,7 @@
                         <% if (app.launchable) { %> target="_blank" <% } %>
                     >
                         <img
-                            src="<%= app.iconUrl || '/public/images/app-placeholder.svg' %>"
+                            src="<%= YUI.Env.iot.icons[app.name] || '/public/images/app-placeholder.svg' %>"
                             alt="<%= app.name %> icon"
                             class="icon--app-icon"
                         />
