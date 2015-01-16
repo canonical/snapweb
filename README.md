@@ -80,6 +80,16 @@ To get the icon for a package:
 
      curl http://localhost:8080/api/v1/packages/xkcd-webserver/icon
 
+### /api/v1/oem
+
+Grabs oem information from the oem package
+
+    curl http://localhost:8080/api/v1/oem/ && echo
+    {“name”:”beagleboneblack.element14”,”vendor”:”element14”,”icon”:”meta/element14.png”,”version”:”1.0”,”type”:”oem”,”branding”:{“name”:”Beagle Bone Black”,”subname”:”element14”},”store”:{“oem-key”:”123456”}}
+
+And OEM package needs to be installed, example OEM package can be found on
+[https://chinstrap.canonical.com/~sergiusens/snaps/beagleboneblack.element14_1.0_all.snap]
+
 ### /api/v1/store
 
 This basically is a proxy to the store

@@ -26,6 +26,7 @@ import (
 	"net/http"
 
 	"launchpad.net/clapper/click"
+	"launchpad.net/clapper/oem"
 	"launchpad.net/clapper/store"
 	"launchpad.net/clapper/system"
 	"launchpad.net/go-dbus/v1"
@@ -66,6 +67,9 @@ func InitURLHandlers(conn *dbus.Connection, log *log.Logger) {
 
 	storeHandler := store.NewHandler()
 	http.Handle("/api/v1/store/", storeHandler.MakeMuxer("/api/v1/store"))
+
+	oemHandler := oem.NewHandler()
+	http.Handle("/api/v1/oem/", oemHandler.MakeMuxer("/api/v1/oem"))
 
 	handleMainPage, err := makeMainPageHandler(conn)
 	if err != nil {
