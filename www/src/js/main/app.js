@@ -3,6 +3,15 @@ YUI.add('demo', function(Y) {
 
   var iot = Y.namespace('iot');
 
+  var showOverlay = function(hide) {
+    var overlay = app.get('overlay');
+    if (hide) {
+      overlay.replaceClass('app-overlay--show', 'app-overlay--hide');
+    } else {
+      overlay.replaceClass('app-overlay--hide', 'app-overlay--show');
+    }
+  };
+
   var showHome = function(req, res, next) {
     var installed = new Y.iot.models.InstalledList();
 
@@ -20,11 +29,21 @@ YUI.add('demo', function(Y) {
     });
 
     list.load(function() {
+      showOverlay();
       Y.iot.app.showView('search', {
         modelList: list,
         queryString: query
       });
     });
+  };
+
+  var hideSearch = function(req, res, next) {
+    var view = app.get('searchView');
+    showOverlay(true);
+    if (view) {
+      view.destroy();
+    }
+    next();
   };
 
   var showStore = function(req, res, next) {
@@ -119,11 +138,6 @@ YUI.add('demo', function(Y) {
     });
   };
 
-  var hideSearch = function(req, res, next) {
-    Y.one('.search-results').setHTML();
-    next();
-  };
-
   var showSettings = function(req, res, next) {
     var installed = new Y.iot.models.InstalledList();
 
@@ -211,15 +225,20 @@ YUI.add('demo', function(Y) {
           });
 
           list.load(function() {
-            Y.iot.app.createView('search', {
+            showOverlay();
+            var view = Y.iot.app.createView('search', {
               modelList: list,
               queryString: query
             }).render();
+
+            app.set('searchView', view);
           });
         }
       }
     }
   });
+
+  app.set('overlay', Y.one('.app-overlay'));
 
   app.render().dispatch();
 
