@@ -28,6 +28,9 @@ YUI.add('iot-views-settings', function(Y) {
       });
       this.get('container').setHTML(content);
 
+      Y.all('.nav-primary a.active').removeClass('active');
+      Y.one('.nav-primary a.settings-link').addClass('active');
+
       return this;
     }
   });
