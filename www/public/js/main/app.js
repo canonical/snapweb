@@ -29,7 +29,6 @@ YUI.add('demo', function(Y) {
   };
 
   var showOverlay = function(hide) {
-    console.log('showOverlay:', hide);
     var overlay = app.get('overlay');
     if (hide) {
       overlay.replaceClass('app-overlay--show', 'app-overlay--hide');
@@ -39,7 +38,6 @@ YUI.add('demo', function(Y) {
   };
 
   var hideSearch = function(req, res, next) {
-    console.log('hideSearch');
     var view = app.get('searchView');
     showOverlay(true);
     if (view) {
