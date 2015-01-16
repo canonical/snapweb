@@ -23,23 +23,15 @@ YUI.add('iot-views-search', function(Y) {
       var content;
 
       if (list.isEmpty()) {
-<<<<<<< TREE
         content =
         '<div class="row"><div class="inner-wrapper"><p>' +
-        'Sorry, no results found for "' +
-        queryString + '"</p></div></div>';
+          'Sorry, no results found for "' +
+          queryString + '"</p></div></div>';
       } else {
         listData = list.map(function(snap) {
           return snap;
         });
         content = this.template(listData);
-=======
-        Y.one('.search-results')
-        .setHTML('<div class="row"><div class="inner-wrapper">' +
-                 '<p>Sorry, no results found for "' + queryString + '"</p>' +
-                 '</div></div>');
-        return this;
->>>>>>> MERGE-SOURCE
       }
 
       this.get('container').setHTML(content);
