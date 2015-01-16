@@ -65,7 +65,6 @@ YUI.add('demo', function(Y) {
   var showApp = function(req, res, next) {
     var name = req.params.name;
     var section = req.params.section;
-    console.log(section);
 
     Y.Promise.all([
       getStoreSnapPromise(name),

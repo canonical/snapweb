@@ -11,8 +11,6 @@ YUI.add('iot-views-snap', function(Y) {
         model.addTarget(this);
       }
 
-      this.after('*:change', this.render, this);
-
       this.bodyView = new views.body({
         model: model
       });
