@@ -71,6 +71,8 @@ func (db *ClickDatabase) GetPackages(pkg string) (packages []Package, err error)
 	}
 
 	for i := range packages {
+		go downloadIcon(packages[i].Name)
+
 		if err := packages[i].getServices(db.conn); err != nil {
 			return nil, err
 		}
@@ -87,62 +89,7 @@ func (db *ClickDatabase) Install(pkg string) error {
 		return errors.New("local installation not implemented")
 	}
 
-	go func() {
-		if !strings.Contains(pkg, ".") {
-			pkg = "com.ubuntu.snappy." + pkg
-		}
-
-		dataPath, err := IconDir()
-		if err != nil {
-			fmt.Println("Cannot obtain dataPath", err)
-			return
-		}
-
-		u, _ := url.Parse("https://search.apps.ubuntu.com/api/v1/package/")
-		u, err = u.Parse(pkg)
-		if err != nil {
-			fmt.Println("failed to parse store package url for", pkg, err)
-			return
-		}
-
-		req, err := http.NewRequest("GET", u.String(), nil)
-		if err != nil {
-			fmt.Println("failed to create request", u.String(), err)
-			return
-		}
-		req.Header.Set("Accept", "application/hal+json")
-		req.Header.Set("X-Ubuntu-Frameworks", strings.Join(Frameworks(), ","))
-
-		resp, err := http.DefaultClient.Do(req)
-		if err != nil {
-			fmt.Println("failed to request", u.String(), err)
-			return
-		}
-		defer resp.Body.Close()
-
-		if resp.StatusCode != http.StatusOK {
-			fmt.Println("failed to request", u.String(), "exited with status:", resp.StatusCode)
-			return
-		}
-
-		var storePkg storePayload
-		dec := json.NewDecoder(resp.Body)
-		if err := dec.Decode(&storePkg); err != nil {
-			fmt.Println("Issue while decoding store payload", err)
-			return
-		}
-
-		if iconUrl, ok := storePkg["icon_url"]; ok {
-			url := iconUrl.(string)
-			if err := download(filepath.Join(dataPath, pkg)+".png", url); err != nil {
-				fmt.Println("Cannot downlad icon:", err)
-			}
-		} else {
-			fmt.Println("No icon url for", pkg, "found")
-			return
-		}
-
-	}()
+	go downloadIcon(pkg)
 
 	if out, err := exec.Command("snappy", "install", pkg).CombinedOutput(); err != nil {
 		return fmt.Errorf("unable to install package: %s", out)
@@ -298,4 +245,71 @@ func IconDir() (dataPath string, err error) {
 	}
 
 	return dataPath, nil
+}
+
+func downloadIcon(pkg string) {
+	if !strings.Contains(pkg, ".") {
+		pkg = "com.ubuntu.snappy." + pkg
+	}
+
+	dataPath, err := IconDir()
+	if err != nil {
+		fmt.Println("Cannot obtain dataPath", err)
+		return
+	}
+
+	iconPath := filepath.Join(dataPath, pkg) + ".png"
+
+	// if we already have the icon, return
+	if _, err := os.Stat(iconPath); os.IsExist(err) {
+		fmt.Println(iconPath, "already downloaded")
+		return
+	} else if !os.IsNotExist(err) {
+		fmt.Println("cannot download icon:", err)
+		return
+	}
+
+	u, _ := url.Parse("https://search.apps.ubuntu.com/api/v1/package/")
+	u, err = u.Parse(pkg)
+	if err != nil {
+		fmt.Println("failed to parse store package url for", pkg, err)
+		return
+	}
+
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		fmt.Println("failed to create request", u.String(), err)
+		return
+	}
+	req.Header.Set("Accept", "application/hal+json")
+	req.Header.Set("X-Ubuntu-Frameworks", strings.Join(Frameworks(), ","))
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		fmt.Println("failed to request", u.String(), err)
+		return
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		fmt.Println("failed to request", u.String(), "exited with status:", resp.StatusCode)
+		return
+	}
+
+	var storePkg storePayload
+	dec := json.NewDecoder(resp.Body)
+	if err := dec.Decode(&storePkg); err != nil {
+		fmt.Println("Issue while decoding store payload", err)
+		return
+	}
+
+	if iconUrl, ok := storePkg["icon_url"]; ok {
+		url := iconUrl.(string)
+		if err := download(iconPath, url); err != nil {
+			fmt.Println("Cannot downlad icon:", err)
+		}
+	} else {
+		fmt.Println("No icon url for", pkg, "found")
+		return
+	}
 }
