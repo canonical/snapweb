@@ -6,6 +6,9 @@ import (
 	"net/http"
 	"net/url"
 	"runtime"
+	"strings"
+
+	"launchpad.net/clapper/click"
 
 	"github.com/gorilla/mux"
 )
@@ -47,7 +50,7 @@ func (h *handler) getSearch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	req.Header.Set("Accept", "application/hal+json")
-	req.Header.Set("X-Ubuntu-Frameworks", "ubuntu-core-15.04-dev1")
+	req.Header.Set("X-Ubuntu-Frameworks", strings.Join(click.Frameworks(), ","))
 	req.Header.Set("X-Ubuntu-Architecture", arch)
 
 	resp, err := http.DefaultClient.Do(req)
@@ -103,7 +106,7 @@ func (h *handler) getPackage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	req.Header.Set("Accept", "application/hal+json")
-	req.Header.Set("X-Ubuntu-Frameworks", "ubuntu-core-15.04-dev1")
+	req.Header.Set("X-Ubuntu-Frameworks", strings.Join(click.Frameworks(), ","))
 	req.Header.Set("X-Ubuntu-Architecture", arch)
 
 	resp, err := http.DefaultClient.Do(req)
