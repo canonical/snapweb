@@ -29,6 +29,10 @@
   /usr/bin/snappy Uxr,
   /usr/bin/click Uxr,
 
+  # for frameworks
+  /usr/share/click/frameworks/    r,
+  /usr/share/click/frameworks/**  r,
+
   # for the fat
   /bin/uname Uxr,
   /usr/bin/basename Uxr,
@@ -40,6 +44,10 @@
   @{CLICK_DIR}/@{APP_PKGNAME}/ r,
   @{CLICK_DIR}/@{APP_PKGNAME}/@{APP_VERSION}/ r,
   @{CLICK_DIR}/@{APP_PKGNAME}/@{APP_VERSION}/** mrklix,
+
+  # Writable system area only for this version.
+  /var/lib/apps/@{APP_PKGNAME}/@{APP_VERSION}/   rw,
+  /var/lib/apps/@{APP_PKGNAME}/@{APP_VERSION}/** rwl,
 
   # system bus
   /var/run/dbus/system_bus_socket rw,
