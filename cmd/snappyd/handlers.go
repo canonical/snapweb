@@ -24,6 +24,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"path/filepath"
 
 	"launchpad.net/clapper/click"
 	"launchpad.net/clapper/oem"
@@ -78,6 +79,12 @@ func InitURLHandlers(conn *dbus.Connection, log *log.Logger) {
 
 	http.Handle("/public/", loggingHandler(http.FileServer(http.Dir("./www"))))
 	http.Handle("/mock-api/", loggingHandler(http.FileServer(http.Dir("./www"))))
+
+	if iconDir, err := click.IconDir(); err == nil {
+		http.Handle("/icons/", loggingHandler(http.FileServer(http.Dir(filepath.Join(iconDir, "..")))))
+	} else {
+		log.Println("Issues while getting icon dir:", err)
+	}
 
 	http.HandleFunc("/", handleMainPage)
 }
