@@ -22,9 +22,12 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"path/filepath"
+	"text/template"
 
 	"launchpad.net/clapper/click"
 	"launchpad.net/clapper/oem"
@@ -35,6 +38,11 @@ import (
 
 type slug string
 type pages map[slug]string
+
+type branding struct {
+	Name    string
+	Subname string
+}
 
 /*
 func makeHandler(fn func(http.ResponseWriter, *http.Request, bytes.Buffer)) http.HandlerFunc {
@@ -106,15 +114,47 @@ func makeMainPageHandler(conn *dbus.Connection) (f http.HandlerFunc, err error) 
 
 	http.Handle("/api/v1/systemimage/", si.MakeMuxer("/api/v1/systemimage"))
 
+	name := "Ubuntu"
+	subname := "Snappy"
+
+	pkg, err := oem.Oem()
+	if err != nil && err != oem.ErrNotFound {
+		return f, err
+	} else if err != oem.ErrNotFound {
+		fmt.Println(pkg)
+		name = pkg.Branding.Name
+		subname = pkg.Branding.Subname
+	}
+
 	return func(w http.ResponseWriter, r *http.Request) {
 		data := Page{
-			Pages:  p,
-			Title:  "Home",
-			Params: si.Info,
+			Pages: p,
+			Title: "Home",
+			Params: branding{
+				Name:    name,
+				Subname: subname,
+			},
 		}
 
-		if err := renderTemplate("main.html", &data, w); err != nil {
+		if err := renderLayout("main.html", &data, w); err != nil {
 			log.Println(err)
 		}
 	}, nil
+}
+
+func renderLayout(html string, data *Page, w http.ResponseWriter) error {
+	htmlPath := filepath.Join("www", "templates", html)
+	if _, err := os.Stat(htmlPath); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return err
+	}
+
+	layoutPath := filepath.Join("www", "templates", "layout.html")
+	t, err := template.ParseFiles(layoutPath, htmlPath)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return err
+	}
+
+	return t.Execute(w, *data)
 }
