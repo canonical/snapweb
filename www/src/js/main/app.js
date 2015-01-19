@@ -57,7 +57,9 @@ YUI.add('demo', function(Y) {
   };
 
   var getLocalSnapPromise = function(name) {
-    name = name.split('.').pop();
+    if (/^com.ubuntu.snappy/.test(name)) {
+      name = name.split('.').pop();
+    }
     return new Y.Promise(function(resolve, reject) {
       Y.io(YUI.Env.iot.api.packages + name, {
         on: {

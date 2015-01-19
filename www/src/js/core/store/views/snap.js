@@ -74,7 +74,10 @@ YUI.add('iot-views-snap', function(Y) {
       e.preventDefault();
       var model = this.get('model');
       var installed = model.get('installed');
-      var name = model.get('name').split('.').pop();
+      var name = model.get('name');
+      if (/^com.ubuntu.snappy/.test(name)) {
+        name = name.split('.').pop();
+      }
       this.get('container').one('.status').set('text', '');
       e.target.addClass('thinking');
 

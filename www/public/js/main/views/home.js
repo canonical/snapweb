@@ -20,20 +20,21 @@ YUI.add('iot-views-home', function(Y) {
         //XXX hacks all the way down
         snap.launchable = false;
 
-        if (snap.ports.required !== undefined) {
+        if (snap.ports.required) {
           snap.launchable = true;
           snap.url = location.protocol + '//' +
             location.hostname + ':' +
             snap.ports.required;
-        } else {
-          if (snap.name.indexOf('.') === -1) {
-            name = 'com.ubuntu.snappy.' + snap.name;
-          } else {
-            name = snap.name;
-          }
-          snap.name = name;
-          snap.url = '/apps/' + name;
         }
+
+        if (snap.name.indexOf('.') === -1) {
+          name = 'com.ubuntu.snappy.' + snap.name;
+        } else {
+          name = snap.name;
+        }
+
+        snap.name = name;
+        snap.url = '/apps/' + name;
         return snap;
       });
 
