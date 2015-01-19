@@ -26,6 +26,7 @@ type Package struct {
 	Name        string   `json:"name"`
 	Version     string   `json:"version"`
 	Icon        string   `json:"icon,omitempty"`
+	Type        string   `json:"type,omitempty"`
 	Services    services `json:"services,omitempty"`
 	Ports       struct {
 		Required uint `json:"required,omitempty"`
