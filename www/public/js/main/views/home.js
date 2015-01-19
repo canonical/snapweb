@@ -22,6 +22,8 @@ YUI.add('iot-views-home', function(Y) {
           snap.url = location.protocol + '//' +
                      location.hostname + ':' +
                      snap.ports.required;
+        } else {
+          snap.url = '/apps/' + snap.name;
         }
 
         snap.imgSrc = '/icons/';
@@ -29,8 +31,6 @@ YUI.add('iot-views-home', function(Y) {
           snap.imgSrc += 'com.ubuntu.snappy.';
         }
         snap.imgSrc += snap.name + '.png';
-
-        snap.url = '/apps/' + snap.name;
 
         return snap;
       });
