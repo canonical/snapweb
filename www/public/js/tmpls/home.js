@@ -9,13 +9,17 @@ $t+='\n                <li class="three-col ';
  if (index % 4 === 3) { 
 $t+='last-col';
  } 
-$t+='">\n                    <a href="'+
-$e($v( app.url ))+
-'/settings" class="link--app"\n                        ';
+$t+='">\n                ';
  if (app.launchable) { 
-$t+=' target="_blank" ';
+$t+='\n                <a href="'+
+$e($v( app.url ))+
+'" class="link--app" target="_blank">\n                ';
+ } else { 
+$t+='\n                <a href="'+
+$e($v( app.url ))+
+'/settings" class="link--app">\n                ';
  } 
-$t+='\n                    >\n                    <img src="'+
+$t+='\n                    <img src="'+
 $e($v( app.imgSrc ))+
 '"\n                            alt="'+
 $e($v( app.name ))+

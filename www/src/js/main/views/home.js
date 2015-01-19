@@ -17,7 +17,7 @@ YUI.add('iot-views-home', function(Y) {
         }
 
         snap.launchable = false;
-        if (snap.ports.required !== undefined) {
+        if (snap.ports.required) {
           snap.launchable = true;
           snap.url = location.protocol + '//' +
                      location.hostname + ':' +
