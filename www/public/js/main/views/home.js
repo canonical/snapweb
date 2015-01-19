@@ -11,7 +11,7 @@ YUI.add('iot-views-home', function(Y) {
     render: function() {
       var list = this.get('modelList');
       var listData = list.filter(function(snap) {
-        if (snap.name === 'webdm' || snap.name === 'snappyd') {
+        if (snap.type === 'framework' || snap.type === 'oem') {
           return false;
         }
         //XXX hacks all the way down
