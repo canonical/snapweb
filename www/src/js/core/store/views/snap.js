@@ -133,7 +133,10 @@ YUI.add('iot-views-snap', function(Y) {
     },
 
     onInstallFailure: function() {
+      var btn = this.get('container').one('.install-action');
       var status = this.get('container').one('.status');
+
+      btn.set('text', 'Install').removeClass('thinking');
       status.set('text', 'There was an error installing');
     }
 
