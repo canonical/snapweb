@@ -39,6 +39,9 @@
     display: block;
     cursor: pointer;
     font-size: 1em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .link--app,
 .link--app:link,
