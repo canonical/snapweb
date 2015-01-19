@@ -12,9 +12,12 @@ YUI.add('iot-views-settings', function(Y) {
 
       var modelList = this.get('modelList');
       var snaps = modelList.filter(function(snap) {
+        var name;
         if (snap.type === 'framework' || snap.type === 'oem') {
           return false;
         }
+
+        snap.title = snap.name;
         if (snap.name.indexOf('.') === -1) {
           name = 'com.ubuntu.snappy.' + snap.name;
         } else {
@@ -22,6 +25,7 @@ YUI.add('iot-views-settings', function(Y) {
         }
         snap.name = name;
         snap.url = '/apps/' + name;
+
         return snap;
       });
 
