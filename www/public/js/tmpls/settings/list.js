@@ -25,9 +25,9 @@ $t+='last-col';
  } 
 $t+='">\n                <a href="'+
 $e($v( app.url ))+
-'" class="link--app">\n                        <img\n                            src="'+
-$e($v( YUI.Env.iot.icons[app.name] || '/public/images/app-placeholder.svg' ))+
-'"\n                            alt="'+
+'/settings" class="link--app">\n                  <img src="/icons/'+
+$e($v( app.name ))+
+'.png"\n                            alt="'+
 $e($v( app.name ))+
 ' icon"\n                            class="icon--app-icon"\n                        />\n                        <label class="label--app-name">'+
 $e($v( app.name ))+
