@@ -14,11 +14,10 @@
             <ul class="list--apps">
               <% Y.Array.each(this, function(app, index) { %>
                 <li class="three-col <% if (index % 4 === 3) { %>last-col<% } %>">
-                    <a href="<%= app.url %>" class="link--app"
+                    <a href="<%= app.url %>/settings" class="link--app"
                         <% if (app.launchable) { %> target="_blank" <% } %>
                     >
-                        <img
-                            src="<%= YUI.Env.iot.icons[app.name] || '/public/images/app-placeholder.svg' %>"
+                    <img src="<%= app.imgSrc %>"
                             alt="<%= app.name %> icon"
                             class="icon--app-icon"
                         />

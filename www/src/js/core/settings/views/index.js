@@ -12,11 +12,18 @@ YUI.add('iot-views-settings', function(Y) {
 
       var modelList = this.get('modelList');
       var snaps = modelList.filter(function(snap) {
+        var name;
         if (snap.type === 'framework' || snap.type === 'oem') {
           return false;
         }
-        var longName = 'com.ubuntu.snappy.' + snap.name;
-        snap.url = '/apps/' + longName;
+
+        snap.imgSrc = '/icons/';
+        if (snap.name.indexOf('.') === -1) {
+          snap.imgSrc += 'com.ubuntu.snappy.';
+        }
+        snap.imgSrc += snap.name + '.png';
+        snap.url = '/apps/' + snap.name;
+
         return snap;
       });
 

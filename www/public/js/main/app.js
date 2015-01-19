@@ -57,7 +57,9 @@ YUI.add('demo', function(Y) {
   };
 
   var getLocalSnapPromise = function(name) {
-    name = name.split('.').pop();
+    if (/^com.ubuntu.snappy/.test(name)) {
+      name = name.split('.').pop();
+    }
     return new Y.Promise(function(resolve, reject) {
       Y.io(YUI.Env.iot.api.packages + name, {
         on: {
@@ -84,6 +86,10 @@ YUI.add('demo', function(Y) {
   var showApp = function(req, res, next) {
     var name = req.params.name;
     var section = req.params.section;
+
+    if (name.indexOf('.') === -1) {
+      name = 'com.ubuntu.snappy.' + name;
+    }
 
     Y.Promise.all([
       getStoreSnapPromise(name),
