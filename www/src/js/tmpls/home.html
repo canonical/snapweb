@@ -17,11 +17,11 @@
                     <a href="<%= app.url %>/settings" class="link--app"
                         <% if (app.launchable) { %> target="_blank" <% } %>
                     >
-                    <img src="/icons/<%= app.name %>.png"
+                    <img src="<%= app.imgSrc %>"
                             alt="<%= app.name %> icon"
                             class="icon--app-icon"
                         />
-                        <p class="label--app-name"><%= app.title %></p>
+                        <p class="label--app-name"><%= app.name %></p>
                     </a>
                 </li>
                 <% }); %>

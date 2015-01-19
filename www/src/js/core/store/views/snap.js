@@ -7,6 +7,12 @@ YUI.add('iot-views-snap', function(Y) {
     initializer: function() {
       var model = this.get('model');
 
+      var name = model.get('name');
+
+      if (/^com.ubuntu.snappy/.test(name)) {
+        model.set('name', name.split('.').pop());
+      }
+
       if (model) {
         model.addTarget(this);
       }

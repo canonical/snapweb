@@ -87,6 +87,10 @@ YUI.add('demo', function(Y) {
     var name = req.params.name;
     var section = req.params.section;
 
+    if (name.indexOf('.') === -1) {
+      name = 'com.ubuntu.snappy.' + name;
+    }
+
     Y.Promise.all([
       getStoreSnapPromise(name),
       getLocalSnapPromise(name)

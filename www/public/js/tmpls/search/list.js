@@ -6,13 +6,13 @@ $e($v( pkg.name ))+
 '" class="search-results__tags--link"></a>\n        <div class="one-col"><img class="pkg-img" src="'+
 $e($v( pkg.icon_url ))+
 '" /></div>\n        <div class="four-col"><h3>'+
-$e($v( pkg.title ))+
+$e($v( pkg.name ))+
 '</h3></div>\n        <div class="two-col">'+
 $e($v( pkg.publisher ))+
 '</div>\n        <div class="five-col last-col">'+
 $e($v( pkg.title ))+
 '</div>\n        </li>\n        ';
  }); 
-$t+='\n      </ul>\n    </div>\n  </div>\n</div>';
+$t+='\n      </ul>\n    </div>\n  </div>\n</div>\n';
 return $t;
 }});

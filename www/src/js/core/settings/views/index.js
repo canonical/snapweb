@@ -17,14 +17,12 @@ YUI.add('iot-views-settings', function(Y) {
           return false;
         }
 
-        snap.title = snap.name;
+        snap.imgSrc = '/icons/';
         if (snap.name.indexOf('.') === -1) {
-          name = 'com.ubuntu.snappy.' + snap.name;
-        } else {
-          name = snap.name;
+          snap.imgSrc += 'com.ubuntu.snappy.';
         }
-        snap.name = name;
-        snap.url = '/apps/' + name;
+        snap.imgSrc += snap.name + '.png';
+        snap.url = '/apps/' + snap.name;
 
         return snap;
       });

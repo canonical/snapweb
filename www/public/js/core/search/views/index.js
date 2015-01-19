@@ -32,6 +32,9 @@ YUI.add('iot-views-search', function(Y) {
           queryString + '"</p></div></div>';
       } else {
         listData = list.map(function(snap) {
+          if (/^com.ubuntu.snappy/.test(snap.name)) {
+            snap.name =  snap.name.split('.').pop();
+          }
           return snap;
         });
         content = this.template(listData);

@@ -31,11 +31,11 @@
                 <% var app = this.apps[index] %>
                 <li class="two-col <% if (index % 6 == 5) { %>last-col<% } %>">
                 <a href="<%= app.url %>/settings" class="link--app">
-                  <img src="/icons/<%= app.name %>.png"
+                  <img src="<%= app.imgSrc %>"
                             alt="<%= app.name %> icon"
                             class="icon--app-icon"
                         />
-                        <label class="label--app-name"><%= app.title %></label>
+                        <label class="label--app-name"><%= app.name %></label>
                     </a>
                 </li>
                 <% } %>
