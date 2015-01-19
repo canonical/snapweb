@@ -11,19 +11,28 @@ YUI.add('iot-views-home', function(Y) {
     render: function() {
       var list = this.get('modelList');
       var listData = list.filter(function(snap) {
+        var name = '';
+
         if (snap.name === 'webdm' || snap.name === 'snappyd') {
           return false;
         }
+
         //XXX hacks all the way down
         snap.launchable = false;
+
         if (snap.ports.required !== undefined) {
           snap.launchable = true;
           snap.url = location.protocol + '//' +
-                     location.hostname + ':' +
-                     snap.ports.required;
+            location.hostname + ':' +
+            snap.ports.required;
         } else {
-          var longName = 'com.ubuntu.snappy.' + snap.name;
-          snap.url = '/apps/' + longName;
+          if (snap.name.indexOf('.') === -1) {
+            name = 'com.ubuntu.snappy.' + snap.name;
+          } else {
+            name = snap.name;
+          }
+          snap.name = name;
+          snap.url = '/apps/' + name;
         }
         return snap;
       });

@@ -15,8 +15,13 @@ YUI.add('iot-views-settings', function(Y) {
         if (snap.name === 'webdm' || snap.name === 'snappyd') {
           return false;
         }
-        var longName = 'com.ubuntu.snappy.' + snap.name;
-        snap.url = '/apps/' + longName;
+        if (snap.name.indexOf('.') === -1) {
+          name = 'com.ubuntu.snappy.' + snap.name;
+        } else {
+          name = snap.name;
+        }
+        snap.name = name;
+        snap.url = '/apps/' + name;
         return snap;
       });
 
