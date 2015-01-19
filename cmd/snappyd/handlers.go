@@ -115,7 +115,7 @@ func makeMainPageHandler(conn *dbus.Connection) (f http.HandlerFunc, err error) 
 	http.Handle("/api/v1/systemimage/", si.MakeMuxer("/api/v1/systemimage"))
 
 	name := "Ubuntu"
-	subname := "Snappy"
+	subname := ""
 
 	pkg, err := oem.Oem()
 	if err != nil && err != oem.ErrNotFound {

@@ -32,7 +32,7 @@
               </svg>
             </div>
             <div class="logotype">
-                {{ .Params.Name }} - {{ .Params.Subname }}
+                {{ .Params.Name }}{{ if .Params.Subname }}- {{ .Params.Subname }}{{ end }}
             </div>
           </a>
         </div>
