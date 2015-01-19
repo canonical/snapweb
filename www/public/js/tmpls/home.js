@@ -11,12 +11,12 @@ $t+='last-col';
  } 
 $t+='">\n                    <a href="'+
 $e($v( app.url ))+
-'" class="link--app"\n                        ';
+'/settings" class="link--app"\n                        ';
  if (app.launchable) { 
 $t+=' target="_blank" ';
  } 
-$t+='\n                    >\n                        <img\n                            src="'+
-$e($v( YUI.Env.iot.icons[app.name] || '/public/images/app-placeholder.svg' ))+
+$t+='\n                    >\n                    <img src="'+
+$e($v( app.imgSrc ))+
 '"\n                            alt="'+
 $e($v( app.name ))+
 ' icon"\n                            class="icon--app-icon"\n                        />\n                        <p class="label--app-name">'+

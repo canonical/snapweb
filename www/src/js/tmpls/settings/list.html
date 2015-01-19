@@ -30,9 +30,8 @@
                 <% for (var index = 0; index < this.apps.length; index++) { %>
                 <% var app = this.apps[index] %>
                 <li class="two-col <% if (index % 6 == 5) { %>last-col<% } %>">
-                <a href="<%= app.url %>" class="link--app">
-                        <img
-                            src="<%= YUI.Env.iot.icons[app.name] || '/public/images/app-placeholder.svg' %>"
+                <a href="<%= app.url %>/settings" class="link--app">
+                  <img src="<%= app.imgSrc %>"
                             alt="<%= app.name %> icon"
                             class="icon--app-icon"
                         />
