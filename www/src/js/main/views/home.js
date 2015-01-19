@@ -24,14 +24,13 @@ YUI.add('iot-views-home', function(Y) {
                      snap.ports.required;
         }
 
-        snap.title = snap.name;
+        snap.imgSrc = '/icons/';
         if (snap.name.indexOf('.') === -1) {
-          name = 'com.ubuntu.snappy.' + snap.name;
-        } else {
-          name = snap.name;
+          snap.imgSrc += 'com.ubuntu.snappy.';
         }
-        snap.name = name;
-        snap.url = '/apps/' + name;
+        snap.imgSrc += snap.name + '.png';
+
+        snap.url = '/apps/' + snap.name;
 
         return snap;
       });

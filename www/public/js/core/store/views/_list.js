@@ -12,6 +12,9 @@ YUI.add('iot-views-store-list', function(Y) {
       var list = this.get('modelList');
 
       var listData = list.map(function(snap) {
+        if (/^com.ubuntu.snappy/.test(snap.name)) {
+          snap.name = snap.name.split('.').pop();
+        }
         return snap;
       });
 

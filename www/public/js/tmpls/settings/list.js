@@ -25,12 +25,12 @@ $t+='last-col';
  } 
 $t+='">\n                <a href="'+
 $e($v( app.url ))+
-'/settings" class="link--app">\n                  <img src="/icons/'+
-$e($v( app.name ))+
-'.png"\n                            alt="'+
+'/settings" class="link--app">\n                  <img src="'+
+$e($v( app.imgSrc ))+
+'"\n                            alt="'+
 $e($v( app.name ))+
 ' icon"\n                            class="icon--app-icon"\n                        />\n                        <label class="label--app-name">'+
-$e($v( app.title ))+
+$e($v( app.name ))+
 '</label>\n                    </a>\n                </li>\n                ';
  } 
 $t+='\n            </ul>\n            ';

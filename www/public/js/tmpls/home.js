@@ -15,12 +15,12 @@ $e($v( app.url ))+
  if (app.launchable) { 
 $t+=' target="_blank" ';
  } 
-$t+='\n                    >\n                    <img src="/icons/'+
-$e($v( app.name ))+
-'.png"\n                            alt="'+
+$t+='\n                    >\n                    <img src="'+
+$e($v( app.imgSrc ))+
+'"\n                            alt="'+
 $e($v( app.name ))+
 ' icon"\n                            class="icon--app-icon"\n                        />\n                        <p class="label--app-name">'+
-$e($v( app.title ))+
+$e($v( app.name ))+
 '</p>\n                    </a>\n                </li>\n                ';
  }); 
 $t+='\n            </ul>\n            ';
