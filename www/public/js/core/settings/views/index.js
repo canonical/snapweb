@@ -12,7 +12,7 @@ YUI.add('iot-views-settings', function(Y) {
 
       var modelList = this.get('modelList');
       var snaps = modelList.filter(function(snap) {
-        if (snap.name === 'webdm' || snap.name === 'snappyd') {
+        if (snap.type === 'framework' || snap.type === 'oem') {
           return false;
         }
         var longName = 'com.ubuntu.snappy.' + snap.name;
