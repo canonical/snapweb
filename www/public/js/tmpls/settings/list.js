@@ -30,7 +30,7 @@ $e($v( app.name ))+
 '.png"\n                            alt="'+
 $e($v( app.name ))+
 ' icon"\n                            class="icon--app-icon"\n                        />\n                        <label class="label--app-name">'+
-$e($v( app.name ))+
+$e($v( app.title ))+
 '</label>\n                    </a>\n                </li>\n                ';
  } 
 $t+='\n            </ul>\n            ';
