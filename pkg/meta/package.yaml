@@ -20,6 +20,6 @@ services:
       start: avahi-daemon -f avahi-daemon.conf
       description: Avahi daemon
 ports:
-    required: 8080
-maintainer: Clapping Team
+    required: 4200
+maintainer: Sergio Schvezov <sergio.schvezov@canonical.com>
 icon: meta/clap.png

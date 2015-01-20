@@ -31,7 +31,7 @@ import (
 
 var logger *log.Logger
 
-const httpAddr string = ":8080"
+const httpAddr string = ":4200"
 
 func init() {
 	logger = log.New(os.Stderr, "Snappy: ", log.Ldate|log.Ltime|log.Lshortfile)

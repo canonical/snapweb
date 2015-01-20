@@ -18,4 +18,4 @@ Now run the watchers, to watch for when the files have changed and copy them ove
 
     ./watch.sh
 
-Leave this running in its own terminal window, and start work. Your changes should be copied over live to the snappy box, so you can see them on http://localhost:8080.
+Leave this running in its own terminal window, and start work. Your changes should be copied over live to the snappy box, so you can see them on http://localhost:4200.
