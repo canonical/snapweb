@@ -3,12 +3,6 @@ html, body {
   margin:0;
 }
 
-.layout {
-}
-
-.layout-body {
-}
-
 .layout-nav-primary .icon {
   padding: 1em 1em 1em 3em;
   white-space: nowrap;
@@ -16,9 +10,6 @@ html, body {
   text-overflow: ellipsis;
   border-bottom: 1px solid #444;
   cursor:pointer;
-}
-
-.layout-app-container > div {
 }
 
 .layout-app-nav-primary {
@@ -163,4 +154,16 @@ header.banner.to-close .logo{
 
 .layout-body {
   padding-bottom: 30px;
+}
+
+.loading::after {
+  content:'';
+  display:block;
+  background-color:rgba(255,255,255,0.8);
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  z-index:100000;
 }

@@ -9,6 +9,8 @@ YUI.add('demo', function(Y) {
     installed.load(function() {
       Y.iot.app.showView('home', {
         modelList: installed
+      }, function(view) {
+        app.get('container').removeClass('loading');
       });
     });
   };
@@ -24,6 +26,8 @@ YUI.add('demo', function(Y) {
       Y.iot.app.showView('search', {
         modelList: list,
         queryString: query
+      }, function(view) {
+        app.get('container').removeClass('loading');
       });
     });
   };
@@ -52,6 +56,8 @@ YUI.add('demo', function(Y) {
     list.load(function() {
       Y.iot.app.showView('store', {
         modelList: list
+      }, function(view) {
+        app.get('container').removeClass('loading');
       });
     });
   };
@@ -105,6 +111,8 @@ YUI.add('demo', function(Y) {
 
       Y.iot.app.showView(view, null, {
         render: true
+      }, function(view) {
+        app.get('container').removeClass('loading');
       });
     });
   };
@@ -143,6 +151,8 @@ YUI.add('demo', function(Y) {
 
       Y.iot.app.showView(view, null, {
         render: true
+      }, function(view) {
+        app.get('container').removeClass('loading');
       });
     });
   };
@@ -208,6 +218,11 @@ YUI.add('demo', function(Y) {
   });
 
   app.set('overlay', Y.one('.app-overlay'));
+
+  app.on('navigate', function(e) {
+    console.log('navigate');
+    app.get('container').addClass('loading');
+  });
 
   app.render().dispatch();
 
