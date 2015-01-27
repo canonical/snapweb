@@ -8,7 +8,7 @@ import (
 	"runtime"
 	"strings"
 
-	"launchpad.net/clapper/click"
+	"launchpad.net/webdm/click"
 
 	"github.com/gorilla/mux"
 )

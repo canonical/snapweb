@@ -1,5 +1,5 @@
 name: webdm
-source: lp:clapper
+source: lp:webdm
 description: Manage a system with a snappy webui
 version: 0.1
 type: framework
