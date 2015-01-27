@@ -33,7 +33,7 @@ gobuild() {
 
     mkdir -p "bin/$plat_abi"
     cd "bin/$plat_abi"
-    GOARCH=$arch go build launchpad.net/clapper/cmd/snappyd
+    GOARCH=$arch go build launchpad.net/webdm/cmd/snappyd
     cd - > /dev/null
 }
 

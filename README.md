@@ -10,13 +10,9 @@ To branch this project run
 
     mkdir -p $GOPATH/src/launchpad.net
     cd $GOPATH/src/launchpad.net
-    bzr branch lp:clapper
-    cd clapper
+    bzr branch lp:webdm
+    cd webdm
     ./build.sh
-
-To build the arm version do
-
-    GOARCH=arm ./build.sh
 
 # Installing
 

@@ -13,9 +13,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"launchpad.net/clapper/systemd"
 	"launchpad.net/go-dbus/v1"
 	"launchpad.net/goyaml"
+	"launchpad.net/webdm/systemd"
 )
 
 type services []map[string]string

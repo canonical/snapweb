@@ -11,8 +11,8 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"launchpad.net/clapper/systemd"
 	"launchpad.net/go-dbus/v1"
+	"launchpad.net/webdm/systemd"
 )
 
 type handler struct {

@@ -29,11 +29,11 @@ import (
 	"path/filepath"
 	"text/template"
 
-	"launchpad.net/clapper/click"
-	"launchpad.net/clapper/oem"
-	"launchpad.net/clapper/store"
-	"launchpad.net/clapper/system"
 	"launchpad.net/go-dbus/v1"
+	"launchpad.net/webdm/click"
+	"launchpad.net/webdm/oem"
+	"launchpad.net/webdm/store"
+	"launchpad.net/webdm/system"
 )
 
 type slug string
