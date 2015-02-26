@@ -7,7 +7,15 @@
 #   - copy this stub in the snapp bin/ directory with the name matching the multiarch binary
 set -e
 
-verbose=true
+# avahi daemon specific options
+config="avahi-daemon.conf"
+# This is a workaround for not having the env vars available
+version=$(/bin/grep 'version:' meta/package.yaml | /bin/sed -e 's/version: *//')
+config_path="/var/lib/apps/webdm/$version/$config"
+
+[ ! -f "$config_path" ] && /bin/cp "$config" "$config_path"
+
+verbose=false
 platform=$(uname -i)
 plat_abi=
 
@@ -24,6 +32,7 @@ case $platform in
     ;;
 esac
 
+# runtime
 snapp_bin_path=$0
 snapp_bin=$(basename $snapp_bin_path)
 snapp_dir=$(realpath $(dirname $snapp_bin_path)/)
@@ -47,7 +56,7 @@ cd $snapp_dir
 $verbose && echo PATH is $PATH
 $verbose && echo LD_LIBRARY_PATH is $LD_LIBRARY_PATH
 $verbose && echo launching $snapp_bin "$@"
-exec $snapp_bin "$@"
+exec $snapp_bin -f "$config_path" "$@"
 
 # never reach this
 exit 1
