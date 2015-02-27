@@ -9,9 +9,7 @@ set -e
 
 # avahi daemon specific options
 config="avahi-daemon.conf"
-# This is a workaround for not having the env vars available
-version=$(/bin/grep 'version:' meta/package.yaml | /bin/sed -e 's/version: *//')
-config_path="/var/lib/apps/webdm/$version/$config"
+config_path="$SNAPP_APP_DATA_PATH/$version/$config"
 
 [ ! -f "$config_path" ] && /bin/cp "$config" "$config_path"
 
