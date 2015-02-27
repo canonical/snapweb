@@ -1,7 +1,7 @@
 name: webdm
 source: lp:webdm
 description: Manage a system with a snappy webui
-version: 0.1
+version: 0.2
 type: framework
 architecture: UNKNOWN_ARCH
 frameworks: ubuntu-core-15.04-dev1
@@ -17,7 +17,7 @@ services:
       start: snappyd
       description: Snappy WebDM
     - name: avahi
-      start: avahi-daemon -f avahi-daemon.conf
+      start: avahi-daemon
       description: Avahi daemon
 ports:
     required: 4200
