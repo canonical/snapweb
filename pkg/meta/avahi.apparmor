@@ -15,7 +15,6 @@
   @{CLICK_DIR}/@{APP_PKGNAME}/@{APP_VERSION}/**  mrklix,
   /var/lib/apps/@{APP_PKGNAME}/@{APP_VERSION}/     rw,
   /var/lib/apps/@{APP_PKGNAME}/@{APP_VERSION}/**   rwl,
-  /var/lib/apps/webdm/@{APP_VERSION}/** rwl,
 
   # global namespaces
   network inet stream,
