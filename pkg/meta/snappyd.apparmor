@@ -53,7 +53,6 @@
   # This is the rule that should stick
   /var/lib/apps/@{APP_PKGNAME}/@{APP_VERSION}/     rw,
   /var/lib/apps/@{APP_PKGNAME}/@{APP_VERSION}/**   rwl,
-  /var/lib/apps/webdm/@{APP_VERSION}/** rwl,
 
   # system bus
   /var/run/dbus/system_bus_socket rw,
