@@ -46,6 +46,7 @@
   /bin/cp Uxr,
   /bin/grep Uxr,
   /bin/sed Uxr,
+  /bin/mkdir Uxr,
 
   # daemon
   /run/avahi-daemon/       rw,
