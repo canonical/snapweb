@@ -13,6 +13,8 @@
   @{CLICK_DIR}/@{APP_PKGNAME}/                   r,
   @{CLICK_DIR}/@{APP_PKGNAME}/@{APP_VERSION}/    r,
   @{CLICK_DIR}/@{APP_PKGNAME}/@{APP_VERSION}/**  mrklix,
+  /var/lib/apps/@{APP_PKGNAME}/@{APP_VERSION}/     rw,
+  /var/lib/apps/@{APP_PKGNAME}/@{APP_VERSION}/**   rwl,
 
   # global namespaces
   network inet stream,
@@ -34,6 +36,10 @@
   /usr/bin/basename Uxr,
   /usr/bin/realpath Uxr,
   /usr/bin/dirname Uxr,
+  /bin/sed Uxr,
+
+  /bin/cp Uxr,
+  /bin/grep Uxr,
   /bin/sed Uxr,
 
   # daemon
