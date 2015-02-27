@@ -3,7 +3,7 @@
 ###VAR###
 
 ###PROFILEATTACH### (attach_disconnected) {
-        
+
   #include <abstractions/base>
   #include <abstractions/nameservice>
   #include <abstractions/user-tmp>
@@ -13,6 +13,11 @@
   @{CLICK_DIR}/@{APP_PKGNAME}/                   r,
   @{CLICK_DIR}/@{APP_PKGNAME}/@{APP_VERSION}/    r,
   @{CLICK_DIR}/@{APP_PKGNAME}/@{APP_VERSION}/**  mrklix,
+  # Writable system area only for this version.
+  # This is a work around for when provisioned
+  /var/lib/apps/@{APP_PKGNAME}                     rw,
+  /var/lib/apps/@{APP_PKGNAME}/                    rw,
+  /var/lib/apps/@{APP_PKGNAME}/**                  rwl,
   /var/lib/apps/@{APP_PKGNAME}/@{APP_VERSION}/     rw,
   /var/lib/apps/@{APP_PKGNAME}/@{APP_VERSION}/**   rwl,
 
