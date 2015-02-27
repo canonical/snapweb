@@ -45,7 +45,7 @@ def set_config(config_yaml):
         try:
             subprocess.check_call(['systemctl', 'restart', avahi_unit])
         except subprocess.CalledProcessError:
-            print("Cannot restart required services to fully apply"
+            print("Cannot restart required services to fully apply "
                   "the configuration changes")
 
     return avahi_config
