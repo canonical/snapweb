@@ -3,11 +3,13 @@
 
 import configparser
 import os
+import subprocess
 import sys
 import yaml
 
 
 WEBDM_DATA_PATH = os.environ['SNAP_APP_DATA_PATH']
+WEBDM_VERSION = os.environ['SNAP_VERSION']
 AVAHI_CONFIG_FILE = os.path.join(WEBDM_DATA_PATH, 'avahi-daemon.conf')
 
 def main():
@@ -27,6 +29,8 @@ def main():
 def set_config(config_yaml):
     """set_config sets a configuration and returns avahi_config"""
 
+    restart_avahi = False
+
     config = config_yaml['config']['webdm']
 
     avahi_config = configparser.ConfigParser()
@@ -34,6 +38,15 @@ def set_config(config_yaml):
 
     if 'avahi-hostname' in config:
         avahi_config['server']['host-name'] = config['avahi-hostname']
+        restart_avahi = True
+
+    if restart_avahi:
+        avahi_unit = 'webdm_avahi_%s.service' % WEBDM_VERSION
+        try:
+            subprocess.check_call(['systemctl', 'restart', avahi_unit])
+        except subprocess.CalledProcessError:
+            print("Cannot restart required services to fully apply "
+                  "the configuration changes")
 
     return avahi_config
 
