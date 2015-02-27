@@ -7,7 +7,7 @@
 #   - copy this stub in the snapp bin/ directory with the name matching the multiarch binary
 set -e
 
-verbose=true
+verbose=false
 platform=$(uname -i)
 plat_abi=
 
