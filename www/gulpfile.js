@@ -113,5 +113,5 @@ gulp.task('watch', function() {
 });
 
 gulp.task('build', ['yui', 'scripts', 'styles', 'image', 'templates']);
-gulp.task('watch', ['scripts', 'styles', 'image', 'templates']);
+gulp.task('watch', ['build', 'watch']);
 gulp.task('default', ['build']);
