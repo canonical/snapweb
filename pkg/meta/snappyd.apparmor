@@ -59,6 +59,8 @@
   capability net_admin,
 
   # system image
+  /etc/system-image/channel.ini r,
+
   dbus (send)
      bus=system
      path=/Service
