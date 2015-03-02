@@ -29,7 +29,7 @@ type Package struct {
 	Type        string   `json:"type,omitempty"`
 	Services    services `json:"services,omitempty"`
 	Ports       struct {
-		Required uint `json:"required,omitempty"`
+		Required interface{} `json:"required,omitempty"`
 	} `json:"ports,omitempty"`
 }
 
@@ -76,6 +76,15 @@ func (db *ClickDatabase) GetPackages(pkg string) (packages []Package, err error)
 
 		if err := packages[i].getServices(db.conn); err != nil {
 			return nil, err
+		}
+
+		port := packages[i].Ports.Required
+		switch port.(type) {
+		case uint, uint32, uint64, float32, float64:
+			// everything is fine
+		default:
+			fmt.Printf("Port type for %s is '%T' with value %v\n", packages[i].Name, port, port)
+			packages[i].Ports.Required = 0
 		}
 	}
 
