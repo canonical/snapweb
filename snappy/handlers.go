@@ -63,6 +63,28 @@ func uiAccess(services []snappy.Service) (port uint64, uri string) {
 }
 
 func (h *handler) getAll(w http.ResponseWriter, r *http.Request) {
+	m := snappy.NewMetaRepository()
+
+	installedSnaps, err := m.Installed()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
+		return
+	}
+
+	snapQs := make([]snapPkg, 0, len(installedSnaps))
+
+	for i := range installedSnaps {
+		snapQs = append(snapQs, snapQueryToPayload(installedSnaps[i]))
+	}
+
+	enc := json.NewEncoder(w)
+	if err := enc.Encode(snapQs); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
+		return
+	}
+
 }
 
 func (h *handler) get(w http.ResponseWriter, r *http.Request) {
