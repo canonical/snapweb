@@ -6,7 +6,21 @@ This assumes you have a working go environment with a GOPATH env var setup
 and nodejs and npm installed:
 
     sudo apt-get install nodejs-legacy npm
-    sudo npm install npm gulp -g
+    sudo npm install -g npm
+
+Install global npm modules without sudo:
+(see also: https://github.com/glenpike/npm-g_nosudo)
+
+    cat > ~/.npmrc << EOF
+    root = $HOME/node/lib/node_modules
+    prefix = $HOME/node
+    binroot = $HOME/node/bin
+    manroot = $HOME/node/man EOF
+
+Also add $HOME/node/bin to PATH and export NODE_PATH=$HOME/node/lib/node_modules
+to the env 
+
+    npm install -g --prefix=$(npm config get prefix) gulp
     cd ./www
     npm install
 
