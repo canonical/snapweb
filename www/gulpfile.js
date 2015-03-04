@@ -48,13 +48,6 @@ gulp.task('scripts', ['clean:scripts'], function() {
   .pipe(gulp.dest('public/js'));
 });
 
-gulp.task('clean:scripts', ['clean:scripts'], function(cb) {
-  del([
-  'public/js',
-  'public/js'
-  ], cb);
-});
-
 gulp.task('clean:scripts', function(cb) {
   del([
   'public/js',
