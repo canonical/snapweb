@@ -66,7 +66,7 @@ gulp.task('styles', ['clean:styles'], function() {
   return gulp.src(paths.css)
   .pipe(csso())
   .pipe(autoprefixer())
-  .pipe(concat('demo.css'))
+  .pipe(concat('webdm.css'))
   .pipe(gulp.dest('public/css'));
 });
 
