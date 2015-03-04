@@ -9,7 +9,10 @@ set -e
 
 # avahi daemon specific options
 config="avahi-daemon.conf"
-config_path="$SNAPP_APP_DATA_PATH/$version/$config"
+config_path="$SNAPP_APP_DATA_PATH/$config"
+
+# This is to workaround pre provisioning
+mkdir -p "$SNAPP_APP_DATA_PATH"
 
 [ ! -f "$config_path" ] && /bin/cp "$config" "$config_path"
 
