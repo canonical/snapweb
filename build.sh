@@ -74,6 +74,9 @@ prov_avahi() {
     cp $avahi_dir/libdaemon0/usr/lib/$plat_abi/* "lib/$plat_abi"
 }
 
+echo "Building web assets with gulp..."
+gulp --gulpfile www/gulpfile.js
+
 orig_pwd=$(pwd)
 
 builddir=$(mktemp -d)
