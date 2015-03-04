@@ -23,17 +23,14 @@ var paths = {
   templates: ['src/js/**/*.html'] // html to be compiled to js tmpl func
 };
 
-gulp.task('clean', function(cb) {
-  del(['public'], cb);
-});
 
-gulp.task('image', function () {
+gulp.task('image', function() {
   gulp.src(paths.imgs)
   .pipe(imagemin())
   .pipe(gulp.dest('public/images'));
 });
 
-gulp.task('scripts', function() {
+gulp.task('scripts', ['clean:scripts'], function() {
   return gulp.src(paths.js)
   .pipe(jscs())
   .on('error', function(err) {
@@ -51,7 +48,14 @@ gulp.task('scripts', function() {
   .pipe(gulp.dest('public/js'));
 });
 
-gulp.task('styles', function() {
+gulp.task('clean:scripts', function(cb) {
+  del([
+  'public/js',
+  '!public/js/tmpls'
+  ], cb);
+});
+
+gulp.task('styles', ['clean:styles'], function() {
   return gulp.src(paths.css)
   .pipe(csso())
   .pipe(autoprefixer())
@@ -59,7 +63,11 @@ gulp.task('styles', function() {
   .pipe(gulp.dest('public/css'));
 });
 
-gulp.task('templates', function() {
+gulp.task('clean:styles', function(cb) {
+  del(['public/css'], cb);
+});
+
+gulp.task('templates', ['clean:templates'], function() {
   return gulp.src(paths.templates)
   .pipe(precompile())
   //.pipe(uglify())
@@ -73,19 +81,21 @@ gulp.task('templates', function() {
   .pipe(gulp.dest('public/js'));
 });
 
-gulp.task('svg', function() {
-  return gulp.src('src/img/*.svg')
-  .pipe(svgSymbols())
-  .pipe(gulp.dest('public/svg'));
+gulp.task('clean:templates', function(cb) {
+  del(['public/js/tmpls'], cb);
 });
 
 // create a smaller yui lib (leave out debug and raw)
-gulp.task('yui', function() {
+gulp.task('yui', ['clean:yui'], function() {
   return gulp.src([
     'node_modules/yui/**/*-min.js',
     'node_modules/yui/**/*-min.css'
   ])
   .pipe(gulp.dest('public/vendor/yui'));
+});
+
+gulp.task('clean:yui', function(cb) {
+  del(['public/vendor/yui'], cb);
 });
 
 gulp.task('watch', function() {
@@ -95,4 +105,6 @@ gulp.task('watch', function() {
   gulp.watch(paths.templates, ['templates']);
 });
 
-gulp.task('default', ['watch', 'scripts', 'styles', 'image', 'templates']);
+gulp.task('build', ['yui', 'scripts', 'styles', 'image', 'templates']);
+gulp.task('watch', ['build', 'watch']);
+gulp.task('default', ['build']);
