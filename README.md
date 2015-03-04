@@ -13,7 +13,8 @@ Install global npm modules without sudo:
     root = $HOME/node/lib/node_modules
     prefix = $HOME/node
     binroot = $HOME/node/bin
-    manroot = $HOME/node/man EOF
+    manroot = $HOME/node/man
+    EOF
 
 Also add $HOME/node/bin to PATH and export NODE_PATH=$HOME/node/lib/node_modules
 to the env 
