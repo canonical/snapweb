@@ -6,10 +6,8 @@ This assumes you have a working go environment with a GOPATH env var setup
 and nodejs and npm installed:
 
     sudo apt-get install nodejs-legacy npm
-    sudo npm install -g npm
 
 Install global npm modules without sudo:
-(see also: https://github.com/glenpike/npm-g_nosudo)
 
     cat > ~/.npmrc << EOF
     root = $HOME/node/lib/node_modules
