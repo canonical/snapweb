@@ -149,7 +149,7 @@ func renderLayout(html string, data *Page, w http.ResponseWriter) error {
 		return err
 	}
 
-	layoutPath := filepath.Join("www", "templates", "layout.html")
+	layoutPath := filepath.Join("www", "templates", "index.html")
 	t, err := template.ParseFiles(layoutPath, htmlPath)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
