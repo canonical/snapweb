@@ -2,7 +2,26 @@
 
 ## Prerequisites
 
-This assumes you have a working go environment with a GOPATH env var setup.
+This assumes you have a working go environment with a GOPATH env var setup
+and nodejs and npm installed:
+
+    sudo apt-get install nodejs-legacy npm
+
+Install global npm modules without sudo:
+
+    cat > ~/.npmrc << EOF
+    root = $HOME/node/lib/node_modules
+    prefix = $HOME/node
+    binroot = $HOME/node/bin
+    manroot = $HOME/node/man
+    EOF
+
+Also add $HOME/node/bin to PATH and export NODE_PATH=$HOME/node/lib/node_modules
+to the env 
+
+    npm install -g --prefix=$(npm config get prefix) gulp
+    cd ./www
+    npm install
 
 ## Building
 
@@ -94,18 +113,3 @@ This basically is a proxy to the store
     curl http://localhost:4200/api/v1/store/search?q=xkcd
 
     curl http://localhost:4200/api/v1/store/package/com.ubuntu.snappy.xkcd-webserver
-
-## Web Front End
-
-To install gulp tools:
-
-    sudo apt-get install nodejs-legacy npm
-    sudo npm install -g gulp
-    cd ./www
-    npm install
-
-To build (& watch):
-    gulp
-
-Set hostname (YUI.Env.demoUrl):
-    edit www/templates/layout.html
