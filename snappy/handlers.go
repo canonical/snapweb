@@ -17,8 +17,8 @@ type snapPkg struct {
 	Version   string          `json:"version"`
 	Installed bool            `json:"installed"`
 	Type      snappy.SnapType `json:"type"`
-	UIPort    uint64          `json:"ui_port"`
-	UIUri     string          `json:"ui_uri"`
+	UIPort    uint64          `json:"ui_port,omitempty"`
+	UIUri     string          `json:"ui_uri,omitempty"`
 }
 
 type handler struct{}
