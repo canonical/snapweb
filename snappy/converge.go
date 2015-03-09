@@ -21,17 +21,17 @@ type snapPkg struct {
 	UIUri     string          `json:"ui_uri,omitempty"`
 }
 
-func packagePayload(pkgName string) (*snapPkg, error) {
+func packagePayload(pkgName string) (snapPkg, error) {
 	snapQ := snappy.ActiveSnapByName(pkgName)
 	if snapQ == nil {
-		return nil, errPackageNotFound
+		return snapPkg{}, errPackageNotFound
 	}
 
 	return snapQueryToPayload(snapQ), nil
 }
 
-func snapQueryToPayload(snapQ snappy.Part) *snapPkg {
-	snap := &snapPkg{
+func snapQueryToPayload(snapQ snappy.Part) snapPkg {
+	snap := snapPkg{
 		Name:      snapQ.Name(),
 		Version:   snapQ.Version(),
 		Installed: snapQ.IsInstalled(),
