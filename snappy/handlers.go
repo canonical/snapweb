@@ -44,6 +44,29 @@ func snapQueryToPayload(snapQ snappy.Part) (snap snapPkg) {
 	return snap
 }
 
+func mergeSnaps(installed, remote []snapPkg) []snapPkg {
+	remoteMap := make(map[string]snapPkg, len(remote))
+
+	for i := range remote {
+		remoteMap[remote[i].Name] = remote[i]
+	}
+
+	for i := range installed {
+		pkgName := installed[i].Name
+		if _, ok := remoteMap[pkgName]; ok {
+			// TODO add details about cost and pricing, and then delete
+			delete(remoteMap, pkgName)
+		}
+	}
+
+	snapPkgs := installed
+	for _, v := range remote {
+		snapPkgs = append(snapPkgs, v)
+	}
+
+	return snapPkgs
+}
+
 func uiAccess(services []snappy.Service) (port uint64, uri string) {
 	for i := range services {
 		if ui, ok := services[i].Ports.External["ui"]; ok {
@@ -72,14 +95,27 @@ func (h *handler) getAll(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	snapQs := make([]snapPkg, 0, len(installedSnaps))
-
-	for i := range installedSnaps {
-		snapQs = append(snapQs, snapQueryToPayload(installedSnaps[i]))
+	remoteSnaps, err := m.Search("*")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
+		return
 	}
 
+	installedSnapQs := make([]snapPkg, 0, len(installedSnaps))
+	for i := range installedSnaps {
+		installedSnapQs = append(installedSnapQs, snapQueryToPayload(installedSnaps[i]))
+	}
+
+	remoteSnapQs := make([]snapPkg, 0, len(remoteSnaps))
+	for i := range remoteSnaps {
+		remoteSnapQs = append(remoteSnapQs, snapQueryToPayload(remoteSnaps[i]))
+	}
+
+	allSnapQs := mergeSnaps(installedSnapQs, remoteSnapQs)
+
 	enc := json.NewEncoder(w)
-	if err := enc.Encode(snapQs); err != nil {
+	if err := enc.Encode(allSnapQs); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
 		return
