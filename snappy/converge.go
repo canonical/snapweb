@@ -100,6 +100,10 @@ func snapQueryToPayload(snapQ snappy.Part) snapPkg {
 
 func uiAccess(services []snappy.Service) (port uint64, uri string) {
 	for i := range services {
+		if services[i].Ports == nil {
+			continue
+		}
+
 		if ui, ok := services[i].Ports.External["ui"]; ok {
 			ui := strings.Split(ui.Port, "/")
 			if len(ui) == 2 {
@@ -108,7 +112,8 @@ func uiAccess(services []snappy.Service) (port uint64, uri string) {
 					return 0, ""
 				}
 
-				return port, ui[1]
+				// FIXME ui[1] holds the proto, not the uri handler
+				return port, ""
 			}
 		}
 	}
