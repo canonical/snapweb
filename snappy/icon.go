@@ -32,7 +32,7 @@ func localIconPath(pkgName, iconPath string) (relativePath string, err error) {
 	}
 
 	// if we already have the icon, return
-	if _, err := os.Stat(iconDstPath); os.IsExist(err) {
+	if _, err := os.Stat(iconDstPath); err == nil {
 		return relativePath, nil
 	} else if !os.IsNotExist(err) {
 		return "", err
