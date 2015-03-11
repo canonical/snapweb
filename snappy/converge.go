@@ -57,7 +57,7 @@ func allPackages() ([]snapPkg, error) {
 	return snapQs, nil
 }
 
-func snapQueryToPayload(snapQ snappy.Part) snapPkg {
+func snapQueryToPayload(snapQ queryPackage) snapPkg {
 	snap := snapPkg{
 		Name:      snapQ.Name(),
 		Version:   snapQ.Version(),
