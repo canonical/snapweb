@@ -92,7 +92,7 @@ func mergeSnaps(installed, remote []snapPkg) []snapPkg {
 	return snapPkgs
 }
 
-func snapQueryToPayload(snapQ snappy.Part) snapPkg {
+func snapQueryToPayload(snapQ queryPackage) snapPkg {
 	snap := snapPkg{
 		Name:      snapQ.Name(),
 		Version:   snapQ.Version(),
