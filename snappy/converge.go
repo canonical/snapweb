@@ -29,6 +29,7 @@ type queryPackage interface {
 	snappy.Versioned
 	snappy.Installed
 	snappy.Typer
+	snappy.Iconic
 }
 
 // for easier stubbing during testing
