@@ -14,6 +14,7 @@ type fakeSnappyPart struct {
 	name      string
 	version   string
 	installed bool
+	icon      string
 	snapType  snappy.SnapType
 }
 
@@ -69,6 +70,10 @@ func (p fakeSnappyPart) Version() string {
 
 func (p fakeSnappyPart) Type() snappy.SnapType {
 	return p.snapType
+}
+
+func (p fakeSnappyPart) Icon() string {
+	return p.icon
 }
 
 func newFakeServicesNoExternalUI() []snappy.Service {
