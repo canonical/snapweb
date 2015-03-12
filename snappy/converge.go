@@ -21,13 +21,6 @@ type snapPkg struct {
 	UIUri     string          `json:"ui_uri,omitempty"`
 }
 
-type queryPackage interface {
-	snappy.Named
-	snappy.Versioned
-	snappy.Installed
-	snappy.Typer
-}
-
 // for easier stubbing during testing
 var activeSnapByName = snappy.ActiveSnapByName
 
@@ -89,7 +82,7 @@ func mergeSnaps(installed, remote []snapPkg) []snapPkg {
 	return snapPkgs
 }
 
-func snapQueryToPayload(snapQ queryPackage) snapPkg {
+func snapQueryToPayload(snapQ snappy.Part) snapPkg {
 	snap := snapPkg{
 		Name:      snapQ.Name(),
 		Version:   snapQ.Version(),
