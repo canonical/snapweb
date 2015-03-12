@@ -11,6 +11,7 @@ import (
 func Test(t *testing.T) { TestingT(t) }
 
 type fakeSnappyPart struct {
+	snappy.Part
 	name      string
 	version   string
 	installed bool
