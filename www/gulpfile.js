@@ -50,8 +50,8 @@ gulp.task('scripts', ['clean:scripts'], function() {
 
 gulp.task('clean:scripts', function(cb) {
   del([
-  'public/js',
-  '!public/js/tmpls'
+  '!public/js/tmpls',
+  'public/js/**'
   ], cb);
 });
 

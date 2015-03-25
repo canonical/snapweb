@@ -86,7 +86,6 @@ func InitURLHandlers(conn *dbus.Connection, log *log.Logger) {
 	}
 
 	http.Handle("/public/", loggingHandler(http.FileServer(http.Dir("./www"))))
-	http.Handle("/mock-api/", loggingHandler(http.FileServer(http.Dir("./www"))))
 
 	if iconDir, err := click.IconDir(); err == nil {
 		http.Handle("/icons/", loggingHandler(http.FileServer(http.Dir(filepath.Join(iconDir, "..")))))
@@ -136,7 +135,7 @@ func makeMainPageHandler(conn *dbus.Connection) (f http.HandlerFunc, err error) 
 			},
 		}
 
-		if err := renderLayout("main.html", &data, w); err != nil {
+		if err := renderLayout("index.html", &data, w); err != nil {
 			log.Println(err)
 		}
 	}, nil
@@ -149,7 +148,7 @@ func renderLayout(html string, data *Page, w http.ResponseWriter) error {
 		return err
 	}
 
-	layoutPath := filepath.Join("www", "templates", "index.html")
+	layoutPath := filepath.Join("www", "templates", "base.html")
 	t, err := template.ParseFiles(layoutPath, htmlPath)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
