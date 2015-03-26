@@ -70,6 +70,7 @@ var SnapView = Marionette.ItemView.extend({
 });
 
 var BaskView = Marionette.CollectionView.extend({
+  className: 'list--apps',
   childView: SnapView
 });
 
