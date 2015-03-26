@@ -18,6 +18,7 @@
     "vinyl-buffer": "~1.0.0",
     "vinyl-source-stream": "~1.1.0",
     "watchify": "~2.4.0",
-    "backbone.marionette": "~2.4.1"
+    "backbone.marionette": "~2.4.1",
+    "aliasify": "~1.7.2"
   }
 }
