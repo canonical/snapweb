@@ -1,0 +1,95 @@
+.search-results {
+  position:absolute;
+  top:60px;
+  left:0;
+  right:0;
+  z-index:100;
+}
+
+.search-results .search-background {
+    position: relative;
+  background-color:#efefef;
+  box-shadow: 0 1px 1px 0 rgba(0,0,0,.15);
+  z-index:100;
+}
+.search-results__list {
+    margin-left: 0;
+    margin-bottom: 1em;
+    list-style: none;
+}
+.search-results__list div, .search-results__list h3, .search-results__list ul {
+    margin-bottom: 0;
+}
+.search-results__list p {
+    font-size: .875em;
+}
+.search-results__list .search-results__tags--link:link, .search-results__list .search-results__tags--link:visited {
+    box-sizing: border-box;
+    color: #333;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 2;
+}
+.search-results__list .list__icons li, .search-results__list .search-results__tags li {
+    position: relative;
+    z-index: 500;
+}
+.search-results__list .search-results__list--item .cell {
+    display: inline-block;
+    position: relative;
+    z-index: 10;
+}
+@media only screen and (min-width : 769px) {
+    .search-results__list .search-results__list--item .cell:hover {
+        display: table;
+        z-index: 200;
+    }
+}
+.search-results__list--header {
+    display: none;
+}
+.search-results__list--item {
+    box-sizing: border-box;
+    width: 100%;
+    position: relative;
+    padding: .8em 10px;
+    margin-bottom: 20px;
+    transition: all .2s;
+}
+
+@media only screen and (min-width : 768px) {
+    .search-results__list--item {
+        margin-bottom: 0;
+    }
+}
+.search-results__list--item p {
+    padding-top: .2em;
+    word-wrap: break-word;
+}
+.search-results__list--item:last-of-type {
+    margin-bottom: 1em;
+}
+.search-results__list--item div:empty {
+    display: none;
+}
+.search-results__list--item h3 {
+    margin-top: 0;
+    line-height: 24px;
+}
+.search-results__list--item h3 img {
+    margin-right: 3px;
+}
+.search-results__list--item img {
+    vertical-align: top;
+}
+.search-results__list--item .deploys__column {
+    font-weight: 500;
+}
+.search-results__list--item:hover {
+    box-shadow: -2px 2px 3px 0 #cdcdcd, 2px 2px 3px 0 #cdcdcd;
+}

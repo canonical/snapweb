@@ -25,7 +25,7 @@ webdm.addRegions({
 // model
 
 var Snap = Backbone.Model.extend({
-  urlRoot: '/api/v1/packages/'
+  urlRoot: '/api/v2/packages/'
 });
 
 var helloWorld = new Snap({id: 'hello-world'});
@@ -39,7 +39,7 @@ helloWorld.fetch({
 
 // collective noun for group of crocs is a 'bask'
 var Bask = Backbone.Collection.extend({
-  url: '/api/v1/packages/',
+  url: '/api/v2/packages/',
   model: Snap
 });
 
