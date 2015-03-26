@@ -1,0 +1,51 @@
+.icon--get-apps {
+    margin: 0 2em;
+}
+.header--get-apps {
+    float: left;
+}
+.icon--app-icon {
+    width: 100%;
+    box-sizing: border-box;
+    border: 5px solid #EFEFEF;
+    border-radius: 20px;
+}
+.icon--app-icon:hover {
+    background: #efefef;
+}
+.list--apps {
+    list-style-type: none;
+    margin: 0;
+    overflow: hidden;
+}
+.list--apps .three-col,
+.list--apps .two-col {
+    width: 48.9362%;
+    margin-right: 0;
+}
+@media only screen and (min-width: 768px) {
+    .list--apps .three-col {
+        width: 23.3%;
+        margin-right: 2.12766%;
+    }
+    .list--apps .two-col {
+        width: 14.8936%;
+        margin-right: 2.12766%;
+    }
+}
+.label--app-name {
+    font-weight: 400;
+    text-align: center;
+    display: block;
+    cursor: pointer;
+    font-size: 1em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.link--app,
+.link--app:link,
+.link--app:hover,
+.link--app:visited {
+    color: #333333;
+}
