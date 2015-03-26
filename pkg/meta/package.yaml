@@ -1,7 +1,7 @@
 name: webdm
 source: lp:webdm
 description: Manage a system with a snappy webui
-version: 0.2
+version: 0.3
 type: framework
 architecture: UNKNOWN_ARCH
 frameworks: ubuntu-core-15.04-dev1
