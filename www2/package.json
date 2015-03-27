@@ -19,9 +19,7 @@
     "vinyl-source-stream": "~1.1.0",
     "watchify": "~2.4.0",
     "backbone.marionette": "~2.4.1",
-    "aliasify": "~1.7.2"
-  },
-  "devDependencies": {
+    "aliasify": "~1.7.2",
     "gulp-concat": "~2.5.2",
     "gulp-jshint": "~1.9.4",
     "gulp-autoprefixer": "~2.1.0",

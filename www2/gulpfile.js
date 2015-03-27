@@ -71,4 +71,8 @@ gulp.task('images:clean', function(cb) {
   del(['public/images'], cb);
 });
 
+gulp.task('watch', ['js'], function(){
+  gulp.watch('src/css/**/*.css', ['styles']);
+});
+
 gulp.task('default', ['js', 'styles', 'images']);

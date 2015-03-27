@@ -1,0 +1,18 @@
+/** a collection of snaps **/
+.bask {
+    display:flex;
+    flex-flow: row wrap;
+}
+
+/** the representation of a snap when in a bask **/
+.snap {
+    flex:1 0 200px;
+    margin:1em;
+}
+
+.snap--icon {
+}
+
+.snap--name {
+    text-align:center;
+}

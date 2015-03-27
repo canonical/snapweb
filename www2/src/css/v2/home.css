@@ -1,0 +1,6 @@
+.view-home .region-installed {
+}
+
+.view-home .region-installed:empty::after {
+    content: 'empty';
+}
