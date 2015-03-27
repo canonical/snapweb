@@ -247,8 +247,12 @@ var webdmRouter = new Marionette.AppRouter({
 });
 
 $(document).ready(function() {
+  $('body').append('<div id="region-main"></div>');
+  console.log('xx');
   webdm.start();
 });
+
+module.exports = webdm;
 
 // Load some initial data, and then start our application
 // loadInitialData().then(app.start);
