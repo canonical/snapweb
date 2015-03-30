@@ -73,6 +73,7 @@ gulp.task('images:clean', function(cb) {
 
 gulp.task('watch', ['js'], function(){
   gulp.watch('src/css/**/*.css', ['styles']);
+  gulp.watch('src/js/**/*.js', ['js:lint']);
 });
 
 gulp.task('default', ['js', 'styles', 'images']);

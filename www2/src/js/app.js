@@ -21,10 +21,6 @@ webdm.on('start', function() {
   Backbone.history.start({pushState: true});
 });
 
-webdm.addRegions({
-  mainRegion: '#region-main'
-});
-
 /** Snap Model
  *
  * var helloWorld = new Snap({id: 'hello-world'});
@@ -107,8 +103,8 @@ var SnapView = Marionette.ItemView.extend({
     return snapTemplate(model);
   },
   ui: {
-   icon: '.snap--icon',
-   name: '.snap--name'
+    icon: '.snap--icon',
+    name: '.snap--name'
   },
   events: {
     'click': 'open',
@@ -129,11 +125,6 @@ var BaskView = Marionette.CollectionView.extend({
   className: 'bask',
   childView: SnapView,
 });
-
-// setup app view
-
-var appLayoutView = new AppLayoutView();
-webdm.mainRegion.show(appLayoutView);
 
 // router
 
@@ -246,9 +237,17 @@ var webdmRouter = new Marionette.AppRouter({
   }
 });
 
+// XXX consider moving to 'start.js' and dropping the OR test on #region-main
 $(document).ready(function() {
+
+  // get or create the node for root layout
+  var mainRegion = $('#region-main') || 
   $('body').append('<div id="region-main"></div>');
-  console.log('xx');
+
+  webdm.addRegions({
+    mainRegion: mainRegion
+  });
+
   webdm.start();
 });
 
