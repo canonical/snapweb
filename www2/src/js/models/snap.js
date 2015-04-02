@@ -5,9 +5,6 @@ var _ = require('lodash');
 var Backbone = require('backbone');
 Backbone.$ = $;
 var Marionette = require('backbone.marionette');
-if (window.__agent) {
-  window.__agent.start(Backbone, Marionette);
-}
 
 /** Snap Model
  *
@@ -26,6 +23,6 @@ if (window.__agent) {
  *
  **/
 
-var Snap = module.exports = Backbone.Model.extend({
+module.exports = Backbone.Model.extend({
   urlRoot: '/api/v2/packages'
 });

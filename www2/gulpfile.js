@@ -19,7 +19,7 @@ var bundler = watchify(browserify('./src/js/app.js', watchify.args));
 bundler.transform('hbsfy');
 bundler.transform({global: true}, 'aliasify');
 
-gulp.task('js', ['js:lint'], bundle);
+gulp.task('js', bundle);
 
 bundler.on('update', bundle); // on any dep update, runs the bundler
 bundler.on('log', gutil.log); // output build logs to terminal

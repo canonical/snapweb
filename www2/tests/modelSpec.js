@@ -1,7 +1,7 @@
-var fs = require('fs');
 var Snap = require('../src/js/models/snap.js');
+var Backbone = require('backbone');
 
-describe('modelSpec', function() {
+describe('Snap', function() {
 
   beforeEach(function() {
     this.model = new Snap({id: 'foo'});
@@ -11,16 +11,13 @@ describe('modelSpec', function() {
     this.model = null;
   });
 
-  it('Snap should exist', function() {
+  it('should be an instance of Backbone.Model', function() {
     expect(Snap).toBeDefined();
+    expect(this.model).toEqual(jasmine.any(Backbone.Model));
   });
 
-  it('Snap should construct model instance', function() {
-    expect(this.model.get('id')).toBe('foo');
-    expect(typeof this.model).toBe('object');
-  });
-
-  it('snap model instance should have a urlRoot prop', function() {
+  // TODO tie the url to a config?
+  it('should have a urlRoot prop', function() {
     expect(this.model.urlRoot).toBe('/api/v2/packages');
   });
 });
