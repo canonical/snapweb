@@ -1,10 +1,8 @@
 // snap.js
 
-var $ = require('jquery');
 var _ = require('lodash');
 var Backbone = require('backbone');
-Backbone.$ = $;
-var Marionette = require('backbone.marionette');
+var CONF = require('../config.js');
 
 /** Snap Model
  *
@@ -24,5 +22,17 @@ var Marionette = require('backbone.marionette');
  **/
 
 module.exports = Backbone.Model.extend({
-  urlRoot: '/api/v2/packages'
+  urlRoot: CONF.PACKAGES,
+  initialize: function() {
+  // event handler to check the installed attr, or the
+  // http status, and refresh GET until state settles on a past tense.
+  // retry count?
+    this.on('sync', function(model, attrs, opts) {
+      if (opts.xhr.status === 202) {
+        _.delay(function(model) {
+          model.fetch();
+        }, 100, model);
+      }
+    });
+  }
 });
