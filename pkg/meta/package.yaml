@@ -18,7 +18,7 @@ services:
       ports:
           external:
               ui:
-                  port: 4200
+                  port: 4200/tcp
                   negotiable: false
     - name: avahi
       start: avahi-daemon
