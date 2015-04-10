@@ -1,0 +1,32 @@
+<div class="row-hero app-details">
+  <div class="inner-wrapper">
+    <div class="eight-col">
+      <img src="{{ icon }}" width="96" height="96" class="app__icon" />
+      <div class="app__details">
+        <h1 class="app__details-title">{{ name }}</h1>
+        <p>By <a href="{{ support_url }}">{{ developer_name }}</a></p>
+        <ul class="app__details-list">
+          <li><strong>Version:</strong>{{ version }}</li>
+          <li><strong>Size:</strong>{{ binary_filesize }}</li>
+        </ul>
+      </div>
+      <ul class="no-bullets inline">
+        {{#each department}}
+        <li>{{ this }}, </li>
+        {{/each}}
+      </ul>
+    </div>
+    <div class="four-col last-col ">
+      <p class="left status"></p>
+      <p class="right">Rating: {{ ratings_average }}/5</p>
+      {{#if installed}}
+      <a class="install-action link-cta-negative">Uninstall</a>
+      {{else}}
+      <a class="install-action link-cta-positive">Install</a>
+      {{/if}}
+    </div>
+  </div>
+</div>
+
+<div class="region-menu"></div>
+<div class="region-tab"></div>

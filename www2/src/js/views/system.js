@@ -8,7 +8,7 @@ if (window.__agent) {
 }
 var template = require('../templates/system.hbs');
 
-module.exports = Backbone.Marionette.LayoutView.extend({
+module.exports = Marionette.LayoutView.extend({
 
   className: 'view-system',
 

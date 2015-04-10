@@ -1,7 +1,6 @@
 // app.js
 
 var $ = require('jquery');
-var _ = require('lodash');
 var Backbone = require('backbone');
 Backbone.$ = $;
 var Marionette = require('backbone.marionette');
@@ -10,17 +9,20 @@ if (window.__agent) {
   window.__agent.start(Backbone, Marionette);
 }
 var RootView = require('./views/root.js');
+
 var homeController = require('./controllers/home.js');
 var storeController = require('./controllers/store.js');
 var systemController = require('./controllers/system.js');
+var snapController = require('./controllers/snaps.js');
 
 var webdm = new Marionette.Application();
 var rootView = new RootView();
 rootView.render();
 
-// set up some routes with controllers... 
+// set up some routes with controllers...
 webdm.routers = {};
 
+// hummm...
 webdm.routers.home = new Marionette.AppRouter({
   controller: homeController,
   appRoutes: {
@@ -42,16 +44,13 @@ webdm.routers.system = new Marionette.AppRouter({
   }
 });
 
-/**
 webdm.routers.snap = new Marionette.AppRouter({
   controller: snapController,
   appRoutes: {
-    'apps': 'index',
-    'apps/:name': 'snap',
-    'apps/:name/:section': 'section',
+    'snap/:name/': 'snap',
+    'snap/:name/:section': 'section',
   }
 });
-**/
 
 webdm.on('start', function() {
   Backbone.history.start({pushState: true});
