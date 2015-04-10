@@ -8,10 +8,16 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type handler struct{}
+type installStatus map[string]uint64
+
+type handler struct {
+	installStatus installStatus
+}
 
 func NewHandler() *handler {
-	return &handler{}
+	return &handler{
+		installStatus: make(installStatus),
+	}
 }
 
 func (h *handler) getAll(w http.ResponseWriter, r *http.Request) {
@@ -47,6 +53,25 @@ func (h *handler) get(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (h *handler) add(w http.ResponseWriter, r *http.Request) {
+	// Get the Key.
+	vars := mux.Vars(r)
+	pkgName := vars["pkg"]
+
+	switch err := installPackage(pkgName); err {
+	case errPackageInstalled:
+		w.WriteHeader(http.StatusOK)
+	case errPackageInstallInProgress:
+		w.WriteHeader(http.StatusBadRequest)
+	case errPackageNotFound:
+		w.WriteHeader(http.StatusNotFound)
+	case nil:
+		w.WriteHeader(http.StatusAccepted)
+	default:
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+}
+
 func (h *handler) MakeMuxer(prefix string) http.Handler {
 	var m *mux.Router
 
@@ -61,6 +86,9 @@ func (h *handler) MakeMuxer(prefix string) http.Handler {
 
 	// get specific package
 	m.HandleFunc("/{pkg}", h.get).Methods("GET")
+
+	// Add a package
+	m.HandleFunc("/{pkg}", h.add).Methods("PUT")
 
 	return m
 }

@@ -11,7 +11,9 @@ import (
 )
 
 var (
-	errPackageNotFound = errors.New("package not found")
+	errPackageNotFound          = errors.New("package not found")
+	errPackageInstalled         = errors.New("package already installed")
+	errPackageInstallInProgress = errors.New("package installion in progress")
 )
 
 type snapPkg struct {
@@ -60,6 +62,10 @@ func allPackages() ([]snapPkg, error) {
 	}
 
 	return mergeSnaps(installedSnapQs, remoteSnapQs), nil
+}
+
+func installPackage(pkgName string) error {
+	return nil
 }
 
 func mergeSnaps(installed, remote []snapPkg) []snapPkg {
