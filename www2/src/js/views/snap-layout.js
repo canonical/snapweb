@@ -12,11 +12,13 @@ module.exports = Marionette.LayoutView.extend({
   className: 'snap-layout',
 
   ui: {
-    install: ".snap--install"
+    install: '.snap--install',
+    menu: '.snap--menu'
   },
 
   events: {
-    'click @ui.install': 'install'
+    'click @ui.install': 'install',
+    'click @ui.menu': 'section'
   },
 
   template: function(model) {
@@ -30,15 +32,9 @@ module.exports = Marionette.LayoutView.extend({
   },
 
   onBeforeShow: function() {
-  /**
-   * if (this.active === 'detail') {
-   *  tabView = new SnapDetailView({ model: this.model });
-   * }
-   */
+    var tabView = this._getSectionView(this.options.section);
     this.showChildView('menuRegion', new SnapMenuView());
-    this.showChildView('tabRegion', new SnapDetailView({
-      model: this.model
-    }));
+    this.showChildView('tabRegion', tabView);
   },
 
   regions: {
@@ -64,5 +60,32 @@ module.exports = Marionette.LayoutView.extend({
       // install
       this.model.save();
     }
-  }
+  },
+
+  _getSectionView: function(section) {
+    var view;
+    switch (section) {
+      case 'reviews':
+        view = new SnapReviewsView();
+        break;
+      case 'settings':
+        view = new SnapSettingsView();
+        break;
+      default:
+        view = new SnapDetailView({ model: this.model });
+    }
+    return view;
+  },
+
+  section: function(e) {
+    e.preventDefault();
+    var section = e.target.getAttribute('href');
+    var view = this._getSectionView(section);
+    var name = this.model.get('name');
+    // XXX url sane
+    var url = 'snap/' + name + '/' + section;
+    // XXX if section is already in place, don't showChildView
+    this.showChildView('tabRegion', view);
+    Backbone.history.navigate(url);
+  } 
 });
