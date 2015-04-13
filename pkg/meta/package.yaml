@@ -1,10 +1,9 @@
-name: webdm
+name: webdm.canonical
 source: lp:webdm
 description: Manage a system with a snappy webui
 version: 0.3
 type: framework
 architecture: UNKNOWN_ARCH
-frameworks: ubuntu-core-15.04-dev1
 integration:
     framework:
         framework: meta/webdm.framework
@@ -16,10 +15,13 @@ services:
     - name: snappyd
       start: snappyd
       description: Snappy WebDM
+      ports:
+          external:
+              ui:
+                  port: 4200/tcp
+                  negotiable: false
     - name: avahi
       start: avahi-daemon
       description: Avahi daemon
-ports:
-    required: 4200
-maintainer: Sergio Schvezov <sergio.schvezov@canonical.com>
+vendor: Sergio Schvezov <sergio.schvezov@canonical.com>
 icon: meta/clap.png
