@@ -1,16 +1,17 @@
-// snap item view
+// store bask snap view
 var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
-var template = require('../templates/snap-item.hbs');
+var template = require('../templates/store-bask-item.hbs');
 
 module.exports = Marionette.ItemView.extend({
-  className: 'bask__snap',
+  className: 'box search-results__list--item',
+  tagName: 'li',
   template: function(model) {
     return template(model);
   },
   ui: {
-    icon: '.bask__snap-icon',
-    name: '.bask__snap-name'
+    icon: '.store-bask__snap-icon',
+    name: '.store-bask__snap-name'
   },
   events: {
     'mouseover @ui.icon': 'hoverIcon',

@@ -4,6 +4,7 @@ var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
 
 var homeController = require('../controllers/home.js');
+var searchController = require('../controllers/search.js');
 var storeController = require('../controllers/store.js');
 var systemController = require('../controllers/system.js');
 var snapController = require('../controllers/snaps.js');
@@ -36,6 +37,13 @@ module.exports = {
     controller: snapController,
     appRoutes: {
       'snap/:name/(:section)': 'snap',
+    }
+  }),
+
+  search: new Marionette.AppRouter({
+    controller: searchController,
+    appRoutes: {
+      'search?q=:query': 'query',
     }
   })
 };
