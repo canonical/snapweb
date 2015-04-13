@@ -5,23 +5,24 @@ import (
 	"fmt"
 	"net/http"
 
+	"launchpad.net/snappy/snappy"
+	"launchpad.net/webdm/progress"
+
 	"github.com/gorilla/mux"
 )
 
-type installStatus map[string]uint64
-
 type handler struct {
-	installStatus installStatus
+	installStatus *webprogress.Status
 }
 
 func NewHandler() *handler {
 	return &handler{
-		installStatus: make(installStatus),
+		installStatus: webprogress.New(),
 	}
 }
 
 func (h *handler) getAll(w http.ResponseWriter, r *http.Request) {
-	payload, err := allPackages()
+	payload, err := h.allPackages()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
@@ -41,7 +42,7 @@ func (h *handler) get(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	pkgName := vars["pkg"]
 
-	payload, err := packagePayload(pkgName)
+	payload, err := h.packagePayload(pkgName)
 	if err != nil {
 		http.NotFound(w, r)
 		return
@@ -58,12 +59,12 @@ func (h *handler) add(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	pkgName := vars["pkg"]
 
-	switch err := installPackage(pkgName); err {
+	switch err := h.installPackage(pkgName); err {
 	case errPackageInstalled:
 		w.WriteHeader(http.StatusOK)
 	case errPackageInstallInProgress:
 		w.WriteHeader(http.StatusBadRequest)
-	case errPackageNotFound:
+	case snappy.ErrPackageNotFound:
 		w.WriteHeader(http.StatusNotFound)
 	case nil:
 		w.WriteHeader(http.StatusAccepted)
