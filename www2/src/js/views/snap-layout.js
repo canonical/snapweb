@@ -12,7 +12,7 @@ module.exports = Marionette.LayoutView.extend({
   className: 'snap-layout',
 
   ui: {
-    install: '.snap--install',
+    install: '.install-action',
     menu: '.snap--menu'
   },
 
@@ -43,9 +43,9 @@ module.exports = Marionette.LayoutView.extend({
   },
 
   install: function() {
-    var installed = this.model.get('status');
+    var installed = this.model.get('installed');
 
-    if (installed === 'installed') {
+    if (installed === true) {
       // uninstall
       this.model.destroy({
         success: function(model, response, opts) {

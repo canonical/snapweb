@@ -1,24 +1,24 @@
-// store layout view
+// search layout view
 var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
-var BaskView = require('./store-bask.js');
-var template = require('../templates/store.hbs');
+var BaskView = require('./bask.js');
+var template = require('../templates/search.hbs');
 
 module.exports = Backbone.Marionette.LayoutView.extend({
 
-  className: 'store',
+  className: 'search',
 
   template : function() {
     return template();
   },
 
   onBeforeShow: function() {
-    this.showChildView('productRegion', new BaskView({
+    this.showChildView('resultsRegion', new BaskView({
       collection: this.collection
     }));
   },
 
   regions: {
-    productRegion: '.region-product'
+    resultsRegion: '.region-results'
   }
 });
