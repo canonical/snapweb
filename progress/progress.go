@@ -1,7 +1,12 @@
 package webprogress
 
 import (
+	"errors"
 	"sync"
+)
+
+var (
+	ErrPackageInstallInProgress = errors.New("package installion in progress")
 )
 
 type Status struct {
@@ -14,15 +19,17 @@ func New() *Status {
 }
 
 // Add add pkg to the list of progresses to track, it is idempotent
-func (i *Status) Add(pkg string) *WebProgress {
+func (i *Status) Add(pkg string) (*WebProgress, error) {
 	i.l.Lock()
 	defer i.l.Unlock()
 
-	if _, ok := i.status[pkg]; !ok {
-		i.status[pkg] = NewWebProgress()
+	if _, ok := i.status[pkg]; ok {
+		return nil, ErrPackageInstallInProgress
 	}
 
-	return i.status[pkg]
+	i.status[pkg] = NewWebProgress()
+
+	return i.status[pkg], nil
 }
 
 // Remove removes pkg to the list of progresses to track, it is a no op

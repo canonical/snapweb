@@ -49,7 +49,7 @@ func (t *WebProgress) Finished() {
 //
 // This is not needed for web progress.
 func (t *WebProgress) Write(p []byte) (n int, err error) {
-	return 0, nil
+	return len(p), nil
 }
 
 // Spin advances a spinner, i.e. can be used to show progress for operations
