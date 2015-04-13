@@ -84,8 +84,11 @@ module.exports = Marionette.LayoutView.extend({
     var name = this.model.get('name');
     // XXX url sane
     var url = 'snap/' + name + '/' + section;
-    // XXX if section is already in place, don't showChildView
-    this.showChildView('tabRegion', view);
-    Backbone.history.navigate(url);
+    // if section is already in place, don't showChildView
+    var re = new RegExp('/' + section + '$', 'i');
+    if (!re.test(Backbone.history.fragment)) {
+      this.showChildView('tabRegion', view);
+      Backbone.history.navigate(url);
+    }
   } 
 });
