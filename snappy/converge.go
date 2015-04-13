@@ -1,14 +1,12 @@
 package snappy
 
 import (
-	"errors"
 	"strconv"
 	"strings"
 
 	"log"
 
 	"launchpad.net/snappy/snappy"
-	"launchpad.net/webdm/progress"
 )
 
 const (
@@ -16,11 +14,6 @@ const (
 	statusUninstalled = "uninstalled"
 	statusInstalling  = "installing"
 	statusUnkown      = "unknown"
-)
-
-var (
-	errPackageInstalled         = errors.New("package already installed")
-	errPackageInstallInProgress = errors.New("package installion in progress")
 )
 
 type snapPkg struct {
@@ -73,22 +66,17 @@ func (h *handler) allPackages() ([]snapPkg, error) {
 }
 
 func (h *handler) installPackage(pkgName string) error {
-	var progress *webprogress.WebProgress
+	progress, err := h.installStatus.Add(pkgName)
+	if err != nil {
+		return err
+	}
+
 	errChan := make(chan error)
 
 	go func() {
-		m := snappy.NewMetaRepository()
-		found, _ := m.Details(pkgName)
-		for _, part := range found {
-			// act only on parts that are downloadable
-			if !part.IsInstalled() {
-				progress = h.installStatus.Add(pkgName)
-				_, err := part.Install(progress, 0)
-				errChan <- err
-			}
-
-			errChan <- snappy.ErrPackageNotFound
-		}
+		_, err := snappy.Install(pkgName, 0, progress)
+		errChan <- err
+		defer close(errChan)
 
 		<-progress.FinishedChan
 		h.installStatus.Remove(pkgName)
@@ -98,9 +86,8 @@ func (h *handler) installPackage(pkgName string) error {
 	case err := <-errChan:
 		return err
 	case <-progress.StartedChan:
-		return errPackageInstallInProgress
+		return nil
 	}
-	return nil
 }
 
 func mergeSnaps(installed, remote []snapPkg) []snapPkg {

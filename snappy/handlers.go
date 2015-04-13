@@ -60,9 +60,9 @@ func (h *handler) add(w http.ResponseWriter, r *http.Request) {
 	pkgName := vars["pkg"]
 
 	switch err := h.installPackage(pkgName); err {
-	case errPackageInstalled:
+	case snappy.ErrAlreadyInstalled:
 		w.WriteHeader(http.StatusOK)
-	case errPackageInstallInProgress:
+	case webprogress.ErrPackageInstallInProgress:
 		w.WriteHeader(http.StatusBadRequest)
 	case snappy.ErrPackageNotFound:
 		w.WriteHeader(http.StatusNotFound)
