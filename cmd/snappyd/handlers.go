@@ -34,7 +34,7 @@ import (
 	"launchpad.net/webdm/oem"
 	"launchpad.net/webdm/snappy"
 	"launchpad.net/webdm/store"
-	"launchpad.net/webdm/system"
+	//	"launchpad.net/webdm/system"
 )
 
 type slug string
@@ -108,14 +108,16 @@ func loggingHandler(h http.Handler) http.Handler {
 }
 
 func makeMainPageHandler(conn *dbus.Connection) (f http.HandlerFunc, err error) {
-	si, err := system.New(conn)
-	if err != nil {
-		return f, err
-	}
+	/*
+		si, err := system.New(conn)
+		if err != nil {
+			return f, err
+		}
 
-	si.Init()
+		si.Init()
 
-	http.Handle("/api/v1/systemimage/", si.MakeMuxer("/api/v1/systemimage"))
+		http.Handle("/api/v1/systemimage/", si.MakeMuxer("/api/v1/systemimage"))
+	*/
 
 	name := "Ubuntu"
 	subname := ""
