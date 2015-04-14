@@ -7,12 +7,14 @@ var template = require('../templates/home.hbs');
 module.exports = Backbone.Marionette.LayoutView.extend({
 
   className: 'view-home',
+  tagName: 'section',
 
   template : function() {
     return template();
   },
 
   onBeforeShow: function() {
+    // TODO if collection empty use emptyView
     this.showChildView('installedRegion', new BaskView({
       collection: this.collection
     }));
