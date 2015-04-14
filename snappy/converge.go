@@ -28,7 +28,17 @@ var activeSnapByName = snappy.ActiveSnapByName
 func (h *handler) packagePayload(pkgName string) (snapPkg, error) {
 	snapQ := activeSnapByName(pkgName)
 	if snapQ == nil {
-		return snapPkg{}, snappy.ErrPackageNotFound
+		m := snappy.NewMetaStoreRepository()
+		storeSnap, err := m.Details(pkgName)
+		if err != nil {
+			return snapPkg{}, err
+		}
+
+		if len(storeSnap) > 0 {
+			snapQ = storeSnap[0]
+		} else {
+			return snapPkg{}, snappy.ErrPackageNotFound
+		}
 	}
 
 	return h.snapQueryToPayload(snapQ), nil
