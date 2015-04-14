@@ -31,7 +31,7 @@ func (s *PayloadSuite) TestPayloadWithNoServices(c *C) {
 	c.Assert(q.Type, Equals, fakeSnap.snapType)
 	c.Assert(q.UIPort, Equals, uint64(0))
 	c.Assert(q.UIUri, Equals, "")
-	c.Assert(q.Icon, Equals, "icons/camlistore.sergiusens_icon.png")
+	c.Assert(q.Icon, Equals, "/icons/camlistore.sergiusens_icon.png")
 }
 
 func (s *PayloadSuite) TestPayloadWithServicesButNoUI(c *C) {
