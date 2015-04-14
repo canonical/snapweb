@@ -71,6 +71,12 @@ func (t *WebProgress) Finished() {
 	}
 }
 
+// Done returns a boolean value indicating that the progress report
+// has finished with no concerns if it was succesfull or not.
+func (t *WebProgress) Done() bool {
+	return !t.finishedChanOpen
+}
+
 // Write is there so that progress can implement a Writer and can be
 // used to display progress of io operations
 //

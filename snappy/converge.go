@@ -144,7 +144,7 @@ func (h *handler) snapQueryToPayload(snapQ snappy.Part) snapPkg {
 			snap.Message = stat.Error.Error()
 		}
 
-		if stat.Status == webprogress.StatusInstalled || stat.Status == webprogress.StatusError {
+		if stat.Done() {
 			h.installStatus.Remove(snap.Name)
 		}
 	} else if snapQ.IsInstalled() {
