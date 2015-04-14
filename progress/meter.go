@@ -109,5 +109,5 @@ func (t *WebProgress) Progress() float64 {
 		return 0
 	}
 
-	return t.current / t.total * 100
+	return t.current * 100 / t.total
 }
