@@ -7,14 +7,18 @@ import (
 
 	. "gopkg.in/check.v1"
 	"launchpad.net/snappy/snappy"
+	"launchpad.net/webdm/progress"
 )
 
-type PayloadSuite struct{}
+type PayloadSuite struct {
+	h handler
+}
 
 var _ = Suite(&PayloadSuite{})
 
 func (s *PayloadSuite) SetUpTest(c *C) {
 	os.Setenv("SNAP_APP_DATA_PATH", c.MkDir())
+	s.h.installStatus = webprogress.New()
 }
 
 func (s *PayloadSuite) TestPayloadWithNoServices(c *C) {
@@ -23,11 +27,11 @@ func (s *PayloadSuite) TestPayloadWithNoServices(c *C) {
 	c.Assert(ioutil.WriteFile(icon, []byte{}, 0644), IsNil)
 	fakeSnap.icon = icon
 
-	q := snapQueryToPayload(fakeSnap)
+	q := s.h.snapQueryToPayload(fakeSnap)
 
 	c.Assert(q.Name, Equals, fakeSnap.name)
 	c.Assert(q.Version, Equals, fakeSnap.version)
-	c.Assert(q.Installed, Equals, fakeSnap.installed)
+	c.Assert(q.Status, Equals, statusInstalled)
 	c.Assert(q.Type, Equals, fakeSnap.snapType)
 	c.Assert(q.UIPort, Equals, uint64(0))
 	c.Assert(q.UIUri, Equals, "")
@@ -37,11 +41,11 @@ func (s *PayloadSuite) TestPayloadWithNoServices(c *C) {
 func (s *PayloadSuite) TestPayloadWithServicesButNoUI(c *C) {
 	fakeSnap := newDefaultFakeServices()
 	fakeSnap.services = newFakeServicesNoExternalUI()
-	q := snapQueryToPayload(fakeSnap)
+	q := s.h.snapQueryToPayload(fakeSnap)
 
 	c.Assert(q.Name, Equals, fakeSnap.name)
 	c.Assert(q.Version, Equals, fakeSnap.version)
-	c.Assert(q.Installed, Equals, fakeSnap.installed)
+	c.Assert(q.Status, Equals, statusInstalled)
 	c.Assert(q.Type, Equals, fakeSnap.snapType)
 	c.Assert(q.UIPort, Equals, uint64(0))
 	c.Assert(q.UIUri, Equals, "")
@@ -50,11 +54,11 @@ func (s *PayloadSuite) TestPayloadWithServicesButNoUI(c *C) {
 func (s *PayloadSuite) TestPayloadWithServicesUI(c *C) {
 	fakeSnap := newDefaultFakeServices()
 	fakeSnap.services = newFakeServicesWithExternalUI()
-	q := snapQueryToPayload(fakeSnap)
+	q := s.h.snapQueryToPayload(fakeSnap)
 
 	c.Assert(q.Name, Equals, fakeSnap.name)
 	c.Assert(q.Version, Equals, fakeSnap.version)
-	c.Assert(q.Installed, Equals, fakeSnap.installed)
+	c.Assert(q.Status, Equals, statusInstalled)
 	c.Assert(q.Type, Equals, fakeSnap.snapType)
 	c.Assert(q.UIPort, Equals, uint64(1024))
 	c.Assert(q.UIUri, Equals, "")
@@ -65,11 +69,11 @@ func (s *PayloadSuite) TestPayloadTypeOem(c *C) {
 	fakeSnap.services = newFakeServicesWithExternalUI()
 	fakeSnap.snapType = snappy.SnapTypeOem
 
-	q := snapQueryToPayload(fakeSnap)
+	q := s.h.snapQueryToPayload(fakeSnap)
 
 	c.Assert(q.Name, Equals, fakeSnap.name)
 	c.Assert(q.Version, Equals, fakeSnap.version)
-	c.Assert(q.Installed, Equals, fakeSnap.installed)
+	c.Assert(q.Status, Equals, statusInstalled)
 	c.Assert(q.Type, Equals, fakeSnap.snapType)
 	c.Assert(q.UIPort, Equals, uint64(0))
 	c.Assert(q.UIUri, Equals, "")
