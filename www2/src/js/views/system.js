@@ -12,8 +12,8 @@ module.exports = Marionette.LayoutView.extend({
 
   className: 'view-system',
 
-  template : function() {
-    return template();
+  template : function(model) {
+    return template(model);
   },
 
   onBeforeShow: function() {

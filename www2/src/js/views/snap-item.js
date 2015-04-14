@@ -4,13 +4,14 @@ var Marionette = require('backbone.marionette');
 var template = require('../templates/snap-item.hbs');
 
 module.exports = Marionette.ItemView.extend({
-  className: 'bask__snap',
+  className: 'three-col',
+  tagName: 'li',
   template: function(model) {
     return template(model);
   },
   ui: {
-    icon: '.bask__snap-icon',
-    name: '.bask__snap-name'
+    icon: '.b-bask__snap-icon',
+    name: '.b-bask__snap-name'
   },
   events: {
     'mouseover @ui.icon': 'hoverIcon',
