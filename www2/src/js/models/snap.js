@@ -34,5 +34,30 @@ module.exports = Backbone.Model.extend({
         }, 100, model);
       }
     });
+
+    this.on('change:status', function(model) {
+      var status = model.get('status');
+      var msg = '';
+
+      console.log('status: ', status);
+
+      switch (status) {
+        case 'installed':
+          msg = 'Uninstall';
+          break;
+        case 'uninstalled':
+          msg = 'Install';
+          break;
+        case 'installing':
+          msg = 'Installing';
+          break;
+        case 'uninstalling':
+          msg = 'Uninstalling';
+          break;
+      }
+
+      this.set('install_msg', msg);
+    });
   }
+
 });

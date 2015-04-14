@@ -43,9 +43,10 @@ module.exports = Marionette.LayoutView.extend({
   },
 
   install: function() {
-    var installed = this.model.get('installed');
+    console.log('hit it');
+    var status = this.model.get('status');
 
-    if (installed === true) {
+    if (status === 'installed') {
       // uninstall
       this.model.destroy({
         success: function(model, response, opts) {
@@ -56,7 +57,7 @@ module.exports = Marionette.LayoutView.extend({
         error: function(model, response, opts) {
         }
       });
-    } else {
+    } else if (status == 'uninstalled') {
       // install
       this.model.save();
     }
