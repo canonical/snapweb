@@ -1,7 +1,7 @@
 // store layout view
 var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
-var BaskView = require('./bask.js');
+var BaskView = require('./store-bask.js');
 var template = require('../templates/store.hbs');
 
 module.exports = Backbone.Marionette.LayoutView.extend({
