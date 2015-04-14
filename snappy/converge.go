@@ -60,31 +60,18 @@ func (h *handler) allPackages() ([]snapPkg, error) {
 	return mergeSnaps(installedSnapQs, remoteSnapQs), nil
 }
 
+func (h *handler) doInstallPackage(progress *webprogress.WebProgress, pkgName string) {
+	_, err := snappy.Install(pkgName, 0, progress)
+	progress.ErrorChan <- err
+}
+
 func (h *handler) installPackage(pkgName string) error {
 	progress, err := h.installStatus.Add(pkgName)
 	if err != nil {
 		return err
 	}
 
-	errChan := make(chan error)
-
-	go func() {
-		_, err := snappy.Install(pkgName, 0, progress)
-		errChan <- err
-		defer close(errChan)
-
-		<-progress.FinishedChan
-	}()
-
-	select {
-	case err := <-errChan:
-		return err
-	case <-progress.StartedChan:
-	}
-
-	go func() {
-		progress.Error = <-errChan
-	}()
+	go h.doInstallPackage(progress, pkgName)
 
 	return nil
 }
