@@ -98,4 +98,4 @@ prov_avahi amd64
 
 cd "$orig_pwd"
 
-snappy-go build $builddir
+snappy build $builddir
