@@ -2,17 +2,27 @@ package webprogress
 
 import "launchpad.net/snappy/progress"
 
+const (
+	StatusInstalled   = "installed"
+	StatusUninstalled = "uninstalled"
+	StatusInstalling  = "installing"
+	StatusError       = "error"
+	StatusUnkown      = "unknown"
+)
+
 // WebProgress show progress on the terminal
 type WebProgress struct {
 	progress.Meter
 	total               float64
 	current             float64
+	Status              string
 	statusMessage       string
 	notificationMessage string
 	StartedChan         chan struct{}
 	startedChanOpen     bool
 	FinishedChan        chan struct{}
 	finishedChanOpen    bool
+	Error               error
 }
 
 // NewWebProgress returns a new WebProgress type
@@ -22,12 +32,14 @@ func NewWebProgress() *WebProgress {
 		startedChanOpen:  true,
 		FinishedChan:     make(chan struct{}),
 		finishedChanOpen: true,
+		Status:           StatusUnkown,
 	}
 }
 
 // Start starts showing progress
 func (t *WebProgress) Start(total float64) {
 	t.total = total
+	t.Status = StatusInstalling
 
 	if t.startedChanOpen {
 		t.startedChanOpen = false
@@ -47,6 +59,12 @@ func (t *WebProgress) SetTotal(total float64) {
 
 // Finished stops displaying the progress
 func (t *WebProgress) Finished() {
+	if t.Error != nil {
+		t.Status = StatusError
+	} else {
+		t.Status = StatusInstalled
+	}
+
 	if t.finishedChanOpen {
 		t.finishedChanOpen = false
 		close(t.FinishedChan)

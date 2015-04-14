@@ -7,13 +7,7 @@ import (
 	"log"
 
 	"launchpad.net/snappy/snappy"
-)
-
-const (
-	statusInstalled   = "installed"
-	statusUninstalled = "uninstalled"
-	statusInstalling  = "installing"
-	statusUnkown      = "unknown"
+	"launchpad.net/webdm/progress"
 )
 
 type snapPkg struct {
@@ -21,6 +15,7 @@ type snapPkg struct {
 	Version  string          `json:"version"`
 	Icon     string          `json:"icon"`
 	Status   string          `json:"status"`
+	Message  string          `json:"message,omitempty"`
 	Progress float64         `json:"progress,omitempty"`
 	Type     snappy.SnapType `json:"type,omitempty"`
 	UIPort   uint64          `json:"ui_port,omitempty"`
@@ -79,15 +74,19 @@ func (h *handler) installPackage(pkgName string) error {
 		defer close(errChan)
 
 		<-progress.FinishedChan
-		h.installStatus.Remove(pkgName)
 	}()
 
 	select {
 	case err := <-errChan:
 		return err
 	case <-progress.StartedChan:
-		return nil
 	}
+
+	go func() {
+		progress.Error = <-errChan
+	}()
+
+	return nil
 }
 
 func mergeSnaps(installed, remote []snapPkg) []snapPkg {
@@ -141,12 +140,17 @@ func (h *handler) snapQueryToPayload(snapQ snappy.Part) snapPkg {
 	}
 
 	if stat, ok := h.installStatus.Get(snap.Name); ok {
-		snap.Status = statusInstalling
-		snap.Progress = stat.Progress()
+		if stat.Error != nil {
+			snap.Message = stat.Error.Error()
+		}
+
+		if stat.Status == webprogress.StatusInstalled || stat.Status == webprogress.StatusError {
+			h.installStatus.Remove(snap.Name)
+		}
 	} else if snapQ.IsInstalled() {
-		snap.Status = statusInstalled
+		snap.Status = webprogress.StatusInstalled
 	} else {
-		snap.Status = statusUninstalled
+		snap.Status = webprogress.StatusUninstalled
 	}
 
 	return snap
