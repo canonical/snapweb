@@ -19,11 +19,7 @@
     <div class="four-col last-col ">
       <p class="left status"></p>
       <p class="right">Rating: {{ ratings_average }}/5</p>
-      {{#if installed}}
-      <a class="install-action link-cta-negative">Uninstall</a>
-      {{else}}
-      <a class="install-action link-cta-positive">Install</a>
-      {{/if}}
+      <a class="install-action link-cta-negative">{{ install_msg }}</a>
     </div>
   </div>
 </div>

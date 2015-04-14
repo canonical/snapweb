@@ -6,7 +6,6 @@ var Snap = require('../models/snap.js');
 
 module.exports = {
   snap: function(name, section) {
-    console.log(section);
     var chan = Radio.channel('root');
     var snap = new Snap({id: name});
 

@@ -1,4 +1,5 @@
 // bask view
+var _ = require('lodash');
 var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
 var SnapItemView = require('../views/snap-item.js');
@@ -18,11 +19,14 @@ module.exports = Marionette.CollectionView.extend({
   // TODO config
   filter: function(child, index, collection) {
     var name = child.get('name');
-    CONF.FILTERED_SNAPS.forEach(function(excluded) {
-      if (name === excluded) {
-        return false;
-      }
+    /**
+    return CONF.FILTERED_SNAPS.forEach(function(excluded) {
+      return (name === excluded) ? true : false;
     });
-    return true;
+    **/
+
+    return !_.some(CONF.FILTERED_SNAPS, function(filtered) {
+      return filtered === name;
+    });
   }
 });
