@@ -60,7 +60,7 @@ func (s *IconPathSuite) TestIconCopy(c *C) {
 	relativePath, err := localIconPath("mypackage.sergiusens", s.pkgIconPath)
 	c.Assert(err, IsNil)
 	iconBaseName := fmt.Sprintf("icons/mypackage.sergiusens_%s", filepath.Base(s.pkgIconPath))
-	c.Assert(relativePath, Equals, iconBaseName)
+	c.Check(relativePath, Equals, filepath.Join("/", iconBaseName))
 
 	contents, err := ioutil.ReadFile(filepath.Join(s.dataPath, iconBaseName))
 	c.Assert(err, IsNil)
@@ -86,5 +86,5 @@ func (s *IconPathSuite) TestIconCopyTargetIconExists(c *C) {
 
 	relativePath, err := localIconPath("mypackage.sergiusens", s.pkgIconPath)
 	c.Assert(err, IsNil)
-	c.Check(relativePath, Equals, iconBaseName)
+	c.Check(relativePath, Equals, filepath.Join("/", iconBaseName))
 }
