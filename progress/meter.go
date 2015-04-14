@@ -9,22 +9,30 @@ type WebProgress struct {
 	current             float64
 	statusMessage       string
 	notificationMessage string
-	StartedChan         chan bool
-	FinishedChan        chan bool
+	StartedChan         chan struct{}
+	startedChanOpen     bool
+	FinishedChan        chan struct{}
+	finishedChanOpen    bool
 }
 
 // NewWebProgress returns a new WebProgress type
 func NewWebProgress() *WebProgress {
 	return &WebProgress{
-		StartedChan:  make(chan bool),
-		FinishedChan: make(chan bool),
+		StartedChan:      make(chan struct{}),
+		startedChanOpen:  true,
+		FinishedChan:     make(chan struct{}),
+		finishedChanOpen: true,
 	}
 }
 
 // Start starts showing progress
 func (t *WebProgress) Start(total float64) {
 	t.total = total
-	t.StartedChan <- true
+
+	if t.startedChanOpen {
+		t.startedChanOpen = false
+		close(t.StartedChan)
+	}
 }
 
 // Set sets the progress to the current value
@@ -39,9 +47,10 @@ func (t *WebProgress) SetTotal(total float64) {
 
 // Finished stops displaying the progress
 func (t *WebProgress) Finished() {
-	t.FinishedChan <- true
-	close(t.StartedChan)
-	close(t.FinishedChan)
+	if t.finishedChanOpen {
+		t.finishedChanOpen = false
+		close(t.FinishedChan)
+	}
 }
 
 // Write is there so that progress can implement a Writer and can be
