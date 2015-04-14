@@ -18,21 +18,15 @@ type WebProgress struct {
 	Status              string
 	statusMessage       string
 	notificationMessage string
-	StartedChan         chan struct{}
-	startedChanOpen     bool
-	FinishedChan        chan struct{}
-	finishedChanOpen    bool
 	Error               error
+	ErrorChan           chan error
 }
 
 // NewWebProgress returns a new WebProgress type
 func NewWebProgress() *WebProgress {
 	return &WebProgress{
-		StartedChan:      make(chan struct{}),
-		startedChanOpen:  true,
-		FinishedChan:     make(chan struct{}),
-		finishedChanOpen: true,
-		Status:           StatusUnkown,
+		ErrorChan: make(chan error),
+		Status:    StatusUnkown,
 	}
 }
 
@@ -40,11 +34,6 @@ func NewWebProgress() *WebProgress {
 func (t *WebProgress) Start(total float64) {
 	t.total = total
 	t.Status = StatusInstalling
-
-	if t.startedChanOpen {
-		t.startedChanOpen = false
-		close(t.StartedChan)
-	}
 }
 
 // Set sets the progress to the current value
@@ -59,22 +48,23 @@ func (t *WebProgress) SetTotal(total float64) {
 
 // Finished stops displaying the progress
 func (t *WebProgress) Finished() {
-	if t.Error != nil {
-		t.Status = StatusError
-	} else {
-		t.Status = StatusInstalled
-	}
+	go func() {
+		err := <-t.ErrorChan
+		defer close(t.ErrorChan)
 
-	if t.finishedChanOpen {
-		t.finishedChanOpen = false
-		close(t.FinishedChan)
-	}
+		if err != nil {
+			t.Status = StatusError
+			t.Error = err
+		} else {
+			t.Status = StatusInstalled
+		}
+	}()
 }
 
 // Done returns a boolean value indicating that the progress report
 // has finished with no concerns if it was succesfull or not.
 func (t *WebProgress) Done() bool {
-	return !t.finishedChanOpen
+	return t.Status == StatusInstalled || t.Status == StatusError
 }
 
 // Write is there so that progress can implement a Writer and can be

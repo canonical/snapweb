@@ -59,7 +59,9 @@ func (h *handler) add(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	pkgName := vars["pkg"]
 
-	switch err := h.installPackage(pkgName); err {
+	err := h.installPackage(pkgName)
+
+	switch err {
 	case snappy.ErrAlreadyInstalled:
 		w.WriteHeader(http.StatusOK)
 	case webprogress.ErrPackageInstallInProgress:
