@@ -43,14 +43,17 @@ module.exports = Marionette.LayoutView.extend({
   },
 
   install: function() {
-    console.log('hit it');
+    console.log('view: user install action ');
     var status = this.model.get('status');
+    console.log('view:', status);
 
     if (status === 'installed') {
       // uninstall
+      this.model.set({status: 'uninstalled'});
       this.model.destroy({
         success: function(model, response, opts) {
           var status = opts.xhr.status;
+          console.log('view: ', status);
           if (status === 200) {
           }
         },
@@ -59,7 +62,12 @@ module.exports = Marionette.LayoutView.extend({
       });
     } else if (status == 'uninstalled') {
       // install
-      this.model.save();
+      console.log('view: model save');
+      this.model.save({
+        success: function(model, response, options){
+          console.log('save success: ', response, options);
+        }
+      });
     }
   },
 

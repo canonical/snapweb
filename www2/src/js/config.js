@@ -4,5 +4,6 @@ module.exports = {
   FILTERED_SNAPS: [
     'webdm',
     'ubuntu-core'
-  ]
+  ],
+  INSTALL_POLL_WAIT: 16 // millisecs
 };
