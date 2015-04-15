@@ -24,22 +24,22 @@ var CONF = require('../config.js');
 module.exports = Backbone.Model.extend({
   urlRoot: CONF.PACKAGES,
   initialize: function() {
-  // event handler to check the installed attr, or the
-  // http status, and refresh GET until state settles on a past tense.
-  // retry count?
-    this.on('sync', function(model, attrs, opts) {
-      if (opts.xhr.status === 202) {
+
+    /** 
+     * Backbone throws 202 to the error handler.
+     * Respond to 202's with a fetch, repeat until 200
+     */
+    this.on('error', function(model, response, opts) {
+      if (response.status == 202) {
         _.delay(function(model) {
           model.fetch();
-        }, 100, model);
+        }, CONF.INSTALL_POLL_WAIT, model);
       }
     });
 
     this.on('change:status', function(model) {
       var status = model.get('status');
       var msg = '';
-
-      console.log('status: ', status);
 
       switch (status) {
         case 'installed':
@@ -58,6 +58,11 @@ module.exports = Backbone.Model.extend({
 
       this.set('install_msg', msg);
     });
+  },
+
+  defaults: {
+    install_msg: 'Install'
   }
+
 
 });
