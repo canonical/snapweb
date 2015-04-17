@@ -16,8 +16,19 @@ Install global npm modules without sudo:
     manroot = $HOME/node/man
     EOF
 
-Also add $HOME/node/bin to PATH and export NODE_PATH=$HOME/node/lib/node_modules
-to the env 
+Setup the environment:
+
+    export PATH=$PATH:$HOME/node/bin
+    export NODE_PATH=$HOME/node/lib/node_modules
+
+Branch:
+
+    mkdir -p $GOPATH/src/launchpad.net
+    cd $GOPATH/src/launchpad.net
+    bzr branch lp:webdm
+    cd webdm
+
+Install:
 
     npm install -g --prefix=$(npm config get prefix) gulp
     cd ./www
@@ -25,12 +36,8 @@ to the env
 
 ## Building
 
-To branch this project run
-
-    mkdir -p $GOPATH/src/launchpad.net
-    cd $GOPATH/src/launchpad.net
-    bzr branch lp:webdm
-    cd webdm
+    go get github.com/gorilla/mux
+    cd $GOPATH/src/launchpad.net/webdm
     ./build.sh
 
 # Installing
