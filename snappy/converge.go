@@ -1,42 +1,50 @@
 package snappy
 
 import (
-	"errors"
 	"strconv"
 	"strings"
 
 	"log"
 
 	"launchpad.net/snappy/snappy"
-)
-
-var (
-	errPackageNotFound = errors.New("package not found")
+	"launchpad.net/webdm/progress"
 )
 
 type snapPkg struct {
-	Name      string          `json:"name"`
-	Version   string          `json:"version"`
-	Icon      string          `json:"icon"`
-	Installed bool            `json:"installed"`
-	Type      snappy.SnapType `json:"type"`
-	UIPort    uint64          `json:"ui_port,omitempty"`
-	UIUri     string          `json:"ui_uri,omitempty"`
+	Name     string          `json:"name"`
+	Version  string          `json:"version"`
+	Icon     string          `json:"icon"`
+	Status   string          `json:"status"`
+	Message  string          `json:"message,omitempty"`
+	Progress float64         `json:"progress,omitempty"`
+	Type     snappy.SnapType `json:"type,omitempty"`
+	UIPort   uint64          `json:"ui_port,omitempty"`
+	UIUri    string          `json:"ui_uri,omitempty"`
 }
 
 // for easier stubbing during testing
 var activeSnapByName = snappy.ActiveSnapByName
 
-func packagePayload(pkgName string) (snapPkg, error) {
+func (h *handler) packagePayload(pkgName string) (snapPkg, error) {
 	snapQ := activeSnapByName(pkgName)
 	if snapQ == nil {
-		return snapPkg{}, errPackageNotFound
+		m := snappy.NewMetaStoreRepository()
+		storeSnap, err := m.Details(pkgName)
+		if err != nil {
+			return snapPkg{}, err
+		}
+
+		if len(storeSnap) > 0 {
+			snapQ = storeSnap[0]
+		} else {
+			return snapPkg{}, snappy.ErrPackageNotFound
+		}
 	}
 
-	return snapQueryToPayload(snapQ), nil
+	return h.snapQueryToPayload(snapQ), nil
 }
 
-func allPackages() ([]snapPkg, error) {
+func (h *handler) allPackages() ([]snapPkg, error) {
 	m := snappy.NewMetaRepository()
 
 	installedSnaps, err := m.Installed()
@@ -46,7 +54,7 @@ func allPackages() ([]snapPkg, error) {
 
 	installedSnapQs := make([]snapPkg, 0, len(installedSnaps))
 	for i := range installedSnaps {
-		installedSnapQs = append(installedSnapQs, snapQueryToPayload(installedSnaps[i]))
+		installedSnapQs = append(installedSnapQs, h.snapQueryToPayload(installedSnaps[i]))
 	}
 
 	remoteSnaps, err := m.Search("*")
@@ -56,10 +64,26 @@ func allPackages() ([]snapPkg, error) {
 
 	remoteSnapQs := make([]snapPkg, 0, len(remoteSnaps))
 	for i := range remoteSnaps {
-		remoteSnapQs = append(remoteSnapQs, snapQueryToPayload(remoteSnaps[i]))
+		remoteSnapQs = append(remoteSnapQs, h.snapQueryToPayload(remoteSnaps[i]))
 	}
 
 	return mergeSnaps(installedSnapQs, remoteSnapQs), nil
+}
+
+func (h *handler) doInstallPackage(progress *webprogress.WebProgress, pkgName string) {
+	_, err := snappy.Install(pkgName, 0, progress)
+	progress.ErrorChan <- err
+}
+
+func (h *handler) installPackage(pkgName string) error {
+	progress, err := h.installStatus.Add(pkgName)
+	if err != nil {
+		return err
+	}
+
+	go h.doInstallPackage(progress, pkgName)
+
+	return nil
 }
 
 func mergeSnaps(installed, remote []snapPkg) []snapPkg {
@@ -85,12 +109,11 @@ func mergeSnaps(installed, remote []snapPkg) []snapPkg {
 	return snapPkgs
 }
 
-func snapQueryToPayload(snapQ snappy.Part) snapPkg {
+func (h *handler) snapQueryToPayload(snapQ snappy.Part) snapPkg {
 	snap := snapPkg{
-		Name:      snapQ.Name(),
-		Version:   snapQ.Version(),
-		Installed: snapQ.IsInstalled(),
-		Type:      snapQ.Type(),
+		Name:    snapQ.Name(),
+		Version: snapQ.Version(),
+		Type:    snapQ.Type(),
 	}
 
 	if snap.Type == snappy.SnapTypeApp || snap.Type == snappy.SnapTypeFramework {
@@ -111,6 +134,20 @@ func snapQueryToPayload(snapQ snappy.Part) snapPkg {
 		snap.Icon = iconPath
 	} else {
 		snap.Icon = snapQ.Icon()
+	}
+
+	if stat, ok := h.installStatus.Get(snap.Name); ok {
+		if stat.Error != nil {
+			snap.Message = stat.Error.Error()
+		}
+
+		if stat.Done() {
+			h.installStatus.Remove(snap.Name)
+		}
+	} else if snapQ.IsInstalled() {
+		snap.Status = webprogress.StatusInstalled
+	} else {
+		snap.Status = webprogress.StatusUninstalled
 	}
 
 	return snap
