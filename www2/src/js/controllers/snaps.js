@@ -18,8 +18,7 @@ module.exports = {
         chan.command('set:content', view);
       },
       error: function() {
-        // TODO ui error messaging
-        // chan.command('show:error', msg);
+        // TODO error view
         alert('Model.fetch() failed. :(');
       }
     });
