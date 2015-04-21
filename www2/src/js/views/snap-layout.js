@@ -6,12 +6,32 @@ var SnapDetailView = require('./snap-detail.js');
 var SnapReviewsView = require('./snap-reviews.js');
 var SnapSettingsView = require('./snap-settings.js');
 var template = require('../templates/snap-layout.hbs');
+var CONF = require('../config.js');
 
 module.exports = Marionette.LayoutView.extend({
+
+  initialize: function() {
+    this.listenTo(this.model, 'change:status', this.handleModelChangeStatus);
+  },
+
+  handleModelChangeStatus: function(model) {
+    var state = model.changed.status;
+    var msg = model.get('install_msg');
+    var installEl = this.ui.install;
+
+    if (state === CONF.INSTALL_STATE.INSTALLED ||
+        state === CONF.INSTALL_STATE.UNINSTALLED) {
+      installEl.removeClass('thinking').text(msg);
+    } else {
+      installEl.addClass('thinking').text(msg);
+    }
+
+  },
 
   className: 'snap-layout',
 
   ui: {
+    statusMessage: '.left .status',
     install: '.install-action',
     menu: '.snap--menu'
   },
@@ -43,29 +63,31 @@ module.exports = Marionette.LayoutView.extend({
   },
 
   install: function() {
-    console.log('view: user install action ');
     var status = this.model.get('status');
-    console.log('view:', status);
+    console.log('install: ', status);
 
-    if (status === 'installed') {
+    if (status === CONF.INSTALL_STATE.INSTALLED) {
+      console.log('install: set installing');
       // uninstall
-      this.model.set({status: 'uninstalled'});
+      this.model.set({
+        status: CONF.INSTALL_STATE.UNINSTALLING
+      });
       this.model.destroy({
-        success: function(model, response, opts) {
-          var status = opts.xhr.status;
-          console.log('view: ', status);
-          if (status === 200) {
-          }
+        success: function() {
         },
-        error: function(model, response, opts) {
+        failure: function() {
         }
       });
-    } else if (status == 'uninstalled') {
+    } else if (status === CONF.INSTALL_STATE.UNINSTALLED) {
+      console.log('install: set uninstalling');
       // install
-      console.log('view: model save');
+      this.model.set({
+        status: CONF.INSTALL_STATE.INSTALLING
+      });
       this.model.save({
-        success: function(model, response, options){
-          console.log('save success: ', response, options);
+        success: function() {
+        },
+        failure: function() {
         }
       });
     }

@@ -5,5 +5,11 @@ module.exports = {
     'webdm',
     'ubuntu-core'
   ],
-  INSTALL_POLL_WAIT: 16 // millisecs
+  INSTALL_STATE: {
+    INSTALLED: 'installed',
+    INSTALLING: 'installing',
+    UNINSTALLED: 'uninstalled',
+    UNINSTALLING: 'uninstalling'
+  },
+  INSTALL_POLL_WAIT: 16 // milliseconds
 };

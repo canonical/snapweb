@@ -22,6 +22,15 @@ describe('Snap', function() {
     expect(this.model.urlRoot).toBe(CONF.PACKAGES);
   });
 
+  it('should have default install_msg', function() {
+    expect(this.model.get('install_msg')).toBe('Install');
+  });
+
+  it('should have correct install message strings based on state', function() {
+    this.model.set('status', CONF.INSTALL_STATE.INSTALLED);
+    expect(this.model.get('install_msg')).toBe('Uninstall');
+  });
+
 });
 
 describe('Snap sync methods', function() {
@@ -29,56 +38,51 @@ describe('Snap sync methods', function() {
   beforeEach(function() {
     jasmine.Ajax.install();
     this.model = new Snap({id: 'foo'});
-    spyOn(this.model, 'fetch').and.callThrough();
     spyOn(this.model, 'save').and.callThrough();
+    spyOn(this.model, 'fetch');
   });
 
   afterEach(function() {
     jasmine.Ajax.uninstall();
     delete this.model;
+    this.model = null;
   });
 
-  it('should poll fetch on HTTP 202 until HTTP 200', function(done) {
+  it('should poll fetch on save() HTTP 202 until HTTP 200', function(done) {
     var model = this.model;
-    model.save();
-    expect(model.save).toHaveBeenCalled();
-    expect(model.fetch).not.toHaveBeenCalled();
-    model.on('sync', function(model) {
+    model.on('sync', function() {
       _.delay(function(model) {
         expect(model.fetch).toHaveBeenCalled();
         done();
-      }, 100, model);
+      }, CONF.INSTALL_POLL_WAIT * 2, model);
     });
+    model.save();
+    expect(model.save).toHaveBeenCalled();
+    expect(model.fetch).not.toHaveBeenCalled();
+
     jasmine.Ajax.requests.mostRecent().respondWith({
-       "status": 202,
-       "contentType": 'application/json',
-       "responseText": {} 
+       'status': 202,
+       'contentType': 'application/json',
+       'responseText': '{}',
     });
   });
 
-/**
-  it('should not poll fetch on HTTP 200', function() {
-    var doneFn = jasmine.createSpy("success");
-    var expectedUrl = CONF.PACKAGES + '/' + this.model.id;
-    this.model.fetch({
-      success: function(model, attrs, opts) {
-        doneFn(opts.xhr.status);
-      }
+  it('should not poll fetch on save() and HTTP 200', function(done) {
+    var model = this.model;
+    model.on('sync', function() {
+      _.delay(function(model) {
+        expect(model.fetch).not.toHaveBeenCalled();
+        done();
+      }, CONF.INSTALL_POLL_WAITi * 2, model);
     });
-    expect(jasmine.Ajax.requests.mostRecent().url).toBe(expectedUrl);
-    expect(this.model.fetch).toHaveBeenCalled();
-    expect(doneFn).not.toHaveBeenCalled();
+    model.save();
+    expect(model.save).toHaveBeenCalled();
+    expect(model.fetch).not.toHaveBeenCalled();
 
-    // test anything that depends on the xhr not having responded
-    // before setting up the respondWith 
     jasmine.Ajax.requests.mostRecent().respondWith({
-       "status": 200,
-       "contentType": 'application/json',
-       "responseText": '{}'
+       'status': 200,
+       'contentType': 'application/json',
+       'responseText': '{}',
     });
-
-    expect(jasmine.Ajax.requests.count()).toBe(1);
-    expect(doneFn).toHaveBeenCalledWith(200);
   });
-  **/
 });

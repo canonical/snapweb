@@ -25,12 +25,17 @@ module.exports = Backbone.Model.extend({
   urlRoot: CONF.PACKAGES,
   initialize: function() {
 
-    /** 
-     * Backbone throws 202 to the error handler.
-     * Respond to 202's with a fetch, repeat until 200
-     */
     this.on('error', function(model, response, opts) {
-      if (response.status == 202) {
+      console.log('got a sync error on Snap model');
+    });
+
+    this.on('sync', function(model, response, opts) {
+      var HttpStatus = opts.xhr.status;
+      /** 
+      * Backbone throws 202 to the error handler.
+      * Respond to 202's with a fetch, repeat until 200
+      */
+      if (HttpStatus === 202) {
         _.delay(function(model) {
           model.fetch();
         }, CONF.INSTALL_POLL_WAIT, model);
@@ -42,16 +47,16 @@ module.exports = Backbone.Model.extend({
       var msg = '';
 
       switch (status) {
-        case 'installed':
+        case CONF.INSTALL_STATE.INSTALLED:
           msg = 'Uninstall';
           break;
-        case 'uninstalled':
-          msg = 'Install';
-          break;
-        case 'installing':
+        case CONF.INSTALL_STATE.INSTALLING:
           msg = 'Installing';
           break;
-        case 'uninstalling':
+        case CONF.INSTALL_STATE.UNINSTALLED:
+          msg = 'Install';
+          break;
+        case CONF.INSTALL_STATE.UNINSTALLING:
           msg = 'Uninstalling';
           break;
       }
