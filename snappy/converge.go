@@ -1,6 +1,7 @@
 package snappy
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -27,34 +28,47 @@ var activeSnapByName = snappy.ActiveSnapByName
 
 func (h *handler) packagePayload(pkgName string) (snapPkg, error) {
 	snapQ := activeSnapByName(pkgName)
-	if snapQ == nil {
-		return snapPkg{}, snappy.ErrPackageNotFound
+	if snapQ != nil {
+		return h.snapQueryToPayload(snapQ, nil), nil
 	}
 
-	return h.snapQueryToPayload(snapQ), nil
+	mStore := snappy.NewMetaStoreRepository()
+	found, err := mStore.Details(pkgName)
+	if err == nil && len(found) != 0 {
+		if strings.ContainsRune(pkgName, '.') {
+			return h.snapQueryToPayload(found[0], nil), nil
+		} else {
+			return h.snapQueryToPayload(found[0], found[0]), nil
+		}
+	}
+
+	return snapPkg{}, snappy.ErrPackageNotFound
 }
 
 func (h *handler) allPackages() ([]snapPkg, error) {
-	m := snappy.NewMetaRepository()
+	mLocal := snappy.NewMetaLocalRepository()
 
-	installedSnaps, err := m.Installed()
+	installedSnaps, err := mLocal.Installed()
 	if err != nil {
 		return nil, err
 	}
 
 	installedSnapQs := make([]snapPkg, 0, len(installedSnaps))
 	for i := range installedSnaps {
-		installedSnapQs = append(installedSnapQs, h.snapQueryToPayload(installedSnaps[i]))
+		installedSnapQs = append(installedSnapQs, h.snapQueryToPayload(installedSnaps[i], nil))
 	}
 
-	remoteSnaps, err := m.Search("*")
+	mStore := snappy.NewUbuntuStoreSnapRepository()
+	remoteSnaps, err := mStore.Search("*")
 	if err != nil {
 		return nil, err
 	}
 
 	remoteSnapQs := make([]snapPkg, 0, len(remoteSnaps))
 	for i := range remoteSnaps {
-		remoteSnapQs = append(remoteSnapQs, h.snapQueryToPayload(remoteSnaps[i]))
+		for _, part := range remoteSnaps[i].Parts {
+			remoteSnapQs = append(remoteSnapQs, h.snapQueryToPayload(part, remoteSnaps[i].Alias))
+		}
 	}
 
 	return mergeSnaps(installedSnapQs, remoteSnapQs), nil
@@ -99,14 +113,29 @@ func mergeSnaps(installed, remote []snapPkg) []snapPkg {
 	return snapPkgs
 }
 
-func (h *handler) snapQueryToPayload(snapQ snappy.Part) snapPkg {
+func isNamespaceLess(snap snappy.Part) bool {
+	return snap.Type() == snappy.SnapTypeOem || snap.Type() == snappy.SnapTypeFramework
+}
+
+func hasPortInformation(snap snappy.Part) bool {
+	return snap.Type() == snappy.SnapTypeApp || snap.Type() == snappy.SnapTypeFramework
+}
+
+func (h *handler) snapQueryToPayload(snapQ snappy.Part, alias snappy.Part) snapPkg {
+	name := fmt.Sprintf("%s.%s", snapQ.Name(), snapQ.Namespace())
+	if snapQ.IsInstalled() && isNamespaceLess(snapQ) {
+		name = snapQ.Name()
+	} else if alias != nil && alias.Namespace() == snapQ.Namespace() {
+		name = snapQ.Name()
+	}
+
 	snap := snapPkg{
-		Name:    snapQ.Name(),
+		Name:    name,
 		Version: snapQ.Version(),
 		Type:    snapQ.Type(),
 	}
 
-	if snap.Type == snappy.SnapTypeApp || snap.Type == snappy.SnapTypeFramework {
+	if hasPortInformation(snapQ) {
 		if snapInstalled, ok := snapQ.(snappy.Services); ok {
 			port, uri := uiAccess(snapInstalled.Services())
 			snap.UIPort = port
