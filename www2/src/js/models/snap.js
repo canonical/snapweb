@@ -23,6 +23,7 @@ var CONF = require('../config.js');
 
 module.exports = Backbone.Model.extend({
   urlRoot: CONF.PACKAGES,
+  idAttribute: 'name',
   initialize: function() {
 
     this.on('error', function(model, response, opts) {
@@ -31,6 +32,9 @@ module.exports = Backbone.Model.extend({
 
     this.on('sync', function(model, response, opts) {
       var status = model.get('status') || opts.xhr.status;
+
+      console.log('xxx');
+      console.log(model);
 
       if (status === 202 ||
           status === CONF.INSTALL_STATE.INSTALLING || 
