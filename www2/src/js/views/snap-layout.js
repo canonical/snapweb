@@ -20,11 +20,11 @@ module.exports = Marionette.LayoutView.extend({
     var msg = model.get('install_msg');
     var installEl = this.ui.install;
 
-    if (state === CONF.INSTALL_STATE.INSTALLED ||
-        state === CONF.INSTALL_STATE.UNINSTALLED) {
-      installEl.removeClass('thinking').text(msg);
-    } else {
+    if (state === CONF.INSTALL_STATE.INSTALLING ||
+        state === CONF.INSTALL_STATE.UNINSTALLING) {
       installEl.addClass('thinking').text(msg);
+    } else {
+      installEl.removeClass('thinking').text(msg);
     }
 
   },
@@ -68,7 +68,6 @@ module.exports = Marionette.LayoutView.extend({
     console.log('install: ', status);
 
     if (status === CONF.INSTALL_STATE.INSTALLED) {
-      console.log('install: set installing');
       // uninstall
       this.model.set({
         status: CONF.INSTALL_STATE.UNINSTALLING
@@ -80,16 +79,11 @@ module.exports = Marionette.LayoutView.extend({
         }
       });
     } else if (status === CONF.INSTALL_STATE.UNINSTALLED) {
-      console.log('install: set uninstalling');
       // install
-      this.model.set({
-        status: CONF.INSTALL_STATE.INSTALLING
-      });
       this.model.save({
-        success: function() {
-        },
-        failure: function() {
-        }
+        status: CONF.INSTALL_STATE.INSTALLING
+      }, {
+        dataType : 'html'
       });
     }
   },
