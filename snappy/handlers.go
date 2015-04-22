@@ -64,14 +64,19 @@ func (h *handler) add(w http.ResponseWriter, r *http.Request) {
 	switch err {
 	case snappy.ErrAlreadyInstalled:
 		w.WriteHeader(http.StatusOK)
+		fmt.Fprintln(w, "Installed", pkgName)
 	case webprogress.ErrPackageInstallInProgress:
 		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintln(w, "Installation in progress for", pkgName)
 	case snappy.ErrPackageNotFound:
 		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintln(w, "Package not found", pkgName)
 	case nil:
 		w.WriteHeader(http.StatusAccepted)
+		fmt.Fprintln(w, "Accepted", pkgName)
 	default:
 		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintln(w, "Error when processing", pkgName)
 	}
 }
 
