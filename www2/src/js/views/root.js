@@ -9,12 +9,10 @@ var chan = Radio.channel('root');
 module.exports = Backbone.Marionette.LayoutView.extend({
 
   initialize: function() {
-    console.log('root view');
-    chan.comply('render', this.render);
     chan.comply('set:content', this.setContent, this);
   },
 
-  el: '#region-main',
+  el: '.region-main',
 
   className: 'webdm',
 
@@ -23,7 +21,6 @@ module.exports = Backbone.Marionette.LayoutView.extend({
   },
 
   setContent: function(content) {
-    console.log('root view: setContent');
     this.contentRegion.show(content);
   },
 

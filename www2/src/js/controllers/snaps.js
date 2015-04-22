@@ -4,9 +4,11 @@ var Radio = require('backbone.radio');
 var SnapLayoutView = require('../views/snap-layout.js');
 var Snap = require('../models/snap.js');
 
+var snapChannel = Radio.channel('snap');
+var rootChannel = Radio.channel('root');
+
 module.exports = {
   snap: function(name, section) {
-    var chan = Radio.channel('root');
     var snap = new Snap({id: name});
 
     snap.fetch({
@@ -15,7 +17,7 @@ module.exports = {
           model: snap,
           section: section
         });
-        chan.command('set:content', view);
+        rootChannel.command('set:content', view);
       },
       error: function() {
         // TODO error view
@@ -24,3 +26,14 @@ module.exports = {
     });
   }
 };
+
+snapChannel.comply('show', function(model) {
+  var name = model.get('name');
+  // create on model
+  var url = 'snap/' + name + '/';
+  var view =  new SnapLayoutView({
+    model: model
+  });
+  rootChannel.command('set:content', view);
+  Backbone.history.navigate(url);
+});
