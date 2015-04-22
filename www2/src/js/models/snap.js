@@ -32,8 +32,6 @@ module.exports = Backbone.Model.extend({
     this.on('sync', function(model, response, opts) {
       var status = model.get('status') || opts.xhr.status;
 
-      console.log(status);
-
       if (status === 202 ||
           status === CONF.INSTALL_STATE.INSTALLING || 
           status === CONF.INSTALL_STATE.UNINSTALLING) {
@@ -64,7 +62,7 @@ module.exports = Backbone.Model.extend({
           // TODO handle error
           break;
         case CONF.INSTALL_STATE.UNKNOWN:
-          // TODO ???
+          // TODO ??? check for message ..
           msg = '';
           break;
       }

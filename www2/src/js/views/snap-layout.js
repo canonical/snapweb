@@ -15,6 +15,10 @@ module.exports = Marionette.LayoutView.extend({
     this.listenTo(this.model, 'change:status', this.handleModelChangeStatus);
   },
 
+  onShow: function() {
+    window.scrollTo(0,0);
+  },
+
   handleModelChangeStatus: function(model) {
     var state = model.changed.status;
     var msg = model.get('install_msg');
