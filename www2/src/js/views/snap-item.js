@@ -21,12 +21,12 @@ module.exports = Marionette.ItemView.extend({
   },
 
   events: {
-    'click': 'command',
+    'click': 'showSnap',
     'mouseover @ui.icon': 'hoverIcon',
     'mouseover @ui.name': 'hoverName'
   },
 
-  command: function(e) {
+  showSnap: function(e) {
     e.preventDefault();
     snapChannel.command('show', this.model);
   },
