@@ -37,7 +37,7 @@ module.exports = Backbone.Model.extend({
       console.log(model);
 
       if (status === 202 ||
-          status === CONF.INSTALL_STATE.INSTALLING || 
+          status === CONF.INSTALL_STATE.INSTALLING ||
           status === CONF.INSTALL_STATE.UNINSTALLING) {
         _.delay(function(model) {
           model.fetch();
@@ -71,13 +71,11 @@ module.exports = Backbone.Model.extend({
           break;
       }
 
-      this.set('install_msg', msg);
+      this.set('installMsg', msg);
     });
   },
 
   defaults: {
-    install_msg: 'Install'
+    installMsg: 'Install'
   }
-
-
 });

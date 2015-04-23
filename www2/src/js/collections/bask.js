@@ -6,6 +6,6 @@ var Snap = require('../models/snap.js');
 var CONF = require('../config.js');
 
 module.exports = Backbone.Collection.extend({
-  url: CONF.PACKAGES, 
+  url: CONF.PACKAGES,
   model: Snap
 });
