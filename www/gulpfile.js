@@ -72,7 +72,7 @@ gulp.task('js:lint', function() {
 // Styles
 
 gulp.task('styles', ['styles:clean'], function() {
-  return gulp.src(['src/css/**/*.css'])
+  return gulp.src(['node_modules/normalize.css', 'src/css/**/*.css'])
   .pipe(csso())
   .pipe(autoprefixer())
   .pipe(concat('webdm.css'))

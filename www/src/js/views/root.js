@@ -12,9 +12,7 @@ module.exports = Backbone.Marionette.LayoutView.extend({
     chan.comply('set:content', this.setContent, this);
   },
 
-  el: '.region-main',
-
-  className: 'webdm',
+  el: '.b-layout__main',
 
   template : function() {
     return template();
