@@ -15,16 +15,40 @@ var source = require('vinyl-source-stream');
 var uglify = require('gulp-uglify');
 var watchify = require('watchify');
 
-var bundler = watchify(browserify('./src/js/app.js', watchify.args));
-bundler.transform('hbsfy');
-bundler.transform({global: true}, 'aliasify');
 
-gulp.task('js', bundle);
+gulp.task('js:build', ['js:clean', 'js:lint'], function() {
+  return createBundler();
+});
 
-bundler.on('update', bundle); // on any dep update, runs the bundler
-bundler.on('log', gutil.log); // output build logs to terminal
+gulp.task('js:watch', ['js:lint'], function() {
+  return createBundler(true);
+});
 
-function bundle() {
+gulp.task('js:clean', function(cb) {
+  del(['public/js'], cb);
+});
+
+function createBundler(watch) {
+  var bundler = browserify('./src/js/app.js', {
+    cache: {},
+    packageCache: {}
+  });
+  bundler.transform('hbsfy');
+  bundler.transform({global: true}, 'aliasify');
+
+  if (watch) {
+    bundler = watchify(bundler);
+    bundler.on('update', function() {
+      bundleShared(bundler);
+    });
+    bundler.on('log', gutil.log);
+  } else {
+  }
+
+  return bundleShared(bundler);
+} 
+
+function bundleShared(bundler) {
   return bundler.bundle()
     .on('error', gutil.log.bind(gutil, 'Browserify Error'))
     .pipe(source('webdm.js'))
@@ -71,9 +95,9 @@ gulp.task('images:clean', function(cb) {
   del(['public/images'], cb);
 });
 
-gulp.task('watch', ['js'], function(){
+gulp.task('watch', ['js:watch'], function() {
   gulp.watch('src/css/**/*.css', ['styles']);
   gulp.watch('src/js/**/*.js', ['js:lint']);
 });
 
-gulp.task('default', ['js', 'styles', 'images']);
+gulp.task('default', ['js:build', 'styles', 'images']);
