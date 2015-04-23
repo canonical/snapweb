@@ -22,13 +22,13 @@ describe('Snap', function() {
     expect(this.model.urlRoot).toBe(CONF.PACKAGES);
   });
 
-  it('should have default install_msg', function() {
-    expect(this.model.get('install_msg')).toBe('Install');
+  it('should have default installMsg', function() {
+    expect(this.model.get('installMsg')).toBe('Install');
   });
 
   it('should have correct install message strings based on state', function() {
     this.model.set('status', CONF.INSTALL_STATE.INSTALLED);
-    expect(this.model.get('install_msg')).toBe('Uninstall');
+    expect(this.model.get('installMsg')).toBe('Uninstall');
   });
 
 });
