@@ -1,1 +1,0 @@
-YUI().use('demo');
