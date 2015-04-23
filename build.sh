@@ -74,8 +74,8 @@ prov_avahi() {
     cp $avahi_dir/libdaemon0/usr/lib/$plat_abi/* "lib/$plat_abi"
 }
 
-#echo "Building web assets with gulp..."
-#gulp --gulpfile www2/gulpfile.js
+echo "Building web assets with gulp..."
+gulp --gulpfile www/gulpfile.js
 
 orig_pwd=$(pwd)
 
@@ -84,7 +84,7 @@ trap 'rm -rf "$builddir"' EXIT
 
 cp -r pkg/. $builddir
 mkdir $builddir/www
-cp -r www2/public www2/templates $builddir/www
+cp -r www/public www/templates $builddir/www
 cd $builddir
 
 sed -i 's/\(architecture: \)UNKNOWN_ARCH/\1[amd64, armhf]/' \
