@@ -16,7 +16,7 @@ module.exports = Marionette.LayoutView.extend({
   },
 
   onShow: function() {
-    window.scrollTo(0,0);
+    window.scrollTo(0, 0);
   },
 
   handleModelChangeStatus: function(model) {
@@ -50,7 +50,7 @@ module.exports = Marionette.LayoutView.extend({
     /**
      * use pretty-bytes on size, when available
      * https://www.npmjs.com/package/pretty-bytes
-     *  
+     *
      * mode.size_human = prettyBytes(model.size)
     **/
     return template(model);
@@ -104,7 +104,7 @@ module.exports = Marionette.LayoutView.extend({
         view = new SnapSettingsView();
         break;
       default:
-        view = new SnapDetailView({ model: this.model });
+        view = new SnapDetailView({model: this.model});
     }
     return view;
   },
@@ -122,5 +122,5 @@ module.exports = Marionette.LayoutView.extend({
       this.showChildView('tabRegion', view);
       Backbone.history.navigate(url);
     }
-  } 
+  }
 });
