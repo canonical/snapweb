@@ -33,9 +33,6 @@ module.exports = Backbone.Model.extend({
     this.on('sync', function(model, response, opts) {
       var status = model.get('status') || opts.xhr.status;
 
-      console.log('xxx');
-      console.log(model);
-
       if (status === 202 ||
           status === CONF.INSTALL_STATE.INSTALLING ||
           status === CONF.INSTALL_STATE.UNINSTALLING) {

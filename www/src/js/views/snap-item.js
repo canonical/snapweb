@@ -15,23 +15,12 @@ module.exports = Marionette.ItemView.extend({
     return template(model);
   },
 
-  ui: {
-    icon: '.b-bask__snap-icon',
-    name: '.b-bask__snap-name'
-  },
-
   events: {
-    'click': 'showSnap',
-    'mouseover @ui.icon': 'hoverIcon',
-    'mouseover @ui.name': 'hoverName'
+    'click': 'showSnap'
   },
 
   showSnap: function(e) {
     e.preventDefault();
     snapChannel.command('show', this.model);
-  },
-
-  hoverIcon: function(e) {
-    console.log(this.model.get('name'));
   }
 });
