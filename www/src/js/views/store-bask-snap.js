@@ -11,17 +11,8 @@ module.exports = Marionette.ItemView.extend({
   template: function(model) {
     return template(model);
   },
-  ui: {
-    icon: '.store-bask__snap-icon',
-    name: '.store-bask__snap-name'
-  },
   events: {
-    'click': 'showSnap',
-    'mouseover @ui.icon': 'hoverIcon',
-    'mouseover @ui.name': 'hoverName'
-  },
-  hoverIcon: function(e) {
-    console.log(this.model.get('name'));
+    'click': 'showSnap'
   },
   showSnap: function(e) {
     e.preventDefault();

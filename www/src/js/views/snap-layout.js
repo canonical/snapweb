@@ -69,7 +69,6 @@ module.exports = Marionette.LayoutView.extend({
 
   install: function() {
     var status = this.model.get('status');
-    console.log('install: ', status);
 
     if (status === CONF.INSTALL_STATE.INSTALLED) {
       // uninstall
@@ -84,8 +83,6 @@ module.exports = Marionette.LayoutView.extend({
       });
     } else if (status === CONF.INSTALL_STATE.UNINSTALLED) {
       // install
-      console.log('aaa');
-      console.log(this.model);
       this.model.save({
         status: CONF.INSTALL_STATE.INSTALLING
       }, {
