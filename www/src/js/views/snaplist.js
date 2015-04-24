@@ -1,20 +1,18 @@
-// bask view
+// snaplist view
 var _ = require('lodash');
 var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
-var SnapItemView = require('../views/snap-item.js');
-var EmptyInstalledView = require('./empty-installed-bask.js');
+var SnaplistItemView = require('../views/snaplist-item.js');
+var EmptySnaplistView = require('./empty-snaplist.js');
 var CONF = require('../config.js');
 
 module.exports = Marionette.CollectionView.extend({
 
-  className: 'list--apps',
+  className: 'b-snaplist',
 
-  tagName: 'ul',
+  childView: SnaplistItemView,
 
-  childView: SnapItemView,
-
-  emptyView: EmptyInstalledView,
+  emptyView: EmptySnaplistView,
 
   // TODO config
   filter: function(child, index, collection) {

@@ -1,7 +1,7 @@
 // home view
 var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
-var BaskView = require('./bask.js');
+var BaskView = require('./snaplist.js');
 var template = require('../templates/home.hbs');
 
 module.exports = Backbone.Marionette.LayoutView.extend({
