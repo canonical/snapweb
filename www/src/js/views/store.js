@@ -6,16 +6,13 @@ var template = require('../templates/store.hbs');
 
 module.exports = Backbone.Marionette.LayoutView.extend({
 
-  className: 'store',
-
   template : function() {
     return template();
   },
 
   onBeforeShow: function() {
     this.showChildView('productRegion', new BaskView({
-      collection: this.collection,
-      rowStyle: true 
+      collection: this.collection
     }));
   },
 

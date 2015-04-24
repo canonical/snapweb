@@ -9,10 +9,12 @@ var CONF = require('../config.js');
 module.exports = Marionette.CollectionView.extend({
 
   className: function() {
-    if (this.options.rowStyle) {
+    var style = this.options.style || 'row';
+
+    if (style === 'row') {
       return 'b-snaplist b-snaplist--row';
-    } else {
-      return 'b-snaplist';
+    } else if (style === 'grid') {
+      return 'b-snaplist b-snaplist--grid';
     }
   },
 
