@@ -1,0 +1,58 @@
+.b-banner {
+  display:flex;
+  align-items:center;
+  background-color:#000;
+  color:#efefef;
+}
+
+.b-banner img {
+  display:block;
+}
+
+.b-banner__brand {
+  padding:15px;
+}
+
+.b-banner__search {
+  flex:1;
+}
+
+.b-banner__search input[type=search] {
+  width:50%;
+  border:none;
+  height:30px;
+  padding:15px 25px 15px 15px;
+  background: #333 url(/public/images/search.svg) 100% 50% no-repeat;
+  background-size:20px;
+  border-right:10px solid #333;
+}
+
+.b-banner__search input[type=search] {
+  outline:0;
+}
+
+.b-banner__primary-nav .b-banner__nav-item {
+  padding:19px 1em 20px;
+}
+
+.b-banner__primary-nav .b-banner__nav-item:hover {
+  background-color:#dd4814;
+}
+
+.b-banner__secondary-nav {
+  margin-left:auto;
+}
+
+.b-banner__secondary-nav .b-banner__nav-item {
+  padding: 15px;
+}
+
+.b-banner__secondary-nav .b-banner__nav-item svg {
+  display:block;
+  height:30px;
+  width:30px;
+}
+
+.b-banner__secondary-nav .b-banner__nav-item:hover path {
+  fill:#dd4814;
+}
