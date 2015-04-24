@@ -8,7 +8,13 @@ var CONF = require('../config.js');
 
 module.exports = Marionette.CollectionView.extend({
 
-  className: 'b-snaplist',
+  className: function() {
+    if (this.options.rowStyle) {
+      return 'b-snaplist b-snaplist--row';
+    } else {
+      return 'b-snaplist';
+    }
+  },
 
   childView: SnaplistItemView,
 
