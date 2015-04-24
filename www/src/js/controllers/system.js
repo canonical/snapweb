@@ -4,7 +4,7 @@ Backbone.$ = $;
 var Marionette = require('backbone.marionette');
 var Radio = require('backbone.radio');
 var SystemLayoutView = require('../views/system.js');
-var Bask = require('../collections/bask.js');
+var Bask = require('../collections/snaplist.js');
 var SystemModel = require('../models/system.js');
 
 module.exports = {
@@ -13,7 +13,7 @@ module.exports = {
     var installedBask = new Bask();
     var system = new SystemModel();
 
-    // TODO installed snaps bask, same as we get for home...
+    // TODO installed snaps snaplist, same as we get for home...
     var options = {
       data: $.param({
         'types': ['app'],

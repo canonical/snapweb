@@ -1,0 +1,24 @@
+html {
+  box-sizing: border-box;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+html, body {
+  font-family: Ubuntu, Arial, 'libra sans', sans-serif;
+  background-color:white;
+  color:#333;
+}
+
+body {
+  background: url("../images/image-background-paper.png") repeat-y fixed 50% 0 #f7f7f7;
+}
+
+a {
+  color:#dd4814;
+}
+
+h1, h2, h3, h4 {
+  font-weight:300;
+}

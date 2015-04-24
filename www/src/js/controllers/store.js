@@ -2,7 +2,7 @@ var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
 var Radio = require('backbone.radio');
 var StoreLayoutView = require('../views/store.js');
-var Bask = require('../collections/bask.js');
+var Bask = require('../collections/snaplist.js');
 
 module.exports = {
   index: function() {
@@ -10,9 +10,9 @@ module.exports = {
     var storeBask = new Bask();
 
     storeBask.fetch({
-      success: function(bask) {
+      success: function(snaplist) {
         var view =  new StoreLayoutView({
-          collection: bask
+          collection: snaplist
         });
         chan.command('set:content', view);
       }
