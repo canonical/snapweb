@@ -1,4 +1,17 @@
-<a class="b-snaplist__link" href="/snap/{{ name }}/">
-  <img class="b-snaplist__icon" src="{{ icon }}" alt="{{ name }} icon" />
-  <p class="b-snaplist__label">{{ name }}</p>
-</a>
+<div class="b-snaplist__icon">
+  <img src="{{ icon }}" alt="{{ name }} icon">
+</div>
+<div class="b-snaplist__label">{{ name }}</div>
+<div class="b-snaplist__author">hiya {{ author }}</div>
+<div class="b-snaplist__title">this is a very long title so it is{{ title }}</div>
+<div class="b-snaplist__install">
+  <div class="b-install">
+    <div class="b-install__message"></div>
+    <div class="b-install__button">
+      {{ installMsg }} {{ name }}
+    </div>
+    <div class="b-install__progress">
+      <div class="b-install__value"></div>
+    </div>
+  </div>
+</div>
