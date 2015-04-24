@@ -14,7 +14,8 @@ module.exports = Backbone.Marionette.LayoutView.extend({
 
   onBeforeShow: function() {
     this.showChildView('productRegion', new BaskView({
-      collection: this.collection
+      collection: this.collection,
+      rowStyle: true 
     }));
   },
 
