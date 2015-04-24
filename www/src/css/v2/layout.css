@@ -1,5 +1,15 @@
-.b_layout {
+.b-layout {
 }
 
-.b_layout__main {
+.b-layout__banner {
+}
+
+.b-layout__main {
+}
+
+.b-layout__footer {
+  padding:2em 0;
+  text-align:center;
+  font-size:12px;
+  color:#999;
 }
