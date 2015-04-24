@@ -14,6 +14,7 @@
 }
 
 .b-banner__search {
+  display:flex;
   flex:1;
 }
 
@@ -22,17 +23,27 @@
   border:none;
   height:30px;
   padding:15px 25px 15px 15px;
-  background: #333 url(/public/images/search.svg) 100% 50% no-repeat;
-  background-size:20px;
-  border-right:10px solid #333;
+  background-color:#333;
 }
 
-.b-banner__search input[type=search] {
+.b-banner__search input[type=search]:focus {
   outline:0;
 }
 
+.b-banner__submit {
+  height:60px;
+  width:60px;
+  background: #333 url(/public/images/search.svg) 50% 50% no-repeat;
+  background-size:20px;
+  cursor:pointer;
+}
+
+.b-banner__submit:hover {
+  background-color:#444;
+}
+
 .b-banner__primary-nav .b-banner__nav-item {
-  padding:19px 1em 20px;
+  padding:19px 2em 20px;
 }
 
 .b-banner__primary-nav .b-banner__nav-item:hover {
