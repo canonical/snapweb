@@ -1,7 +1,6 @@
 package snappy
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 
@@ -13,6 +12,7 @@ import (
 
 type snapPkg struct {
 	Name     string          `json:"name"`
+	Origin   string          `json:"origin"`
 	Version  string          `json:"version"`
 	Icon     string          `json:"icon"`
 	Status   string          `json:"status"`
@@ -29,17 +29,13 @@ var activeSnapByName = snappy.ActiveSnapByName
 func (h *handler) packagePayload(pkgName string) (snapPkg, error) {
 	snapQ := activeSnapByName(pkgName)
 	if snapQ != nil {
-		return h.snapQueryToPayload(snapQ, nil), nil
+		return h.snapQueryToPayload(snapQ), nil
 	}
 
 	mStore := snappy.NewMetaStoreRepository()
 	found, err := mStore.Details(pkgName)
 	if err == nil && len(found) != 0 {
-		if strings.ContainsRune(pkgName, '.') {
-			return h.snapQueryToPayload(found[0], nil), nil
-		} else {
-			return h.snapQueryToPayload(found[0], found[0]), nil
-		}
+		return h.snapQueryToPayload(found[0]), nil
 	}
 
 	return snapPkg{}, snappy.ErrPackageNotFound
@@ -55,7 +51,7 @@ func (h *handler) allPackages() ([]snapPkg, error) {
 
 	installedSnapQs := make([]snapPkg, 0, len(installedSnaps))
 	for i := range installedSnaps {
-		installedSnapQs = append(installedSnapQs, h.snapQueryToPayload(installedSnaps[i], nil))
+		installedSnapQs = append(installedSnapQs, h.snapQueryToPayload(installedSnaps[i]))
 	}
 
 	mStore := snappy.NewUbuntuStoreSnapRepository()
@@ -65,9 +61,13 @@ func (h *handler) allPackages() ([]snapPkg, error) {
 	}
 
 	remoteSnapQs := make([]snapPkg, 0, len(remoteSnaps))
-	for i := range remoteSnaps {
-		for _, part := range remoteSnaps[i].Parts {
-			remoteSnapQs = append(remoteSnapQs, h.snapQueryToPayload(part, remoteSnaps[i].Alias))
+	for _, remote := range remoteSnaps {
+		if alias := remote.Alias; alias != nil {
+			remoteSnapQs = append(remoteSnapQs, h.snapQueryToPayload(alias))
+		} else {
+			for _, part := range remote.Parts {
+				remoteSnapQs = append(remoteSnapQs, h.snapQueryToPayload(part))
+			}
 		}
 	}
 
@@ -91,18 +91,15 @@ func (h *handler) installPackage(pkgName string) error {
 }
 
 func mergeSnaps(installed, remote []snapPkg) []snapPkg {
-	remoteMap := make(map[string]snapPkg, len(remote))
+	remoteMap := make(map[string]snapPkg)
 
 	for i := range remote {
 		remoteMap[remote[i].Name] = remote[i]
 	}
 
-	for i := range installed {
-		pkgName := installed[i].Name
-		if _, ok := remoteMap[pkgName]; ok {
-			// TODO add details about cost and pricing, and then delete
-			delete(remoteMap, pkgName)
-		}
+	for _, pkg := range installed {
+		// TODO add details about cost and pricing, and then delete
+		delete(remoteMap, pkg.Name)
 	}
 
 	snapPkgs := installed
@@ -113,24 +110,14 @@ func mergeSnaps(installed, remote []snapPkg) []snapPkg {
 	return snapPkgs
 }
 
-func isNamespaceLess(snap snappy.Part) bool {
-	return snap.Type() == snappy.SnapTypeOem || snap.Type() == snappy.SnapTypeFramework
-}
-
 func hasPortInformation(snap snappy.Part) bool {
 	return snap.Type() == snappy.SnapTypeApp || snap.Type() == snappy.SnapTypeFramework
 }
 
-func (h *handler) snapQueryToPayload(snapQ snappy.Part, alias snappy.Part) snapPkg {
-	name := fmt.Sprintf("%s.%s", snapQ.Name(), snapQ.Namespace())
-	if snapQ.IsInstalled() && isNamespaceLess(snapQ) {
-		name = snapQ.Name()
-	} else if alias != nil && alias.Namespace() == snapQ.Namespace() {
-		name = snapQ.Name()
-	}
-
+func (h *handler) snapQueryToPayload(snapQ snappy.Part) snapPkg {
 	snap := snapPkg{
-		Name:    name,
+		Name:    snapQ.Name(),
+		Origin:  snapQ.Namespace(),
 		Version: snapQ.Version(),
 		Type:    snapQ.Type(),
 	}
