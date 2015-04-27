@@ -1,6 +1,7 @@
 package snappy
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -99,11 +100,14 @@ func mergeSnaps(installed, remote []snapPkg) []snapPkg {
 
 	for _, pkg := range installed {
 		// TODO add details about cost and pricing, and then delete
+		fmt.Println(len(remoteMap), remoteMap[pkg.Name])
 		delete(remoteMap, pkg.Name)
+		fmt.Println(len(remoteMap), remoteMap[pkg.Name])
 	}
 
 	snapPkgs := installed
-	for _, v := range remote {
+
+	for _, v := range remoteMap {
 		snapPkgs = append(snapPkgs, v)
 	}
 
