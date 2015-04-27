@@ -1,7 +1,6 @@
 package snappy
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 
@@ -66,9 +65,12 @@ func (h *handler) allPackages() ([]snapPkg, error) {
 		if alias := remote.Alias; alias != nil {
 			remoteSnapQs = append(remoteSnapQs, h.snapQueryToPayload(alias))
 		} else {
-			for _, part := range remote.Parts {
-				remoteSnapQs = append(remoteSnapQs, h.snapQueryToPayload(part))
-			}
+			/*
+				TODO reenable once we can filter by type
+				for _, part := range remote.Parts {
+					remoteSnapQs = append(remoteSnapQs, h.snapQueryToPayload(part))
+				}
+			*/
 		}
 	}
 
@@ -100,9 +102,7 @@ func mergeSnaps(installed, remote []snapPkg) []snapPkg {
 
 	for _, pkg := range installed {
 		// TODO add details about cost and pricing, and then delete
-		fmt.Println(len(remoteMap), remoteMap[pkg.Name])
 		delete(remoteMap, pkg.Name)
-		fmt.Println(len(remoteMap), remoteMap[pkg.Name])
 	}
 
 	snapPkgs := installed
