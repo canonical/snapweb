@@ -74,6 +74,10 @@
   text-overflow: ellipsis;
 }
 
+.b-snaplist--row .b-snaplist__label {
+  min-width:100px;
+}
+
 .b-snaplist--row .b-snaplist__title {
   flex:4 1;
 }
@@ -81,6 +85,7 @@
 .b-snaplist--row .b-snaplist__install {
   flex:3;
   margin:0 1em;
+  min-width:100px;
 }
 
 /**

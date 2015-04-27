@@ -7,6 +7,10 @@
 .b-layout__main {
 }
 
+.b-layout__main:empty + .b-layout__footer {
+  display:none;
+}
+
 .b-layout__footer {
   padding:2em 0;
   text-align:center;

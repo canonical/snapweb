@@ -12,7 +12,6 @@ module.exports = Marionette.LayoutView.extend({
 
   initialize: function() {
     chan.comply('set:content', this.setContent, this);
-    console.log('hlo');
   },
 
   el: '.b-layout',

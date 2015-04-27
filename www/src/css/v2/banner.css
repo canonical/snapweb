@@ -3,25 +3,42 @@
   align-items:center;
   background-color:#000;
   color:#efefef;
+  line-height:20px;
 }
 
 .b-banner img {
   display:block;
 }
 
-.b-banner__brand {
-  padding:15px;
+.b-banner a {
+  text-decoration:none;
+  color:#fff;
+  display:block;
+}
+
+.b-banner__brand a {
+  display: flex;
+  align-items:center;
+  padding:0 15px;
+}
+
+.b-banner__brand img {
+  margin:0 0.6em 0;
 }
 
 .b-banner__search {
-  display:flex;
   flex:1;
+}
+
+.b-banner__form {
+  display:flex;
 }
 
 .b-banner__search input[type=search] {
   width:50%;
   border:none;
   height:30px;
+  line-height:20px;
   padding:15px 25px 15px 15px;
   background-color:#333;
 }
@@ -31,6 +48,7 @@
 }
 
 .b-banner__submit {
+  border:0;
   height:60px;
   width:60px;
   background: #333 url(/public/images/search.svg) 50% 50% no-repeat;
@@ -38,12 +56,18 @@
   cursor:pointer;
 }
 
-.b-banner__submit:hover {
-  background-color:#444;
+.b-banner__submit:active, 
+.b-banner__submit:focus {
+  outline:0;
 }
 
-.b-banner__primary-nav .b-banner__nav-item {
-  padding:19px 2em 20px;
+.b-banner__submit:hover {
+  background-color:#dd4814;
+}
+
+.b-banner__primary-nav .b-banner__nav-item a {
+  white-space: nowrap;
+  padding:20px 2em;
 }
 
 .b-banner__primary-nav .b-banner__nav-item:hover {
@@ -64,6 +88,6 @@
   width:30px;
 }
 
-.b-banner__secondary-nav .b-banner__nav-item:hover path {
-  fill:#dd4814;
+.b-banner__secondary-nav .b-banner__nav-item:hover {
+  background-color:#dd4814;
 }

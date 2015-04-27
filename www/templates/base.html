@@ -13,6 +13,11 @@
       <div class="b-layout__main"></div>
       <div class="b-layout__footer"></div>
     </div>
-  <script src="/public/js/webdm.js"></script>
+    <script>
+      var WEBDM = WEBDM || {};
+      WEBDM.NAME = '{{ .Params.Name }}';
+      WEBDM.SUBNAME = '{{ .Params.Subname }}';
+    </script>
+    <script src="/public/js/webdm.js"></script>
   </body>
 </html>
