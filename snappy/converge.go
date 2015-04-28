@@ -147,11 +147,11 @@ func (h *handler) snapQueryToPayload(snapQ snappy.Part) snapPkg {
 	}
 
 	if stat, ok := h.installStatus.Get(snap.Name); ok {
-		if stat.Error != nil {
-			snap.Message = stat.Error.Error()
-		}
-
 		if stat.Done() {
+			if stat.Error != nil {
+				snap.Message = stat.Error.Error()
+			}
+
 			h.installStatus.Remove(snap.Name)
 		}
 	} else if snapQ.IsInstalled() {
