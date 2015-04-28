@@ -16,10 +16,13 @@
   display:block;
 }
 
+.b-banner a.active {
+}
+
 .b-banner__brand a {
   display: flex;
   align-items:center;
-  padding:0 15px;
+  padding:15px;
 }
 
 .b-banner__brand img {
@@ -48,6 +51,7 @@
 }
 
 .b-banner__submit {
+  display:block;
   border:0;
   height:60px;
   width:60px;
@@ -65,6 +69,20 @@
   background-color:#dd4814;
 }
 
+.b-banner__nav-item--active {
+  position:relative;
+}
+
+.b-banner__nav-item--active::before {
+  position:absolute;
+  content:'';
+  background:#dd4814;
+  bottom:0;
+  left:0;
+  right:0;
+  height:3px;
+}
+
 .b-banner__primary-nav .b-banner__nav-item a {
   white-space: nowrap;
   padding:20px 2em;
@@ -78,7 +96,7 @@
   margin-left:auto;
 }
 
-.b-banner__secondary-nav .b-banner__nav-item {
+.b-banner__secondary-nav .b-banner__nav-item a {
   padding: 15px;
 }
 
@@ -91,3 +109,4 @@
 .b-banner__secondary-nav .b-banner__nav-item:hover {
   background-color:#dd4814;
 }
+
