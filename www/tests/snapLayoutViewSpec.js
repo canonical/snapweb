@@ -6,7 +6,10 @@ var CONF = require('../src/js/config.js');
 describe('SnapLayoutView', function() {
 
   beforeEach(function() {
-    this.model = new Snap({id: 'foo'});
+    this.model = new Snap({
+      status: CONF.INSTALL_STATE.UNINSTALLED,
+      installActionString: 'Install'
+    });
     this.view = new SnapLayoutView({
       model: this.model
     });
