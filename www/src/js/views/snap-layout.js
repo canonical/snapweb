@@ -11,17 +11,23 @@ var CONF = require('../config.js');
 module.exports = Marionette.LayoutView.extend({
 
   initialize: function() {
-    //this.listenTo(this.model, 'sync', this.render);
     this.listenTo(this.model, 'change:status', this.handleModelChangeStatus);
+    this.listenTo(this.model, 'change:isError', this.handleModelError);
   },
 
   onShow: function() {
     window.scrollTo(0, 0);
   },
 
+  handleModelError: function(model) {
+    if (model.changed.isError) {
+      this.ui.statusMessage.text(model.get('message'));
+    }
+  },
+
   handleModelChangeStatus: function(model) {
     var state = model.changed.status;
-    var msg = model.get('install_msg');
+    var msg = model.get('installMsg');
     var installEl = this.ui.install;
 
     if (state === CONF.INSTALL_STATE.INSTALLING ||
@@ -30,13 +36,12 @@ module.exports = Marionette.LayoutView.extend({
     } else {
       installEl.removeClass('thinking').text(msg);
     }
-
   },
 
   className: 'snap-layout',
 
   ui: {
-    statusMessage: '.left .status',
+    statusMessage: 'p.left.status',
     install: '.install-action',
     menu: '.snap--menu'
   },
@@ -67,7 +72,7 @@ module.exports = Marionette.LayoutView.extend({
     tabRegion: '.region-tab'
   },
 
-  install: function() {
+  install: function(e) {
     var status = this.model.get('status');
 
     if (status === CONF.INSTALL_STATE.INSTALLED) {
@@ -83,6 +88,8 @@ module.exports = Marionette.LayoutView.extend({
       }, {
         dataType : 'html'
       });
+    } else {
+      e.preventDefault();
     }
   },
 
