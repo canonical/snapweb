@@ -75,12 +75,7 @@ module.exports = Marionette.LayoutView.extend({
       this.model.set({
         status: CONF.INSTALL_STATE.UNINSTALLING
       });
-      this.model.destroy({
-        success: function() {
-        },
-        failure: function() {
-        }
-      });
+      this.model.destroy();
     } else if (status === CONF.INSTALL_STATE.UNINSTALLED) {
       // install
       this.model.save({
