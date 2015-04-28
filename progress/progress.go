@@ -38,9 +38,7 @@ func (i *Status) Remove(pkg string) {
 	i.l.Lock()
 	defer i.l.Unlock()
 
-	if _, ok := i.status[pkg]; ok {
-		delete(i.status, pkg)
-	}
+	delete(i.status, pkg)
 }
 
 // Get returns a *WebProgress corresponding to pkg or nil if not tracked.

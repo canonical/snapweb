@@ -7,7 +7,7 @@ const (
 	StatusUninstalled = "uninstalled"
 	StatusInstalling  = "installing"
 	StatusError       = "error"
-	StatusUnkown      = "unknown"
+	StatusUnknown     = "unknown"
 )
 
 // WebProgress show progress on the terminal
@@ -24,10 +24,24 @@ type WebProgress struct {
 
 // NewWebProgress returns a new WebProgress type
 func NewWebProgress() *WebProgress {
-	return &WebProgress{
+	t := &WebProgress{
 		ErrorChan: make(chan error),
-		Status:    StatusUnkown,
+		Status:    StatusUnknown,
 	}
+
+	go func() {
+		defer close(t.ErrorChan)
+		err := <-t.ErrorChan
+
+		if err != nil {
+			t.Status = StatusError
+			t.Error = err
+		} else {
+			t.Status = StatusInstalled
+		}
+	}()
+
+	return t
 }
 
 // Start starts showing progress
@@ -48,17 +62,6 @@ func (t *WebProgress) SetTotal(total float64) {
 
 // Finished stops displaying the progress
 func (t *WebProgress) Finished() {
-	go func() {
-		err := <-t.ErrorChan
-		defer close(t.ErrorChan)
-
-		if err != nil {
-			t.Status = StatusError
-			t.Error = err
-		} else {
-			t.Status = StatusInstalled
-		}
-	}()
 }
 
 // Done returns a boolean value indicating that the progress report
@@ -72,6 +75,7 @@ func (t *WebProgress) Done() bool {
 //
 // This is not needed for web progress.
 func (t *WebProgress) Write(p []byte) (n int, err error) {
+	t.current += float64(len(p))
 	return len(p), nil
 }
 
