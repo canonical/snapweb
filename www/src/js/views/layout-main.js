@@ -1,6 +1,8 @@
 // main layout view
+var $ = require('jquery');
 var _ = require('lodash');
 var Backbone = require('backbone');
+Backbone.$ = $;
 var Marionette = require('backbone.marionette');
 var Radio = require('backbone.radio');
 var BannerView = require('./layout-banner.js');
