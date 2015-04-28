@@ -10,7 +10,6 @@ var systemController = require('../controllers/system.js');
 var snapController = require('../controllers/snaps.js');
 
 module.exports = {
-  test: 'test',
 
   home: new Marionette.AppRouter({
     controller: homeController,

@@ -1,0 +1,59 @@
+.b-install {
+  max-width:300px;
+}
+
+.b-install__button {
+  border-radius:4px;
+  border:1px solid #dd4814;
+  position:relative;
+  padding:8px 2em;
+  text-align:center;
+  cursor:pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  user-select: none;
+  background-color:white;
+  color:#dd4814;
+  font-weight:400;
+  font-size:12px;
+}
+
+.b-install--uninstall .b-install__button {
+  border:1px solid #ccc;
+}
+
+.b-install--thinking .b-install__button {
+  cursor:progress;
+  background-color:transparent;
+  color:#333;
+  border-color:white;
+}
+
+.b-install__progress {
+  box-sizing:border-box;
+  display:none;
+  position:absolute;
+  left:8px;
+  right:8px;
+  bottom:3px;
+  height:5px;
+  border-radius:10px;
+  border:1px solid #dd4814;
+  background: white;
+  margin:0;
+  padding:0;
+}
+
+.b-install__value {
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:0;
+  right:100%;
+  background-color:rgba(221, 72, 20, 1);
+}
+
+.b-install--thinking .b-install__progress {
+  display:block;
+}
