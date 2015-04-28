@@ -90,11 +90,11 @@ cd $builddir
 sed -i 's/\(architecture: \)UNKNOWN_ARCH/\1[amd64, armhf]/' \
     $builddir/meta/package.yaml
 
-#gobuild arm
+gobuild arm
 gobuild amd64
 
-#prov_avahi armhf
-#prov_avahi amd64
+prov_avahi armhf
+prov_avahi amd64
 
 cd "$orig_pwd"
 
