@@ -20,7 +20,7 @@ gulp.task('js:build', ['js:clean', 'js:lint'], function() {
 });
 
 gulp.task('js:watch', ['js:lint'], function() {
-  return createBundler(true);
+  createBundler(true);
 });
 
 gulp.task('js:clean', function(cb) {

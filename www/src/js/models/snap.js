@@ -43,10 +43,10 @@ module.exports = Backbone.Model.extend({
     });
 
     this.on('change:status', function(model) {
-      var status = model.get('status');
-      var msg = 'Oops.';
+      var state = model.get('status');
+      var msg = model.get('installMsg');
 
-      switch (status) {
+      switch (state) {
         case CONF.INSTALL_STATE.INSTALLED:
           msg = 'Uninstall';
           break;
@@ -58,13 +58,6 @@ module.exports = Backbone.Model.extend({
           break;
         case CONF.INSTALL_STATE.UNINSTALLING:
           msg = 'Uninstalling';
-          break;
-        case CONF.INSTALL_STATE.ERROR:
-          // TODO handle error
-          break;
-        case CONF.INSTALL_STATE.UNKNOWN:
-          // TODO ??? check for message ..
-          msg = '';
           break;
       }
 
