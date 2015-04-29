@@ -26,7 +26,7 @@ type WebProgress struct {
 func NewWebProgress() *WebProgress {
 	t := &WebProgress{
 		ErrorChan: make(chan error),
-		Status:    StatusUnknown,
+		Status:    StatusInstalling,
 	}
 
 	go func() {
