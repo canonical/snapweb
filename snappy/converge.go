@@ -23,6 +23,11 @@ type snapPkg struct {
 	UIUri    string          `json:"ui_uri,omitempty"`
 }
 
+type Response struct {
+	Package string
+	Message string
+}
+
 // for easier stubbing during testing
 var activeSnapByName = snappy.ActiveSnapByName
 
@@ -147,12 +152,14 @@ func (h *handler) snapQueryToPayload(snapQ snappy.Part) snapPkg {
 	}
 
 	if stat, ok := h.installStatus.Get(snap.Name); ok {
+		snap.Status = stat.Status
 		if stat.Done() {
 			if stat.Error != nil {
 				snap.Message = stat.Error.Error()
 			}
 
-			h.installStatus.Remove(snap.Name)
+		} else {
+			snap.Progress = stat.Progress()
 		}
 	} else if snapQ.IsInstalled() {
 		snap.Status = webprogress.StatusInstalled

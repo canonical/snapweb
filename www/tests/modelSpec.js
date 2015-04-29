@@ -51,14 +51,17 @@ describe('Snap', function() {
       this.model.set('status', CONF.INSTALL_STATE.INSTALLING);
       expect(this.model.get('installActionString')).toBe('Installing');
 
+    });
+
+    it('should unset installActionString if unrecognised model state', function() {
+      this.model.set('status', 'errror');
+      expect(this.model.get('installActionString')).toBe(undefined);
+
       this.model.set('status', 'foo');
-      expect(this.model.get('installActionString')).toBe(false);
+      expect(this.model.get('installActionString')).toBe(undefined);
 
-      this.model.set('status', 1);
-      expect(this.model.get('installActionString')).toBe(false);
-
-      this.model.set('status');
-      expect(this.model.get('installActionString')).toBe(false);
+      this.model.unset('status');
+      expect(this.model.get('installActionString')).toBe(undefined);
     });
 
   });

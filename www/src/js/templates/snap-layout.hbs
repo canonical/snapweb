@@ -17,11 +17,12 @@
       </ul>
     </div>
     <div class="four-col last-col ">
-      <p class="left status">{{ message }}</p>
+      <p class="left status"></p>
       <p class="right">Rating: {{ ratings_average }}/5</p>
       {{#if installActionString}}
-      <a class="install-action link-cta-negative">{{ installActionString }}</a>
+      <a class="install-action {{ installHTMLClass}}">{{ installActionString }}</a>
       {{/if}}
+      <p class="error-message clear">{{ message }}</p>
     </div>
   </div>
 </div>
