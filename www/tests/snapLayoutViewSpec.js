@@ -47,6 +47,11 @@ describe('SnapLayoutView', function() {
     expect(this.view.ui.install.hasClass('thinking')).toBeFalsy();
   });
 
+  it('should deactivate install button if model has unrecognised status', function() {
+    this.model.set('status', '');
+    expect(this.view.ui.install).not.toBe();
+  });
+
   xit('should inform user when install succeeds', function() {
   });
 
