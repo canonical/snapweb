@@ -74,8 +74,8 @@ prov_avahi() {
     cp $avahi_dir/libdaemon0/usr/lib/$plat_abi/* "lib/$plat_abi"
 }
 
-#echo "Building web assets with gulp..."
-#gulp --gulpfile www/gulpfile.js
+echo "Building web assets with gulp..."
+gulp --gulpfile www/gulpfile.js
 
 orig_pwd=$(pwd)
 
@@ -90,7 +90,7 @@ cd $builddir
 sed -i 's/\(architecture: \)UNKNOWN_ARCH/\1[amd64, armhf]/' \
     $builddir/meta/package.yaml
 
-#gobuild arm
+gobuild arm
 gobuild amd64
 
 prov_avahi armhf
