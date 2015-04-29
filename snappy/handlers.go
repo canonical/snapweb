@@ -28,7 +28,6 @@ func (h *handler) getAll(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
 		return
 	}
-
 }
 
 func (h *handler) get(w http.ResponseWriter, r *http.Request) {
