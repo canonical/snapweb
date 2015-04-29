@@ -41,13 +41,45 @@ func allPackages() ([]snapPkg, error) {
 		return nil, err
 	}
 
-	snapQs := make([]snapPkg, 0, len(installedSnaps))
-
+	installedSnapQs := make([]snapPkg, 0, len(installedSnaps))
 	for i := range installedSnaps {
-		snapQs = append(snapQs, snapQueryToPayload(installedSnaps[i]))
+		installedSnapQs = append(installedSnapQs, snapQueryToPayload(installedSnaps[i]))
 	}
 
-	return snapQs, nil
+	remoteSnaps, err := m.Search("*")
+	if err != nil {
+		return nil, err
+	}
+
+	remoteSnapQs := make([]snapPkg, 0, len(remoteSnaps))
+	for i := range remoteSnaps {
+		remoteSnapQs = append(remoteSnapQs, snapQueryToPayload(remoteSnaps[i]))
+	}
+
+	return mergeSnaps(installedSnapQs, remoteSnapQs), nil
+}
+
+func mergeSnaps(installed, remote []snapPkg) []snapPkg {
+	remoteMap := make(map[string]snapPkg, len(remote))
+
+	for i := range remote {
+		remoteMap[remote[i].Name] = remote[i]
+	}
+
+	for i := range installed {
+		pkgName := installed[i].Name
+		if _, ok := remoteMap[pkgName]; ok {
+			// TODO add details about cost and pricing, and then delete
+			delete(remoteMap, pkgName)
+		}
+	}
+
+	snapPkgs := installed
+	for _, v := range remote {
+		snapPkgs = append(snapPkgs, v)
+	}
+
+	return snapPkgs
 }
 
 func snapQueryToPayload(snapQ snappy.Part) snapPkg {
