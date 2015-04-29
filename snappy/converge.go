@@ -7,7 +7,7 @@ import (
 	"log"
 
 	"launchpad.net/snappy/snappy"
-	"launchpad.net/webdm/progress"
+	"launchpad.net/webdm/webprogress"
 )
 
 type snapPkg struct {
