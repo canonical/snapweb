@@ -1,6 +1,10 @@
 package snappy
 
 import (
+	"io/ioutil"
+	"os"
+	"path/filepath"
+
 	. "gopkg.in/check.v1"
 	"launchpad.net/snappy/snappy"
 )
@@ -9,8 +13,15 @@ type PayloadSuite struct{}
 
 var _ = Suite(&PayloadSuite{})
 
+func (s *PayloadSuite) SetUpTest(c *C) {
+	os.Setenv("SNAP_APP_DATA_PATH", c.MkDir())
+}
+
 func (s *PayloadSuite) TestPayloadWithNoServices(c *C) {
 	fakeSnap := newDefaultFake()
+	icon := filepath.Join(c.MkDir(), "icon.png")
+	c.Assert(ioutil.WriteFile(icon, []byte{}, 0644), IsNil)
+	fakeSnap.icon = icon
 
 	q := snapQueryToPayload(fakeSnap)
 
@@ -20,6 +31,7 @@ func (s *PayloadSuite) TestPayloadWithNoServices(c *C) {
 	c.Assert(q.Type, Equals, fakeSnap.snapType)
 	c.Assert(q.UIPort, Equals, uint64(0))
 	c.Assert(q.UIUri, Equals, "")
+	c.Assert(q.Icon, Equals, "/icons/camlistore.sergiusens_icon.png")
 }
 
 func (s *PayloadSuite) TestPayloadWithServicesButNoUI(c *C) {

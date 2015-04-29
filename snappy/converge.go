@@ -5,6 +5,8 @@ import (
 	"strconv"
 	"strings"
 
+	"log"
+
 	"launchpad.net/snappy/snappy"
 )
 
@@ -15,6 +17,7 @@ var (
 type snapPkg struct {
 	Name      string          `json:"name"`
 	Version   string          `json:"version"`
+	Icon      string          `json:"icon"`
 	Installed bool            `json:"installed"`
 	Type      snappy.SnapType `json:"type"`
 	UIPort    uint64          `json:"ui_port,omitempty"`
@@ -96,6 +99,18 @@ func snapQueryToPayload(snapQ snappy.Part) snapPkg {
 			snap.UIPort = port
 			snap.UIUri = uri
 		}
+	}
+
+	if snapQ.IsInstalled() {
+		iconPath, err := localIconPath(snapQ.Name(), snapQ.Icon())
+		if err != nil {
+			log.Println("Icon path for installed package cannot be set", err)
+			iconPath = ""
+		}
+
+		snap.Icon = iconPath
+	} else {
+		snap.Icon = snapQ.Icon()
 	}
 
 	return snap

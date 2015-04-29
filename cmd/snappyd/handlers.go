@@ -92,8 +92,8 @@ func InitURLHandlers(conn *dbus.Connection, log *log.Logger) {
 	http.Handle("/public/", loggingHandler(http.FileServer(http.Dir("./www"))))
 	http.Handle("/mock-api/", loggingHandler(http.FileServer(http.Dir("./www"))))
 
-	if iconDir, err := click.IconDir(); err == nil {
-		http.Handle("/icons/", loggingHandler(http.FileServer(http.Dir(filepath.Join(iconDir, "..")))))
+	if iconDir, relativePath, err := snappy.IconDir(); err == nil {
+		http.Handle(fmt.Sprintf("/%s/", relativePath), loggingHandler(http.FileServer(http.Dir(filepath.Join(iconDir, "..")))))
 	} else {
 		log.Println("Issues while getting icon dir:", err)
 	}
