@@ -15,6 +15,20 @@ func NewHandler() *handler {
 }
 
 func (h *handler) getAll(w http.ResponseWriter, r *http.Request) {
+	payload, err := allPackages()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
+		return
+	}
+
+	enc := json.NewEncoder(w)
+	if err := enc.Encode(payload); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
+		return
+	}
+
 }
 
 func (h *handler) get(w http.ResponseWriter, r *http.Request) {
