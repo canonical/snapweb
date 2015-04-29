@@ -11,36 +11,72 @@ var CONF = require('../config.js');
 module.exports = Marionette.LayoutView.extend({
 
   initialize: function() {
-    this.listenTo(this.model, 'change:status', this.handleModelChangeStatus);
-    this.listenTo(this.model, 'change:isError', this.handleModelError);
+    this.listenTo(
+      this.model, 'change:installHTMLClass', this.onModelHTMLClassChange
+    );
+    this.listenTo(
+      this.model, 'change:status', this.onModelStatusChange
+    );
+    this.listenTo(
+      this.model, 'change:message change:isError', this.onModelError
+    );
   },
 
   onShow: function() {
     window.scrollTo(0, 0);
   },
 
-  handleModelError: function(model) {
-    if (model.changed.isError) {
-      this.ui.statusMessage.text(model.get('message'));
-    }
+  onModelError: function(model) {
+    this.ui.errorMessage.text(model.get('message'));
   },
 
-  handleModelChangeStatus: function(model) {
-    var state = model.changed.status;
-    var msg = model.get('installMsg');
+  onModelHTMLClassChange: function(model) {
+    var installEl = this.ui.install;
+    installEl.removeClass(model.previous('installHTMLClass'))
+    .addClass(model.get('installHTMLClass'));
+  },
+
+  onModelStatusChange: function(model) {
+    var oldState = model.previous('status');
+    var state = model.get('status');
+    var msg = model.get('installActionString');
     var installEl = this.ui.install;
 
-    if (state === CONF.INSTALL_STATE.INSTALLING ||
-        state === CONF.INSTALL_STATE.UNINSTALLING) {
+    if (
+      state === CONF.INSTALL_STATE.INSTALLING ||
+      state === CONF.INSTALL_STATE.UNINSTALLING
+    ) {
       installEl.addClass('thinking').text(msg);
-    } else {
+    } else if (
+      state === CONF.INSTALL_STATE.INSTALL ||
+      state === CONF.INSTALL_STATE.UNINSTALLED
+    ) {
       installEl.removeClass('thinking').text(msg);
+    } else {
+      // in the rare case that a status isn't one we're expecting,
+      // remove the install button
+      installEl.remove();
+    }
+
+    if (
+      state === CONF.INSTALL_STATE.INSTALLED &&
+      oldState === CONF.INSTALL_STATE.INSTALLING
+    ) {
+      this.ui.statusMessage.text('Install successful!');
+    }
+
+    if (
+      state === CONF.INSTALL_STATE.UNINSTALLED &&
+      oldState === CONF.INSTALL_STATE.UNINSTALLING
+    ) {
+      this.ui.statusMessage.text('Uninstall successful!');
     }
   },
 
   className: 'snap-layout',
 
   ui: {
+    errorMessage: '.error-message',
     statusMessage: 'p.left.status',
     install: '.install-action',
     menu: '.snap--menu'

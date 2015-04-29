@@ -42,15 +42,7 @@ module.exports = Backbone.Model.extend({
         _.delay(function(model) {
           model.fetch();
         }, CONF.INSTALL_POLL_WAIT, model);
-      } else if (status === 400) {
-        console.log(400);
-        console.log(response);
-      } else if (status === 404) {
-        console.log(404);
-        console.log(response);
       }
-
-      model.setInstallActionString(model);
 
     });
 
@@ -63,36 +55,33 @@ module.exports = Backbone.Model.extend({
       });
     });
 
-    this.on('change:status', this.handleStatusChange);
+    this.on('add change:status', this.handleStatusChange);
   },
 
   handleStatusChange: function(model) {
     this.setInstallActionString(model);
-    this.setInstallSuccessString(model);
+    this.setInstallHTMLClass(model);
   },
 
-  setInstallSuccessString: function(model) {
-    var oldState = model.previous('state');
-    var state = model.get('state');
+  setInstallHTMLClass: function(model) {
+    var state = model.get('status');
+    var installHTMLClass;
 
-    if (
-      state === CONF.INSTALL_STATE.INSTALLED &&
-      oldState === CONF.INSTALL_STATE.INSTALLING
-    ) {
-      console.log('Install successful!');
+    if (state === CONF.INSTALL_STATE.INSTALLED) {
+      installHTMLClass = 'link-cta-negative';
+      return model.set('installHTMLClass', installHTMLClass);
     }
 
-    if (
-      state === CONF.INSTALL_STATE.UNINSTALLED &&
-      oldState === CONF.INSTALL_STATE.UNINSTALLING
-    ) {
-      console.log('Uninstall successful!');
+    if (state === CONF.INSTALL_STATE.UNINSTALLED) {
+      installHTMLClass = 'link-cta-positive';
+      return model.set('installHTMLClass', installHTMLClass);
     }
+
   },
 
   setInstallActionString: function(model) {
     var state = model.get('status');
-    var action = model.get('installActionString');
+    var action;
 
     switch (state) {
       case CONF.INSTALL_STATE.INSTALLED:
@@ -111,7 +100,7 @@ module.exports = Backbone.Model.extend({
         // XXX
         // has the effect of hiding the install button in the view,
         // as we have an indeterminate state
-        action = false;
+        return model.unset('installActionString');
     }
 
     return model.set('installActionString', action);
