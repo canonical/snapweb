@@ -7,7 +7,7 @@ import (
 	"log"
 
 	"launchpad.net/snappy/snappy"
-	"launchpad.net/webdm/progress"
+	"launchpad.net/webdm/webprogress"
 )
 
 type snapPkg struct {
@@ -21,6 +21,11 @@ type snapPkg struct {
 	Type     snappy.SnapType `json:"type,omitempty"`
 	UIPort   uint64          `json:"ui_port,omitempty"`
 	UIUri    string          `json:"ui_uri,omitempty"`
+}
+
+type Response struct {
+	Package string `json:"package"`
+	Message string `json:"message"`
 }
 
 // for easier stubbing during testing
@@ -147,12 +152,14 @@ func (h *handler) snapQueryToPayload(snapQ snappy.Part) snapPkg {
 	}
 
 	if stat, ok := h.installStatus.Get(snap.Name); ok {
+		snap.Status = stat.Status
 		if stat.Done() {
 			if stat.Error != nil {
 				snap.Message = stat.Error.Error()
 			}
 
-			h.installStatus.Remove(snap.Name)
+		} else {
+			snap.Progress = stat.Progress()
 		}
 	} else if snapQ.IsInstalled() {
 		snap.Status = webprogress.StatusInstalled
