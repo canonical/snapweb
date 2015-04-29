@@ -6,7 +6,6 @@ const (
 	StatusInstalled   = "installed"
 	StatusUninstalled = "uninstalled"
 	StatusInstalling  = "installing"
-	StatusError       = "error"
 	StatusUnknown     = "unknown"
 )
 
@@ -34,7 +33,7 @@ func NewWebProgress() *WebProgress {
 		err := <-t.ErrorChan
 
 		if err != nil {
-			t.Status = StatusError
+			t.Status = StatusUninstalled
 			t.Error = err
 		} else {
 			t.Status = StatusInstalled
@@ -67,7 +66,7 @@ func (t *WebProgress) Finished() {
 // Done returns a boolean value indicating that the progress report
 // has finished with no concerns if it was succesfull or not.
 func (t *WebProgress) Done() bool {
-	return t.Status == StatusInstalled || t.Status == StatusError
+	return t.Status == StatusInstalled || t.Status == StatusUninstalled
 }
 
 // Write is there so that progress can implement a Writer and can be
