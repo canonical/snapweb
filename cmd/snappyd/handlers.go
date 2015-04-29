@@ -32,6 +32,7 @@ import (
 	"launchpad.net/go-dbus/v1"
 	"launchpad.net/webdm/click"
 	"launchpad.net/webdm/oem"
+	"launchpad.net/webdm/snappy"
 	"launchpad.net/webdm/store"
 	"launchpad.net/webdm/system"
 )
@@ -73,6 +74,9 @@ func InitURLHandlers(conn *dbus.Connection, log *log.Logger) {
 
 	packageHandler := click.NewHandler(conn)
 	http.Handle("/api/v1/packages/", packageHandler.MakeMuxer("/api/v1/packages"))
+
+	snappyHandler := snappy.NewHandler()
+	http.Handle("/api/v2/packages/", snappyHandler.MakeMuxer("/api/v2/packages"))
 
 	storeHandler := store.NewHandler()
 	http.Handle("/api/v1/store/", storeHandler.MakeMuxer("/api/v1/store"))
