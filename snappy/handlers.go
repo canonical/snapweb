@@ -8,7 +8,7 @@ import (
 	"log"
 
 	"launchpad.net/snappy/snappy"
-	"launchpad.net/webdm/progress"
+	"launchpad.net/webdm/webprogress"
 
 	"github.com/gorilla/mux"
 )

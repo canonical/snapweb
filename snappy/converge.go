@@ -7,7 +7,7 @@ import (
 	"log"
 
 	"launchpad.net/snappy/snappy"
-	"launchpad.net/webdm/progress"
+	"launchpad.net/webdm/webprogress"
 )
 
 type snapPkg struct {
@@ -24,8 +24,8 @@ type snapPkg struct {
 }
 
 type Response struct {
-	Package string
-	Message string
+	Package string `json:"package"`
+	Message string `json:"message"`
 }
 
 // for easier stubbing during testing
