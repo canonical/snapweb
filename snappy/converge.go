@@ -33,6 +33,23 @@ func packagePayload(pkgName string) (snapPkg, error) {
 	return snapQueryToPayload(snapQ), nil
 }
 
+func allPackages() ([]snapPkg, error) {
+	m := snappy.NewMetaRepository()
+
+	installedSnaps, err := m.Installed()
+	if err != nil {
+		return nil, err
+	}
+
+	snapQs := make([]snapPkg, 0, len(installedSnaps))
+
+	for i := range installedSnaps {
+		snapQs = append(snapQs, snapQueryToPayload(installedSnaps[i]))
+	}
+
+	return snapQs, nil
+}
+
 func snapQueryToPayload(snapQ snappy.Part) snapPkg {
 	snap := snapPkg{
 		Name:      snapQ.Name(),
