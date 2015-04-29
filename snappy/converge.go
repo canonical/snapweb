@@ -24,8 +24,8 @@ type snapPkg struct {
 }
 
 type Response struct {
-	Package string
-	Message string
+	Package string `json:"package"`
+	Message string `json:"message"`
 }
 
 // for easier stubbing during testing
