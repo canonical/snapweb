@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"log"
+
 	"launchpad.net/snappy/snappy"
 	"launchpad.net/webdm/progress"
 
@@ -59,24 +61,32 @@ func (h *handler) add(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	pkgName := vars["pkg"]
 
+	enc := json.NewEncoder(w)
+	var msg string
+
 	err := h.installPackage(pkgName)
 
 	switch err {
 	case snappy.ErrAlreadyInstalled:
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintln(w, "Installed", pkgName)
+		msg = "Installed"
 	case webprogress.ErrPackageInstallInProgress:
 		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintln(w, "Installation in progress for", pkgName)
+		msg = "Installation in progress"
 	case snappy.ErrPackageNotFound:
 		w.WriteHeader(http.StatusNotFound)
-		fmt.Fprintln(w, "Package not found", pkgName)
+		msg = "Package not found"
 	case nil:
 		w.WriteHeader(http.StatusAccepted)
-		fmt.Fprintln(w, "Accepted", pkgName)
+		msg = "Accepted"
 	default:
 		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintln(w, "Error when processing", pkgName)
+		msg = "Processing error"
+	}
+
+	response := Response{Message: msg, Package: pkgName}
+	if err := enc.Encode(response); err != nil {
+		log.Print(err)
 	}
 }
 
