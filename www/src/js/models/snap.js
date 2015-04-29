@@ -63,7 +63,31 @@ module.exports = Backbone.Model.extend({
       });
     });
 
-    this.on('change:status', this.setInstallActionString);
+    this.on('change:status', this.handleStatusChange);
+  },
+
+  handleStatusChange: function(model) {
+    this.setInstallActionString(model);
+    this.setInstallSuccessString(model);
+  },
+
+  setInstallSuccessString: function(model) {
+    var oldState = model.previous('state');
+    var state = model.get('state');
+
+    if (
+      state === CONF.INSTALL_STATE.INSTALLED &&
+      oldState === CONF.INSTALL_STATE.INSTALLING
+    ) {
+      console.log('Install successful!');
+    }
+
+    if (
+      state === CONF.INSTALL_STATE.UNINSTALLED &&
+      oldState === CONF.INSTALL_STATE.UNINSTALLING
+    ) {
+      console.log('Uninstall successful!');
+    }
   },
 
   setInstallActionString: function(model) {
@@ -84,6 +108,7 @@ module.exports = Backbone.Model.extend({
         action = 'Uninstalling';
         break;
       default:
+        // XXX
         // has the effect of hiding the install button in the view,
         // as we have an indeterminate state
         action = false;
