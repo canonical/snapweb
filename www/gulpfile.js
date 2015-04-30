@@ -1,6 +1,7 @@
-// gulpfile.js - streaming build system for client side assets
-
+var aliasify = require('aliasify');
 var autoprefixer = require('gulp-autoprefixer');
+var browserify = require('browserify');
+var buffer = require('vinyl-buffer');
 var concat = require('gulp-concat');
 var csso = require('gulp-csso');
 var del = require('del');
@@ -9,102 +10,94 @@ var gutil = require('gulp-util');
 var imagemin = require('gulp-imagemin');
 var jscs = require('gulp-jscs');
 var jshint = require('gulp-jshint');
-var precompile = require('./precompile.js');
-var rename = require('gulp-rename');
 var sourcemaps = require('gulp-sourcemaps');
-var svgSymbols = require('gulp-svg-symbols');
+var source = require('vinyl-source-stream');
 var uglify = require('gulp-uglify');
-
-// where to find sources
-var paths = {
-  js: ['src/js/**/*.js'],
-  css: ['src/css/**/*.css'],
-  imgs: ['src/images/**/*'],
-  templates: ['src/js/**/*.html'] // html to be compiled to js tmpl func
-};
+var watchify = require('watchify');
 
 
-gulp.task('image', function() {
-  gulp.src(paths.imgs)
+gulp.task('js:build', ['js:clean', 'js:lint'], function() {
+  return createBundler();
+});
+
+gulp.task('js:watch', ['js:lint'], function() {
+  createBundler(true);
+});
+
+gulp.task('js:clean', function(cb) {
+  del(['public/js'], cb);
+});
+
+function createBundler(watch) {
+  var bundler = browserify('./src/js/app.js', {
+    cache: {},
+    packageCache: {}
+  });
+  bundler.transform('hbsfy');
+  bundler.transform({global: true}, 'aliasify');
+
+  if (watch) {
+    bundler = watchify(bundler);
+    bundler.on('update', function() {
+      bundleShared(bundler);
+    });
+    bundler.on('log', gutil.log);
+  } else {
+  }
+
+  return bundleShared(bundler);
+} 
+
+function bundleShared(bundler) {
+  return bundler.bundle()
+    .on('error', gutil.log.bind(gutil, 'Browserify Error'))
+    .pipe(source('webdm.js'))
+      .pipe(buffer())
+      .pipe(sourcemaps.init({loadMaps: true})) // loads map from browserify file
+      .pipe(uglify())
+      .pipe(sourcemaps.write('./')) // writes .map file
+    .pipe(gulp.dest('./public/js/'));
+}
+
+gulp.task('js:lint', function() {
+  return gulp.src(['src/js/**/*.js'])
+    .pipe(jscs())
+    .on('error', function(err) {
+      gutil.log(gutil.colors.green(err));
+      this.emit('end');
+    })
+    .pipe(jshint());
+});
+
+// Styles
+
+gulp.task('styles', ['styles:clean'], function() {
+  return gulp.src(['src/css/**/*.css'])
+  .pipe(csso())
+  .pipe(autoprefixer())
+  .pipe(concat('webdm.css'))
+  .pipe(gulp.dest('public/css'));
+});
+
+gulp.task('styles:clean', function(cb) {
+  del(['public/css'], cb);
+});
+
+// Images
+
+gulp.task('images', ['images:clean'], function() {
+  gulp.src(['src/images/**/*'])
   .pipe(imagemin())
   .pipe(gulp.dest('public/images'));
 });
 
-gulp.task('scripts', ['clean:scripts'], function() {
-  return gulp.src(paths.js)
-  .pipe(jscs())
-  .on('error', function(err) {
-    gutil.log(gutil.colors.green(err));
-    this.emit('end');
-  })
-  .pipe(jshint())
-//  .pipe(sourcemaps.init())
-//  .pipe(uglify())
-//  .on('error', function(err) {
-//    gutil.log(gutil.colors.green(err));
-//    this.emit('end');
-//  })
-//  .pipe(sourcemaps.write({debug: false}))
-  .pipe(gulp.dest('public/js'));
+gulp.task('images:clean', function(cb) {
+  del(['public/images'], cb);
 });
 
-gulp.task('clean:scripts', function(cb) {
-  del([
-  'public/js',
-  '!public/js/tmpls'
-  ], cb);
+gulp.task('watch', ['js:watch'], function() {
+  gulp.watch('src/css/**/*.css', ['styles']);
+  gulp.watch('src/js/**/*.js', ['js:lint']);
 });
 
-gulp.task('styles', ['clean:styles'], function() {
-  return gulp.src(paths.css)
-  .pipe(csso())
-  .pipe(autoprefixer())
-  .pipe(concat('demo.css'))
-  .pipe(gulp.dest('public/css'));
-});
-
-gulp.task('clean:styles', function(cb) {
-  del(['public/css'], cb);
-});
-
-gulp.task('templates', ['clean:templates'], function() {
-  return gulp.src(paths.templates)
-  .pipe(precompile())
-  //.pipe(uglify())
-  .on('error', function(err) {
-    gutil.log(gutil.colors.green(err));
-    this.emit('end');
-  })
-  .pipe(rename({
-    extname: '.js'
-  }))
-  .pipe(gulp.dest('public/js'));
-});
-
-gulp.task('clean:templates', function(cb) {
-  del(['public/js/tmpls'], cb);
-});
-
-// create a smaller yui lib (leave out debug and raw)
-gulp.task('yui', ['clean:yui'], function() {
-  return gulp.src([
-    'node_modules/yui/**/*-min.js',
-    'node_modules/yui/**/*-min.css'
-  ])
-  .pipe(gulp.dest('public/vendor/yui'));
-});
-
-gulp.task('clean:yui', function(cb) {
-  del(['public/vendor/yui'], cb);
-});
-
-gulp.task('watch', function() {
-  gulp.watch(paths.js, ['scripts']);
-  gulp.watch(paths.css, ['styles']);
-  gulp.watch(paths.imgs, ['image']);
-  gulp.watch(paths.templates, ['templates']);
-});
-
-gulp.task('build', ['yui', 'scripts', 'styles', 'image', 'templates']);
-gulp.task('watch', ['build', 'watch']);
-gulp.task('default', ['build']);
+gulp.task('default', ['js:build', 'styles', 'images']);

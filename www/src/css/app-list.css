@@ -49,3 +49,7 @@
 .link--app:visited {
     color: #333333;
 }
+
+.list--apps .three-col:nth-of-type(4n + 0) {
+  margin-right:0;
+}
