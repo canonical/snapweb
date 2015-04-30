@@ -24,35 +24,44 @@ describe('Snap', function() {
       expect(this.model.urlRoot).toBe(CONF.PACKAGES);
     });
 
-    it('should have default installMsg', function() {
-      expect(this.model.get('installMsg')).toBeDefined();
-    });
-
     it('should have default icon', function() {
       expect(this.model.get('icon')).toBeDefined();
     });
 
-    it('should have correct install message strings based on state', function() {
-      this.model.set('status', CONF.INSTALL_STATE.INSTALLED);
-      expect(this.model.get('installMsg')).toBe('Uninstall');
-    });
-
   });
 
-  describe('parse', function() {
-
+  describe('setInstallActionString', function() {
     beforeEach(function() {
       this.model = new Snap({id: 'foo'});
     });
 
-    afterEach(function() {
-      delete this.model;
-      this.model = null;
+
+    it('should set installActionString from model state', function() {
+      this.model.set('status', CONF.INSTALL_STATE.INSTALLED);
+      expect(this.model.get('installActionString')).toBe('Uninstall');
+
+      this.model.set('status', CONF.INSTALL_STATE.UNINSTALLED);
+      expect(this.model.get('installActionString')).toBe('Install');
+
+      this.model.set('status', CONF.INSTALL_STATE.UNINSTALLING);
+      expect(this.model.get('installActionString')).toBe('Uninstalling…');
+
+      this.model.set('status', CONF.INSTALL_STATE.INSTALLING);
+      expect(this.model.get('installActionString')).toBe('Installing…');
+
     });
 
-    it('should handle an empty string in icon property', function() {
-      expect(this.model.parse({ icon: ''}).icon).toBe(this.model.defaults.icon);
+    it('should unset installActionString if unrecognised model state', function() {
+      this.model.set('status', 'errror');
+      expect(this.model.get('installActionString')).toBe(undefined);
+
+      this.model.set('status', 'foo');
+      expect(this.model.get('installActionString')).toBe(undefined);
+
+      this.model.unset('status');
+      expect(this.model.get('installActionString')).toBe(undefined);
     });
+
   });
 
   describe('sync methods', function() {
@@ -114,5 +123,4 @@ describe('Snap', function() {
       });
     });
   });
-
 });
