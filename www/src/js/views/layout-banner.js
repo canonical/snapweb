@@ -17,16 +17,16 @@ module.exports = Marionette.ItemView.extend({
     'click': function(e) {
       var CLASS = 'b-banner__nav-item';
       var ACTIVE_CLASS = 'b-banner__nav-item--active';
-      var navItem = e.target.closest('.'+CLASS);
+      var navItem = e.target.closest('.' + CLASS);
       if (navItem) {
-        this.$('.'+ACTIVE_CLASS).toggleClass(ACTIVE_CLASS, false);
+        this.$('.' + ACTIVE_CLASS).toggleClass(ACTIVE_CLASS, false);
         this.$(navItem).toggleClass(ACTIVE_CLASS, true);
       }
     }
   },
 
   // XXX ugh, use a model
-  serializeData: function(){
+  serializeData: function() {
     var webdm = window.WEBDM;
     var path = window.location.pathname.split('/')[1];
     return {
