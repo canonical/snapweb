@@ -1,15 +1,71 @@
-YUI.add('iot-models-snap', function(Y) {
+// snap.js
 
-  Y.io.header('X-Requested-With');
-  var Snap = Y.Base.create('snap', Y.Model, [Y.ModelSync.REST], {
-    root: YUI.Env.iot.api.store
-  });
+var _ = require('lodash');
+var Backbone = require('backbone');
+var CONF = require('../config.js');
 
-  Y.namespace('iot.models').Snap = Snap;
+/** Snap Model
+ *
+ * var helloWorld = new Snap({id: 'hello-world'});
+ *
+ * // fetch from server (http GET)
+ * helloWorld.fetch({
+ *   success: function(snap) {
+ *     console.log(snap);
+ *   }
+ * });
+ *
+ * // install (http PUT)
+ * // uninstall (http DELETE)
+ * // upgrade (http UPGRADE)
+ *
+ **/
 
-}, '0.0.1', {
-  requires: [
-    'model',
-    'model-sync-rest'
-  ]
+module.exports = Backbone.Model.extend({
+  urlRoot: CONF.PACKAGES,
+  idAttribute: 'name',
+  initialize: function() {
+
+    this.on('error', function(model, response, opts) {
+      var httpStatus = opts.xhr.status;
+    });
+
+    this.on('sync', function(model, response, opts) {
+      var status = model.get('status') || opts.xhr.status;
+
+      if (status === 202 ||
+          status === CONF.INSTALL_STATE.INSTALLING ||
+          status === CONF.INSTALL_STATE.UNINSTALLING) {
+        _.delay(function(model) {
+          model.fetch();
+        }, CONF.INSTALL_POLL_WAIT, model);
+      }
+    });
+
+    this.on('change:status', function(model) {
+      var state = model.get('status');
+      var msg = model.get('installMsg');
+
+      switch (state) {
+        case CONF.INSTALL_STATE.INSTALLED:
+          msg = 'Uninstall';
+          break;
+        case CONF.INSTALL_STATE.INSTALLING:
+          msg = 'Installing';
+          break;
+        case CONF.INSTALL_STATE.UNINSTALLED:
+          msg = 'Install';
+          break;
+        case CONF.INSTALL_STATE.UNINSTALLING:
+          msg = 'Uninstalling';
+          break;
+      }
+
+      this.set('installMsg', msg);
+    });
+  },
+
+  defaults: {
+    installMsg: 'Install'
+  }
 });
