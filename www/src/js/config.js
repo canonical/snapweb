@@ -9,9 +9,7 @@ module.exports = {
     INSTALLED: 'installed',
     INSTALLING: 'installing',
     UNINSTALLED: 'uninstalled',
-    UNINSTALLING: 'uninstalling',
-    ERROR: 'error',
-    UNKNOWN: 'unknown'
+    UNINSTALLING: 'uninstalling'
   },
   INSTALL_POLL_WAIT: 16 // milliseconds
 };

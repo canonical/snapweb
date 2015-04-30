@@ -1,4 +1,5 @@
 // snap layout view
+var _ = require('lodash');
 var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
 var SnapMenuView = require('./snap-menu.js');
@@ -42,16 +43,8 @@ module.exports = Marionette.LayoutView.extend({
     var msg = model.get('installActionString');
     var installEl = this.ui.install;
 
-    if (
-      state === CONF.INSTALL_STATE.INSTALLING ||
-      state === CONF.INSTALL_STATE.UNINSTALLING
-    ) {
-      installEl.addClass('thinking').text(msg);
-    } else if (
-      state === CONF.INSTALL_STATE.INSTALL ||
-      state === CONF.INSTALL_STATE.UNINSTALLED
-    ) {
-      installEl.removeClass('thinking').text(msg);
+    if (_.contains(CONF.INSTALL_STATE, state)) {
+      installEl.text(msg);
     } else {
       // in the rare case that a status isn't one we're expecting,
       // remove the install button
