@@ -114,7 +114,15 @@ module.exports = Backbone.Model.extend({
     return model.set('installActionString', action);
   },
 
+  parse: function(response) {
+    if (response.hasOwnProperty('icon') && !response.icon.length) {
+      response.icon = this.defaults.icon;
+    }
+    return response;
+  },
+
   defaults: {
+    icon: '/public/images/default-package-icon.svg',
     installActionString: false
   }
 

@@ -4,7 +4,9 @@ var Backbone = require('backbone');
 var CONF = require('../src/js/config.js');
 
 describe('Snap', function() {
-  describe('instance', function() {
+
+  describe('instance/construction', function() {
+
     beforeEach(function() {
       this.model = new Snap({id: 'foo'});
     });
@@ -23,19 +25,20 @@ describe('Snap', function() {
       expect(this.model.urlRoot).toBe(CONF.PACKAGES);
     });
 
+    it('should have default icon', function() {
+      expect(this.model.get('icon')).toBeDefined();
+    });
+
   });
 
   describe('setInstallActionString', function() {
+
     beforeEach(function() {
       this.model = new Snap({id: 'foo'});
     });
 
     afterEach(function() {
       delete this.model;
-    });
-
-    it('should be false by default so we can hide install button if stateless', function() {
-      expect(this.model.get('installActionString')).toBe(false);
     });
 
     it('should set installActionString from model state', function() {
@@ -66,7 +69,7 @@ describe('Snap', function() {
 
   });
 
-  describe('Snap sync methods', function() {
+  describe('sync methods', function() {
 
     beforeEach(function() {
       jasmine.Ajax.install();
