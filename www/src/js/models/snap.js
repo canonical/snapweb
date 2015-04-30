@@ -63,9 +63,25 @@ module.exports = Backbone.Model.extend({
 
       this.set('installMsg', msg);
     });
+
+    this.on('change:icon', function(model) {
+      var icon = model.get('icon');
+
+      if (!icon) {
+        model.unset('icon');
+      }
+    });
+  },
+
+  parse: function(response) {
+    if (response.hasOwnProperty('icon') && !response.icon.length) {
+      response.icon = this.defaults.icon;
+    }
+    return response;
   },
 
   defaults: {
-    installMsg: 'Install'
+    installMsg: 'Install',
+    icon: '/public/images/default-package-icon.svg'
   }
 });
