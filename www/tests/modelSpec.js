@@ -5,7 +5,8 @@ var CONF = require('../src/js/config.js');
 
 describe('Snap', function() {
 
-  describe('construction', function() {
+  describe('instance/construction', function() {
+
     beforeEach(function() {
       this.model = new Snap({id: 'foo'});
     });
@@ -31,10 +32,14 @@ describe('Snap', function() {
   });
 
   describe('setInstallActionString', function() {
+
     beforeEach(function() {
       this.model = new Snap({id: 'foo'});
     });
 
+    afterEach(function() {
+      delete this.model;
+    });
 
     it('should set installActionString from model state', function() {
       this.model.set('status', CONF.INSTALL_STATE.INSTALLED);
