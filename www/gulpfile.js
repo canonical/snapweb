@@ -94,7 +94,8 @@ gulp.task('images:clean', function(cb) {
   del(['public/images'], cb);
 });
 
-gulp.task('watch', ['default', 'js:watch'], function() {
+gulp.task('watch', ['js:watch', 'styles', 'images'], function() {
+  gulp.watch('src/images/**/*.{svg,png,jpg,jpeg}', ['images']);
   gulp.watch('src/css/**/*.css', ['styles']);
   gulp.watch('src/js/**/*.js', ['js:lint']);
 });
