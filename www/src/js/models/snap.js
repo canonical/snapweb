@@ -115,8 +115,7 @@ module.exports = Backbone.Model.extend({
   },
 
   defaults: {
-    installActionString: false,
-    thinking: false
+    installActionString: false
   }
 
 });
