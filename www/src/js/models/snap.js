@@ -63,14 +63,6 @@ module.exports = Backbone.Model.extend({
 
       this.set('installMsg', msg);
     });
-
-    this.on('change:icon', function(model) {
-      var icon = model.get('icon');
-
-      if (!icon) {
-        model.unset('icon');
-      }
-    });
   },
 
   parse: function(response) {
