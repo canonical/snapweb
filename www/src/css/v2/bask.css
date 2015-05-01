@@ -1,0 +1,40 @@
+/** b-bask: snap collection block **/
+.b-bask {
+    display:flex;
+    flex-flow: row wrap;
+}
+
+.b-bask__snap {
+    flex:1 0 13%;
+    margin:20px;
+}
+
+.b-bask__snap a,
+.b-bask__snap a:link,
+.b-bask__snap a:hover,
+.b-bask__snap a:visited {
+    color: #333333;
+}
+
+.b-bask__snap-icon {
+    text-align:center;
+}
+
+.b-bask__snap-icon img {
+  border-radius:5%;
+}
+
+.b-bask__snap-icon:hover {
+    background: #efefef;
+}
+
+.b-bask__snap-label {
+    font-weight: 400;
+    text-align: center;
+    display: block;
+    cursor: pointer;
+    font-size: 1em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
