@@ -5,17 +5,17 @@ platform=$(uname -i)
 
 case $platform in
     x86_64)
-        arch=x86_64-linux-gnu
+        plat_abi=x86_64-linux-gnu
         ;;
     armv7l)
-        arch=arm-linux-gnueabihf
+        plat_abi=arm-linux-gnueabihf
         ;;
     *)
         echo "unknown platform for snappy-magic: $platform. remember to file a bug or better yet: fix it :)"
         ;;
 esac
 
-exec $SNAP_APP_PATH/bin/$arch/snappyd
+exec $SNAP_APP_PATH/bin/$plat_abi/snappyd
 
 # never reach this
 exit 1

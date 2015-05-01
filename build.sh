@@ -5,7 +5,7 @@ set -e
 AVAHI_VERSION="0.6.31-4ubuntu4snap2"
 LIBDAEMON0_VERSION="0.14-6"
 
-get_arch() {
+get_platform_abi() {
     arch=$1
 
     case $arch in
@@ -19,7 +19,7 @@ get_arch() {
             plat_abi=arm-linux-gnueabihf
         ;;
         *)
-            echo "bad platform"
+            echo "unknown platform for snappy-magic: $arch remember to file a bug or better yet: fix it :)"
             exit 1
         ;;
     esac
@@ -30,7 +30,7 @@ get_arch() {
 gobuild() {
     arch=$1
 
-    plat_abi=$(get_arch $arch)
+    plat_abi=$(get_platform_abi $arch)
 
     mkdir -p "bin/$plat_abi"
     cd "bin/$plat_abi"
