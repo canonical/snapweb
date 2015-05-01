@@ -76,6 +76,16 @@
   /usr/bin/sc-filtergen                                           Uxr,
   /usr/bin/aa-clickhook                                           Uxr,
 
+  # snappy requirements for services
+  /etc/mime.types                                                   r,
+  /usr/share/click/hooks/                                           r,
+  /usr/share/click/hooks/**                                         r,
+  /etc/systemd/system/                                              r,
+  /etc/systemd/system/**                                          rwl,
+  /var/lib/apparmor/clicks/                                         r,
+  /var/lib/apparmor/clicks/**                                     rwl,
+  /bin/systemctl                                                  Uxr,
+
   capability net_admin,
   capability dac_override,
 }
