@@ -19,15 +19,13 @@
 }
 
 .b-installer--uninstall .b-installer__button {
-  background-color: #ccc;
-  color:#333;
+  background-color:#ccc;
+  color:#fff;
+  font-weight:300;
 }
 
 .b-installer--thinking .b-installer__button {
   cursor:progress;
-  background-color:transparent;
-  color:#333;
-  border-color:transparent;
 }
 
 .b-installer__progress {

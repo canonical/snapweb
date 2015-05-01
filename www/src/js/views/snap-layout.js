@@ -67,14 +67,14 @@ module.exports = Marionette.LayoutView.extend({
     }
   },
 
-  className: 'snap-layout',
+  className: 'b-snap',
 
   ui: {
     errorMessage: '.b-installer__error',
     statusMessage: '.b-installer__message',
     installer: '.b-installer',
     installerButton: '.b-installer__button',
-    menu: '.snap--menu'
+    menu: '.b-snap--navigation'
   },
 
   events: {
