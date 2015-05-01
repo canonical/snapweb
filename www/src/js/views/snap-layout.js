@@ -74,7 +74,7 @@ module.exports = Marionette.LayoutView.extend({
     statusMessage: '.b-installer__message',
     installer: '.b-installer',
     installerButton: '.b-installer__button',
-    menu: '.b-snap--navigation'
+    menu: '.b-snap__nav-item'
   },
 
   events: {
@@ -94,7 +94,7 @@ module.exports = Marionette.LayoutView.extend({
 
   onBeforeShow: function() {
     var tabView = this._getSectionView(this.options.section);
-    this.showChildView('menuRegion', new SnapMenuView());
+    this.showChildView('menuRegion', new SnapMenuView({ model: this.model}));
     this.showChildView('tabRegion', tabView);
   },
 
