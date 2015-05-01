@@ -29,11 +29,8 @@ import (
 	"path/filepath"
 	"text/template"
 
-	"launchpad.net/go-dbus/v1"
-	"launchpad.net/webdm/click"
 	"launchpad.net/webdm/oem"
 	"launchpad.net/webdm/snappy"
-	"launchpad.net/webdm/store"
 )
 
 type slug string
@@ -59,7 +56,6 @@ func makeHandler(fn func(http.ResponseWriter, *http.Request, bytes.Buffer)) http
 var p = pages{
 	"Admin":    "/admin",
 	"Services": "/services",
-	"Store":    "/store",
 }
 
 type Page struct {
@@ -68,22 +64,16 @@ type Page struct {
 	Params interface{}
 }
 
-func InitURLHandlers(conn *dbus.Connection, log *log.Logger) {
+func InitURLHandlers(log *log.Logger) {
 	log.Println("Initializing HTTP handlers...")
-
-	packageHandler := click.NewHandler(conn)
-	http.Handle("/api/v1/packages/", packageHandler.MakeMuxer("/api/v1/packages"))
 
 	snappyHandler := snappy.NewHandler()
 	http.Handle("/api/v2/packages/", snappyHandler.MakeMuxer("/api/v2/packages"))
 
-	storeHandler := store.NewHandler()
-	http.Handle("/api/v1/store/", storeHandler.MakeMuxer("/api/v1/store"))
-
 	oemHandler := oem.NewHandler()
 	http.Handle("/api/v1/oem/", oemHandler.MakeMuxer("/api/v1/oem"))
 
-	handleMainPage, err := makeMainPageHandler(conn)
+	handleMainPage, err := makeMainPageHandler()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -107,7 +97,7 @@ func loggingHandler(h http.Handler) http.Handler {
 	})
 }
 
-func makeMainPageHandler(conn *dbus.Connection) (f http.HandlerFunc, err error) {
+func makeMainPageHandler() (f http.HandlerFunc, err error) {
 	name := "Ubuntu"
 	subname := ""
 
