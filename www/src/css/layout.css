@@ -5,6 +5,7 @@
 }
 
 .b-layout__main {
+  padding:0 3em;
 }
 
 .b-layout__main:empty + .b-layout__footer {

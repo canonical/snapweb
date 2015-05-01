@@ -1,6 +1,23 @@
-<img src="{{ icon }}" width="96" height="96">
-{{ name }}
-By <a href="{{ support_url }}">{{ developer_name }}</a>
+<div class="b-snap__banner">
+  <div class="b-snap__meta">
+    <h1 class="b-snap__title">{{ name }} {{ version }} {{ binary_filesize }}</h1>
+    <p>
+    <span class="b-snap__origin" title="Origin">{{ origin }}</span>
+    <span class="b-snap__filesize" title="Package filesize">{{ binary_filesize}}</span>
+    </p>
+  </div>
+  <div class="b-snap__actions">
+    <div class="b-installer {{ installHTMLClass }}">
+      {{#if installActionString}}
+      <div class="b-installer__button">{{ installActionString }} {{ name }}</div>
+      {{/if}}
+    </div>
+  </div>
+</div>
+<div class="b-snap__icon">
+<img src="{{ icon }}">
+</div>
+<a href="{{ support_url }}">{{ developer_name }}</a>
 Version: {{ version }}
 Size: {{ binary_filesize }}
 <p>
@@ -9,15 +26,6 @@ Size: {{ binary_filesize }}
 {{/each}}
 </p>
 
-<div class="b-installer {{ installHTMLClass }}">
-  {{#if installActionString}}
-  <div class="b-installer__button">{{ installActionString }} {{ name }} 
-    <div class="b-installer__progress">
-      <div class="b-installer__value"></div>
-    </div>
-  </div>
-  {{/if}}
-</div>
 
 <div class="b-installer__message"></div>
 <div class="b-installer__error">{{ message }}</div>
