@@ -1,59 +1,59 @@
-.b-install {
+.b-installer {
   max-width:300px;
 }
 
-.b-install__button {
+.b-installer__button {
+  background-color: #dd4814;
   border-radius:4px;
-  border:1px solid #dd4814;
-  position:relative;
-  padding:8px 2em;
-  text-align:center;
+  color:#fff;
   cursor:pointer;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  user-select: none;
-  background-color:white;
-  color:#dd4814;
   font-weight:400;
-  font-size:12px;
+  overflow: hidden;
+  padding:8px 2em;
+  position:relative;
+  text-align:center;
+  text-overflow: ellipsis;
+  transition: background-color 0.3s;
+  user-select: none;
+  white-space: nowrap;
 }
 
-.b-install--uninstall .b-install__button {
-  border:1px solid #ccc;
+.b-installer--uninstall .b-installer__button {
+  background-color: #ccc;
+  color:#333;
 }
 
-.b-install--thinking .b-install__button {
+.b-installer--thinking .b-installer__button {
   cursor:progress;
   background-color:transparent;
   color:#333;
-  border-color:white;
+  border-color:transparent;
 }
 
-.b-install__progress {
-  box-sizing:border-box;
-  display:none;
-  position:absolute;
-  left:8px;
-  right:8px;
-  bottom:3px;
-  height:5px;
+.b-installer__progress {
+  background: white;
   border-radius:10px;
   border:1px solid #dd4814;
-  background: white;
+  bottom:3px;
+  box-sizing:border-box;
+  display:none;
+  height:5px;
+  left:8px;
   margin:0;
   padding:0;
+  position:absolute;
+  right:8px;
 }
 
-.b-install__value {
-  position:absolute;
-  top:0;
+.b-installer__value {
+  background-color:rgba(221, 72, 20, 1);
   bottom:0;
   left:0;
+  position:absolute;
   right:100%;
-  background-color:rgba(221, 72, 20, 1);
+  top:0;
 }
 
-.b-install--thinking .b-install__progress {
+.b-installer--thinking .b-installer__progress {
   display:block;
 }

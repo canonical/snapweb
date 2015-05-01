@@ -1,31 +1,26 @@
-<div class="row-hero app-details">
-  <div class="inner-wrapper">
-    <div class="eight-col">
-      <img src="{{ icon }}" width="96" height="96" class="app__icon">
-      <div class="app__details">
-        <h1 class="app__details-title">{{ name }}</h1>
-        <p>By <a href="{{ support_url }}">{{ developer_name }}</a></p>
-        <ul class="app__details-list">
-          <li><strong>Version:</strong>{{ version }}</li>
-          <li><strong>Size:</strong>{{ binary_filesize }}</li>
-        </ul>
-      </div>
-      <ul class="no-bullets inline">
-        {{#each department}}
-        <li>{{ this }}, </li>
-        {{/each}}
-      </ul>
-    </div>
-    <div class="four-col last-col ">
-      <p class="left status"></p>
-      <p class="right">Rating: {{ ratings_average }}/5</p>
-      {{#if installActionString}}
-      <a class="install-action {{ installHTMLClass}}">{{ installActionString }}</a>
-      {{/if}}
-      <p class="error-message clear">{{ message }}</p>
+<img src="{{ icon }}" width="96" height="96">
+{{ name }}
+By <a href="{{ support_url }}">{{ developer_name }}</a>
+Version: {{ version }}
+Size: {{ binary_filesize }}
+<p>
+{{#each department}}
+{{ this }}
+{{/each}}
+</p>
+
+<div class="b-installer {{ installHTMLClass }}">
+  {{#if installActionString}}
+  <div class="b-installer__button">{{ installActionString }} {{ name }} 
+    <div class="b-installer__progress">
+      <div class="b-installer__value"></div>
     </div>
   </div>
+  {{/if}}
 </div>
+
+<div class="b-installer__message"></div>
+<div class="b-installer__error">{{ message }}</div>
 
 <div class="region-menu"></div>
 <div class="region-tab"></div>
