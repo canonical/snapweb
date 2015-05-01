@@ -25,8 +25,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-
-	"launchpad.net/go-dbus/v1"
 )
 
 var logger *log.Logger
@@ -39,12 +37,8 @@ func init() {
 
 func main() {
 	logger.Println("Connecting to System Bus")
-	conn, err := dbus.Connect(dbus.SystemBus)
-	if err != nil {
-		log.Fatal("Connection error: ", err)
-	}
 
-	InitURLHandlers(conn, logger)
+	InitURLHandlers(logger)
 
 	logger.Println("Snappy starting...")
 
