@@ -7,10 +7,10 @@
 .b-snap__banner {
   display: flex;
   line-height:1.3;
-  padding:1.3em 0.3em 1.3em;
-  margin:0 0 1.3em 0;
-  border-bottom:1px solid #ddd;
+  margin:0 -3em;
+  padding:1.3em 3em 1.3em;
   align-items: center;
+  background-color:rgba(0,0,0,0.1);
 }
 
 .b-snap__meta {
@@ -30,6 +30,36 @@
   margin-left:auto;
 }
 
-.b-snap__tab {
-  flex: 1;
+.b-snap__navigation {
+  background-color:rgba(255,255,255,0.7);
+  display: flex;
+  align-items: center;
+  margin:0 0 1em 0;
+  border-top:1px solid #bbb;
+  border-bottom:1px solid #ddd;
+  margin:0 -3em 1em -3em;
+  padding:0 3em;
+}
+
+.b-snap__nav-item {
+  min-width:120px;
+  text-align: center;
+  position:relative;
+}
+
+.b-snap__nav-item--active::before {
+  position:absolute;
+  content:'';
+  background:#dd4814;
+  bottom:0;
+  left:0;
+  right:0;
+  height:3px;
+}
+
+.b-snap__nav-item a {
+  display:block;
+  color:#333;
+  text-decoration:none;
+  padding:15px 0;
 }

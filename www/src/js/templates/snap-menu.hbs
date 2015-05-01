@@ -1,11 +1,5 @@
-<div class="row app__details-nav snap--menu">
-  <div class="inner-wrapper">
-    <nav class="twelve-col no-margin-bottom ">
-    <ul class="inline-icons">
-      <li><a href="details">Details</a></li>
-      <li><a href="reviews">Reviews</a></li>
-      <li><a href="settings">Settings</a></li>
-    </ul>
-    </nav>
-  </div>
+{{#each navigation}}
+<div class="b-snap__nav-item{{#if isActive }} b-snap__nav-item--active{{/if}}">
+  <a href="{{ href }}">{{ text }}</a>
 </div>
+{{/each}}
