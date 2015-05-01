@@ -6,7 +6,10 @@ var CONF = require('../src/js/config.js');
 describe('SnapLayoutView', function() {
 
   beforeEach(function() {
-    this.model = new Snap({id: 'foo'});
+    this.model = new Snap({
+      status: CONF.INSTALL_STATE.UNINSTALLED,
+      installActionString: 'Install'
+    });
     this.view = new SnapLayoutView({
       model: this.model
     });
@@ -42,6 +45,11 @@ describe('SnapLayoutView', function() {
   it('should not be thinking when uninstalled', function() {
     this.model.set('status', CONF.INSTALL_STATE.UNINSTALLED);
     expect(this.view.ui.install.hasClass('thinking')).toBeFalsy();
+  });
+
+  it('should deactivate install button if model has unrecognised status', function() {
+    this.model.set('status', '');
+    expect(this.view.ui.install).not.toBe();
   });
 
   xit('should inform user when install succeeds', function() {

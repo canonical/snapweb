@@ -100,3 +100,8 @@
 .app__details-screenshots {
     margin-top: 20px;
 }
+
+.error-message {
+    font-size:smaller;
+    color:#DF382C;
+}
