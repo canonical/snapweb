@@ -55,6 +55,8 @@
   /tmp/**                                                         rwl,
   /var/lib/apps/                                                    r,
   /var/lib/apps/**                                                rwl,
+  /var/lib/snappy/                                                    r,
+  /var/lib/snappy/**                                                rwl,
   /var/lib/click/hooks/                                             r,
   /var/lib/click/hooks/**                                         rwl,
   /home/                                                            r,
@@ -72,6 +74,7 @@
   /bin/mountpoint                                                 Uxr,
   /usr/bin/debsig-verify                                          Uxr,
   /usr/bin/sc-filtergen                                           Uxr,
+  /usr/bin/aa-clickhook                                           Uxr,
 
   capability net_admin,
   capability dac_override,

@@ -15,6 +15,7 @@ case $platform in
         ;;
 esac
 
+mkdir -p $SNAP_APP_TMPDIR
 exec $SNAP_APP_PATH/bin/$plat_abi/snappyd
 
 # never reach this
