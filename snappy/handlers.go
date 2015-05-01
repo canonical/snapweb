@@ -47,6 +47,7 @@ func (h *handler) get(w http.ResponseWriter, r *http.Request) {
 	payload, err := h.packagePayload(pkgName)
 	if err != nil {
 		http.NotFound(w, r)
+		fmt.Fprintln(w, err, pkgName)
 		return
 	}
 
