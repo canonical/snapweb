@@ -12,11 +12,11 @@
   @{CLICK_DIR}/@{APP_PKGNAME}/@{APP_VERSION}/**                mrklix,
 
   # Writable home area
-  owner @{HOMEDIRS}/apps/@{APP_PKGNAME}/@{APP_VERSION}             rw,
+  owner @{HOMEDIRS}/apps/@{APP_PKGNAME}/@{APP_VERSION}/            rw,
   owner @{HOMEDIRS}/apps/@{APP_PKGNAME}/@{APP_VERSION}/**     mrwklix,
 
   # Read-only system area for other versions
-  /var/lib/apps/@{APP_PKGNAME}/                                     r,
+  /var/lib/apps/@{APP_PKGNAME}/                                    rw,
   /var/lib/apps/@{APP_PKGNAME}/**                               mrkix,
 
   # Writable system area only for this version.
