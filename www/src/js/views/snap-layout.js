@@ -1,4 +1,5 @@
 // snap layout view
+var _ = require('lodash');
 var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
 var SnapMenuView = require('./snap-menu.js');
@@ -11,32 +12,65 @@ var CONF = require('../config.js');
 module.exports = Marionette.LayoutView.extend({
 
   initialize: function() {
-    //this.listenTo(this.model, 'sync', this.render);
-    this.listenTo(this.model, 'change:status', this.handleModelChangeStatus);
+    this.listenTo(
+      this.model, 'change:installHTMLClass', this.onModelHTMLClassChange
+    );
+    this.listenTo(
+      this.model, 'change:status', this.onModelStatusChange
+    );
+    this.listenTo(
+      this.model, 'change:message change:isError', this.onModelError
+    );
   },
 
   onShow: function() {
     window.scrollTo(0, 0);
   },
 
-  handleModelChangeStatus: function(model) {
-    var state = model.changed.status;
-    var msg = model.get('install_msg');
+  onModelError: function(model) {
+    this.ui.errorMessage.text(model.get('message'));
+  },
+
+  onModelHTMLClassChange: function(model) {
+    var installEl = this.ui.install;
+    installEl.removeClass(model.previous('installHTMLClass'))
+    .addClass(model.get('installHTMLClass'));
+  },
+
+  onModelStatusChange: function(model) {
+    var oldState = model.previous('status');
+    var state = model.get('status');
+    var msg = model.get('installActionString');
     var installEl = this.ui.install;
 
-    if (state === CONF.INSTALL_STATE.INSTALLING ||
-        state === CONF.INSTALL_STATE.UNINSTALLING) {
-      installEl.addClass('thinking').text(msg);
+    if (_.contains(CONF.INSTALL_STATE, state)) {
+      installEl.text(msg);
     } else {
-      installEl.removeClass('thinking').text(msg);
+      // in the rare case that a status isn't one we're expecting,
+      // remove the install button
+      installEl.remove();
     }
 
+    if (
+      state === CONF.INSTALL_STATE.INSTALLED &&
+      oldState === CONF.INSTALL_STATE.INSTALLING
+    ) {
+      this.ui.statusMessage.text('Install successful!');
+    }
+
+    if (
+      state === CONF.INSTALL_STATE.UNINSTALLED &&
+      oldState === CONF.INSTALL_STATE.UNINSTALLING
+    ) {
+      this.ui.statusMessage.text('Uninstall successful!');
+    }
   },
 
   className: 'snap-layout',
 
   ui: {
-    statusMessage: '.left .status',
+    errorMessage: '.error-message',
+    statusMessage: 'p.left.status',
     install: '.install-action',
     menu: '.snap--menu'
   },
@@ -67,7 +101,7 @@ module.exports = Marionette.LayoutView.extend({
     tabRegion: '.region-tab'
   },
 
-  install: function() {
+  install: function(e) {
     var status = this.model.get('status');
 
     if (status === CONF.INSTALL_STATE.INSTALLED) {
@@ -83,6 +117,8 @@ module.exports = Marionette.LayoutView.extend({
       }, {
         dataType : 'html'
       });
+    } else {
+      e.preventDefault();
     }
   },
 
