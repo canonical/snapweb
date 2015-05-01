@@ -30,12 +30,13 @@
   /tmp/snaps/@{APP_PKGNAME}/@{APP_VERSION}/**                 mrwlkix,
 
   # magic script
-  /bin/uname                                                      Uxr,
-  /usr/bin/basename                                               Uxr,
-  /usr/bin/realpath                                               Uxr,
-  /usr/bin/dirname                                                Uxr,
-  /bin/dash                                                       Uxr,
-  /bin/sed                                                        Uxr,
+  /bin/uname                                                      ixr,
+  /usr/bin/basename                                               ixr,
+  /usr/bin/realpath                                               ixr,
+  /usr/bin/dirname                                                ixr,
+  /bin/dash                                                       ixr,
+  /bin/sed                                                        ixr,
+  /bin/mkdir                                                      ixr,
 
   @{PROC}/sys/kernel/hostname                                       r,
   @{PROC}/sys/kernel/somaxconn                                      r,
@@ -53,7 +54,7 @@
   /tmp/                                                             r,
   /tmp/**                                                         rwl,
   /var/lib/apps/                                                    r,
-  /var/lib/apps/**                                               rwdl,
+  /var/lib/apps/**                                                rwl,
   /var/lib/click/hooks/                                             r,
   /var/lib/click/hooks/**                                         rwl,
   /home/                                                            r,
