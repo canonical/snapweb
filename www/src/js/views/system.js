@@ -10,8 +10,6 @@ var template = require('../templates/system.hbs');
 
 module.exports = Marionette.LayoutView.extend({
 
-  className: 'view-system',
-
   template : function(model) {
     return template(model);
   },
