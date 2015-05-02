@@ -10,7 +10,7 @@
   margin:0 -3em;
   padding:1.3em 3em 1.3em;
   align-items: center;
-  background-color:rgba(0,0,0,0.1);
+  background-color:rgba(255,255,255,0.7);
 }
 
 .b-snap__meta {
@@ -31,11 +31,11 @@
 }
 
 .b-snap__navigation {
-  background-color:rgba(255,255,255,0.7);
+  background-color:rgba(255,255,255,0.5);
   display: flex;
   align-items: center;
   margin:0 0 1em 0;
-  border-top:1px solid #bbb;
+  border-top:1px solid #efefef;
   border-bottom:1px solid #ddd;
   margin:0 -3em 1em -3em;
   padding:0 3em;
@@ -45,6 +45,10 @@
   min-width:120px;
   text-align: center;
   position:relative;
+  display:block;
+  color:#333;
+  text-decoration:none;
+  padding:15px 0;
 }
 
 .b-snap__nav-item--active::before {
@@ -55,11 +59,4 @@
   left:0;
   right:0;
   height:3px;
-}
-
-.b-snap__nav-item a {
-  display:block;
-  color:#333;
-  text-decoration:none;
-  padding:15px 0;
 }

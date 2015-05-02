@@ -123,24 +123,7 @@ module.exports = Backbone.Model.extend({
 
   defaults: {
     icon: '/public/images/default-package-icon.svg',
-    installActionString: false,
-    navigation: {
-      'details': {
-        text: 'Details',
-        href: '/details',
-        isActive: true
-      },
-      'reviews': {
-        text: 'Reviews',
-        href: '/reviews',
-        isActive: false
-      },
-      'config': {
-        text: 'Config',
-        href: '/settings',
-        isActive: false
-      }
-    }
+    installActionString: false
   }
 
 });
