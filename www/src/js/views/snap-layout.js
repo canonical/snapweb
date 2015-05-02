@@ -94,7 +94,11 @@ module.exports = Marionette.LayoutView.extend({
 
   onBeforeShow: function() {
     var tabView = this._getSectionView(this.options.section);
-    this.showChildView('menuRegion', new SnapMenuView({ model: this.model}));
+    this.showChildView('menuRegion', 
+      new SnapMenuView({
+        section: this.options.section
+      })
+    );
     this.showChildView('tabRegion', tabView);
   },
 
