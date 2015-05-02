@@ -12,26 +12,12 @@
       <div class="b-installer__button">{{ installActionString }} {{ name }}</div>
       {{/if}}
     </div>
+    <div class="b-installer__message"></div>
+    <div class="b-installer__error">{{ message }}</div>
   </div>
 </div>
 
 <div class="region-menu"></div>
 
-<div class="b-snap__icon">
-  <img src="{{ icon }}">
-</div>
-
-<a href="{{ support_url }}">{{ developer_name }}</a>
-Version: {{ version }}
-Size: {{ binary_filesize }}
-<p>
-{{#each department}}
-{{ this }}
-{{/each}}
-</p>
-
-
-<div class="b-installer__message"></div>
-<div class="b-installer__error">{{ message }}</div>
 
 <div class="region-tab"></div>
