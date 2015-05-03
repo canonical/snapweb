@@ -33,6 +33,15 @@ func newDefaultFakePart() *fakeSnappyPart {
 	}
 }
 
+func newFakePart(name, version string, installed bool) *fakeSnappyPart {
+	return &fakeSnappyPart{
+		name:      name,
+		version:   version,
+		installed: installed,
+		snapType:  snappy.SnapTypeApp,
+	}
+}
+
 func newParametrizedFake(name, version string, installed bool, snapType snappy.SnapType) *fakeSnappyPart {
 	return &fakeSnappyPart{
 		name:      name,
