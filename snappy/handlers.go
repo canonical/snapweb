@@ -3,6 +3,7 @@ package snappy
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 
 	"log"
@@ -24,7 +25,16 @@ func NewHandler() *handler {
 }
 
 func (h *handler) getAll(w http.ResponseWriter, r *http.Request) {
-	payload, err := h.allPackages()
+	dec := json.NewDecoder(r.Body)
+
+	var filter ListFilter
+	if err := dec.Decode(&filter); err != nil && err != io.EOF {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
+		return
+	}
+
+	payload, err := h.allPackages(filter.InstalledOnly)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
