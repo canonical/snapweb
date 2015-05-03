@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -ev
+set -e
 
 if which goctest >/dev/null; then
     goctest="goctest"
@@ -43,13 +43,13 @@ $goctest -v -cover ./...
 echo Running vet
 go vet ./...
 
-# golint
-#echo Running lint
-#lint=$(golint ./...)
-#if [ -n "$lint" ]; then
-#    echo "Lint complains:"
-#    echo $lint
-#    exit 1
-#fi
+ golint
+echo Running lint
+lint=$(golint ./...)
+if [ -n "$lint" ]; then
+    echo "Lint complains:"
+    echo $lint
+    exit 1
+fi
 
 echo "All good, what could possibly go wrong"
