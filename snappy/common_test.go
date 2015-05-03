@@ -91,6 +91,7 @@ func (p fakeSnappyPart) InstalledSize() int64 {
 	if p.installed {
 		return 30
 	}
+
 	return -1
 }
 
