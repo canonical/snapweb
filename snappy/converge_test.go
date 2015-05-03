@@ -7,7 +7,7 @@ import (
 
 	. "gopkg.in/check.v1"
 	"launchpad.net/snappy/snappy"
-	"launchpad.net/webdm/progress"
+	"launchpad.net/webdm/webprogress"
 )
 
 type PayloadSuite struct {
@@ -22,7 +22,7 @@ func (s *PayloadSuite) SetUpTest(c *C) {
 }
 
 func (s *PayloadSuite) TestPayloadWithNoServices(c *C) {
-	fakeSnap := newDefaultFake()
+	fakeSnap := newDefaultFakePart()
 	icon := filepath.Join(c.MkDir(), "icon.png")
 	c.Assert(ioutil.WriteFile(icon, []byte{}, 0644), IsNil)
 	fakeSnap.icon = icon
@@ -31,7 +31,7 @@ func (s *PayloadSuite) TestPayloadWithNoServices(c *C) {
 
 	c.Assert(q.Name, Equals, fakeSnap.name)
 	c.Assert(q.Version, Equals, fakeSnap.version)
-	c.Assert(q.Status, Equals, statusInstalled)
+	c.Assert(q.Status, Equals, webprogress.StatusInstalled)
 	c.Assert(q.Type, Equals, fakeSnap.snapType)
 	c.Assert(q.UIPort, Equals, uint64(0))
 	c.Assert(q.UIUri, Equals, "")
@@ -45,7 +45,7 @@ func (s *PayloadSuite) TestPayloadWithServicesButNoUI(c *C) {
 
 	c.Assert(q.Name, Equals, fakeSnap.name)
 	c.Assert(q.Version, Equals, fakeSnap.version)
-	c.Assert(q.Status, Equals, statusInstalled)
+	c.Assert(q.Status, Equals, webprogress.StatusInstalled)
 	c.Assert(q.Type, Equals, fakeSnap.snapType)
 	c.Assert(q.UIPort, Equals, uint64(0))
 	c.Assert(q.UIUri, Equals, "")
@@ -58,7 +58,7 @@ func (s *PayloadSuite) TestPayloadWithServicesUI(c *C) {
 
 	c.Assert(q.Name, Equals, fakeSnap.name)
 	c.Assert(q.Version, Equals, fakeSnap.version)
-	c.Assert(q.Status, Equals, statusInstalled)
+	c.Assert(q.Status, Equals, webprogress.StatusInstalled)
 	c.Assert(q.Type, Equals, fakeSnap.snapType)
 	c.Assert(q.UIPort, Equals, uint64(1024))
 	c.Assert(q.UIUri, Equals, "")
@@ -73,7 +73,7 @@ func (s *PayloadSuite) TestPayloadTypeOem(c *C) {
 
 	c.Assert(q.Name, Equals, fakeSnap.name)
 	c.Assert(q.Version, Equals, fakeSnap.version)
-	c.Assert(q.Status, Equals, statusInstalled)
+	c.Assert(q.Status, Equals, webprogress.StatusInstalled)
 	c.Assert(q.Type, Equals, fakeSnap.snapType)
 	c.Assert(q.UIPort, Equals, uint64(0))
 	c.Assert(q.UIUri, Equals, "")
