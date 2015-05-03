@@ -23,14 +23,18 @@ import (
 )
 
 var (
+	// ErrPackageInstallInProgress indicates that installation of the package is
+	// already in progress.
 	ErrPackageInstallInProgress = errors.New("package installion in progress")
 )
 
+// Status holds the state of all operations that require progress information.
 type Status struct {
 	status map[string]*WebProgress
 	l      sync.Mutex
 }
 
+// New creates a new Status.
 func New() *Status {
 	return &Status{status: make(map[string]*WebProgress)}
 }
