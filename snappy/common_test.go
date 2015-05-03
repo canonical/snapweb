@@ -88,11 +88,18 @@ func (p fakeSnappyPart) IsInstalled() bool {
 }
 
 func (p fakeSnappyPart) InstalledSize() int64 {
-	return 30
+	if p.installed {
+		return 30
+	}
+	return -1
 }
 
 func (p fakeSnappyPart) DownloadSize() int64 {
-	return 60
+	if !p.installed {
+		return 60
+	}
+
+	return -1
 }
 
 func (p fakeSnappyPart) Name() string {
