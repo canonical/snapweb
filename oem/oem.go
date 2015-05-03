@@ -4,7 +4,7 @@ import (
 	"errors"
 	"io/ioutil"
 
-	"launchpad.net/goyaml"
+	"gopkg.in/yaml.v2"
 )
 
 type oem struct {
@@ -40,7 +40,7 @@ func Oem() (pkg oem, err error) {
 		return pkg, ErrDecode
 	}
 
-	if err := goyaml.Unmarshal([]byte(f), &pkg); err != nil {
+	if err := yaml.Unmarshal([]byte(f), &pkg); err != nil {
 		return pkg, ErrDecode
 	}
 
