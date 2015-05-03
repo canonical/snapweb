@@ -40,12 +40,12 @@ type snapPkg struct {
 	UIUri    string          `json:"ui_uri,omitempty"`
 }
 
-type Response struct {
+type response struct {
 	Package string `json:"package"`
 	Message string `json:"message"`
 }
 
-type ListFilter struct {
+type listFilter struct {
 	Types         []string `json:"types,omitempty"`
 	InstalledOnly bool     `json:"installed_only"`
 }
@@ -53,7 +53,7 @@ type ListFilter struct {
 // for easier stubbing during testing
 var activeSnapByName = snappy.ActiveSnapByName
 
-func (h *handler) packagePayload(pkgName string) (snapPkg, error) {
+func (h *Handler) packagePayload(pkgName string) (snapPkg, error) {
 	snapQ := activeSnapByName(pkgName)
 	if snapQ != nil {
 		return h.snapQueryToPayload(snapQ), nil
@@ -68,7 +68,7 @@ func (h *handler) packagePayload(pkgName string) (snapPkg, error) {
 	return snapPkg{}, snappy.ErrPackageNotFound
 }
 
-func (h *handler) allPackages(installedOnly bool) ([]snapPkg, error) {
+func (h *Handler) allPackages(installedOnly bool) ([]snapPkg, error) {
 	mLocal := snappy.NewMetaLocalRepository()
 
 	installedSnaps, err := mLocal.Installed()
@@ -105,12 +105,12 @@ func (h *handler) allPackages(installedOnly bool) ([]snapPkg, error) {
 	return mergeSnaps(installedSnapQs, remoteSnapQs, installedOnly), nil
 }
 
-func (h *handler) doInstallPackage(progress *webprogress.WebProgress, pkgName string) {
+func (h *Handler) doInstallPackage(progress *webprogress.WebProgress, pkgName string) {
 	_, err := snappy.Install(pkgName, 0, progress)
 	progress.ErrorChan <- err
 }
 
-func (h *handler) installPackage(pkgName string) error {
+func (h *Handler) installPackage(pkgName string) error {
 	progress, err := h.installStatus.Add(pkgName)
 	if err != nil {
 		return err
@@ -156,7 +156,7 @@ func hasPortInformation(snap snappy.Part) bool {
 	return snap.Type() == snappy.SnapTypeApp || snap.Type() == snappy.SnapTypeFramework
 }
 
-func (h *handler) snapQueryToPayload(snapQ snappy.Part) snapPkg {
+func (h *Handler) snapQueryToPayload(snapQ snappy.Part) snapPkg {
 	snap := snapPkg{
 		Name:    snapQ.Name(),
 		Origin:  snapQ.Namespace(),

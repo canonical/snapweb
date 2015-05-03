@@ -37,30 +37,18 @@ type branding struct {
 	Subname string
 }
 
-/*
-func makeHandler(fn func(http.ResponseWriter, *http.Request, bytes.Buffer)) http.HandlerFunc {
-	var buf bytes.Buffer
-	t, _ := template.ParseFiles(filepath.Join("www", "templates", "navbar.html"))
-	t.Execute(buf, p)
-
-	return func(w http.ResponseWriter, r *http.Request) {
-		fn(w, r, buf)
-	}
-}
-*/
-
 var p = pages{
 	"Admin":    "/admin",
 	"Services": "/services",
 }
 
-type Page struct {
+type page struct {
 	Pages  pages
 	Title  string
 	Params interface{}
 }
 
-func InitURLHandlers(log *log.Logger) {
+func initURLHandlers(log *log.Logger) {
 	log.Println("Initializing HTTP handlers...")
 
 	snappyHandler := snappy.NewHandler()
@@ -104,7 +92,7 @@ func makeMainPageHandler() (f http.HandlerFunc, err error) {
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		data := Page{
+		data := page{
 			Pages: p,
 			Title: "Home",
 			Params: branding{
@@ -119,7 +107,7 @@ func makeMainPageHandler() (f http.HandlerFunc, err error) {
 	}, nil
 }
 
-func renderLayout(html string, data *Page, w http.ResponseWriter) error {
+func renderLayout(html string, data *page, w http.ResponseWriter) error {
 	htmlPath := filepath.Join("www", "templates", html)
 	if _, err := os.Stat(htmlPath); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
