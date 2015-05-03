@@ -20,10 +20,12 @@ package webprogress
 import "launchpad.net/snappy/progress"
 
 const (
-	StatusInstalled   = "installed"
+	// StatusInstalled indicates the package is in an installed state.
+	StatusInstalled = "installed"
+	// StatusUninstalled indicates the package is in an uninstalled state.
 	StatusUninstalled = "uninstalled"
-	StatusInstalling  = "installing"
-	StatusUnknown     = "unknown"
+	// StatusInstalling indicates the package is in an installing state.
+	StatusInstalling = "installing"
 )
 
 // WebProgress show progress on the terminal

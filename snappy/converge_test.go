@@ -29,7 +29,7 @@ import (
 )
 
 type PayloadSuite struct {
-	h handler
+	h Handler
 }
 
 var _ = Suite(&PayloadSuite{})
@@ -98,7 +98,7 @@ func (s *PayloadSuite) TestPayloadTypeOem(c *C) {
 }
 
 type MergeSuite struct {
-	h handler
+	h Handler
 }
 
 var _ = Suite(&MergeSuite{})

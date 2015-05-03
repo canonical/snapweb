@@ -34,7 +34,7 @@ func init() {
 func main() {
 	logger.Println("Connecting to System Bus")
 
-	InitURLHandlers(logger)
+	initURLHandlers(logger)
 
 	logger.Println("Snappy starting...")
 

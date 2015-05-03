@@ -31,20 +31,22 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type handler struct {
+// Handler implements snappy's packages api.
+type Handler struct {
 	installStatus *webprogress.Status
 }
 
-func NewHandler() *handler {
-	return &handler{
+// NewHandler creates an instance that implements snappy's packages api.
+func NewHandler() *Handler {
+	return &Handler{
 		installStatus: webprogress.New(),
 	}
 }
 
-func (h *handler) getAll(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
 	dec := json.NewDecoder(r.Body)
 
-	var filter ListFilter
+	var filter listFilter
 	if err := dec.Decode(&filter); err != nil && err != io.EOF {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
@@ -66,7 +68,7 @@ func (h *handler) getAll(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *handler) get(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
 	// Get the Key.
 	vars := mux.Vars(r)
 	pkgName := vars["pkg"]
@@ -84,7 +86,7 @@ func (h *handler) get(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *handler) add(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) add(w http.ResponseWriter, r *http.Request) {
 	// Get the Key.
 	vars := mux.Vars(r)
 	pkgName := vars["pkg"]
@@ -112,13 +114,15 @@ func (h *handler) add(w http.ResponseWriter, r *http.Request) {
 		msg = "Processing error"
 	}
 
-	response := Response{Message: msg, Package: pkgName}
+	response := response{Message: msg, Package: pkgName}
 	if err := enc.Encode(response); err != nil {
 		log.Print(err)
 	}
 }
 
-func (h *handler) MakeMuxer(prefix string) http.Handler {
+// MakeMuxer sets up the handlers multiplexing to handle requests against snappy's
+// packages api
+func (h *Handler) MakeMuxer(prefix string) http.Handler {
 	var m *mux.Router
 
 	if prefix == "" {
