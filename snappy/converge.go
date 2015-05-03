@@ -28,6 +28,11 @@ type Response struct {
 	Message string `json:"message"`
 }
 
+type ListFilter struct {
+	Types         []string `json:"types,omitempty"`
+	InstalledOnly bool     `json:"installed_only"`
+}
+
 // for easier stubbing during testing
 var activeSnapByName = snappy.ActiveSnapByName
 
@@ -46,7 +51,7 @@ func (h *handler) packagePayload(pkgName string) (snapPkg, error) {
 	return snapPkg{}, snappy.ErrPackageNotFound
 }
 
-func (h *handler) allPackages() ([]snapPkg, error) {
+func (h *handler) allPackages(installedOnly bool) ([]snapPkg, error) {
 	mLocal := snappy.NewMetaLocalRepository()
 
 	installedSnaps, err := mLocal.Installed()
@@ -66,6 +71,7 @@ func (h *handler) allPackages() ([]snapPkg, error) {
 	}
 
 	remoteSnapQs := make([]snapPkg, 0, len(remoteSnaps))
+
 	for _, remote := range remoteSnaps {
 		if alias := remote.Alias; alias != nil {
 			remoteSnapQs = append(remoteSnapQs, h.snapQueryToPayload(alias))
@@ -79,7 +85,7 @@ func (h *handler) allPackages() ([]snapPkg, error) {
 		}
 	}
 
-	return mergeSnaps(installedSnapQs, remoteSnapQs), nil
+	return mergeSnaps(installedSnapQs, remoteSnapQs, installedOnly), nil
 }
 
 func (h *handler) doInstallPackage(progress *webprogress.WebProgress, pkgName string) {
@@ -98,22 +104,32 @@ func (h *handler) installPackage(pkgName string) error {
 	return nil
 }
 
-func mergeSnaps(installed, remote []snapPkg) []snapPkg {
-	remoteMap := make(map[string]snapPkg)
+func mergeSnaps(installed, remote []snapPkg, installedOnly bool) []snapPkg {
+	remoteMap := make(map[string]*snapPkg, len(remote))
+
+	// we start with the installed set
+	allMap := make(map[string]*snapPkg, len(installed))
 
 	for i := range remote {
-		remoteMap[remote[i].Name] = remote[i]
+		remoteMap[remote[i].Name] = &remote[i]
 	}
 
-	for _, pkg := range installed {
-		// TODO add details about cost and pricing, and then delete
-		delete(remoteMap, pkg.Name)
+	for i := range installed {
+		allMap[installed[i].Name] = &installed[i]
 	}
 
-	snapPkgs := installed
+	for pkgName := range remoteMap {
+		if _, ok := allMap[pkgName]; ok {
+			// TODO add details about cost and pricing, and then delete
+		} else if !installedOnly {
+			allMap[pkgName] = remoteMap[pkgName]
+		}
+	}
 
-	for _, v := range remoteMap {
-		snapPkgs = append(snapPkgs, v)
+	snapPkgs := make([]snapPkg, 0, len(allMap))
+
+	for _, v := range allMap {
+		snapPkgs = append(snapPkgs, *v)
 	}
 
 	return snapPkgs
