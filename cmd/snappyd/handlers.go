@@ -70,9 +70,6 @@ func InitURLHandlers(log *log.Logger) {
 	snappyHandler := snappy.NewHandler()
 	http.Handle("/api/v2/packages/", snappyHandler.MakeMuxer("/api/v2/packages"))
 
-	oemHandler := oem.NewHandler()
-	http.Handle("/api/v1/oem/", oemHandler.MakeMuxer("/api/v1/oem"))
-
 	handleMainPage, err := makeMainPageHandler()
 	if err != nil {
 		log.Fatal(err)
@@ -100,6 +97,7 @@ func makeMainPageHandler() (f http.HandlerFunc, err error) {
 	name := "Ubuntu"
 	subname := ""
 
+	// TODO: use oem information from launchpad.net/snappy
 	pkg, err := oem.Oem()
 	if err != nil && err != oem.ErrNotFound {
 		return f, err
