@@ -24,7 +24,7 @@ type fakeSnappyPartServices struct {
 	services []snappy.Service
 }
 
-func newDefaultFake() *fakeSnappyPart {
+func newDefaultFakePart() *fakeSnappyPart {
 	return &fakeSnappyPart{
 		name:      "camlistore.sergiusens",
 		version:   "2.0",
@@ -63,6 +63,10 @@ func (p fakeSnappyPart) IsInstalled() bool {
 
 func (p fakeSnappyPart) Name() string {
 	return p.name
+}
+
+func (p fakeSnappyPart) Namespace() string {
+	return "ubuntu"
 }
 
 func (p fakeSnappyPart) Version() string {
