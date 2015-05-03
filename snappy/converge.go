@@ -105,31 +105,31 @@ func (h *handler) installPackage(pkgName string) error {
 }
 
 func mergeSnaps(installed, remote []snapPkg, installedOnly bool) []snapPkg {
-	remoteMap := make(map[string]snapPkg, len(remote))
+	remoteMap := make(map[string]*snapPkg, len(remote))
 
 	// we start with the installed set
-	allMap := make(map[string]snapPkg, len(installed))
+	allMap := make(map[string]*snapPkg, len(installed))
 
 	for i := range remote {
-		remoteMap[remote[i].Name] = remote[i]
+		remoteMap[remote[i].Name] = &remote[i]
 	}
 
 	for i := range installed {
-		allMap[installed[i].Name] = installed[i]
+		allMap[installed[i].Name] = &installed[i]
 	}
 
-	for pkgName, pkg := range remoteMap {
+	for pkgName := range remoteMap {
 		if _, ok := allMap[pkgName]; ok {
 			// TODO add details about cost and pricing, and then delete
 		} else if !installedOnly {
-			allMap[pkgName] = pkg
+			allMap[pkgName] = remoteMap[pkgName]
 		}
 	}
 
 	snapPkgs := make([]snapPkg, 0, len(allMap))
 
 	for _, v := range allMap {
-		snapPkgs = append(snapPkgs, v)
+		snapPkgs = append(snapPkgs, *v)
 	}
 
 	return snapPkgs
