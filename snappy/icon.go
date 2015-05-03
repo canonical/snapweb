@@ -27,9 +27,14 @@ import (
 )
 
 var (
-	ErrDataPathNotSet    = errors.New("package data path not set")
+	// ErrDataPathNotSet indicates that SNAP_APP_DATA_PATH has not been set by the
+	// launching system.
+	ErrDataPathNotSet = errors.New("package data path not set")
+	// ErrOnIconDataPathSet indicates that there has been an error when setting up
+	// the location where icons are going to be saved.
 	ErrOnIconDataPathSet = errors.New("cannot prepare icon data path")
-	ErrIconNotExist      = errors.New("the icon does not exist")
+	// ErrIconNotExist happens when the package has no icon.
+	ErrIconNotExist = errors.New("the icon does not exist")
 )
 
 func localIconPath(pkgName, iconPath string) (relativePath string, err error) {
@@ -62,6 +67,7 @@ func localIconPath(pkgName, iconPath string) (relativePath string, err error) {
 	return filepath.Join("/", relativePath), nil
 }
 
+// IconDir returns information to properly serve package icons with an http.FileServer
 func IconDir() (dataPath, relativeBasePath string, err error) {
 	dataPath = os.Getenv("SNAP_APP_DATA_PATH")
 	if dataPath == "" {
