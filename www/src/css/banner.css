@@ -22,11 +22,11 @@
 .b-banner__brand a {
   display: flex;
   align-items:center;
-  padding:15px;
+  padding:15px 2em 15px 15px;
 }
 
 .b-banner__brand img {
-  margin:0 0.6em 0;
+  margin:0 15px 0 0;
 }
 
 .b-banner__search {
@@ -67,6 +67,10 @@
 
 .b-banner__submit:hover {
   background-color:#dd4814;
+}
+
+.b-banner__nav-item {
+  border-left:1px solid #333;
 }
 
 .b-banner__nav-item--active {
