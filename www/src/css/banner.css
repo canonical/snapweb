@@ -70,7 +70,7 @@
 }
 
 .b-banner__nav-item {
-  border-left:1px solid #333;
+  border-right:1px solid #333;
 }
 
 .b-banner__nav-item--active {
@@ -82,8 +82,8 @@
   content:'';
   background:#dd4814;
   bottom:0;
-  left:0;
-  right:0;
+  left:-1px;
+  right:-1px;
   height:3px;
 }
 
@@ -99,6 +99,10 @@
 .b-banner__secondary-nav {
   margin-left:auto;
 }
+
+.b-banner__secondary-nav .b-banner__nav-item:last-child {
+  border-right:none;
+} 
 
 .b-banner__secondary-nav .b-banner__nav-item a {
   padding: 15px;
