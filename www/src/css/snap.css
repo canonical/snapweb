@@ -1,0 +1,64 @@
+.b-snap {
+}
+
+.b-snap__icon {
+}
+.b-snap__icon img {
+  display:block;
+}
+
+.b-snap__banner {
+  display: flex;
+  line-height:1.3;
+  margin:0 -3em;
+  padding:1.3em 3em 1.3em;
+  align-items: flex-start;
+  background-color:rgba(255,255,255,0.7);
+}
+
+.b-snap__meta {
+  flex: 2;
+}
+
+.b-snap__meta > * {
+  margin:0;
+}
+
+.b-snap__actions {
+  flex: 1;
+}
+
+.b-snap__actions .b-installer {
+  margin-left:auto;
+}
+
+.b-snap__navigation {
+  background-color:rgba(255,255,255,0.5);
+  display: flex;
+  align-items: center;
+  margin:0 0 1em 0;
+  border-top:1px solid #efefef;
+  border-bottom:1px solid #ddd;
+  margin:0 -3em 1em -3em;
+  padding:0 3em;
+}
+
+.b-snap__nav-item {
+  min-width:120px;
+  text-align: center;
+  position:relative;
+  display:block;
+  color:#333;
+  text-decoration:none;
+  padding:15px 0;
+}
+
+.b-snap__nav-item--active::before {
+  position:absolute;
+  content:'';
+  background:#dd4814;
+  bottom:0;
+  left:0;
+  right:0;
+  height:3px;
+}

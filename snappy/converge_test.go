@@ -171,14 +171,20 @@ func (s *MergeSuite) TestManyInstalledAndManyRemotes(c *C) {
 	c.Check(snaps[0].Name, Equals, "app1.canonical")
 	c.Check(snaps[0].Version, Equals, "1.0")
 	c.Check(snaps[0].Status, Equals, webprogress.StatusInstalled)
+	c.Check(snaps[0].InstalledSize, Equals, int64(30))
+	c.Check(snaps[0].DownloadSize, Equals, int64(0))
 
 	c.Check(snaps[1].Name, Equals, "app2.canonical")
 	c.Check(snaps[1].Version, Equals, "2.0")
 	c.Check(snaps[1].Status, Equals, webprogress.StatusInstalled)
+	c.Check(snaps[1].InstalledSize, Equals, int64(30))
+	c.Check(snaps[1].DownloadSize, Equals, int64(0))
 
 	c.Check(snaps[2].Name, Equals, "app3.canonical")
 	c.Check(snaps[2].Version, Equals, "3.0")
 	c.Check(snaps[2].Status, Equals, webprogress.StatusInstalled)
+	c.Check(snaps[2].InstalledSize, Equals, int64(30))
+	c.Check(snaps[2].DownloadSize, Equals, int64(0))
 
 	// Installed and remotes
 	snaps = mergeSnaps(installed, remotes, false)
@@ -188,18 +194,26 @@ func (s *MergeSuite) TestManyInstalledAndManyRemotes(c *C) {
 	c.Check(snaps[0].Name, Equals, "app1.canonical")
 	c.Check(snaps[0].Version, Equals, "1.0")
 	c.Check(snaps[0].Status, Equals, webprogress.StatusInstalled)
+	c.Check(snaps[0].InstalledSize, Equals, int64(30))
+	c.Check(snaps[0].DownloadSize, Equals, int64(0))
 
 	c.Check(snaps[1].Name, Equals, "app2.canonical")
 	c.Check(snaps[1].Version, Equals, "2.0")
 	c.Check(snaps[1].Status, Equals, webprogress.StatusInstalled)
+	c.Check(snaps[1].InstalledSize, Equals, int64(30))
+	c.Check(snaps[1].DownloadSize, Equals, int64(0))
 
 	c.Check(snaps[2].Name, Equals, "app3.canonical")
 	c.Check(snaps[2].Version, Equals, "3.0")
 	c.Check(snaps[2].Status, Equals, webprogress.StatusInstalled)
+	c.Check(snaps[2].InstalledSize, Equals, int64(30))
+	c.Check(snaps[2].DownloadSize, Equals, int64(0))
 
 	c.Check(snaps[3].Name, Equals, "app3.ubuntu")
 	c.Check(snaps[3].Version, Equals, "3.0")
 	c.Check(snaps[3].Status, Equals, webprogress.StatusUninstalled)
+	c.Check(snaps[3].InstalledSize, Equals, int64(0))
+	c.Check(snaps[3].DownloadSize, Equals, int64(60))
 }
 
 func (s *MergeSuite) TestManyInstalledAndManyRemotesSomeInstalling(c *C) {
@@ -237,8 +251,12 @@ func (s *MergeSuite) TestManyInstalledAndManyRemotesSomeInstalling(c *C) {
 	c.Check(snaps[3].Name, Equals, "app4.ubuntu")
 	c.Check(snaps[3].Version, Equals, "2.0")
 	c.Check(snaps[3].Status, Equals, webprogress.StatusInstalling)
+	c.Check(snaps[3].InstalledSize, Equals, int64(0))
+	c.Check(snaps[3].DownloadSize, Equals, int64(60))
 
 	c.Check(snaps[4].Name, Equals, "app5.ubuntu")
 	c.Check(snaps[4].Version, Equals, "3.0")
 	c.Check(snaps[4].Status, Equals, webprogress.StatusUninstalled)
+	c.Check(snaps[4].InstalledSize, Equals, int64(0))
+	c.Check(snaps[4].DownloadSize, Equals, int64(60))
 }

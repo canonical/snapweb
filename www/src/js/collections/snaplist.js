@@ -1,5 +1,5 @@
-// bask.js
-// collective noun for group of crocs is a 'bask' :)
+// snaplist.js
+// collective noun for group of crocs is a 'snaplist' :)
 
 var Backbone = require('backbone');
 var Snap = require('../models/snap.js');
