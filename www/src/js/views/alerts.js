@@ -1,5 +1,7 @@
 // global alerts view
+var $ = require('jquery');
 var Backbone = require('backbone');
+Backbone.$ = $;
 var Marionette = require('backbone.marionette');
 var template = require('../templates/alerts.hbs');
 
@@ -21,7 +23,9 @@ module.exports = Backbone.Marionette.ItemView.extend({
 
   onClose: function(e) {
     var model = this.model;
-    e.preventDefault();
+    if (e && e.preventDefault) {
+      e.preventDefault();
+    }
     this.destroy();
     model.unset('message', {silent: true});
   }
