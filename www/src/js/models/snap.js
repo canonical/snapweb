@@ -114,15 +114,22 @@ module.exports = Backbone.Model.extend({
   },
 
   parse: function(response) {
+
     if (response.hasOwnProperty('icon') && !response.icon.length) {
       response.icon = this.defaults.icon;
     }
+
+    if (response.hasOwnProperty('origin') && !response.origin.length) {
+      response.origin = this.defaults.origin;
+    }
+
     return response;
   },
 
   defaults: {
     icon: '/public/images/default-package-icon.svg',
-    installActionString: false
+    installActionString: false,
+    origin: '-'
   }
 
 });
