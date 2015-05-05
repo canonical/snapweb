@@ -29,27 +29,27 @@ describe('SnapLayoutView', function() {
 
   it('should be thinking when installing', function() {
     this.model.set('status', CONF.INSTALL_STATE.INSTALLING);
-    expect(this.view.ui.install.hasClass('thinking')).toBeTruthy();
+    expect(this.view.ui.installer.hasClass('b-installer--thinking')).toBeTruthy();
   });
 
   it('should be thinking when uninstalling', function() {
     this.model.set('status', CONF.INSTALL_STATE.UNINSTALLING);
-    expect(this.view.ui.install.hasClass('thinking')).toBeTruthy();
+    expect(this.view.ui.installer.hasClass('b-installer--thinking')).toBeTruthy();
   });
 
   it('should not be thinking when installed', function() {
     this.model.set('status', CONF.INSTALL_STATE.INSTALLED);
-    expect(this.view.ui.install.hasClass('thinking')).toBeFalsy();
+    expect(this.view.ui.installer.hasClass('b-installer--thinking')).toBeFalsy();
   });
 
   it('should not be thinking when uninstalled', function() {
     this.model.set('status', CONF.INSTALL_STATE.UNINSTALLED);
-    expect(this.view.ui.install.hasClass('thinking')).toBeFalsy();
+    expect(this.view.ui.installer.hasClass('b-installer--thinking')).toBeFalsy();
   });
 
   it('should deactivate install button if model has unrecognised status', function() {
     this.model.set('status', '');
-    expect(this.view.ui.install).not.toBe();
+    expect(this.view.ui.installer).not.toBe();
   });
 
   xit('should inform user when install succeeds', function() {

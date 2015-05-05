@@ -1,34 +1,3 @@
-<div class="row details">
-  <div class="inner-wrapper">
-
-    <main class="seven-col append-one">
-
-    <div class="app__details-description">
-      <h2>Details</h2>
-      <p>{{ description }}</p>
-    </div>
-
-    {{#if screenshot_urls }}
-    <div class="app__details-screenshots">
-      <h3>Screenshots</h3>
-      <ul class="inline">
-        {{#each screenshot_urls}}
-        <li class="three-col"><img src="{{this}}" /></li>
-        {{/each}}
-      </ul>
-    </div>
-    {{/if}}
-    </main>
-
-    <aside class="four-col last-col">
-    <div class="frameworks box four-col">
-      <h3>Frameworks</h3>
-      <ul class="no-bullets">
-        {{#each clcick_framework}}
-        <li class="smaller">{{this}}</li>
-        {{/each}}
-      </ul>
-    </div>
-    </aside>
-  </div>
+<div class="b-snap__icon">
+  <img src="{{ icon }}" width="256" height="256">
 </div>

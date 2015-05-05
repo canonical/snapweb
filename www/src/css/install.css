@@ -1,0 +1,57 @@
+.b-installer {
+  max-width:300px;
+}
+
+.b-installer__button {
+  background-color: #dd4814;
+  border-radius:4px;
+  color:#fff;
+  cursor:pointer;
+  font-weight:400;
+  overflow: hidden;
+  padding:8px 2em;
+  position:relative;
+  text-align:center;
+  text-overflow: ellipsis;
+  transition: background-color 0.3s;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.b-installer--uninstall .b-installer__button {
+  background-color:#ccc;
+  color:#fff;
+  font-weight:300;
+}
+
+.b-installer--thinking .b-installer__button {
+  cursor:progress;
+}
+
+.b-installer__progress {
+  background: white;
+  border-radius:10px;
+  border:1px solid #dd4814;
+  bottom:3px;
+  box-sizing:border-box;
+  display:none;
+  height:5px;
+  left:8px;
+  margin:0;
+  padding:0;
+  position:absolute;
+  right:8px;
+}
+
+.b-installer__value {
+  background-color:rgba(221, 72, 20, 1);
+  bottom:0;
+  left:0;
+  position:absolute;
+  right:100%;
+  top:0;
+}
+
+.b-installer--thinking .b-installer__progress {
+  display:block;
+}
