@@ -1,5 +1,7 @@
 .b-installer {
-  max-width:300px;
+  position:relative;
+  width:300px;
+  padding-bottom:9px;
 }
 
 .b-installer__button {
@@ -25,7 +27,9 @@
 }
 
 .b-installer--thinking .b-installer__button {
+  background-color:transparent;
   cursor:progress;
+  color:#dd4814;
 }
 
 .b-installer__message {
@@ -38,15 +42,14 @@
   background: white;
   border-radius:10px;
   border:1px solid #dd4814;
-  bottom:3px;
-  box-sizing:border-box;
+  bottom:0;
   display:none;
   height:5px;
-  left:8px;
+  left:0;
   margin:0;
   padding:0;
   position:absolute;
-  right:8px;
+  right:0;
 }
 
 .b-installer__value {
@@ -56,6 +59,7 @@
   position:absolute;
   right:100%;
   top:0;
+  transition: right 0.1s;
 }
 
 .b-installer--thinking .b-installer__progress {
