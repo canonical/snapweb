@@ -2,12 +2,14 @@
 var _ = require('lodash');
 var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
+var Radio = require('backbone.radio');
 var SnapMenuView = require('./snap-menu.js');
 var SnapDetailView = require('./snap-detail.js');
 var SnapReviewsView = require('./snap-reviews.js');
 var SnapSettingsView = require('./snap-settings.js');
 var template = require('../templates/snap-layout.hbs');
 var CONF = require('../config.js');
+var chan = Radio.channel('root');
 
 module.exports = Marionette.LayoutView.extend({
 
@@ -19,7 +21,7 @@ module.exports = Marionette.LayoutView.extend({
       this.model, 'change:status', this.onModelStatusChange
     );
     this.listenTo(
-      this.model, 'change:message change:isError', this.onModelError
+      this.model, 'change:message', this.onModelError
     );
   },
 
@@ -28,7 +30,7 @@ module.exports = Marionette.LayoutView.extend({
   },
 
   onModelError: function(model) {
-    this.ui.errorMessage.text(model.get('message'));
+    chan.command('alert:error', model);
   },
 
   onModelHTMLClassChange: function(model) {
@@ -94,7 +96,7 @@ module.exports = Marionette.LayoutView.extend({
 
   onBeforeShow: function() {
     var tabView = this._getSectionView(this.options.section);
-    this.showChildView('menuRegion', 
+    this.showChildView('menuRegion',
       new SnapMenuView({
         section: this.options.section
       })

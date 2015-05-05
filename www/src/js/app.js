@@ -9,17 +9,17 @@ var Radio = require('backbone.radio');
 if (window.__agent) {
   window.__agent.start(Backbone, Marionette);
 }
-var MainView = require('./views/layout-main.js');
+var LayoutView = require('./views/layout.js');
 var router = require('./routers/router.js');
 
 var webdm = new Marionette.Application();
-var mainView = new MainView();
-mainView.render();
-
-webdm.on('start', function() {
-  Backbone.history.start({pushState: true});
-});
+var layout = new LayoutView();
+layout.render();
 
 $(document).ready(function() {
   webdm.start();
+});
+
+webdm.on('start', function() {
+  Backbone.history.start({pushState: true});
 });
