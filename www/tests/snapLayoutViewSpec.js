@@ -1,6 +1,6 @@
+var Backbone = require('backbone');
 var Snap = require('../src/js/models/snap.js');
 var SnapLayoutView = require('../src/js/views/snap-layout.js');
-var Backbone = require('backbone');
 var CONF = require('../src/js/config.js');
 
 describe('SnapLayoutView', function() {
