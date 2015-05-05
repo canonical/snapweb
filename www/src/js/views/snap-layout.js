@@ -59,6 +59,9 @@ module.exports = Marionette.LayoutView.extend({
     var installer = this.ui.installer;
     var installerButton = this.ui.installerButton;
 
+    // reset progress
+    this.ui.installerProgress.css('right', '100%');
+
     if (_.contains(CONF.INSTALL_STATE, state)) {
       installerButton.text(msg);
     } else {
@@ -131,7 +134,9 @@ module.exports = Marionette.LayoutView.extend({
       this.model.set({
         status: CONF.INSTALL_STATE.UNINSTALLING
       });
-      this.model.destroy();
+      this.model.destroy({
+        dataType : 'html'
+      });
     } else if (status === CONF.INSTALL_STATE.UNINSTALLED) {
       // install
       this.model.save({
