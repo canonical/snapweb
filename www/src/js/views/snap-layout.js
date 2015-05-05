@@ -21,10 +21,23 @@ module.exports = Marionette.LayoutView.extend({
     this.listenTo(
       this.model, 'change:message change:isError', this.onModelError
     );
+    this.listenTo(
+      this.model, 'change:progress', this.onProgressChange
+    );
   },
 
   onShow: function() {
     window.scrollTo(0, 0);
+  },
+
+  onProgressChange: function(model) {
+    var state = model.get('status');
+    var progress;
+
+    if (state === CONF.INSTALL_STATE.INSTALLING) {
+      progress = (100 - (model.get('progress') | 0)) + '%';
+      this.ui.installerProgress.css('right', progress);
+    }
   },
 
   onModelError: function(model) {
@@ -74,6 +87,7 @@ module.exports = Marionette.LayoutView.extend({
     statusMessage: '.b-installer__message',
     installer: '.b-installer',
     installerButton: '.b-installer__button',
+    installerProgress: '.b-installer__value',
     menu: '.b-snap__nav-item'
   },
 
