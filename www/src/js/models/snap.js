@@ -50,7 +50,6 @@ module.exports = Backbone.Model.extend({
       var status = model.get('status') || opts.xhr.status;
       model.set({
         'status': model.previous('status'),
-        'isError': true,
         'message': response.statusText
       });
     });

@@ -1,0 +1,31 @@
+.b-alert {
+  position: relative;
+  width: 600px;
+  margin: 0 auto;
+  background-color: rgb(255, 255, 255);
+  border-radius: 0px;
+  border: 4px solid #DADADA;
+  padding: 1em 2em;
+  border-top: none;
+  color: #dd4814;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+
+.b-alert__close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.b-alert__close a {
+  text-decoration:none;
+  color: #ccc;
+  display:block;
+  width:40px;
+  height:40px;
+  text-align:right;
+  padding:6px 10px
+}
