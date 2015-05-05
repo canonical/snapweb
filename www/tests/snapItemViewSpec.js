@@ -1,4 +1,4 @@
-var SnapItemView = require('../src/js/views/snap-item.js');
+var SnapItemView = require('../src/js/views/snaplist-item.js');
 var Backbone = require('backbone');
 
 describe('SnapItemView', function() {
