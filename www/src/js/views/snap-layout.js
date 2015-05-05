@@ -7,6 +7,7 @@ var SnapMenuView = require('./snap-menu.js');
 var SnapDetailView = require('./snap-detail.js');
 var SnapReviewsView = require('./snap-reviews.js');
 var SnapSettingsView = require('./snap-settings.js');
+var InstallBehavior = require('../behaviors/install.js');
 var template = require('../templates/snap-layout.hbs');
 var CONF = require('../config.js');
 var chan = Radio.channel('root');
@@ -15,89 +16,32 @@ module.exports = Marionette.LayoutView.extend({
 
   initialize: function() {
     this.listenTo(
-      this.model, 'change:installHTMLClass', this.onModelHTMLClassChange
-    );
-    this.listenTo(
-      this.model, 'change:status', this.onModelStatusChange
-    );
-    this.listenTo(
       this.model, 'change:message', this.onModelError
     );
-    this.listenTo(
-      this.model, 'change:progress', this.onProgressChange
-    );
+  },
+
+  behaviors: {
+    InstallBehavior: {
+      behaviorClass: InstallBehavior
+    }
   },
 
   onShow: function() {
     window.scrollTo(0, 0);
   },
 
-  onProgressChange: function(model) {
-    var state = model.get('status');
-    var progress;
-
-    if (state === CONF.INSTALL_STATE.INSTALLING) {
-      progress = (100 - (model.get('progress') | 0)) + '%';
-      this.ui.installerProgress.css('right', progress);
-    }
-  },
 
   onModelError: function(model) {
     chan.command('alert:error', model);
   },
 
-  onModelHTMLClassChange: function(model) {
-    var installer = this.ui.installer;
-    installer.removeClass(model.previous('installHTMLClass'))
-    .addClass(model.get('installHTMLClass'));
-  },
-
-  onModelStatusChange: function(model) {
-    var oldState = model.previous('status');
-    var state = model.get('status');
-    var msg = model.get('installActionString');
-    var installer = this.ui.installer;
-    var installerButton = this.ui.installerButton;
-
-    // reset progress
-    this.ui.installerProgress.css('right', '100%');
-
-    if (_.contains(CONF.INSTALL_STATE, state)) {
-      installerButton.text(msg);
-    } else {
-      // in the rare case that a status isn't one we're expecting,
-      // remove the install button
-      installer.remove();
-    }
-
-    if (
-      state === CONF.INSTALL_STATE.INSTALLED &&
-      oldState === CONF.INSTALL_STATE.INSTALLING
-    ) {
-      this.ui.statusMessage.text('Install successful!');
-    }
-
-    if (
-      state === CONF.INSTALL_STATE.UNINSTALLED &&
-      oldState === CONF.INSTALL_STATE.UNINSTALLING
-    ) {
-      this.ui.statusMessage.text('Uninstall successful!');
-    }
-  },
-
   className: 'b-snap',
 
   ui: {
-    errorMessage: '.b-installer__error',
-    statusMessage: '.b-installer__message',
-    installer: '.b-installer',
-    installerButton: '.b-installer__button',
-    installerProgress: '.b-installer__value',
     menu: '.b-snap__nav-item'
   },
 
   events: {
-    'click @ui.installerButton': 'install',
     'click @ui.menu': 'section'
   },
 
@@ -124,29 +68,6 @@ module.exports = Marionette.LayoutView.extend({
   regions: {
     menuRegion: '.region-menu',
     tabRegion: '.region-tab'
-  },
-
-  install: function(e) {
-    var status = this.model.get('status');
-
-    if (status === CONF.INSTALL_STATE.INSTALLED) {
-      // uninstall
-      this.model.set({
-        status: CONF.INSTALL_STATE.UNINSTALLING
-      });
-      this.model.destroy({
-        dataType : 'html'
-      });
-    } else if (status === CONF.INSTALL_STATE.UNINSTALLED) {
-      // install
-      this.model.save({
-        status: CONF.INSTALL_STATE.INSTALLING
-      }, {
-        dataType : 'html'
-      });
-    } else {
-      e.preventDefault();
-    }
   },
 
   _getSectionView: function(section) {
