@@ -67,20 +67,20 @@ module.exports = Backbone.Model.extend({
     var state = model.get('status');
     var installHTMLClass = '';
 
-    if (state === CONF.INSTALL_STATE.INSTALLING) {
-      installHTMLClass = 'thinking link-cta-positive';
-    }
-
-    if (state === CONF.INSTALL_STATE.UNINSTALLING) {
-      installHTMLClass = 'thinking link-cta-negative';
+    if (state === CONF.INSTALL_STATE.UNINSTALLED) {
+      installHTMLClass = 'b-installer--install';
     }
 
     if (state === CONF.INSTALL_STATE.INSTALLED) {
-      installHTMLClass = 'link-cta-negative';
+      installHTMLClass = 'b-installer--uninstall';
     }
 
-    if (state === CONF.INSTALL_STATE.UNINSTALLED) {
-      installHTMLClass = 'link-cta-positive';
+    if (state === CONF.INSTALL_STATE.INSTALLING) {
+      installHTMLClass = 'b-installer--install b-installer--thinking';
+    }
+
+    if (state === CONF.INSTALL_STATE.UNINSTALLING) {
+      installHTMLClass = 'b-installer--uninstall b-installer--thinking';
     }
 
     return model.set('installHTMLClass', installHTMLClass);

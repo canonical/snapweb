@@ -2,117 +2,24 @@ html {
   box-sizing: border-box;
 }
 
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
 html, body {
-  font-family: Ubuntu, Arial, 'libra sans', sans-serif;
+  font: normal 300 15px/1.4 'Ubuntu', 'Arial', 'libra sans', sans-serif;
   background-color:white;
   color:#333;
 }
 
-*, *:before, *:after {
-  box-sizing: inherit;
+body {
+  background: url('../images/image-background-paper.png') repeat-y fixed 50% 0 #f7f7f7;
 }
 
 a {
   color:#dd4814;
 }
 
-.cof {
-  width:27px;
-  height:27px;
-}
-
-.pkg {
-  margin-bottom: 1em;
-  padding: 1em 1em 1em 133px;
-  position:relative;
-}
-
-.services-pkg p, .pkg p, .about p {
-  margin:0;
-}
-
-.pkg-img {
-  width: 40px;
-}
-
-.pkg-publisher {
-  font-size:11px;
-  text-transform:uppercase;
-  color:#aaa;
-}
-
-.pkg-name {
-  font-size:30px;
-}
-
-.pkg-show {
-  color:white;
-  background-color:#dd4814;
-  font-size:11px;
-  text-transform:uppercase;
-  padding:4px 1em;
-  display:inline-block;
-  vertical-align:middle;
-  margin-left:1em;
-  border-radius:3px;
-  text-decoration:none;
-}
-
-.pkg-show.hide {
-    display:none;
-}
-
-h1, h2, h3, h4 {
-  margin:0;
+h1 {
   font-weight:300;
 }
-
-.install {
-  border: 1px solid #FFF;
-  background: #eee;
-  padding: 0 1em;
-  border-radius: 3px;
-  margin: 1em 0;
-}
-
-fieldset {
-  margin:0;
-  padding:0;
-  border:0;
-}
-
-.services {
-  margin-top:1em;
-}
-
-.services h2 {
-  font-size:18px;
-  margin-bottom:0.6em;
-}
-
-.service-row {
-  display:flex;
-  padding:1em;
-  border-top:1px solid #ddd;
-  border-bottom:1px solid #ddd;
-}
-.service-row + .service-row {
-  border-top:none;
-}
-
-.service-row::nth-of-type(2) {
-  background: #eee;
-}
-
-.service-name {
-  flex:2;
-}
-
-.service-action {
-  flex:1;
-}
-
-.service-action .switch {
-  margin:0;
-}
-

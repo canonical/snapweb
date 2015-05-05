@@ -32,8 +32,8 @@ module.exports = Marionette.LayoutView.extend({
   },
 
   onModelHTMLClassChange: function(model) {
-    var installEl = this.ui.install;
-    installEl.removeClass(model.previous('installHTMLClass'))
+    var installer = this.ui.installer;
+    installer.removeClass(model.previous('installHTMLClass'))
     .addClass(model.get('installHTMLClass'));
   },
 
@@ -41,14 +41,15 @@ module.exports = Marionette.LayoutView.extend({
     var oldState = model.previous('status');
     var state = model.get('status');
     var msg = model.get('installActionString');
-    var installEl = this.ui.install;
+    var installer = this.ui.installer;
+    var installerButton = this.ui.installerButton;
 
     if (_.contains(CONF.INSTALL_STATE, state)) {
-      installEl.text(msg);
+      installerButton.text(msg);
     } else {
       // in the rare case that a status isn't one we're expecting,
       // remove the install button
-      installEl.remove();
+      installer.remove();
     }
 
     if (
@@ -66,17 +67,18 @@ module.exports = Marionette.LayoutView.extend({
     }
   },
 
-  className: 'snap-layout',
+  className: 'b-snap',
 
   ui: {
-    errorMessage: '.error-message',
-    statusMessage: 'p.left.status',
-    install: '.install-action',
-    menu: '.snap--menu'
+    errorMessage: '.b-installer__error',
+    statusMessage: '.b-installer__message',
+    installer: '.b-installer',
+    installerButton: '.b-installer__button',
+    menu: '.b-snap__nav-item'
   },
 
   events: {
-    'click @ui.install': 'install',
+    'click @ui.installerButton': 'install',
     'click @ui.menu': 'section'
   },
 
@@ -92,7 +94,11 @@ module.exports = Marionette.LayoutView.extend({
 
   onBeforeShow: function() {
     var tabView = this._getSectionView(this.options.section);
-    this.showChildView('menuRegion', new SnapMenuView());
+    this.showChildView('menuRegion',
+      new SnapMenuView({
+        section: this.options.section
+      })
+    );
     this.showChildView('tabRegion', tabView);
   },
 

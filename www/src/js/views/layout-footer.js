@@ -1,7 +1,12 @@
+// footer layout view
 var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
-var template = require('../templates/empty-installed-bask.hbs');
+var template = require('../templates/layout-footer.hbs');
 
 module.exports = Marionette.ItemView.extend({
-  template: template()
+
+  template : function() {
+    return template();
+  }
+
 });

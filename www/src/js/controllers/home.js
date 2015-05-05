@@ -4,7 +4,7 @@ Backbone.$ = $;
 var Marionette = require('backbone.marionette');
 var Radio = require('backbone.radio');
 var HomeLayoutView = require('../views/home.js');
-var Bask = require('../collections/bask.js');
+var Bask = require('../collections/snaplist.js');
 
 module.exports = {
   index: function() {
@@ -16,9 +16,9 @@ module.exports = {
         'types': ['app'],
         'installed_only': true
       }),
-      success: function(bask) {
+      success: function(snaplist) {
         var view = new HomeLayoutView({
-          collection: bask
+          collection: snaplist
         });
         chan.command('set:content', view);
       }
