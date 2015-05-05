@@ -28,18 +28,20 @@ import (
 )
 
 type snapPkg struct {
-	Name        string          `json:"name"`
-	Origin      string          `json:"origin"`
-	Version     string          `json:"version"`
-	Vendor      string          `json:"vendor"`
-	Description string          `json:"description"`
-	Icon        string          `json:"icon"`
-	Status      string          `json:"status"`
-	Message     string          `json:"message,omitempty"`
-	Progress    float64         `json:"progress,omitempty"`
-	Type        snappy.SnapType `json:"type,omitempty"`
-	UIPort      uint64          `json:"ui_port,omitempty"`
-	UIUri       string          `json:"ui_uri,omitempty"`
+	Name          string          `json:"name"`
+	Origin        string          `json:"origin"`
+	Version       string          `json:"version"`
+	Vendor        string          `json:"vendor"`
+	Description   string          `json:"description"`
+	Icon          string          `json:"icon"`
+	Status        string          `json:"status"`
+	Message       string          `json:"message,omitempty"`
+	Progress      float64         `json:"progress,omitempty"`
+	InstalledSize int64           `json:"installed_size,omitempty"`
+	DownloadSize  int64           `json:"download_size,omitempty"`
+	Type          snappy.SnapType `json:"type,omitempty"`
+	UIPort        uint64          `json:"ui_port,omitempty"`
+	UIUri         string          `json:"ui_uri,omitempty"`
 }
 
 type response struct {
@@ -184,8 +186,10 @@ func (h *Handler) snapQueryToPayload(snapQ snappy.Part) snapPkg {
 		}
 
 		snap.Icon = iconPath
+		snap.InstalledSize = snapQ.InstalledSize()
 	} else {
 		snap.Icon = snapQ.Icon()
+		snap.DownloadSize = snapQ.DownloadSize()
 	}
 
 	if stat, ok := h.installStatus.Get(snap.Name); ok {

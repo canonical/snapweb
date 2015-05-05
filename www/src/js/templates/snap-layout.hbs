@@ -1,31 +1,26 @@
-<div class="row-hero app-details">
-  <div class="inner-wrapper">
-    <div class="eight-col">
-      <img src="{{ icon }}" width="96" height="96" class="app__icon">
-      <div class="app__details">
-        <h1 class="app__details-title">{{ name }}</h1>
-        <p>By <a href="{{ support_url }}">{{ developer_name }}</a></p>
-        <ul class="app__details-list">
-          <li><strong>Version:</strong>{{ version }}</li>
-          <li><strong>Size:</strong>{{ binary_filesize }}</li>
-        </ul>
-      </div>
-      <ul class="no-bullets inline">
-        {{#each department}}
-        <li>{{ this }}, </li>
-        {{/each}}
-      </ul>
-    </div>
-    <div class="four-col last-col ">
-      <p class="left status"></p>
-      <p class="right">Rating: {{ ratings_average }}/5</p>
+<div class="b-snap__banner">
+  <div class="b-snap__meta">
+    <h1 class="b-snap__title">{{ name }} {{ version }} {{ binary_filesize }}</h1>
+    <p>
+    <span class="b-snap__origin" title="Origin">{{ origin }}</span>
+    <span class="b-snap__filesize" title="Package filesize">{{ binary_filesize}}</span>
+    </p>
+  </div>
+  <div class="b-snap__actions">
+    <div class="b-installer {{ installHTMLClass }}">
       {{#if installActionString}}
-      <a class="install-action {{ installHTMLClass}}">{{ installActionString }}</a>
+      <div class="b-installer__button">{{ installActionString }}</div>
+      <div class="b-installer__progress" title="download progress">
+        <div class="b-installer__value"></div>
+      </div>
       {{/if}}
-      <p class="error-message clear">{{ message }}</p>
+      <div class="b-installer__message"></div>
     </div>
   </div>
 </div>
+<div class="b-installer__error">{{ message }}</div>
 
 <div class="region-menu"></div>
+
+
 <div class="region-tab"></div>

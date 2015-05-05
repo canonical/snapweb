@@ -2,12 +2,14 @@
 var _ = require('lodash');
 var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
+var Radio = require('backbone.radio');
 var SnapMenuView = require('./snap-menu.js');
 var SnapDetailView = require('./snap-detail.js');
 var SnapReviewsView = require('./snap-reviews.js');
 var SnapSettingsView = require('./snap-settings.js');
 var template = require('../templates/snap-layout.hbs');
 var CONF = require('../config.js');
+var chan = Radio.channel('root');
 
 module.exports = Marionette.LayoutView.extend({
 
@@ -19,7 +21,10 @@ module.exports = Marionette.LayoutView.extend({
       this.model, 'change:status', this.onModelStatusChange
     );
     this.listenTo(
-      this.model, 'change:message change:isError', this.onModelError
+      this.model, 'change:message', this.onModelError
+    );
+    this.listenTo(
+      this.model, 'change:progress', this.onProgressChange
     );
   },
 
@@ -27,13 +32,23 @@ module.exports = Marionette.LayoutView.extend({
     window.scrollTo(0, 0);
   },
 
+  onProgressChange: function(model) {
+    var state = model.get('status');
+    var progress;
+
+    if (state === CONF.INSTALL_STATE.INSTALLING) {
+      progress = (100 - (model.get('progress') | 0)) + '%';
+      this.ui.installerProgress.css('right', progress);
+    }
+  },
+
   onModelError: function(model) {
-    this.ui.errorMessage.text(model.get('message'));
+    chan.command('alert:error', model);
   },
 
   onModelHTMLClassChange: function(model) {
-    var installEl = this.ui.install;
-    installEl.removeClass(model.previous('installHTMLClass'))
+    var installer = this.ui.installer;
+    installer.removeClass(model.previous('installHTMLClass'))
     .addClass(model.get('installHTMLClass'));
   },
 
@@ -41,14 +56,18 @@ module.exports = Marionette.LayoutView.extend({
     var oldState = model.previous('status');
     var state = model.get('status');
     var msg = model.get('installActionString');
-    var installEl = this.ui.install;
+    var installer = this.ui.installer;
+    var installerButton = this.ui.installerButton;
+
+    // reset progress
+    this.ui.installerProgress.css('right', '100%');
 
     if (_.contains(CONF.INSTALL_STATE, state)) {
-      installEl.text(msg);
+      installerButton.text(msg);
     } else {
       // in the rare case that a status isn't one we're expecting,
       // remove the install button
-      installEl.remove();
+      installer.remove();
     }
 
     if (
@@ -66,17 +85,19 @@ module.exports = Marionette.LayoutView.extend({
     }
   },
 
-  className: 'snap-layout',
+  className: 'b-snap',
 
   ui: {
-    errorMessage: '.error-message',
-    statusMessage: 'p.left.status',
-    install: '.install-action',
-    menu: '.snap--menu'
+    errorMessage: '.b-installer__error',
+    statusMessage: '.b-installer__message',
+    installer: '.b-installer',
+    installerButton: '.b-installer__button',
+    installerProgress: '.b-installer__value',
+    menu: '.b-snap__nav-item'
   },
 
   events: {
-    'click @ui.install': 'install',
+    'click @ui.installerButton': 'install',
     'click @ui.menu': 'section'
   },
 
@@ -92,7 +113,11 @@ module.exports = Marionette.LayoutView.extend({
 
   onBeforeShow: function() {
     var tabView = this._getSectionView(this.options.section);
-    this.showChildView('menuRegion', new SnapMenuView());
+    this.showChildView('menuRegion',
+      new SnapMenuView({
+        section: this.options.section
+      })
+    );
     this.showChildView('tabRegion', tabView);
   },
 
@@ -109,7 +134,9 @@ module.exports = Marionette.LayoutView.extend({
       this.model.set({
         status: CONF.INSTALL_STATE.UNINSTALLING
       });
-      this.model.destroy();
+      this.model.destroy({
+        dataType : 'html'
+      });
     } else if (status === CONF.INSTALL_STATE.UNINSTALLED) {
       // install
       this.model.save({

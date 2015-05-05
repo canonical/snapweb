@@ -1,4 +1,5 @@
 // app.js
+'use strict';
 
 var $ = require('jquery');
 var Backbone = require('backbone');
@@ -8,17 +9,17 @@ var Radio = require('backbone.radio');
 if (window.__agent) {
   window.__agent.start(Backbone, Marionette);
 }
-var RootView = require('./views/root.js');
+var LayoutView = require('./views/layout.js');
 var router = require('./routers/router.js');
 
 var webdm = new Marionette.Application();
-var rootView = new RootView();
-rootView.render();
-
-webdm.on('start', function() {
-  Backbone.history.start({pushState: true});
-});
+var layout = new LayoutView();
+layout.render();
 
 $(document).ready(function() {
   webdm.start();
+});
+
+webdm.on('start', function() {
+  Backbone.history.start({pushState: true});
 });
