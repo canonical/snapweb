@@ -10,12 +10,15 @@
     <div class="b-installer {{ installHTMLClass }}">
       {{#if installActionString}}
       <div class="b-installer__button">{{ installActionString }} {{ name }}</div>
+      <div class="b-installer__progress" title="download progress">
+        <div class="b-installer__value"></div>
+      </div>
       {{/if}}
     </div>
     <div class="b-installer__message"></div>
-    <div class="b-installer__error">{{ message }}</div>
   </div>
 </div>
+<div class="b-installer__error">{{ message }}</div>
 
 <div class="region-menu"></div>
 
