@@ -28,6 +28,12 @@
   cursor:progress;
 }
 
+.b-installer__message {
+  margin-top:4px;
+  text-align:center;
+  font-size:12px;
+}
+
 .b-installer__progress {
   background: white;
   border-radius:10px;

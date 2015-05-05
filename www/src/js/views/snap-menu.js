@@ -1,5 +1,7 @@
 // snap menu view
+var $ = require('jquery');
 var Backbone = require('backbone');
+Backbone.$ = $;
 var Marionette = require('backbone.marionette');
 var template = require('../templates/snap-menu.hbs');
 
