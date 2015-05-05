@@ -47,13 +47,15 @@ func (s *PayloadSuite) TestPayloadWithNoServices(c *C) {
 
 	q := s.h.snapQueryToPayload(fakeSnap)
 
-	c.Assert(q.Name, Equals, fakeSnap.name)
-	c.Assert(q.Version, Equals, fakeSnap.version)
-	c.Assert(q.Status, Equals, webprogress.StatusInstalled)
-	c.Assert(q.Type, Equals, fakeSnap.snapType)
-	c.Assert(q.UIPort, Equals, uint64(0))
-	c.Assert(q.UIUri, Equals, "")
-	c.Assert(q.Icon, Equals, "/icons/camlistore.sergiusens_icon.png")
+	c.Check(q.Name, Equals, fakeSnap.name)
+	c.Check(q.Version, Equals, fakeSnap.version)
+	c.Check(q.Status, Equals, webprogress.StatusInstalled)
+	c.Check(q.Type, Equals, fakeSnap.snapType)
+	c.Check(q.UIPort, Equals, uint64(0))
+	c.Check(q.UIUri, Equals, "")
+	c.Check(q.Icon, Equals, "/icons/camlistore.sergiusens_icon.png")
+	c.Check(q.Description, Equals, fakeSnap.description)
+	c.Check(q.Vendor, Equals, fakeSnap.vendor)
 }
 
 func (s *PayloadSuite) TestPayloadWithServicesButNoUI(c *C) {
