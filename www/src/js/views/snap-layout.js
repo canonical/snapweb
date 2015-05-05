@@ -23,10 +23,23 @@ module.exports = Marionette.LayoutView.extend({
     this.listenTo(
       this.model, 'change:message', this.onModelError
     );
+    this.listenTo(
+      this.model, 'change:progress', this.onProgressChange
+    );
   },
 
   onShow: function() {
     window.scrollTo(0, 0);
+  },
+
+  onProgressChange: function(model) {
+    var state = model.get('status');
+    var progress;
+
+    if (state === CONF.INSTALL_STATE.INSTALLING) {
+      progress = (100 - (model.get('progress') | 0)) + '%';
+      this.ui.installerProgress.css('right', progress);
+    }
   },
 
   onModelError: function(model) {
@@ -45,6 +58,9 @@ module.exports = Marionette.LayoutView.extend({
     var msg = model.get('installActionString');
     var installer = this.ui.installer;
     var installerButton = this.ui.installerButton;
+
+    // reset progress
+    this.ui.installerProgress.css('right', '100%');
 
     if (_.contains(CONF.INSTALL_STATE, state)) {
       installerButton.text(msg);
@@ -76,6 +92,7 @@ module.exports = Marionette.LayoutView.extend({
     statusMessage: '.b-installer__message',
     installer: '.b-installer',
     installerButton: '.b-installer__button',
+    installerProgress: '.b-installer__value',
     menu: '.b-snap__nav-item'
   },
 
@@ -117,7 +134,9 @@ module.exports = Marionette.LayoutView.extend({
       this.model.set({
         status: CONF.INSTALL_STATE.UNINSTALLING
       });
-      this.model.destroy();
+      this.model.destroy({
+        dataType : 'html'
+      });
     } else if (status === CONF.INSTALL_STATE.UNINSTALLED) {
       // install
       this.model.save({
