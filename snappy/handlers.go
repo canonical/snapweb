@@ -21,9 +21,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"net/http"
-
 	"log"
+	"net/http"
 
 	"launchpad.net/snappy/snappy"
 	"launchpad.net/webdm/webprogress"
@@ -44,80 +43,96 @@ func NewHandler() *Handler {
 }
 
 func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	enc := json.NewEncoder(w)
 	dec := json.NewDecoder(r.Body)
 
 	var filter listFilter
 	if err := dec.Decode(&filter); err != nil && err != io.EOF {
 		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
+		enc.Encode(fmt.Sprintf("Error: %s", err))
 		return
 	}
 
 	payload, err := h.allPackages(filter.InstalledOnly)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
+		enc.Encode(fmt.Sprintf("Error: %s", err))
 		return
 	}
 
-	enc := json.NewEncoder(w)
 	if err := enc.Encode(payload); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprint(w, fmt.Sprintf("Error: %s", err))
-		return
+		// give up on json
+		fmt.Fprintf(w, "Error: %s", err)
+		log.Print(err)
 	}
 }
 
 func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 	// Get the Key.
 	vars := mux.Vars(r)
 	pkgName := vars["pkg"]
+	enc := json.NewEncoder(w)
 
 	payload, err := h.packagePayload(pkgName)
 	if err != nil {
-		http.NotFound(w, r)
-		fmt.Fprintln(w, err, pkgName)
+		w.WriteHeader(http.StatusNotFound)
+		//		http.NotFound(w, r)
+		enc.Encode(fmt.Sprintln(err, pkgName))
 		return
 	}
 
-	enc := json.NewEncoder(w)
 	if err := enc.Encode(payload); err != nil {
-		fmt.Fprint(w, "Error")
+		w.WriteHeader(http.StatusInternalServerError)
+		// give up on json
+		fmt.Fprintf(w, "Error: %s", err)
+		log.Print(err)
 	}
 }
 
 func (h *Handler) add(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 	// Get the Key.
 	vars := mux.Vars(r)
 	pkgName := vars["pkg"]
 
-	enc := json.NewEncoder(w)
 	var msg string
+	var status int
 
 	err := h.installPackage(pkgName)
 
 	switch err {
 	case snappy.ErrAlreadyInstalled:
-		w.WriteHeader(http.StatusOK)
+		status = http.StatusOK
 		msg = "Installed"
 	case webprogress.ErrPackageInstallInProgress:
-		w.WriteHeader(http.StatusBadRequest)
+		status = http.StatusBadRequest
 		msg = "Installation in progress"
 	case snappy.ErrPackageNotFound:
-		w.WriteHeader(http.StatusNotFound)
+		status = http.StatusNotFound
 		msg = "Package not found"
 	case nil:
-		w.WriteHeader(http.StatusAccepted)
+		status = http.StatusAccepted
 		msg = "Accepted"
 	default:
-		w.WriteHeader(http.StatusInternalServerError)
+		status = http.StatusInternalServerError
 		msg = "Processing error"
 	}
 
 	response := response{Message: msg, Package: pkgName}
-	if err := enc.Encode(response); err != nil {
+	bs, err := json.Marshal(response)
+	if err != nil {
+		// giving up on json
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "Error: %s", err)
 		log.Print(err)
+		return
 	}
+
+	w.WriteHeader(status)
+	w.Write(bs)
 }
 
 // MakeMuxer sets up the handlers multiplexing to handle requests against snappy's
