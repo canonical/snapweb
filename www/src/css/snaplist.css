@@ -80,3 +80,8 @@
 .b-snaplist--row .b-snaplist__type {
   text-align:center;
 }
+
+.b-snaplist--row .b-installer__message {
+  /** XXX hmm **/
+  display:none;
+}

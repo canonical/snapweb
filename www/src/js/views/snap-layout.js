@@ -2,7 +2,6 @@
 var _ = require('lodash');
 var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
-var Radio = require('backbone.radio');
 var SnapMenuView = require('./snap-menu.js');
 var SnapDetailView = require('./snap-detail.js');
 var SnapReviewsView = require('./snap-reviews.js');
@@ -10,15 +9,8 @@ var SnapSettingsView = require('./snap-settings.js');
 var InstallBehavior = require('../behaviors/install.js');
 var template = require('../templates/snap-layout.hbs');
 var CONF = require('../config.js');
-var chan = Radio.channel('root');
 
 module.exports = Marionette.LayoutView.extend({
-
-  initialize: function() {
-    this.listenTo(
-      this.model, 'change:message', this.onModelError
-    );
-  },
 
   behaviors: {
     InstallBehavior: {
@@ -28,11 +20,6 @@ module.exports = Marionette.LayoutView.extend({
 
   onShow: function() {
     window.scrollTo(0, 0);
-  },
-
-
-  onModelError: function(model) {
-    chan.command('alert:error', model);
   },
 
   className: 'b-snap',

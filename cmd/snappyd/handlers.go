@@ -1,22 +1,18 @@
 /*
- * Copyright 2014 Canonical Ltd.
+ * Copyright (C) 2014-2015 Canonical Ltd
  *
- * Authors:
- * Michael Frey: michael.frey@canonical.com
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3 as
+ * published by the Free Software Foundation.
  *
- * This file is part of snappy.
- *
- * usensord is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; version 3.
- *
- * usensord is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 package main
@@ -29,11 +25,8 @@ import (
 	"path/filepath"
 	"text/template"
 
-	"launchpad.net/go-dbus/v1"
-	"launchpad.net/webdm/click"
 	"launchpad.net/webdm/oem"
 	"launchpad.net/webdm/snappy"
-	"launchpad.net/webdm/store"
 )
 
 type slug string
@@ -44,46 +37,24 @@ type branding struct {
 	Subname string
 }
 
-/*
-func makeHandler(fn func(http.ResponseWriter, *http.Request, bytes.Buffer)) http.HandlerFunc {
-	var buf bytes.Buffer
-	t, _ := template.ParseFiles(filepath.Join("www", "templates", "navbar.html"))
-	t.Execute(buf, p)
-
-	return func(w http.ResponseWriter, r *http.Request) {
-		fn(w, r, buf)
-	}
-}
-*/
-
 var p = pages{
 	"Admin":    "/admin",
 	"Services": "/services",
-	"Store":    "/store",
 }
 
-type Page struct {
+type page struct {
 	Pages  pages
 	Title  string
 	Params interface{}
 }
 
-func InitURLHandlers(conn *dbus.Connection, log *log.Logger) {
+func initURLHandlers(log *log.Logger) {
 	log.Println("Initializing HTTP handlers...")
-
-	packageHandler := click.NewHandler(conn)
-	http.Handle("/api/v1/packages/", packageHandler.MakeMuxer("/api/v1/packages"))
 
 	snappyHandler := snappy.NewHandler()
 	http.Handle("/api/v2/packages/", snappyHandler.MakeMuxer("/api/v2/packages"))
 
-	storeHandler := store.NewHandler()
-	http.Handle("/api/v1/store/", storeHandler.MakeMuxer("/api/v1/store"))
-
-	oemHandler := oem.NewHandler()
-	http.Handle("/api/v1/oem/", oemHandler.MakeMuxer("/api/v1/oem"))
-
-	handleMainPage, err := makeMainPageHandler(conn)
+	handleMainPage, err := makeMainPageHandler()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -106,10 +77,11 @@ func loggingHandler(h http.Handler) http.Handler {
 	})
 }
 
-func makeMainPageHandler(conn *dbus.Connection) (f http.HandlerFunc, err error) {
+func makeMainPageHandler() (f http.HandlerFunc, err error) {
 	name := "Ubuntu"
 	subname := ""
 
+	// TODO: use oem information from launchpad.net/snappy
 	pkg, err := oem.Oem()
 	if err != nil && err != oem.ErrNotFound {
 		return f, err
@@ -120,7 +92,7 @@ func makeMainPageHandler(conn *dbus.Connection) (f http.HandlerFunc, err error) 
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		data := Page{
+		data := page{
 			Pages: p,
 			Title: "Home",
 			Params: branding{
@@ -135,7 +107,7 @@ func makeMainPageHandler(conn *dbus.Connection) (f http.HandlerFunc, err error) 
 	}, nil
 }
 
-func renderLayout(html string, data *Page, w http.ResponseWriter) error {
+func renderLayout(html string, data *page, w http.ResponseWriter) error {
 	htmlPath := filepath.Join("www", "templates", html)
 	if _, err := os.Stat(htmlPath); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

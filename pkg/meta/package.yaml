@@ -1,16 +1,10 @@
 name: webdm
+vendor: Sergio Schvezov <sergio.schvezov@canonical.com>
+icon: meta/clap.png
 source: lp:webdm
-description: Manage a system with a snappy webui
-version: 0.3
 type: framework
+version: 0.6
 architecture: UNKNOWN_ARCH
-integration:
-    framework:
-        framework: meta/webdm.framework
-    snappyd:
-        apparmor-profile: meta/snappyd.apparmor
-    avahi:
-        apparmor-profile: meta/avahi.apparmor
 services:
     - name: snappyd
       start: snappyd
@@ -20,8 +14,6 @@ services:
               ui:
                   port: 4200/tcp
                   negotiable: false
-    - name: avahi
-      start: avahi-daemon
-      description: Avahi daemon
-vendor: Sergio Schvezov <sergio.schvezov@canonical.com>
-icon: meta/clap.png
+      security-policy:
+          apparmor: meta/snappyd.profile
+          seccomp: meta/snappyd.seccomp

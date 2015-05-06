@@ -9,15 +9,16 @@ and nodejs and npm installed:
 
 Install global npm modules without sudo:
 
-    cat > ~/.npmrc << EOF
-    root = $HOME/node/lib/node_modules
-    prefix = $HOME/node
-    binroot = $HOME/node/bin
-    manroot = $HOME/node/man
-    EOF
+    cat > ~/.npmrc <<-EOF
+	root = $HOME/node/lib/node_modules
+	prefix = $HOME/node
+	binroot = $HOME/node/bin
+	manroot = $HOME/node/man
+	EOF
 
 Setup the environment:
 
+    mkdir ~/node
     export PATH=$PATH:$HOME/node/bin
     export NODE_PATH=$HOME/node/lib/node_modules
 

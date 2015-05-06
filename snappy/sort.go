@@ -15,30 +15,10 @@
  *
  */
 
-package main
+package snappy
 
-import (
-	"log"
-	"net/http"
-	"os"
-)
+type snapPkgsByName []snapPkg
 
-var logger *log.Logger
-
-const httpAddr string = ":4200"
-
-func init() {
-	logger = log.New(os.Stderr, "Snappy: ", log.Ldate|log.Ltime|log.Lshortfile)
-}
-
-func main() {
-	logger.Println("Connecting to System Bus")
-
-	initURLHandlers(logger)
-
-	logger.Println("Snappy starting...")
-
-	if err := http.ListenAndServe(httpAddr, nil); err != nil {
-		logger.Printf("http.ListendAndServer() failed with %s\n", err)
-	}
-}
+func (s snapPkgsByName) Len() int           { return len(s) }
+func (s snapPkgsByName) Swap(i, j int)      { s[i], s[j] = s[j], s[i] }
+func (s snapPkgsByName) Less(i, j int) bool { return s[i].Name < s[j].Name }
