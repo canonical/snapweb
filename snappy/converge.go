@@ -53,8 +53,8 @@ type response struct {
 }
 
 type listFilter struct {
-	Types         []string `json:"types,omitempty"`
-	InstalledOnly bool     `json:"installed_only"`
+	Types         []string
+	InstalledOnly bool
 }
 
 // for easier stubbing during testing
