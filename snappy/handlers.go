@@ -73,13 +73,13 @@ func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	// Get the Key.
 	vars := mux.Vars(r)
-	pkgName := vars["pkg"]
+	resource := vars["pkg"]
 	enc := json.NewEncoder(w)
 
-	payload, err := h.packagePayload(pkgName)
+	payload, err := h.packagePayload(resource)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		enc.Encode(fmt.Sprintln(err, pkgName))
+		enc.Encode(fmt.Sprintln(err, resource))
 		return
 	}
 
