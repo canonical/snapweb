@@ -18,6 +18,7 @@
 package snappy
 
 import (
+	"sort"
 	"strconv"
 	"strings"
 
@@ -154,6 +155,8 @@ func mergeSnaps(installed, remote []snapPkg, installedOnly bool) []snapPkg {
 	for _, v := range allMap {
 		snapPkgs = append(snapPkgs, *v)
 	}
+
+	sort.Sort(snapPkgsByName(snapPkgs))
 
 	return snapPkgs
 }
