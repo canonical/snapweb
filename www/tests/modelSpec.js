@@ -94,15 +94,14 @@ describe('Snap', function() {
       });
       model.save({
         status: 'installing'
-      }, {
-        dataType: 'html'
       });
       expect(model.save).toHaveBeenCalled();
       expect(model.fetch).not.toHaveBeenCalled();
 
       jasmine.Ajax.requests.mostRecent().respondWith({
         'status': 202,
-        'contentType': 'plain/text'
+        'contentType': 'application/json',
+        'responseText': '{}'
       });
     });
 
@@ -116,15 +115,14 @@ describe('Snap', function() {
       });
       model.save({
         status: 'installing'
-      }, {
-        dataType: 'html'
       });
       expect(model.save).toHaveBeenCalled();
       expect(model.fetch).not.toHaveBeenCalled();
 
       jasmine.Ajax.requests.mostRecent().respondWith({
         'status': 200,
-        'contentType': 'plain/text'
+        'contentType': 'application/json',
+        'responseText': '{}'
       });
     });
   });
