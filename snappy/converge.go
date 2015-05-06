@@ -120,36 +120,38 @@ func (h *Handler) allPackages(installedOnly bool) ([]snapPkg, error) {
 	return mergeSnaps(installedSnapQs, remoteSnapQs, installedOnly), nil
 }
 
-func (h *Handler) doRemovePackage(progress *webprogress.WebProgress, pkgName string) {
+func (h *Handler) doRemovePackage(progress *webprogress.WebProgress, ID string) {
+	pkgName := strings.Split(ID, ".")[0]
+
 	err := snappy.Remove(pkgName, 0, progress)
 	progress.ErrorChan <- err
 	close(progress.ErrorChan)
 }
 
-func (h *Handler) removePackage(pkgName string) error {
-	progress, err := h.statusTracker.Add(pkgName, webprogress.OperationRemove)
+func (h *Handler) removePackage(ID string) error {
+	progress, err := h.statusTracker.Add(ID, webprogress.OperationRemove)
 	if err != nil {
 		return err
 	}
 
-	go h.doRemovePackage(progress, pkgName)
+	go h.doRemovePackage(progress, ID)
 
 	return nil
 }
 
-func (h *Handler) doInstallPackage(progress *webprogress.WebProgress, pkgName string) {
-	_, err := snappy.Install(pkgName, 0, progress)
+func (h *Handler) doInstallPackage(progress *webprogress.WebProgress, ID string) {
+	_, err := snappy.Install(ID, 0, progress)
 	progress.ErrorChan <- err
 	close(progress.ErrorChan)
 }
 
-func (h *Handler) installPackage(pkgName string) error {
-	progress, err := h.statusTracker.Add(pkgName, webprogress.OperationInstall)
+func (h *Handler) installPackage(ID string) error {
+	progress, err := h.statusTracker.Add(ID, webprogress.OperationInstall)
 	if err != nil {
 		return err
 	}
 
-	go h.doInstallPackage(progress, pkgName)
+	go h.doInstallPackage(progress, ID)
 
 	return nil
 }
@@ -233,10 +235,10 @@ func (h *Handler) snapQueryToPayload(snapQ snappy.Part) snapPkg {
 		snap.DownloadSize = snapQ.DownloadSize()
 	}
 
-	if stat, ok := h.statusTracker.Get(snap.Name); ok {
+	if stat, ok := h.statusTracker.Get(snap.ID); ok {
 		snap.Status = stat.Status
 		if stat.Done() {
-			defer h.statusTracker.Remove(snap.Name)
+			defer h.statusTracker.Remove(snap.ID)
 
 			if stat.Error != nil {
 				snap.Message = stat.Error.Error()
