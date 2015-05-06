@@ -32,13 +32,13 @@ import (
 
 // Handler implements snappy's packages api.
 type Handler struct {
-	installStatus *webprogress.Status
+	statusTracker *webprogress.StatusTracker
 }
 
 // NewHandler creates an instance that implements snappy's packages api.
 func NewHandler() *Handler {
 	return &Handler{
-		installStatus: webprogress.New(),
+		statusTracker: webprogress.New(),
 	}
 }
 
@@ -101,28 +101,8 @@ func (h *Handler) add(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	pkgName := vars["pkg"]
 
-	var msg string
-	var status int
-
 	err := h.installPackage(pkgName)
-
-	switch err {
-	case snappy.ErrAlreadyInstalled:
-		status = http.StatusOK
-		msg = "Installed"
-	case webprogress.ErrPackageInstallInProgress:
-		status = http.StatusBadRequest
-		msg = "Installation in progress"
-	case snappy.ErrPackageNotFound:
-		status = http.StatusNotFound
-		msg = "Package not found"
-	case nil:
-		status = http.StatusAccepted
-		msg = "Accepted"
-	default:
-		status = http.StatusInternalServerError
-		msg = "Processing error"
-	}
+	msg, status := respond(err)
 
 	response := response{Message: msg, Package: pkgName}
 	bs, err := json.Marshal(response)
@@ -136,6 +116,51 @@ func (h *Handler) add(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(status)
 	w.Write(bs)
+}
+
+func (h *Handler) remove(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	// Get the Key.
+	vars := mux.Vars(r)
+	pkgName := vars["pkg"]
+
+	err := h.removePackage(pkgName)
+	msg, status := respond(err)
+
+	response := response{Message: msg, Package: pkgName}
+	bs, err := json.Marshal(response)
+	if err != nil {
+		// giving up on json
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "Error: %s", err)
+		log.Print(err)
+		return
+	}
+
+	w.WriteHeader(status)
+	w.Write(bs)
+}
+
+func respond(err error) (msg string, status int) {
+	switch err {
+	case snappy.ErrAlreadyInstalled:
+		status = http.StatusOK
+		msg = "Installed"
+	case webprogress.ErrPackageInstallInProgress:
+		status = http.StatusBadRequest
+		msg = "Operation in progress"
+	case snappy.ErrPackageNotFound:
+		status = http.StatusNotFound
+		msg = "Package not found"
+	case nil:
+		status = http.StatusAccepted
+		msg = "Accepted"
+	default:
+		status = http.StatusInternalServerError
+		msg = "Processing error"
+	}
+
+	return msg, status
 }
 
 // MakeMuxer sets up the handlers multiplexing to handle requests against snappy's
@@ -157,6 +182,9 @@ func (h *Handler) MakeMuxer(prefix string) http.Handler {
 
 	// Add a package
 	m.HandleFunc("/{pkg}", h.add).Methods("PUT")
+
+	// Remove a package
+	m.HandleFunc("/{pkg}", h.remove).Methods("DELETE")
 
 	return m
 }
