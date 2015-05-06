@@ -79,7 +79,6 @@ func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
 	payload, err := h.packagePayload(pkgName)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		//		http.NotFound(w, r)
 		enc.Encode(fmt.Sprintln(err, pkgName))
 		return
 	}
