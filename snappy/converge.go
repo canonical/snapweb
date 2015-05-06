@@ -37,6 +37,7 @@ type snapPkg struct {
 	Icon          string          `json:"icon"`
 	Status        string          `json:"status"`
 	Message       string          `json:"message,omitempty"`
+	IsError       bool            `json:"-"`
 	Progress      float64         `json:"progress,omitempty"`
 	InstalledSize int64           `json:"installed_size,omitempty"`
 	DownloadSize  int64           `json:"download_size,omitempty"`
@@ -113,6 +114,7 @@ func (h *Handler) allPackages(installedOnly bool) ([]snapPkg, error) {
 func (h *Handler) doInstallPackage(progress *webprogress.WebProgress, pkgName string) {
 	_, err := snappy.Install(pkgName, 0, progress)
 	progress.ErrorChan <- err
+	close(progress.ErrorChan)
 }
 
 func (h *Handler) installPackage(pkgName string) error {
@@ -202,6 +204,7 @@ func (h *Handler) snapQueryToPayload(snapQ snappy.Part) snapPkg {
 
 			if stat.Error != nil {
 				snap.Message = stat.Error.Error()
+				snap.IsError = true
 			}
 
 		} else {

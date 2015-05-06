@@ -48,7 +48,6 @@ func NewWebProgress() *WebProgress {
 	}
 
 	go func() {
-		defer close(t.ErrorChan)
 		err := <-t.ErrorChan
 
 		if err != nil {
