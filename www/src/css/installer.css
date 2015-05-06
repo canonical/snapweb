@@ -61,6 +61,6 @@
   transition: right 0.1s;
 }
 
-.b-installer--thinking .b-installer__progress {
+.b-installer--thinking.b-installer--install .b-installer__progress {
   display:block;
 }

@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2014-2015 Canonical Ltd
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3 as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package snappy
 
 import (
@@ -12,11 +29,13 @@ func Test(t *testing.T) { TestingT(t) }
 
 type fakeSnappyPart struct {
 	snappy.Part
-	name      string
-	version   string
-	installed bool
-	icon      string
-	snapType  snappy.SnapType
+	name        string
+	version     string
+	vendor      string
+	description string
+	installed   bool
+	icon        string
+	snapType    snappy.SnapType
 }
 
 type fakeSnappyPartServices struct {
@@ -24,11 +43,22 @@ type fakeSnappyPartServices struct {
 	services []snappy.Service
 }
 
-func newDefaultFake() *fakeSnappyPart {
+func newDefaultFakePart() *fakeSnappyPart {
 	return &fakeSnappyPart{
-		name:      "camlistore.sergiusens",
-		version:   "2.0",
-		installed: true,
+		name:        "camlistore.sergiusens",
+		version:     "2.0",
+		installed:   true,
+		snapType:    snappy.SnapTypeApp,
+		vendor:      "Sergiusens Incorporated",
+		description: "Camlistore",
+	}
+}
+
+func newFakePart(name, version string, installed bool) *fakeSnappyPart {
+	return &fakeSnappyPart{
+		name:      name,
+		version:   version,
+		installed: installed,
 		snapType:  snappy.SnapTypeApp,
 	}
 }
@@ -61,8 +91,28 @@ func (p fakeSnappyPart) IsInstalled() bool {
 	return p.installed
 }
 
+func (p fakeSnappyPart) InstalledSize() int64 {
+	if p.installed {
+		return 30
+	}
+
+	return -1
+}
+
+func (p fakeSnappyPart) DownloadSize() int64 {
+	if !p.installed {
+		return 60
+	}
+
+	return -1
+}
+
 func (p fakeSnappyPart) Name() string {
 	return p.name
+}
+
+func (p fakeSnappyPart) Namespace() string {
+	return "ubuntu"
 }
 
 func (p fakeSnappyPart) Version() string {
@@ -75,6 +125,14 @@ func (p fakeSnappyPart) Type() snappy.SnapType {
 
 func (p fakeSnappyPart) Icon() string {
 	return p.icon
+}
+
+func (p fakeSnappyPart) Vendor() string {
+	return p.vendor
+}
+
+func (p fakeSnappyPart) Description() string {
+	return p.description
 }
 
 func newFakeServicesNoExternalUI() []snappy.Service {

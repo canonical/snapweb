@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2014-2015 Canonical Ltd
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3 as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package snappy
 
 import (
@@ -10,9 +27,14 @@ import (
 )
 
 var (
-	ErrDataPathNotSet    = errors.New("package data path not set")
+	// ErrDataPathNotSet indicates that SNAP_APP_DATA_PATH has not been set by the
+	// launching system.
+	ErrDataPathNotSet = errors.New("package data path not set")
+	// ErrOnIconDataPathSet indicates that there has been an error when setting up
+	// the location where icons are going to be saved.
 	ErrOnIconDataPathSet = errors.New("cannot prepare icon data path")
-	ErrIconNotExist      = errors.New("the icon does not exist")
+	// ErrIconNotExist happens when the package has no icon.
+	ErrIconNotExist = errors.New("the icon does not exist")
 )
 
 func localIconPath(pkgName, iconPath string) (relativePath string, err error) {
@@ -45,6 +67,7 @@ func localIconPath(pkgName, iconPath string) (relativePath string, err error) {
 	return filepath.Join("/", relativePath), nil
 }
 
+// IconDir returns information to properly serve package icons with an http.FileServer
 func IconDir() (dataPath, relativeBasePath string, err error) {
 	dataPath = os.Getenv("SNAP_APP_DATA_PATH")
 	if dataPath == "" {

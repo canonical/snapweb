@@ -1,12 +1,31 @@
+/*
+ * Copyright (C) 2014-2015 Canonical Ltd
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3 as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package webprogress
 
 import "launchpad.net/snappy/progress"
 
 const (
-	StatusInstalled   = "installed"
+	// StatusInstalled indicates the package is in an installed state.
+	StatusInstalled = "installed"
+	// StatusUninstalled indicates the package is in an uninstalled state.
 	StatusUninstalled = "uninstalled"
-	StatusInstalling  = "installing"
-	StatusUnknown     = "unknown"
+	// StatusInstalling indicates the package is in an installing state.
+	StatusInstalling = "installing"
 )
 
 // WebProgress show progress on the terminal
@@ -29,7 +48,6 @@ func NewWebProgress() *WebProgress {
 	}
 
 	go func() {
-		defer close(t.ErrorChan)
 		err := <-t.ErrorChan
 
 		if err != nil {
