@@ -21,7 +21,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"sort"
 
 	. "gopkg.in/check.v1"
 	"launchpad.net/snappy/snappy"
@@ -134,7 +133,6 @@ func (s *MergeSuite) TestManyInstalledAndNoRemote(c *C) {
 	}
 
 	snaps := mergeSnaps(installed, nil, true)
-	sort.Sort(snapPkgsByName(snaps))
 
 	c.Assert(snaps, HasLen, 3)
 	c.Assert(snaps[0].Name, Equals, "app1.canonical")
@@ -165,7 +163,6 @@ func (s *MergeSuite) TestManyInstalledAndManyRemotes(c *C) {
 
 	// Only installed
 	snaps := mergeSnaps(installed, remotes, true)
-	sort.Sort(snapPkgsByName(snaps))
 
 	c.Assert(snaps, HasLen, 3)
 	c.Check(snaps[0].Name, Equals, "app1.canonical")
@@ -188,7 +185,6 @@ func (s *MergeSuite) TestManyInstalledAndManyRemotes(c *C) {
 
 	// Installed and remotes
 	snaps = mergeSnaps(installed, remotes, false)
-	sort.Sort(snapPkgsByName(snaps))
 
 	c.Assert(snaps, HasLen, 4)
 	c.Check(snaps[0].Name, Equals, "app1.canonical")
@@ -233,7 +229,6 @@ func (s *MergeSuite) TestManyInstalledAndManyRemotesSomeInstalling(c *C) {
 
 	// Installed and remotes
 	snaps := mergeSnaps(installed, remotes, false)
-	sort.Sort(snapPkgsByName(snaps))
 
 	c.Assert(snaps, HasLen, 5)
 	c.Check(snaps[0].Name, Equals, "app1.canonical")
