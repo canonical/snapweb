@@ -31,6 +31,8 @@ type snapPkg struct {
 	Name          string          `json:"name"`
 	Origin        string          `json:"origin"`
 	Version       string          `json:"version"`
+	Vendor        string          `json:"vendor"`
+	Description   string          `json:"description"`
 	Icon          string          `json:"icon"`
 	Status        string          `json:"status"`
 	Message       string          `json:"message,omitempty"`
@@ -160,10 +162,12 @@ func hasPortInformation(snap snappy.Part) bool {
 
 func (h *Handler) snapQueryToPayload(snapQ snappy.Part) snapPkg {
 	snap := snapPkg{
-		Name:    snapQ.Name(),
-		Origin:  snapQ.Namespace(),
-		Version: snapQ.Version(),
-		Type:    snapQ.Type(),
+		Name:        snapQ.Name(),
+		Origin:      snapQ.Namespace(),
+		Version:     snapQ.Version(),
+		Vendor:      snapQ.Vendor(),
+		Description: snapQ.Description(),
+		Type:        snapQ.Type(),
 	}
 
 	if hasPortInformation(snapQ) {
