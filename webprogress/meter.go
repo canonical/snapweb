@@ -98,7 +98,7 @@ func NewWebProgress(op Operation) *WebProgress {
 }
 
 // Start starts showing progress
-func (t *WebProgress) Start(total float64) {
+func (t *WebProgress) Start(pkgName string, total float64) {
 	t.total = total
 }
 
