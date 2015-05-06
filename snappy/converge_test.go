@@ -21,7 +21,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"sort"
 
 	. "gopkg.in/check.v1"
 	"launchpad.net/snappy/snappy"
@@ -36,7 +35,7 @@ var _ = Suite(&PayloadSuite{})
 
 func (s *PayloadSuite) SetUpTest(c *C) {
 	os.Setenv("SNAP_APP_DATA_PATH", c.MkDir())
-	s.h.installStatus = webprogress.New()
+	s.h.statusTracker = webprogress.New()
 }
 
 func (s *PayloadSuite) TestPayloadWithNoServices(c *C) {
@@ -107,7 +106,7 @@ var _ = Suite(&MergeSuite{})
 
 func (s *MergeSuite) SetUpTest(c *C) {
 	os.Setenv("SNAP_APP_DATA_PATH", c.MkDir())
-	s.h.installStatus = webprogress.New()
+	s.h.statusTracker = webprogress.New()
 }
 
 func (s *MergeSuite) TestOneInstalledAndNoRemote(c *C) {
@@ -134,7 +133,6 @@ func (s *MergeSuite) TestManyInstalledAndNoRemote(c *C) {
 	}
 
 	snaps := mergeSnaps(installed, nil, true)
-	sort.Sort(snapPkgsByName(snaps))
 
 	c.Assert(snaps, HasLen, 3)
 	c.Assert(snaps[0].Name, Equals, "app1.canonical")
@@ -165,7 +163,6 @@ func (s *MergeSuite) TestManyInstalledAndManyRemotes(c *C) {
 
 	// Only installed
 	snaps := mergeSnaps(installed, remotes, true)
-	sort.Sort(snapPkgsByName(snaps))
 
 	c.Assert(snaps, HasLen, 3)
 	c.Check(snaps[0].Name, Equals, "app1.canonical")
@@ -188,7 +185,6 @@ func (s *MergeSuite) TestManyInstalledAndManyRemotes(c *C) {
 
 	// Installed and remotes
 	snaps = mergeSnaps(installed, remotes, false)
-	sort.Sort(snapPkgsByName(snaps))
 
 	c.Assert(snaps, HasLen, 4)
 	c.Check(snaps[0].Name, Equals, "app1.canonical")
@@ -217,7 +213,7 @@ func (s *MergeSuite) TestManyInstalledAndManyRemotes(c *C) {
 }
 
 func (s *MergeSuite) TestManyInstalledAndManyRemotesSomeInstalling(c *C) {
-	s.h.installStatus.Add("app4.ubuntu")
+	s.h.statusTracker.Add("app4.ubuntu", webprogress.OperationInstall)
 
 	installed := []snapPkg{
 		s.h.snapQueryToPayload(newFakePart("app1.canonical", "1.0", true)),
@@ -233,7 +229,6 @@ func (s *MergeSuite) TestManyInstalledAndManyRemotesSomeInstalling(c *C) {
 
 	// Installed and remotes
 	snaps := mergeSnaps(installed, remotes, false)
-	sort.Sort(snapPkgsByName(snaps))
 
 	c.Assert(snaps, HasLen, 5)
 	c.Check(snaps[0].Name, Equals, "app1.canonical")
