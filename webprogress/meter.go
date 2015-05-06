@@ -81,7 +81,16 @@ func NewWebProgress(op Operation) *WebProgress {
 			t.Status = StatusUninstalled
 			t.Error = err
 		} else {
-			t.Status = StatusInstalled
+			var status Status
+			switch op {
+			case OperationInstall:
+				status = StatusInstalled
+			case OperationRemove:
+				status = StatusUninstalled
+			default:
+				panic("Not a valid Operation")
+			}
+			t.Status = status
 		}
 	}()
 
