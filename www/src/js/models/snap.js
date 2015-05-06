@@ -29,10 +29,6 @@ module.exports = Backbone.Model.extend({
 
   initialize: function() {
 
-    this.on('error', function(model, response, opts) {
-      var httpStatus = opts.xhr.status;
-    });
-
     this.on('add sync', function(model, response, opts) {
       var status = model.get('status') || opts.xhr.status;
 
