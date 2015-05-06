@@ -29,11 +29,13 @@ func Test(t *testing.T) { TestingT(t) }
 
 type fakeSnappyPart struct {
 	snappy.Part
-	name      string
-	version   string
-	installed bool
-	icon      string
-	snapType  snappy.SnapType
+	name        string
+	version     string
+	vendor      string
+	description string
+	installed   bool
+	icon        string
+	snapType    snappy.SnapType
 }
 
 type fakeSnappyPartServices struct {
@@ -43,10 +45,12 @@ type fakeSnappyPartServices struct {
 
 func newDefaultFakePart() *fakeSnappyPart {
 	return &fakeSnappyPart{
-		name:      "camlistore.sergiusens",
-		version:   "2.0",
-		installed: true,
-		snapType:  snappy.SnapTypeApp,
+		name:        "camlistore.sergiusens",
+		version:     "2.0",
+		installed:   true,
+		snapType:    snappy.SnapTypeApp,
+		vendor:      "Sergiusens Incorporated",
+		description: "Camlistore",
 	}
 }
 
@@ -121,6 +125,14 @@ func (p fakeSnappyPart) Type() snappy.SnapType {
 
 func (p fakeSnappyPart) Icon() string {
 	return p.icon
+}
+
+func (p fakeSnappyPart) Vendor() string {
+	return p.vendor
+}
+
+func (p fakeSnappyPart) Description() string {
+	return p.description
 }
 
 func newFakeServicesNoExternalUI() []snappy.Service {
