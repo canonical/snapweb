@@ -23,6 +23,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strings"
 
 	"launchpad.net/snappy/snappy"
 	"launchpad.net/webdm/webprogress"
@@ -42,12 +43,24 @@ func NewHandler() *Handler {
 	}
 }
 
+func installedOnly(v string) bool {
+	return v == "true"
+}
+
+func types(v string) []string {
+	return strings.Split(v, ",")
+}
+
 func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(w)
 	dec := json.NewDecoder(r.Body)
 
-	var filter listFilter
+	filter := listFilter{
+		InstalledOnly: installedOnly(r.FormValue("installed_only")),
+		Types:         types(r.FormValue("types")),
+	}
+
 	if err := dec.Decode(&filter); err != nil && err != io.EOF {
 		w.WriteHeader(http.StatusInternalServerError)
 		enc.Encode(fmt.Sprintf("Error: %s", err))
