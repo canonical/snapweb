@@ -2,14 +2,12 @@
 var _ = require('lodash');
 var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
-var Radio = require('backbone.radio');
 var SnapMenuView = require('./snap-menu.js');
 var SnapDetailView = require('./snap-detail.js');
 var SnapReviewsView = require('./snap-reviews.js');
 var SnapSettingsView = require('./snap-settings.js');
 var template = require('../templates/snap-layout.hbs');
 var CONF = require('../config.js');
-var chan = Radio.channel('root');
 
 module.exports = Marionette.LayoutView.extend({
 
@@ -19,9 +17,6 @@ module.exports = Marionette.LayoutView.extend({
     );
     this.listenTo(
       this.model, 'change:status', this.onModelStatusChange
-    );
-    this.listenTo(
-      this.model, 'change:message', this.onModelError
     );
     this.listenTo(
       this.model, 'change:progress', this.onProgressChange
@@ -40,10 +35,6 @@ module.exports = Marionette.LayoutView.extend({
       progress = (100 - (model.get('progress') | 0)) + '%';
       this.ui.installerProgress.css('right', progress);
     }
-  },
-
-  onModelError: function(model) {
-    chan.command('alert:error', model);
   },
 
   onModelHTMLClassChange: function(model) {

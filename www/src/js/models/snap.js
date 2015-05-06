@@ -2,7 +2,9 @@
 
 var _ = require('lodash');
 var Backbone = require('backbone');
+var Radio = require('backbone.radio');
 var CONF = require('../config.js');
+var chan = Radio.channel('root');
 
 /** Snap Model
  *
@@ -32,9 +34,10 @@ module.exports = Backbone.Model.extend({
     this.on('add sync', function(model, response, opts) {
       var status = model.get('status') || opts.xhr.status;
 
-      if (status === 202 ||
-          status === CONF.INSTALL_STATE.INSTALLING ||
-          status === CONF.INSTALL_STATE.UNINSTALLING) {
+      if (
+        status === CONF.INSTALL_STATE.INSTALLING ||
+        status === CONF.INSTALL_STATE.UNINSTALLING
+      ) {
         _.delay(function(model) {
           model.fetch();
         }, CONF.INSTALL_POLL_WAIT, model);
@@ -43,14 +46,17 @@ module.exports = Backbone.Model.extend({
     });
 
     this.on('error', function(model, response, opts) {
-      var status = model.get('status') || opts.xhr.status;
-      model.set({
-        'status': model.previous('status'),
-        'message': response.statusText
-      });
+      this.set(this.parse(response.responseJSON));
+      chan.command('alert:error', model);
     });
 
+    this.on('change:message', this.onMessageChange);
+
     this.on('add change:status', this.handleStatusChange);
+  },
+
+  onMessageChange: function(model) {
+    console.log('message:', model.get('message'));
   },
 
   handleStatusChange: function(model) {
