@@ -83,6 +83,10 @@ func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if payload.IsError {
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+
 	if err := enc.Encode(payload); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		// give up on json
