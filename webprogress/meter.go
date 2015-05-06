@@ -36,11 +36,11 @@ const (
 	// StatusInstalled indicates the package is in an installed state.
 	StatusInstalled Status = "installed"
 	// StatusUninstalled indicates the package is in an uninstalled state.
-	StatusUninstalled = "uninstalled"
+	StatusUninstalled Status = "uninstalled"
 	// StatusInstalling indicates the package is in an installing state.
-	StatusInstalling = "installing"
+	StatusInstalling Status = "installing"
 	// StatusUninstalling indicates the package is in an uninstalling state.
-	StatusUninstalling = "uninstalling"
+	StatusUninstalling Status = "uninstalling"
 )
 
 // WebProgress show progress on the terminal
