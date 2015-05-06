@@ -9,7 +9,7 @@ var rootChannel = Radio.channel('root');
 
 module.exports = {
   snap: function(name, section) {
-    var snap = new Snap({name: name});
+    var snap = new Snap({id: id});
 
     snap.fetch({
       success: function(snap) {
@@ -28,7 +28,7 @@ module.exports = {
 };
 
 snapChannel.comply('show', function(model) {
-  var name = model.get('name');
+  var name = model.get('id');
   var url = 'snap/' + name + '/';
   var view =  new SnapLayoutView({
     model: model
