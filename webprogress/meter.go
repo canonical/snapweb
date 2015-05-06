@@ -19,13 +19,28 @@ package webprogress
 
 import "launchpad.net/snappy/progress"
 
+// Operation indicates the desired operation to perform
+type Operation uint
+
+const (
+	// OperationInstall indicates that a package needs installing
+	OperationInstall Operation = iota
+	// OperationRemove indicates that a package needs uninstalling
+	OperationRemove
+)
+
+// Status indicates the status a package is in.
+type Status string
+
 const (
 	// StatusInstalled indicates the package is in an installed state.
-	StatusInstalled = "installed"
+	StatusInstalled Status = "installed"
 	// StatusUninstalled indicates the package is in an uninstalled state.
 	StatusUninstalled = "uninstalled"
 	// StatusInstalling indicates the package is in an installing state.
 	StatusInstalling = "installing"
+	// StatusUninstalling indicates the package is in an uninstalling state.
+	StatusUninstalling = "uninstalling"
 )
 
 // WebProgress show progress on the terminal
@@ -33,18 +48,30 @@ type WebProgress struct {
 	progress.Meter
 	total               float64
 	current             float64
-	Status              string
+	Status              Status
 	statusMessage       string
 	notificationMessage string
 	Error               error
 	ErrorChan           chan error
+	operation           Operation
 }
 
 // NewWebProgress returns a new WebProgress type
-func NewWebProgress() *WebProgress {
+func NewWebProgress(op Operation) *WebProgress {
+	var status Status
+	switch op {
+	case OperationInstall:
+		status = StatusInstalling
+	case OperationRemove:
+		status = StatusUninstalling
+	default:
+		panic("Not a valid Operation")
+	}
+
 	t := &WebProgress{
 		ErrorChan: make(chan error),
-		Status:    StatusInstalling,
+		Status:    status,
+		operation: op,
 	}
 
 	go func() {
@@ -64,7 +91,6 @@ func NewWebProgress() *WebProgress {
 // Start starts showing progress
 func (t *WebProgress) Start(total float64) {
 	t.total = total
-	t.Status = StatusInstalling
 }
 
 // Set sets the progress to the current value

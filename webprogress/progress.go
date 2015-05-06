@@ -28,19 +28,19 @@ var (
 	ErrPackageInstallInProgress = errors.New("package installion in progress")
 )
 
-// Status holds the state of all operations that require progress information.
-type Status struct {
+// StatusTracker holds the state of all operations that require progress information.
+type StatusTracker struct {
 	status map[string]*WebProgress
 	l      sync.Mutex
 }
 
 // New creates a new Status.
-func New() *Status {
-	return &Status{status: make(map[string]*WebProgress)}
+func New() *StatusTracker {
+	return &StatusTracker{status: make(map[string]*WebProgress)}
 }
 
 // Add add pkg to the list of progresses to track, it is idempotent
-func (i *Status) Add(pkg string) (*WebProgress, error) {
+func (i *StatusTracker) Add(pkg string, op Operation) (*WebProgress, error) {
 	i.l.Lock()
 	defer i.l.Unlock()
 
@@ -48,14 +48,14 @@ func (i *Status) Add(pkg string) (*WebProgress, error) {
 		return nil, ErrPackageInstallInProgress
 	}
 
-	i.status[pkg] = NewWebProgress()
+	i.status[pkg] = NewWebProgress(op)
 
 	return i.status[pkg], nil
 }
 
 // Remove removes pkg to the list of progresses to track, it is a no op
 // to remove multiple times.
-func (i *Status) Remove(pkg string) {
+func (i *StatusTracker) Remove(pkg string) {
 	i.l.Lock()
 	defer i.l.Unlock()
 
@@ -63,7 +63,7 @@ func (i *Status) Remove(pkg string) {
 }
 
 // Get returns a *WebProgress corresponding to pkg or nil if not tracked.
-func (i *Status) Get(pkg string) (*WebProgress, bool) {
+func (i *StatusTracker) Get(pkg string) (*WebProgress, bool) {
 	i.l.Lock()
 	defer i.l.Unlock()
 
