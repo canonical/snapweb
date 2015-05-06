@@ -35,7 +35,7 @@ var _ = Suite(&PayloadSuite{})
 
 func (s *PayloadSuite) SetUpTest(c *C) {
 	os.Setenv("SNAP_APP_DATA_PATH", c.MkDir())
-	s.h.installStatus = webprogress.New()
+	s.h.statusTracker = webprogress.New()
 }
 
 func (s *PayloadSuite) TestPayloadWithNoServices(c *C) {
@@ -106,7 +106,7 @@ var _ = Suite(&MergeSuite{})
 
 func (s *MergeSuite) SetUpTest(c *C) {
 	os.Setenv("SNAP_APP_DATA_PATH", c.MkDir())
-	s.h.installStatus = webprogress.New()
+	s.h.statusTracker = webprogress.New()
 }
 
 func (s *MergeSuite) TestOneInstalledAndNoRemote(c *C) {
@@ -213,7 +213,7 @@ func (s *MergeSuite) TestManyInstalledAndManyRemotes(c *C) {
 }
 
 func (s *MergeSuite) TestManyInstalledAndManyRemotesSomeInstalling(c *C) {
-	s.h.installStatus.Add("app4.ubuntu")
+	s.h.statusTracker.Add("app4.ubuntu", webprogress.OperationInstall)
 
 	installed := []snapPkg{
 		s.h.snapQueryToPayload(newFakePart("app1.canonical", "1.0", true)),
