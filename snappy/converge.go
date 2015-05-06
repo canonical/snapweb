@@ -113,12 +113,15 @@ func (h *Handler) allPackages(filter *listFilter) ([]snapPkg, error) {
 		if alias := remote.Alias; alias != nil {
 			remoteSnapQs = append(remoteSnapQs, h.snapQueryToPayload(alias))
 		} else {
-			for _, part := range remote.Parts {
-				if !typeFilter(string(part.Type())) {
-					continue
+			/*
+				// reinstate this when the name/namespace mess stops.
+				for _, part := range remote.Parts {
+					if !typeFilter(string(part.Type())) {
+						continue
+					}
+					remoteSnapQs = append(remoteSnapQs, h.snapQueryToPayload(part))
 				}
-				remoteSnapQs = append(remoteSnapQs, h.snapQueryToPayload(part))
-			}
+			*/
 		}
 	}
 
