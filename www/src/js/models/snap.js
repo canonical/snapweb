@@ -25,8 +25,6 @@ module.exports = Backbone.Model.extend({
 
   urlRoot: CONF.PACKAGES,
 
-  idAttribute: 'name',
-
   initialize: function() {
 
     this.on('error', function(model, response, opts) {

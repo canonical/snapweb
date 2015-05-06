@@ -29,8 +29,10 @@ import (
 )
 
 type snapPkg struct {
+	ID            string             `json:"id"`
 	Name          string             `json:"name"`
 	Origin        string             `json:"origin"`
+	Resource      string             `json:"resource"`
 	Version       string             `json:"version"`
 	Vendor        string             `json:"vendor"`
 	Description   string             `json:"description"`
@@ -59,14 +61,25 @@ type listFilter struct {
 // for easier stubbing during testing
 var activeSnapByName = snappy.ActiveSnapByName
 
-func (h *Handler) packagePayload(pkgName string) (snapPkg, error) {
+func (h *Handler) packagePayload(resource string) (snapPkg, error) {
+	var pkgName, namespace string
+	if s := strings.Split(resource, "."); len(s) == 2 {
+		pkgName = s[0]
+		namespace = s[1]
+	} else {
+		pkgName = resource
+	}
+
 	snapQ := activeSnapByName(pkgName)
 	if snapQ != nil {
-		return h.snapQueryToPayload(snapQ), nil
+		// the second check is for locally installed snaps that lose their origin.
+		if snapQ.Namespace() == namespace || snapQ.Type() != snappy.SnapTypeApp {
+			return h.snapQueryToPayload(snapQ), nil
+		}
 	}
 
 	mStore := snappy.NewMetaStoreRepository()
-	found, err := mStore.Details(pkgName)
+	found, err := mStore.Details(resource)
 	if err == nil && len(found) != 0 {
 		return h.snapQueryToPayload(found[0]), nil
 	}
@@ -99,12 +112,9 @@ func (h *Handler) allPackages(installedOnly bool) ([]snapPkg, error) {
 		if alias := remote.Alias; alias != nil {
 			remoteSnapQs = append(remoteSnapQs, h.snapQueryToPayload(alias))
 		} else {
-			/*
-				TODO reenable once we can filter by type
-				for _, part := range remote.Parts {
-					remoteSnapQs = append(remoteSnapQs, h.snapQueryToPayload(part))
-				}
-			*/
+			for _, part := range remote.Parts {
+				remoteSnapQs = append(remoteSnapQs, h.snapQueryToPayload(part))
+			}
 		}
 	}
 
@@ -178,6 +188,10 @@ func mergeSnaps(installed, remote []snapPkg, installedOnly bool) []snapPkg {
 	return snapPkgs
 }
 
+func isNamespaceless(snap snappy.Part) bool {
+	return snap.Type() == snappy.SnapTypeOem || snap.Type() == snappy.SnapTypeFramework
+}
+
 func hasPortInformation(snap snappy.Part) bool {
 	return snap.Type() == snappy.SnapTypeApp || snap.Type() == snappy.SnapTypeFramework
 }
@@ -190,6 +204,12 @@ func (h *Handler) snapQueryToPayload(snapQ snappy.Part) snapPkg {
 		Vendor:      snapQ.Vendor(),
 		Description: snapQ.Description(),
 		Type:        snapQ.Type(),
+	}
+
+	if isNamespaceless(snapQ) {
+		snap.ID = snapQ.Name()
+	} else {
+		snap.ID = snapQ.Name() + "." + snapQ.Namespace()
 	}
 
 	if hasPortInformation(snapQ) {
