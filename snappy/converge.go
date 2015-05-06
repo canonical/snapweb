@@ -32,7 +32,6 @@ type snapPkg struct {
 	ID            string             `json:"id"`
 	Name          string             `json:"name"`
 	Origin        string             `json:"origin"`
-	Resource      string             `json:"resource"`
 	Version       string             `json:"version"`
 	Vendor        string             `json:"vendor"`
 	Description   string             `json:"description"`
