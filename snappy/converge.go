@@ -222,7 +222,7 @@ func (h *Handler) snapQueryToPayload(snapQ snappy.Part) snapPkg {
 	}
 
 	if snapQ.IsInstalled() {
-		iconPath, err := localIconPath(snapQ.Name(), snapQ.Icon())
+		iconPath, err := localIconPath(snap.ID, snapQ.Icon())
 		if err != nil {
 			log.Println("Icon path for installed package cannot be set", err)
 			iconPath = ""
