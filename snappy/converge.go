@@ -30,21 +30,21 @@ import (
 )
 
 type snapPkg struct {
-	Name          string          `json:"name"`
-	Origin        string          `json:"origin"`
-	Version       string          `json:"version"`
-	Vendor        string          `json:"vendor"`
-	Description   string          `json:"description"`
-	Icon          string          `json:"icon"`
-	Status        string          `json:"status"`
-	Message       string          `json:"message,omitempty"`
-	IsError       bool            `json:"-"`
-	Progress      float64         `json:"progress,omitempty"`
-	InstalledSize int64           `json:"installed_size,omitempty"`
-	DownloadSize  int64           `json:"download_size,omitempty"`
-	Type          snappy.SnapType `json:"type,omitempty"`
-	UIPort        uint64          `json:"ui_port,omitempty"`
-	UIUri         string          `json:"ui_uri,omitempty"`
+	Name          string             `json:"name"`
+	Origin        string             `json:"origin"`
+	Version       string             `json:"version"`
+	Vendor        string             `json:"vendor"`
+	Description   string             `json:"description"`
+	Icon          string             `json:"icon"`
+	Status        webprogress.Status `json:"status"`
+	Message       string             `json:"message,omitempty"`
+	IsError       bool               `json:"-"`
+	Progress      float64            `json:"progress,omitempty"`
+	InstalledSize int64              `json:"installed_size,omitempty"`
+	DownloadSize  int64              `json:"download_size,omitempty"`
+	Type          snappy.SnapType    `json:"type,omitempty"`
+	UIPort        uint64             `json:"ui_port,omitempty"`
+	UIUri         string             `json:"ui_uri,omitempty"`
 }
 
 type response struct {
@@ -128,6 +128,23 @@ func (h *Handler) allPackages(filter *listFilter) ([]snapPkg, error) {
 	return mergeSnaps(installedSnapQs, remoteSnapQs, filter.InstalledOnly), nil
 }
 
+func (h *Handler) doRemovePackage(progress *webprogress.WebProgress, pkgName string) {
+	err := snappy.Remove(pkgName, 0, progress)
+	progress.ErrorChan <- err
+	close(progress.ErrorChan)
+}
+
+func (h *Handler) removePackage(pkgName string) error {
+	progress, err := h.statusTracker.Add(pkgName, webprogress.OperationRemove)
+	if err != nil {
+		return err
+	}
+
+	go h.doRemovePackage(progress, pkgName)
+
+	return nil
+}
+
 func (h *Handler) doInstallPackage(progress *webprogress.WebProgress, pkgName string) {
 	_, err := snappy.Install(pkgName, 0, progress)
 	progress.ErrorChan <- err
@@ -135,7 +152,7 @@ func (h *Handler) doInstallPackage(progress *webprogress.WebProgress, pkgName st
 }
 
 func (h *Handler) installPackage(pkgName string) error {
-	progress, err := h.installStatus.Add(pkgName)
+	progress, err := h.statusTracker.Add(pkgName, webprogress.OperationInstall)
 	if err != nil {
 		return err
 	}
@@ -214,10 +231,10 @@ func (h *Handler) snapQueryToPayload(snapQ snappy.Part) snapPkg {
 		snap.DownloadSize = snapQ.DownloadSize()
 	}
 
-	if stat, ok := h.installStatus.Get(snap.Name); ok {
+	if stat, ok := h.statusTracker.Get(snap.Name); ok {
 		snap.Status = stat.Status
 		if stat.Done() {
-			defer h.installStatus.Remove(snap.Name)
+			defer h.statusTracker.Remove(snap.Name)
 
 			if stat.Error != nil {
 				snap.Message = stat.Error.Error()
