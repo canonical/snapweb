@@ -18,6 +18,7 @@
 package snappy
 
 import (
+	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -86,7 +87,7 @@ func (h *Handler) packagePayload(resource string) (snapPkg, error) {
 	return snapPkg{}, snappy.ErrPackageNotFound
 }
 
-func (h *Handler) allPackages(installedOnly bool) ([]snapPkg, error) {
+func (h *Handler) allPackages(filter *listFilter) ([]snapPkg, error) {
 	mLocal := snappy.NewMetaLocalRepository()
 
 	installedSnaps, err := mLocal.Installed()
@@ -94,8 +95,21 @@ func (h *Handler) allPackages(installedOnly bool) ([]snapPkg, error) {
 		return nil, err
 	}
 
+	typeFilter := func(string) bool { return true }
+
+	if len(filter.Types) != 0 {
+		regex, err := regexp.Compile("^(?:" + strings.Join(filter.Types, "|") + ")")
+		if err != nil {
+			return nil, err
+		}
+		typeFilter = regex.MatchString
+	}
+
 	installedSnapQs := make([]snapPkg, 0, len(installedSnaps))
 	for i := range installedSnaps {
+		if !typeFilter(string(installedSnaps[i].Type())) {
+			continue
+		}
 		installedSnapQs = append(installedSnapQs, h.snapQueryToPayload(installedSnaps[i]))
 	}
 
@@ -109,15 +123,21 @@ func (h *Handler) allPackages(installedOnly bool) ([]snapPkg, error) {
 
 	for _, remote := range remoteSnaps {
 		if alias := remote.Alias; alias != nil {
+			if !typeFilter(string(alias.Type())) {
+				continue
+			}
 			remoteSnapQs = append(remoteSnapQs, h.snapQueryToPayload(alias))
 		} else {
 			for _, part := range remote.Parts {
+				if !typeFilter(string(part.Type())) {
+					continue
+				}
 				remoteSnapQs = append(remoteSnapQs, h.snapQueryToPayload(part))
 			}
 		}
 	}
 
-	return mergeSnaps(installedSnapQs, remoteSnapQs, installedOnly), nil
+	return mergeSnaps(installedSnapQs, remoteSnapQs, filter.InstalledOnly), nil
 }
 
 func (h *Handler) doRemovePackage(progress *webprogress.WebProgress, ID string) {

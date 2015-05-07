@@ -67,7 +67,7 @@ func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	payload, err := h.allPackages(filter.InstalledOnly)
+	payload, err := h.allPackages(&filter)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		enc.Encode(fmt.Sprintf("Error: %s", err))
