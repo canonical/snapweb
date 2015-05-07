@@ -111,13 +111,13 @@ func (s *MergeSuite) SetUpTest(c *C) {
 
 func (s *MergeSuite) TestOneInstalledAndNoRemote(c *C) {
 	installed := []snapPkg{
-		s.h.snapQueryToPayload(newFakePart("app1.canonical", "1.0", true)),
+		s.h.snapQueryToPayload(newFakePart("app1", "canonical", "1.0", true)),
 	}
 
 	snaps := mergeSnaps(installed, nil, true)
 
 	c.Assert(snaps, HasLen, 1)
-	c.Assert(snaps[0].Name, Equals, "app1.canonical")
+	c.Assert(snaps[0].Name, Equals, "app1")
 	c.Assert(snaps[0].Version, Equals, "1.0")
 	c.Assert(snaps[0].Status, Equals, webprogress.StatusInstalled)
 
@@ -127,57 +127,60 @@ func (s *MergeSuite) TestOneInstalledAndNoRemote(c *C) {
 
 func (s *MergeSuite) TestManyInstalledAndNoRemote(c *C) {
 	installed := []snapPkg{
-		s.h.snapQueryToPayload(newFakePart("app1.canonical", "1.0", true)),
-		s.h.snapQueryToPayload(newFakePart("app2.canonical", "2.0", true)),
-		s.h.snapQueryToPayload(newFakePart("app3.canonical", "3.0", true)),
+		s.h.snapQueryToPayload(newFakePart("app1", "canonical", "1.0", true)),
+		s.h.snapQueryToPayload(newFakePart("app2", "canonical", "2.0", true)),
+		s.h.snapQueryToPayload(newFakePart("app3", "canonical", "3.0", true)),
 	}
 
 	snaps := mergeSnaps(installed, nil, true)
 
 	c.Assert(snaps, HasLen, 3)
-	c.Assert(snaps[0].Name, Equals, "app1.canonical")
+	c.Assert(snaps[0].Name, Equals, "app1")
 	c.Assert(snaps[0].Version, Equals, "1.0")
 	c.Assert(snaps[0].Status, Equals, webprogress.StatusInstalled)
 
-	c.Assert(snaps[1].Name, Equals, "app2.canonical")
+	c.Assert(snaps[1].Name, Equals, "app2")
 	c.Assert(snaps[1].Version, Equals, "2.0")
 	c.Assert(snaps[1].Status, Equals, webprogress.StatusInstalled)
 
-	c.Assert(snaps[2].Name, Equals, "app3.canonical")
+	c.Assert(snaps[2].Name, Equals, "app3")
 	c.Assert(snaps[2].Version, Equals, "3.0")
 	c.Assert(snaps[2].Status, Equals, webprogress.StatusInstalled)
 }
 
 func (s *MergeSuite) TestManyInstalledAndManyRemotes(c *C) {
 	installed := []snapPkg{
-		s.h.snapQueryToPayload(newFakePart("app1.canonical", "1.0", true)),
-		s.h.snapQueryToPayload(newFakePart("app2.canonical", "2.0", true)),
-		s.h.snapQueryToPayload(newFakePart("app3.canonical", "3.0", true)),
+		s.h.snapQueryToPayload(newFakePart("app1", "canonical", "1.0", true)),
+		s.h.snapQueryToPayload(newFakePart("app2", "canonical", "2.0", true)),
+		s.h.snapQueryToPayload(newFakePart("app3", "canonical", "3.0", true)),
 	}
 
 	remotes := []snapPkg{
-		s.h.snapQueryToPayload(newFakePart("app1.canonical", "1.0", false)),
-		s.h.snapQueryToPayload(newFakePart("app2.canonical", "2.0", false)),
-		s.h.snapQueryToPayload(newFakePart("app3.ubuntu", "3.0", false)),
+		s.h.snapQueryToPayload(newFakePart("app1", "canonical", "1.0", false)),
+		s.h.snapQueryToPayload(newFakePart("app2", "canonical", "2.0", false)),
+		s.h.snapQueryToPayload(newFakePart("app4", "ubuntu", "3.0", false)),
 	}
 
 	// Only installed
 	snaps := mergeSnaps(installed, remotes, true)
 
 	c.Assert(snaps, HasLen, 3)
-	c.Check(snaps[0].Name, Equals, "app1.canonical")
+	c.Check(snaps[0].Name, Equals, "app1")
+	c.Check(snaps[0].Origin, Equals, "canonical")
 	c.Check(snaps[0].Version, Equals, "1.0")
 	c.Check(snaps[0].Status, Equals, webprogress.StatusInstalled)
 	c.Check(snaps[0].InstalledSize, Equals, int64(30))
 	c.Check(snaps[0].DownloadSize, Equals, int64(0))
 
-	c.Check(snaps[1].Name, Equals, "app2.canonical")
+	c.Check(snaps[1].Name, Equals, "app2")
+	c.Check(snaps[1].Origin, Equals, "canonical")
 	c.Check(snaps[1].Version, Equals, "2.0")
 	c.Check(snaps[1].Status, Equals, webprogress.StatusInstalled)
 	c.Check(snaps[1].InstalledSize, Equals, int64(30))
 	c.Check(snaps[1].DownloadSize, Equals, int64(0))
 
-	c.Check(snaps[2].Name, Equals, "app3.canonical")
+	c.Check(snaps[2].Name, Equals, "app3")
+	c.Check(snaps[0].Origin, Equals, "canonical")
 	c.Check(snaps[2].Version, Equals, "3.0")
 	c.Check(snaps[2].Status, Equals, webprogress.StatusInstalled)
 	c.Check(snaps[2].InstalledSize, Equals, int64(30))
@@ -187,25 +190,29 @@ func (s *MergeSuite) TestManyInstalledAndManyRemotes(c *C) {
 	snaps = mergeSnaps(installed, remotes, false)
 
 	c.Assert(snaps, HasLen, 4)
-	c.Check(snaps[0].Name, Equals, "app1.canonical")
+	c.Check(snaps[0].Name, Equals, "app1")
+	c.Check(snaps[0].Origin, Equals, "canonical")
 	c.Check(snaps[0].Version, Equals, "1.0")
 	c.Check(snaps[0].Status, Equals, webprogress.StatusInstalled)
 	c.Check(snaps[0].InstalledSize, Equals, int64(30))
 	c.Check(snaps[0].DownloadSize, Equals, int64(0))
 
-	c.Check(snaps[1].Name, Equals, "app2.canonical")
+	c.Check(snaps[1].Name, Equals, "app2")
+	c.Check(snaps[1].Origin, Equals, "canonical")
 	c.Check(snaps[1].Version, Equals, "2.0")
 	c.Check(snaps[1].Status, Equals, webprogress.StatusInstalled)
 	c.Check(snaps[1].InstalledSize, Equals, int64(30))
 	c.Check(snaps[1].DownloadSize, Equals, int64(0))
 
-	c.Check(snaps[2].Name, Equals, "app3.canonical")
+	c.Check(snaps[2].Name, Equals, "app3")
+	c.Check(snaps[2].Origin, Equals, "canonical")
 	c.Check(snaps[2].Version, Equals, "3.0")
 	c.Check(snaps[2].Status, Equals, webprogress.StatusInstalled)
 	c.Check(snaps[2].InstalledSize, Equals, int64(30))
 	c.Check(snaps[2].DownloadSize, Equals, int64(0))
 
-	c.Check(snaps[3].Name, Equals, "app3.ubuntu")
+	c.Check(snaps[3].Name, Equals, "app4")
+	c.Check(snaps[3].Origin, Equals, "ubuntu")
 	c.Check(snaps[3].Version, Equals, "3.0")
 	c.Check(snaps[3].Status, Equals, webprogress.StatusUninstalled)
 	c.Check(snaps[3].InstalledSize, Equals, int64(0))
@@ -216,40 +223,40 @@ func (s *MergeSuite) TestManyInstalledAndManyRemotesSomeInstalling(c *C) {
 	s.h.statusTracker.Add("app4.ubuntu", webprogress.OperationInstall)
 
 	installed := []snapPkg{
-		s.h.snapQueryToPayload(newFakePart("app1.canonical", "1.0", true)),
-		s.h.snapQueryToPayload(newFakePart("app2.canonical", "2.0", true)),
-		s.h.snapQueryToPayload(newFakePart("app3.canonical", "3.0", true)),
+		s.h.snapQueryToPayload(newFakePart("app1", "canonical", "1.0", true)),
+		s.h.snapQueryToPayload(newFakePart("app2", "canonical", "2.0", true)),
+		s.h.snapQueryToPayload(newFakePart("app3", "canonical", "3.0", true)),
 	}
 
 	remotes := []snapPkg{
-		s.h.snapQueryToPayload(newFakePart("app1.canonical", "1.0", false)),
-		s.h.snapQueryToPayload(newFakePart("app4.ubuntu", "2.0", false)),
-		s.h.snapQueryToPayload(newFakePart("app5.ubuntu", "3.0", false)),
+		s.h.snapQueryToPayload(newFakePart("app1", "canonical", "1.0", false)),
+		s.h.snapQueryToPayload(newFakePart("app4", "ubuntu", "2.0", false)),
+		s.h.snapQueryToPayload(newFakePart("app5", "ubuntu", "3.0", false)),
 	}
 
 	// Installed and remotes
 	snaps := mergeSnaps(installed, remotes, false)
 
 	c.Assert(snaps, HasLen, 5)
-	c.Check(snaps[0].Name, Equals, "app1.canonical")
+	c.Check(snaps[0].Name, Equals, "app1")
 	c.Check(snaps[0].Version, Equals, "1.0")
 	c.Check(snaps[0].Status, Equals, webprogress.StatusInstalled)
 
-	c.Check(snaps[1].Name, Equals, "app2.canonical")
+	c.Check(snaps[1].Name, Equals, "app2")
 	c.Check(snaps[1].Version, Equals, "2.0")
 	c.Check(snaps[1].Status, Equals, webprogress.StatusInstalled)
 
-	c.Check(snaps[2].Name, Equals, "app3.canonical")
+	c.Check(snaps[2].Name, Equals, "app3")
 	c.Check(snaps[2].Version, Equals, "3.0")
 	c.Check(snaps[2].Status, Equals, webprogress.StatusInstalled)
 
-	c.Check(snaps[3].Name, Equals, "app4.ubuntu")
+	c.Check(snaps[3].Name, Equals, "app4")
 	c.Check(snaps[3].Version, Equals, "2.0")
 	c.Check(snaps[3].Status, Equals, webprogress.StatusInstalling)
 	c.Check(snaps[3].InstalledSize, Equals, int64(0))
 	c.Check(snaps[3].DownloadSize, Equals, int64(60))
 
-	c.Check(snaps[4].Name, Equals, "app5.ubuntu")
+	c.Check(snaps[4].Name, Equals, "app5")
 	c.Check(snaps[4].Version, Equals, "3.0")
 	c.Check(snaps[4].Status, Equals, webprogress.StatusUninstalled)
 	c.Check(snaps[4].InstalledSize, Equals, int64(0))
