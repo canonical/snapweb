@@ -84,14 +84,15 @@ module.exports = Marionette.Behavior.extend({
         status: CONF.INSTALL_STATE.UNINSTALLING
       });
       model.destroy({
-        dataType : 'html'
+        dataType : 'json',
+        silent: true
       });
     } else if (status === CONF.INSTALL_STATE.UNINSTALLED) {
       // install
       model.save({
         status: CONF.INSTALL_STATE.INSTALLING
       }, {
-        dataType : 'html'
+        dataType : 'json'
       });
     } else {
       e.preventDefault();
