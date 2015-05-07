@@ -37,6 +37,7 @@ const (
 	hostnameWedbm     = "webdm"
 )
 
+const timeoutMinutes = 10
 const inAddr = `%s.local. 60 IN A %s`
 const inPtr = `%s.in-addr.arpa. 60 IN PTR %s.local.`
 
@@ -76,10 +77,14 @@ func Init(l *log.Logger) {
 }
 
 func timeoutLoop() {
+	timeout := time.After(timeoutMinutes * time.Minute)
+
 	for {
 		loop()
-		<-time.After(10 * time.Minute)
+		<-timeout
 	}
+
+	panic("eternal loop is over")
 }
 
 var osHostname = os.Hostname
