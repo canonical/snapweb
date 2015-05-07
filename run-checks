@@ -47,7 +47,7 @@ $goctest -v -cover ./...
 echo Running vet
 go vet ./...
 
- golint
+# golint
 echo Running lint
 lint=$(golint ./...)
 if [ -n "$lint" ]; then
@@ -55,5 +55,10 @@ if [ -n "$lint" ]; then
     echo $lint
     exit 1
 fi
+
+# js unit tests
+echo "Running js unit tests (set JS_TESTER to override)"
+( cd www && ${JS_TESTER:-xvfb-run ./node_modules/karma/bin/karma start --single-run} )
+
 
 echo "All good, what could possibly go wrong"
