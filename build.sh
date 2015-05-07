@@ -39,7 +39,7 @@ gobuild() {
 }
 
 echo "Building web assets with gulp..."
-gulp --gulpfile www/gulpfile.js
+gulp
 
 orig_pwd=$(pwd)
 
