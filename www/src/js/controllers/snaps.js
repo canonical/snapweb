@@ -9,7 +9,7 @@ var rootChannel = Radio.channel('root');
 
 module.exports = {
   snap: function(name, section) {
-    var snap = new Snap({id: id});
+    var snap = new Snap({id: name});
 
     snap.fetch({
       success: function(snap) {
