@@ -32,7 +32,6 @@ Branch:
 Install:
 
     npm install -g --prefix=$(npm config get prefix) gulp
-    cd ./www
     npm install
 
 ## Building
