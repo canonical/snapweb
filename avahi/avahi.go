@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2014-2015 Canonical Ltd
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3 as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 package avahi
 
 import (
@@ -21,19 +37,23 @@ const (
 const inAddr = `%s.local. 60 IN A %s`
 const inPtr = `%s.in-addr.arpa. 60 IN PTR %s.local.`
 
+var mdnsPublish = mdns.Publish
+
 func tryPublish(hostname, ip string) {
 	rr := fmt.Sprintf(inAddr, hostname, ip)
 
 	logger.Println("Publishing", rr)
 
-	if err := mdns.Publish(rr); err != nil {
+	if err := mdnsPublish(rr); err != nil {
 		logger.Printf(`Unable to publish record "%s": %v`, rr, err)
 		return
 	}
 }
 
+var netInterfaceAddrs = net.InterfaceAddrs
+
 func ipAddrs() (addrs []net.Addr, err error) {
-	ifaces, err := net.InterfaceAddrs()
+	ifaces, err := netInterfaceAddrs()
 	if err != nil {
 		return nil, err
 	}
@@ -55,6 +75,8 @@ func Init(l *log.Logger) {
 	}
 }
 
+var osHostname = os.Hostname
+
 func loop() {
 	addrs, err := ipAddrs()
 	if err != nil {
@@ -62,7 +84,7 @@ func loop() {
 		return
 	}
 
-	hostname, err := os.Hostname()
+	hostname, err := osHostname()
 	if err != nil {
 		logger.Println("Cannot obtain hostname:", err)
 		return
