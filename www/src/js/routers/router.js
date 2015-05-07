@@ -35,7 +35,7 @@ module.exports = {
   snap: new Marionette.AppRouter({
     controller: snapController,
     appRoutes: {
-      'snap/:name/(:section)': 'snap',
+      'snap/:id/(:section)': 'snap',
     }
   }),
 
