@@ -28,8 +28,6 @@ module.exports = Backbone.Model.extend({
 
   urlRoot: CONF.PACKAGES,
 
-  idAttribute: 'name',
-
   initialize: function() {
 
     this.on('add sync', function(model, response, opts) {
@@ -47,7 +45,16 @@ module.exports = Backbone.Model.extend({
     });
 
     this.on('error', function(model, response, opts) {
-      this.set(this.parse(response.responseJSON));
+      var json = JSON.parse(response.responseText);
+      var previous = model.previousAttributes();
+      var message;
+      if (json && json.message) {
+        message = json.message;
+      } else {
+        message = 'Sorry, something went wrong :(';
+      }
+      previous.message = message;
+      model.set(previous);
       chan.command('alert:error', model);
     });
 
@@ -136,12 +143,20 @@ module.exports = Backbone.Model.extend({
 
   parse: function(response) {
 
+    var type = response.type;
+
     if (response.hasOwnProperty('icon') && !response.icon.length) {
       response.icon = this.defaults.icon;
     }
 
     if (response.hasOwnProperty('origin') && !response.origin.length) {
       response.origin = this.defaults.origin;
+    }
+
+    if (type) {
+      if (_.contains(CONF.NON_INSTALLABLE_TYPES, type)) {
+        response.isInstallable = false;
+      }
     }
 
     return response;
@@ -152,7 +167,8 @@ module.exports = Backbone.Model.extend({
     installActionString: false,
     origin: '-',
     installed_size: false,
-    download_size: false
+    download_size: false,
+    isInstallable: true
   }
 
 });
