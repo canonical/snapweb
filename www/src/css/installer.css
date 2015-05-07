@@ -1,9 +1,16 @@
 .b-installer {
   position:relative;
-  width:300px;
+  width:260px;
+  font-size:15px;
+}
+
+.b-installer.b-installer__small {
+  font-size:13px;
+  width:160px;
 }
 
 .b-installer__button {
+  text-transform:uppercase;
   background-color: #dd4814;
   border-radius:4px;
   color:#fff;
@@ -18,6 +25,7 @@
   user-select: none;
   white-space: nowrap;
 }
+
 
 .b-installer--uninstall .b-installer__button {
   background-color:#ccc;
