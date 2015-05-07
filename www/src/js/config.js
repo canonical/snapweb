@@ -5,6 +5,10 @@ module.exports = {
     'webdm',
     'ubuntu-core'
   ],
+  NON_INSTALLABLE_IDS: [
+    'webdm',
+    'ubuntu-core.ubuntu'
+  ],
   NON_INSTALLABLE_TYPES: [
     'oem'
   ],
