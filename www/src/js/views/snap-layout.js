@@ -76,7 +76,7 @@ module.exports = Marionette.LayoutView.extend({
     e.preventDefault();
     var section = e.target.getAttribute('href');
     var view = this._getSectionView(section);
-    var name = this.model.get('name');
+    var name = this.model.get('id');
     // XXX url sane
     var url = 'snap/' + name + '/' + section;
     // if section is already in place, don't showChildView

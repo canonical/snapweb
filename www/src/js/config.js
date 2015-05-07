@@ -5,6 +5,9 @@ module.exports = {
     'webdm',
     'ubuntu-core'
   ],
+  NON_INSTALLABLE_TYPES: [
+    'oem'
+  ],
   INSTALL_STATE: {
     INSTALLED: 'installed',
     INSTALLING: 'installing',

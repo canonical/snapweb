@@ -23,6 +23,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strings"
 
 	"launchpad.net/snappy/snappy"
 	"launchpad.net/webdm/webprogress"
@@ -42,19 +43,31 @@ func NewHandler() *Handler {
 	}
 }
 
+func installedOnly(v string) bool {
+	return v == "true"
+}
+
+func types(v string) []string {
+	return strings.Split(v, ",")
+}
+
 func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(w)
 	dec := json.NewDecoder(r.Body)
 
-	var filter listFilter
+	filter := listFilter{
+		InstalledOnly: installedOnly(r.FormValue("installed_only")),
+		Types:         types(r.FormValue("types")),
+	}
+
 	if err := dec.Decode(&filter); err != nil && err != io.EOF {
 		w.WriteHeader(http.StatusInternalServerError)
 		enc.Encode(fmt.Sprintf("Error: %s", err))
 		return
 	}
 
-	payload, err := h.allPackages(filter.InstalledOnly)
+	payload, err := h.allPackages(&filter)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		enc.Encode(fmt.Sprintf("Error: %s", err))
@@ -73,13 +86,13 @@ func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	// Get the Key.
 	vars := mux.Vars(r)
-	pkgName := vars["pkg"]
+	resource := vars["id"]
 	enc := json.NewEncoder(w)
 
-	payload, err := h.packagePayload(pkgName)
+	payload, err := h.packagePayload(resource)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		enc.Encode(fmt.Sprintln(err, pkgName))
+		enc.Encode(fmt.Sprintln(err, resource))
 		return
 	}
 
@@ -99,12 +112,12 @@ func (h *Handler) add(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	// Get the Key.
 	vars := mux.Vars(r)
-	pkgName := vars["pkg"]
+	ID := vars["id"]
 
-	err := h.installPackage(pkgName)
+	err := h.installPackage(ID)
 	msg, status := respond(err)
 
-	response := response{Message: msg, Package: pkgName}
+	response := response{Message: msg, Package: ID}
 	bs, err := json.Marshal(response)
 	if err != nil {
 		// giving up on json
@@ -122,12 +135,12 @@ func (h *Handler) remove(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	// Get the Key.
 	vars := mux.Vars(r)
-	pkgName := vars["pkg"]
+	ID := vars["id"]
 
-	err := h.removePackage(pkgName)
+	err := h.removePackage(ID)
 	msg, status := respond(err)
 
-	response := response{Message: msg, Package: pkgName}
+	response := response{Message: msg, Package: ID}
 	bs, err := json.Marshal(response)
 	if err != nil {
 		// giving up on json
@@ -178,13 +191,13 @@ func (h *Handler) MakeMuxer(prefix string) http.Handler {
 	m.HandleFunc("/", h.getAll).Methods("GET")
 
 	// get specific package
-	m.HandleFunc("/{pkg}", h.get).Methods("GET")
+	m.HandleFunc("/{id}", h.get).Methods("GET")
 
 	// Add a package
-	m.HandleFunc("/{pkg}", h.add).Methods("PUT")
+	m.HandleFunc("/{id}", h.add).Methods("PUT")
 
 	// Remove a package
-	m.HandleFunc("/{pkg}", h.remove).Methods("DELETE")
+	m.HandleFunc("/{id}", h.remove).Methods("DELETE")
 
 	return m
 }

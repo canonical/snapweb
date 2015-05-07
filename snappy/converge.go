@@ -18,6 +18,7 @@
 package snappy
 
 import (
+	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -29,6 +30,7 @@ import (
 )
 
 type snapPkg struct {
+	ID            string             `json:"id"`
 	Name          string             `json:"name"`
 	Origin        string             `json:"origin"`
 	Version       string             `json:"version"`
@@ -52,21 +54,32 @@ type response struct {
 }
 
 type listFilter struct {
-	Types         []string `json:"types,omitempty"`
-	InstalledOnly bool     `json:"installed_only"`
+	Types         []string
+	InstalledOnly bool
 }
 
 // for easier stubbing during testing
 var activeSnapByName = snappy.ActiveSnapByName
 
-func (h *Handler) packagePayload(pkgName string) (snapPkg, error) {
+func (h *Handler) packagePayload(resource string) (snapPkg, error) {
+	var pkgName, namespace string
+	if s := strings.Split(resource, "."); len(s) == 2 {
+		pkgName = s[0]
+		namespace = s[1]
+	} else {
+		pkgName = resource
+	}
+
 	snapQ := activeSnapByName(pkgName)
 	if snapQ != nil {
-		return h.snapQueryToPayload(snapQ), nil
+		// the second check is for locally installed snaps that lose their origin.
+		if snapQ.Namespace() == namespace || snapQ.Type() != snappy.SnapTypeApp {
+			return h.snapQueryToPayload(snapQ), nil
+		}
 	}
 
 	mStore := snappy.NewMetaStoreRepository()
-	found, err := mStore.Details(pkgName)
+	found, err := mStore.Details(resource)
 	if err == nil && len(found) != 0 {
 		return h.snapQueryToPayload(found[0]), nil
 	}
@@ -74,7 +87,7 @@ func (h *Handler) packagePayload(pkgName string) (snapPkg, error) {
 	return snapPkg{}, snappy.ErrPackageNotFound
 }
 
-func (h *Handler) allPackages(installedOnly bool) ([]snapPkg, error) {
+func (h *Handler) allPackages(filter *listFilter) ([]snapPkg, error) {
 	mLocal := snappy.NewMetaLocalRepository()
 
 	installedSnaps, err := mLocal.Installed()
@@ -82,8 +95,21 @@ func (h *Handler) allPackages(installedOnly bool) ([]snapPkg, error) {
 		return nil, err
 	}
 
+	typeFilter := func(string) bool { return true }
+
+	if len(filter.Types) != 0 {
+		regex, err := regexp.Compile("^(?:" + strings.Join(filter.Types, "|") + ")")
+		if err != nil {
+			return nil, err
+		}
+		typeFilter = regex.MatchString
+	}
+
 	installedSnapQs := make([]snapPkg, 0, len(installedSnaps))
 	for i := range installedSnaps {
+		if !typeFilter(string(installedSnaps[i].Type())) {
+			continue
+		}
 		installedSnapQs = append(installedSnapQs, h.snapQueryToPayload(installedSnaps[i]))
 	}
 
@@ -97,50 +123,55 @@ func (h *Handler) allPackages(installedOnly bool) ([]snapPkg, error) {
 
 	for _, remote := range remoteSnaps {
 		if alias := remote.Alias; alias != nil {
+			if !typeFilter(string(alias.Type())) {
+				continue
+			}
 			remoteSnapQs = append(remoteSnapQs, h.snapQueryToPayload(alias))
 		} else {
-			/*
-				TODO reenable once we can filter by type
-				for _, part := range remote.Parts {
-					remoteSnapQs = append(remoteSnapQs, h.snapQueryToPayload(part))
+			for _, part := range remote.Parts {
+				if !typeFilter(string(part.Type())) {
+					continue
 				}
-			*/
+				remoteSnapQs = append(remoteSnapQs, h.snapQueryToPayload(part))
+			}
 		}
 	}
 
-	return mergeSnaps(installedSnapQs, remoteSnapQs, installedOnly), nil
+	return mergeSnaps(installedSnapQs, remoteSnapQs, filter.InstalledOnly), nil
 }
 
-func (h *Handler) doRemovePackage(progress *webprogress.WebProgress, pkgName string) {
+func (h *Handler) doRemovePackage(progress *webprogress.WebProgress, ID string) {
+	pkgName := strings.Split(ID, ".")[0]
+
 	err := snappy.Remove(pkgName, 0, progress)
 	progress.ErrorChan <- err
 	close(progress.ErrorChan)
 }
 
-func (h *Handler) removePackage(pkgName string) error {
-	progress, err := h.statusTracker.Add(pkgName, webprogress.OperationRemove)
+func (h *Handler) removePackage(ID string) error {
+	progress, err := h.statusTracker.Add(ID, webprogress.OperationRemove)
 	if err != nil {
 		return err
 	}
 
-	go h.doRemovePackage(progress, pkgName)
+	go h.doRemovePackage(progress, ID)
 
 	return nil
 }
 
-func (h *Handler) doInstallPackage(progress *webprogress.WebProgress, pkgName string) {
-	_, err := snappy.Install(pkgName, 0, progress)
+func (h *Handler) doInstallPackage(progress *webprogress.WebProgress, ID string) {
+	_, err := snappy.Install(ID, 0, progress)
 	progress.ErrorChan <- err
 	close(progress.ErrorChan)
 }
 
-func (h *Handler) installPackage(pkgName string) error {
-	progress, err := h.statusTracker.Add(pkgName, webprogress.OperationInstall)
+func (h *Handler) installPackage(ID string) error {
+	progress, err := h.statusTracker.Add(ID, webprogress.OperationInstall)
 	if err != nil {
 		return err
 	}
 
-	go h.doInstallPackage(progress, pkgName)
+	go h.doInstallPackage(progress, ID)
 
 	return nil
 }
@@ -178,6 +209,10 @@ func mergeSnaps(installed, remote []snapPkg, installedOnly bool) []snapPkg {
 	return snapPkgs
 }
 
+func isNamespaceless(snap snappy.Part) bool {
+	return snap.Type() == snappy.SnapTypeOem || snap.Type() == snappy.SnapTypeFramework
+}
+
 func hasPortInformation(snap snappy.Part) bool {
 	return snap.Type() == snappy.SnapTypeApp || snap.Type() == snappy.SnapTypeFramework
 }
@@ -192,6 +227,12 @@ func (h *Handler) snapQueryToPayload(snapQ snappy.Part) snapPkg {
 		Type:        snapQ.Type(),
 	}
 
+	if isNamespaceless(snapQ) {
+		snap.ID = snapQ.Name()
+	} else {
+		snap.ID = snapQ.Name() + "." + snapQ.Namespace()
+	}
+
 	if hasPortInformation(snapQ) {
 		if snapInstalled, ok := snapQ.(snappy.Services); ok {
 			port, uri := uiAccess(snapInstalled.Services())
@@ -201,7 +242,7 @@ func (h *Handler) snapQueryToPayload(snapQ snappy.Part) snapPkg {
 	}
 
 	if snapQ.IsInstalled() {
-		iconPath, err := localIconPath(snapQ.Name(), snapQ.Icon())
+		iconPath, err := localIconPath(snap.ID, snapQ.Icon())
 		if err != nil {
 			log.Println("Icon path for installed package cannot be set", err)
 			iconPath = ""
@@ -214,10 +255,10 @@ func (h *Handler) snapQueryToPayload(snapQ snappy.Part) snapPkg {
 		snap.DownloadSize = snapQ.DownloadSize()
 	}
 
-	if stat, ok := h.statusTracker.Get(snap.Name); ok {
+	if stat, ok := h.statusTracker.Get(snap.ID); ok {
 		snap.Status = stat.Status
 		if stat.Done() {
-			defer h.statusTracker.Remove(snap.Name)
+			defer h.statusTracker.Remove(snap.ID)
 
 			if stat.Error != nil {
 				snap.Message = stat.Error.Error()
