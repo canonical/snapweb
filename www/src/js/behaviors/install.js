@@ -36,7 +36,7 @@ module.exports = Marionette.Behavior.extend({
     var installer = this.ui.installer;
     var installerButton = this.ui.installerButton;
 
-    // reset progress 
+    // reset progress
     this.ui.installerProgress.css('right', '100%');
 
     if (_.contains(CONF.INSTALL_STATE, state)) {
