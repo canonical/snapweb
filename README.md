@@ -32,7 +32,6 @@ Branch:
 Install:
 
     npm install -g --prefix=$(npm config get prefix) gulp
-    cd ./www
     npm install
 
 ## Building
@@ -107,3 +106,18 @@ This basically is a proxy to the store
     curl http://localhost:4200/api/v1/store/search?q=xkcd
 
     curl http://localhost:4200/api/v1/store/package/com.ubuntu.snappy.xkcd-webserver
+
+### Dependencies handling
+
+To generate dependencies.tsv you need `godeps`, so
+
+    go get launchpad.net/godeps
+
+To obtain the correct dependencies for the project, run:
+
+    godeps -t -u dependencies.tsv
+
+If the dependencies need updating
+
+    godeps -t ./... > dependencies.tsv
+

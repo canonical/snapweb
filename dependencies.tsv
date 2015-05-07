@@ -6,4 +6,4 @@ github.com/juju/loggo	git	4c7cbce140ca070eeb59a28f4bf9507e511711f9	2015-02-26T05
 github.com/mvo5/goconfigparser	git	26426272dda20cc76aa1fa44286dc743d2972fe8	2015-02-12T09:37:50Z
 gopkg.in/check.v1	git	64131543e7896d5bcc6bd5a76287eb75ea96c673	2014-10-24T13:38:53Z
 gopkg.in/yaml.v2	git	49c95bdc21843256fb6c4e0d370a05f24a0bf213	2015-02-24T22:57:58Z
-launchpad.net/snappy	bzr	snappy_tarmac-20150505234155-4engr9ywa3p9badb	441
+launchpad.net/snappy	bzr	snappy_tarmac-20150506140221-gy35a67lv7tmc0nl	442
