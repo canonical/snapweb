@@ -50,13 +50,9 @@ module.exports = Backbone.Model.extend({
       chan.command('alert:error', model);
     });
 
-    this.on('change:message', this.onMessageChange);
+    this.on('add change:message', this.onMessageChange);
 
     this.on('add change:status', this.handleStatusChange);
-  },
-
-  onMessageChange: function(model) {
-    console.log('message:', model.get('message'));
   },
 
   handleStatusChange: function(model) {
@@ -116,15 +112,22 @@ module.exports = Backbone.Model.extend({
   },
 
   parse: function(response) {
+
     if (response.hasOwnProperty('icon') && !response.icon.length) {
       response.icon = this.defaults.icon;
     }
+
+    if (response.hasOwnProperty('origin') && !response.origin.length) {
+      response.origin = this.defaults.origin;
+    }
+
     return response;
   },
 
   defaults: {
     icon: '/public/images/default-package-icon.svg',
-    installActionString: false
+    installActionString: false,
+    origin: '-'
   }
 
 });

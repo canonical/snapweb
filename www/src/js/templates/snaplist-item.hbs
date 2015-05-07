@@ -1,6 +1,19 @@
 <div class="b-snaplist__icon">
   <img src="{{ icon }}" alt="{{ name }} icon">
 </div>
-<div class="b-snaplist__label">{{ name }}</div>
-<div class="b-snaplist__title">{{ version }}</div>
-<div class="b-snaplist__author">{{ origin }}</div>
+<div class="b-snaplist__name">{{ name }}</div>
+{{!-- only name is shown in grid view, everything after is hidden --}}
+<div class="b-snaplist__version">{{ version }}</div>
+<div class="b-snaplist__origin">{{ origin }}</div>
+<div class="b-snaplist__type">{{ type }}</div>
+<div class="b-snaplist__actions">
+  <div class="b-installer {{ installHTMLClass }}">
+    {{#if installActionString}}
+    <div class="b-installer__button">{{ installActionString }}</div>
+    <div class="b-installer__progress" title="download progress">
+      <div class="b-installer__value"></div>
+    </div>
+    {{/if}}
+    <div class="b-installer__message"></div>
+  </div>
+</div>
