@@ -33,11 +33,6 @@ godeps -u dependencies.tsv
 echo Building
 go build -v launchpad.net/webdm/...
 
-# www
-echo Obtaining npm dependencies
-npm install && npm update
-
-
 # tests
 echo Running tests from $(pwd)
 $goctest -v -cover ./...
@@ -55,6 +50,10 @@ if [ -n "$lint" ]; then
     echo $lint
     exit 1
 fi
+
+# www
+echo Obtaining npm dependencies
+npm install --loglevel error && npm update --loglevel error
 
 # js unit tests
 echo "Running js unit tests (set JS_TESTER to override)"
