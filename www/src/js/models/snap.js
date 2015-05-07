@@ -3,6 +3,7 @@
 var _ = require('lodash');
 var Backbone = require('backbone');
 var Radio = require('backbone.radio');
+var prettyBytes = require('pretty-bytes');
 var CONF = require('../config.js');
 var chan = Radio.channel('root');
 
@@ -50,12 +51,34 @@ module.exports = Backbone.Model.extend({
       chan.command('alert:error', model);
     });
 
-    this.on('add change:message', this.onMessageChange);
-
-    this.on('add change:status', this.handleStatusChange);
+    this.on('add change:status', this.onStatusChange);
+    this.on('add change:installed_size', this.onInstalledSizeChange);
+    this.on('add change:download_size', this.onDownloadSizeChange);
   },
 
-  handleStatusChange: function(model) {
+  onDownloadSizeChange: function(model) {
+    var bytes = model.get('download_size');
+    model.set(
+      'prettyDownloadSize', this._prettyBytes(model.get('download_size'))
+    );
+  },
+
+  onInstalledSizeChange: function(model) {
+    var bytes = model.get('installed_size');
+    model.set(
+      'prettyInstalledSize', this._prettyBytes(model.get('installed_size'))
+    );
+  },
+
+  _prettyBytes: function(bytes) {
+    if (_.isNumber(bytes) && bytes >= 0) {
+      return prettyBytes(bytes);
+    } else {
+      return false;
+    }
+  },
+
+  onStatusChange: function(model) {
     this.setInstallActionString(model);
     this.setInstallHTMLClass(model);
   },
@@ -127,7 +150,9 @@ module.exports = Backbone.Model.extend({
   defaults: {
     icon: '/public/images/default-package-icon.svg',
     installActionString: false,
-    origin: '-'
+    origin: '-',
+    installed_size: false,
+    download_size: false
   }
 
 });
