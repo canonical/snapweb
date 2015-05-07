@@ -35,7 +35,7 @@ go build -v launchpad.net/webdm/...
 
 # www
 echo Obtaining npm dependencies
-npm update
+npm install && npm update
 
 
 # tests
