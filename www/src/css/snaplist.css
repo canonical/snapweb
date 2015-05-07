@@ -63,6 +63,7 @@
 }
 
 .b-snaplist--row .b-snaplist__name,
+.b-snaplist--row .b-snaplist__version,
 .b-snaplist--row .b-snaplist__type,
 .b-snaplist--row .b-snaplist__origin {
   flex:1 1;
@@ -79,6 +80,10 @@
 
 .b-snaplist--row .b-snaplist__type {
   text-align:center;
+}
+
+.b-snaplist--row .b-snaplist__actions {
+  flex: 1;
 }
 
 .b-snaplist--row .b-installer__message {

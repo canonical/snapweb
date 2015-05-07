@@ -7,6 +7,7 @@
 <div class="b-snaplist__origin">{{ origin }}</div>
 <div class="b-snaplist__type">{{ type }}</div>
 <div class="b-snaplist__actions">
+  {{#if isInstallable}}
   <div class="b-installer b-installer__small {{ installHTMLClass }}">
     {{#if installActionString}}
     <div class="b-installer__button">{{ installActionString }}</div>
@@ -16,4 +17,5 @@
     {{/if}}
     <div class="b-installer__message"></div>
   </div>
+  {{/if}}
 </div>
