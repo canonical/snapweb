@@ -37,13 +37,13 @@ var (
 	ErrIconNotExist = errors.New("the icon does not exist")
 )
 
-func localIconPath(pkgName, iconPath string) (relativePath string, err error) {
+func localIconPath(ID, iconPath string) (relativePath string, err error) {
 	dataPath, relativePath, err := IconDir()
 	if err != nil {
 		return "", err
 	}
 
-	baseIcon := fmt.Sprintf("%s_%s", pkgName, filepath.Base(iconPath))
+	baseIcon := fmt.Sprintf("%s_%s", ID, filepath.Base(iconPath))
 
 	relativePath = filepath.Join(relativePath, baseIcon)
 	iconDstPath := filepath.Join(dataPath, baseIcon)

@@ -30,6 +30,7 @@ func Test(t *testing.T) { TestingT(t) }
 type fakeSnappyPart struct {
 	snappy.Part
 	name        string
+	namespace   string
 	version     string
 	vendor      string
 	description string
@@ -45,7 +46,8 @@ type fakeSnappyPartServices struct {
 
 func newDefaultFakePart() *fakeSnappyPart {
 	return &fakeSnappyPart{
-		name:        "camlistore.sergiusens",
+		name:        "camlistore",
+		namespace:   "sergiusens",
 		version:     "2.0",
 		installed:   true,
 		snapType:    snappy.SnapTypeApp,
@@ -54,9 +56,10 @@ func newDefaultFakePart() *fakeSnappyPart {
 	}
 }
 
-func newFakePart(name, version string, installed bool) *fakeSnappyPart {
+func newFakePart(name, namespace, version string, installed bool) *fakeSnappyPart {
 	return &fakeSnappyPart{
 		name:      name,
+		namespace: namespace,
 		version:   version,
 		installed: installed,
 		snapType:  snappy.SnapTypeApp,
@@ -76,6 +79,7 @@ func newDefaultFakeServices() *fakeSnappyPartServices {
 	return &fakeSnappyPartServices{
 		fakeSnappyPart: fakeSnappyPart{
 			name:      "camlistore.sergiusens",
+			namespace: "sergiusens",
 			version:   "2.0",
 			installed: true,
 			snapType:  snappy.SnapTypeApp,
@@ -112,7 +116,7 @@ func (p fakeSnappyPart) Name() string {
 }
 
 func (p fakeSnappyPart) Namespace() string {
-	return "ubuntu"
+	return p.namespace
 }
 
 func (p fakeSnappyPart) Version() string {

@@ -27,8 +27,6 @@ module.exports = Backbone.Model.extend({
 
   urlRoot: CONF.PACKAGES,
 
-  idAttribute: 'name',
-
   initialize: function() {
 
     this.on('add sync', function(model, response, opts) {
