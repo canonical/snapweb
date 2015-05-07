@@ -77,11 +77,12 @@ func Init(l *log.Logger) {
 }
 
 func timeoutLoop() {
-	timeout := time.After(timeoutMinutes * time.Minute)
+	timeout := time.NewTimer(timeoutMinutes * time.Minute)
 
 	for {
 		loop()
-		<-timeout
+		timeout.Reset(timeoutMinutes * time.Minute)
+		<-timeout.C
 	}
 
 	panic("eternal loop is over")
