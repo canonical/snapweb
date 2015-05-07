@@ -8,8 +8,8 @@ var snapChannel = Radio.channel('snap');
 var rootChannel = Radio.channel('root');
 
 module.exports = {
-  snap: function(name, section) {
-    var snap = new Snap({id: name});
+  snap: function(id, section) {
+    var snap = new Snap({id: id});
 
     snap.fetch({
       success: function(snap) {
