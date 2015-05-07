@@ -22,12 +22,15 @@ import (
 	"net"
 	"os"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/davecheney/mdns"
 )
 
 var logger *log.Logger
+
+var initOnce sync.Once
 
 const (
 	hostnameLocalhost = "localhost"
@@ -69,6 +72,10 @@ func ipAddrs() (addrs []net.Addr, err error) {
 func Init(l *log.Logger) {
 	logger = l
 
+	initOnce.Do(timeoutLoop)
+}
+
+func timeoutLoop() {
 	for {
 		loop()
 		<-time.After(10 * time.Minute)
