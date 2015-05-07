@@ -58,7 +58,7 @@ fi
 
 # js unit tests
 echo "Running js unit tests (set JS_TESTER to override)"
-( cd www && ${JS_TESTER:-xvfb-run ./node_modules/karma/bin/karma start --single-run} )
+( ${JS_TESTER:- ./node_modules/karma/bin/karma start --single-run} )
 
 
 echo "All good, what could possibly go wrong"
