@@ -25,14 +25,14 @@
   width:100%;
 }
 
-.b-snaplist--grid .b-snaplist__label {
+.b-snaplist--grid .b-snaplist__name {
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.b-snaplist--grid .b-snaplist__label ~ * {
+.b-snaplist--grid .b-snaplist__name ~ * {
   display:none;
 }
 
@@ -62,10 +62,10 @@
   height: 40px;
 }
 
-.b-snaplist--row .b-snaplist__label,
-.b-snaplist--row .b-snaplist__author,
-.b-snaplist--row .b-snaplist__title {
-  flex:2;
+.b-snaplist--row .b-snaplist__name,
+.b-snaplist--row .b-snaplist__type,
+.b-snaplist--row .b-snaplist__origin {
+  flex:1 1;
   margin:0 1em;
   white-space: nowrap;
   width: 100%;
@@ -73,50 +73,15 @@
   text-overflow: ellipsis;
 }
 
-.b-snaplist--row .b-snaplist__label {
+.b-snaplist--row .b-snaplist__version {
   min-width:100px;
 }
 
-.b-snaplist--row .b-snaplist__title {
-  flex:4 1;
+.b-snaplist--row .b-snaplist__type {
+  text-align:center;
 }
 
-.b-snaplist--row .b-snaplist__install {
-  flex:3;
-  margin:0 1em;
-  min-width:100px;
+.b-snaplist--row .b-installer__message {
+  /** XXX hmm **/
+  display:none;
 }
-
-/**
-
-.b-snaplist__item a,
-.b-snaplist__item a:link,
-.b-snaplist__item a:hover,
-.b-snaplist__item a:visited {
-    color: #333333;
-}
-
-.b-snaplist__snap-icon {
-    text-align:center;
-}
-
-.b-snaplist__snap-icon img {
-  border-radius:5%;
-}
-
-.b-snaplist__snap-icon:hover {
-    background: #efefef;
-}
-
-.b-snaplist__snap-label {
-    font-weight: 400;
-    text-align: center;
-    display: block;
-    cursor: pointer;
-    font-size: 1em;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-**/
