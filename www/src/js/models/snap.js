@@ -46,7 +46,16 @@ module.exports = Backbone.Model.extend({
     });
 
     this.on('error', function(model, response, opts) {
-      this.set(this.parse(response.responseJSON));
+      var json = JSON.parse(response.responseText);
+      var previous = model.previousAttributes();
+      var message;
+      if (json && json.message) {
+        message = json.message;
+      } else {
+        message = 'Sorry, something went wrong :(';
+      }
+      previous.message = message;
+      model.set(previous);
       chan.command('alert:error', model);
     });
 
