@@ -1,6 +1,6 @@
 name: webdm
 vendor: Sergio Schvezov <sergio.schvezov@canonical.com>
-icon: meta/clap.png
+icon: meta/webdm-icon.png
 source: lp:webdm
 type: framework
 version: 0.6
