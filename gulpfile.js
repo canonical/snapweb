@@ -24,11 +24,11 @@ gulp.task('js:watch', ['js:lint'], function() {
 });
 
 gulp.task('js:clean', function(cb) {
-  del(['public/js'], cb);
+  del(['www/public/js'], cb);
 });
 
 function createBundler(watch) {
-  var bundler = browserify('./src/js/app.js', {
+  var bundler = browserify('./www/src/js/app.js', {
     cache: {},
     packageCache: {}
   });
@@ -55,11 +55,11 @@ function bundleShared(bundler) {
       .pipe(sourcemaps.init({loadMaps: true})) // loads map from browserify file
       .pipe(uglify())
       .pipe(sourcemaps.write('./')) // writes .map file
-    .pipe(gulp.dest('./public/js/'));
+    .pipe(gulp.dest('www/public/js/'));
 }
 
 gulp.task('js:lint', function() {
-  return gulp.src(['src/js/**/*.js'])
+  return gulp.src(['www/src/js/**/*.js'])
     .pipe(jscs())
     .on('error', function(err) {
       gutil.log(gutil.colors.green(err));
@@ -71,33 +71,33 @@ gulp.task('js:lint', function() {
 // Styles
 
 gulp.task('styles', ['styles:clean'], function() {
-  return gulp.src(['node_modules/normalize.css/normalize.css', 'src/css/**/*.css'])
+  return gulp.src(['node_modules/normalize.css/normalize.css', 'www/src/css/**/*.css'])
   .pipe(csso())
   .pipe(autoprefixer())
   .pipe(concat('webdm.css'))
-  .pipe(gulp.dest('public/css'));
+  .pipe(gulp.dest('www/public/css'));
 });
 
 gulp.task('styles:clean', function(cb) {
-  del(['public/css'], cb);
+  del(['www/public/css'], cb);
 });
 
 // Images
 
 gulp.task('images', ['images:clean'], function() {
-  gulp.src(['src/images/**/*'])
+  gulp.src(['www/src/images/**/*'])
   .pipe(imagemin())
-  .pipe(gulp.dest('public/images'));
+  .pipe(gulp.dest('www/public/images'));
 });
 
 gulp.task('images:clean', function(cb) {
-  del(['public/images'], cb);
+  del(['www/public/images'], cb);
 });
 
 gulp.task('watch', ['js:watch', 'styles', 'images'], function() {
-  gulp.watch('src/images/**/*.{svg,png,jpg,jpeg}', ['images']);
-  gulp.watch('src/css/**/*.css', ['styles']);
-  gulp.watch('src/js/**/*.js', ['js:lint']);
+  gulp.watch('www/src/images/**/*.{svg,png,jpg,jpeg}', ['images']);
+  gulp.watch('www/src/css/**/*.css', ['styles']);
+  gulp.watch('www/src/js/**/*.js', ['js:lint']);
 });
 
 gulp.task('default', ['js:build', 'styles', 'images']);
