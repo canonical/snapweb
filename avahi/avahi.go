@@ -84,8 +84,6 @@ func timeoutLoop() {
 		timeout.Reset(timeoutMinutes * time.Minute)
 		<-timeout.C
 	}
-
-	panic("eternal loop is over")
 }
 
 var osHostname = os.Hostname
