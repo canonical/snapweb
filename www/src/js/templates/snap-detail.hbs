@@ -1,9 +1,12 @@
 <div class="b-snap__icon">
   <img src="{{ icon }}" width="256" height="256">
 </div>
+{{#if description}}
+<p>{{ description }}</p>
+{{/if}}
 {{#if prettyInstalledSize}}
-  {{prettyInstalledSize}}
+<p>Installed size: {{prettyInstalledSize}}</p>
 {{/if}}
 {{#if prettyDownloadSize}}
-  {{prettyDownloadSize}}
+<p>Download size: {{prettyDownloadSize}}</p>
 {{/if}}
