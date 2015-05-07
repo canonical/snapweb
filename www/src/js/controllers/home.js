@@ -13,7 +13,6 @@ module.exports = {
 
     installedBask.fetch({
       data: $.param({
-        'types': ['app'],
         'installed_only': true
       }),
       success: function(snaplist) {

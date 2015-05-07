@@ -120,6 +120,9 @@ module.exports = Backbone.Model.extend({
 
   parse: function(response) {
 
+    var type = response.type;
+    var id  = response.id;
+
     if (response.hasOwnProperty('icon') && !response.icon.length) {
       response.icon = this.defaults.icon;
     }
@@ -128,13 +131,26 @@ module.exports = Backbone.Model.extend({
       response.origin = this.defaults.origin;
     }
 
+    if (type) {
+      if (_.contains(CONF.NON_INSTALLABLE_TYPES, type)) {
+        response.isInstallable = false;
+      }
+    }
+
+    if (id) {
+      if (_.contains(CONF.NON_INSTALLABLE_IDS, id)) {
+        response.isInstallable = false;
+      }
+    }
+
     return response;
   },
 
   defaults: {
     icon: '/public/images/default-package-icon.svg',
     installActionString: false,
-    origin: '-'
+    origin: '-',
+    isInstallable: true
   }
 
 });
