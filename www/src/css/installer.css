@@ -1,7 +1,6 @@
 .b-installer {
   position:relative;
   width:300px;
-  padding-bottom:9px;
 }
 
 .b-installer__button {
@@ -62,6 +61,6 @@
   transition: right 0.1s;
 }
 
-.b-installer--thinking .b-installer__progress {
+.b-installer--thinking.b-installer--install .b-installer__progress {
   display:block;
 }
