@@ -4,7 +4,7 @@
   font-size:15px;
 }
 
-.b-installer.b-installer__small {
+.b-installer.b-installer--small {
   font-size:13px;
   width:160px;
 }
@@ -26,11 +26,18 @@
   white-space: nowrap;
 }
 
-
 .b-installer--uninstall .b-installer__button {
   background-color:#ccc;
   color:#fff;
   font-weight:300;
+}
+
+.b-installer--disabled .b-installer__button {
+  font-weight: inherit;
+  background-color: inherit;
+  color:#333;
+  cursor:not-allowed;
+  text-transform:none;
 }
 
 .b-installer--thinking .b-installer__button {
