@@ -120,8 +120,22 @@ module.exports = Backbone.Model.extend({
 
   parse: function(response) {
 
+    var status = response.status; 
     var type = response.type;
     var id  = response.id;
+
+    if (
+      status === CONF.INSTALL_STATE.INSTALLED ||
+      status === CONF.INSTALL_STATE.UNINSTALLING
+    ) {
+      response.isInstalled = true;
+    } else if (
+      status === CONF.INSTALL_STATE.UNINSTALLED ||
+      status === CONF.INSTALL_STATE.INSTALLING
+    ) {
+      response.isInstalled = false;
+    }
+
 
     if (response.hasOwnProperty('icon') && !response.icon.length) {
       response.icon = this.defaults.icon;

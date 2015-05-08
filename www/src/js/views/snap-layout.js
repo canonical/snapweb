@@ -2,6 +2,7 @@
 var _ = require('lodash');
 var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
+var Handlebars = require("hbsfy/runtime");
 var SnapMenuView = require('./snap-menu.js');
 var SnapDetailView = require('./snap-detail.js');
 var SnapReviewsView = require('./snap-reviews.js');
@@ -9,6 +10,8 @@ var SnapSettingsView = require('./snap-settings.js');
 var InstallBehavior = require('../behaviors/install.js');
 var template = require('../templates/snap-layout.hbs');
 var CONF = require('../config.js');
+
+Handlebars.registerPartial('installer', require('../templates/_installer.hbs'));
 
 module.exports = Marionette.LayoutView.extend({
 
