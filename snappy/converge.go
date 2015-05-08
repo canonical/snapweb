@@ -130,7 +130,7 @@ func (h *Handler) allPackages(filter *listFilter) ([]snapPkg, error) {
 	}
 
 	mStore := snappy.NewUbuntuStoreSnapRepository()
-	remoteSnaps, err := mStore.Search("*")
+	remoteSnaps, err := mStore.Search(filter.query)
 	if err != nil {
 		return nil, err
 	}
@@ -142,16 +142,10 @@ func (h *Handler) allPackages(filter *listFilter) ([]snapPkg, error) {
 			if !typeFilter(string(alias.Type())) {
 				continue
 			}
-			if !queryFilter(alias.Name()) {
-				continue
-			}
 			remoteSnapQs = append(remoteSnapQs, h.snapQueryToPayload(alias))
 		} else {
 			for _, part := range remote.Parts {
 				if !typeFilter(string(part.Type())) {
-					continue
-				}
-				if !queryFilter(part.Name()) {
 					continue
 				}
 				remoteSnapQs = append(remoteSnapQs, h.snapQueryToPayload(part))
