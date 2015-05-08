@@ -28,7 +28,7 @@
   white-space: nowrap;
 }
 
-.b-installer_uninstall .b-installer__button {
+.b-installer__uninstall .b-installer__button {
   background-color:#ccc;
   color:#fff;
   font-weight:300;
@@ -42,7 +42,8 @@
   text-transform:none;
 }
 
-.b-installer_thinking .b-installer__button {
+.b-installer__install_thinking .b-installer__button,
+.b-installer__uninstall_thinking .b-installer__button {
   background-color:transparent;
   cursor:progress;
   color:#dd4814;
@@ -78,6 +79,6 @@
   transition: right 0.1s;
 }
 
-.b-installer_thinking.b-installer--install .b-installer__progress {
+.b-installer__install_thinking .b-installer__progress {
   display:block;
 }
