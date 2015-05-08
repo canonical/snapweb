@@ -14,7 +14,6 @@
     "browserify": "~9.0.3",
     "del": "~1.1.1",
     "gulp": "~3.8.11",
-    "gulp-autoprefixer": "~2.1.0",
     "gulp-concat": "~2.5.2",
     "gulp-csso": "~1.0.0",
     "gulp-imagemin": "~2.2.1",
