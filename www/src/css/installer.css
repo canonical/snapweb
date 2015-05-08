@@ -1,10 +1,12 @@
+/** @define b-installer; weak */
+
 .b-installer {
   position:relative;
   width:260px;
   font-size:15px;
 }
 
-.b-installer.b-installer--small {
+.b-installer_small {
   font-size:13px;
   width:160px;
 }
@@ -26,13 +28,13 @@
   white-space: nowrap;
 }
 
-.b-installer--uninstall .b-installer__button {
+.b-installer_uninstall .b-installer__button {
   background-color:#ccc;
   color:#fff;
   font-weight:300;
 }
 
-.b-installer--disabled .b-installer__button {
+.b-installer_disabled .b-installer__button {
   font-weight: inherit;
   background-color: inherit;
   color:#333;
@@ -40,7 +42,7 @@
   text-transform:none;
 }
 
-.b-installer--thinking .b-installer__button {
+.b-installer_thinking .b-installer__button {
   background-color:transparent;
   cursor:progress;
   color:#dd4814;
@@ -76,6 +78,6 @@
   transition: right 0.1s;
 }
 
-.b-installer--thinking.b-installer--install .b-installer__progress {
+.b-installer_thinking.b-installer--install .b-installer__progress {
   display:block;
 }

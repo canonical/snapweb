@@ -29,7 +29,7 @@ module.exports = Backbone.Marionette.ItemView.extend({
   setActiveNav: function(link) {
     link = link || 'details';
     var toActiveSelector = '[href=' + link + ']';
-    var activeClass = 'b-snap__nav-item--active';
+    var activeClass = 'b-snap__nav-item_active';
     var activeSelector = '.' + activeClass;
     this.$(activeSelector).removeClass(activeClass);
     this.$(toActiveSelector).addClass(activeClass);
