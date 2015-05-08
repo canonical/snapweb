@@ -21,6 +21,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+
+	"launchpad.net/webdm/avahi"
 )
 
 var logger *log.Logger
@@ -32,9 +34,9 @@ func init() {
 }
 
 func main() {
-	logger.Println("Connecting to System Bus")
-
 	initURLHandlers(logger)
+
+	go avahi.Init(logger)
 
 	logger.Println("Snappy starting...")
 
