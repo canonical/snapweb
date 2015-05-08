@@ -1,5 +1,7 @@
 var aliasify = require('aliasify');
-var autoprefixer = require('gulp-autoprefixer');
+var postcss = require('gulp-postcss');
+var autoprefixer = require('autoprefixer-core');
+var bemLinter = require('postcss-bem-linter');
 var browserify = require('browserify');
 var buffer = require('vinyl-buffer');
 var concat = require('gulp-concat');
@@ -71,10 +73,19 @@ gulp.task('js:lint', function() {
 // Styles
 
 gulp.task('styles', ['styles:clean'], function() {
-  return gulp.src(['node_modules/normalize.css/normalize.css', 'www/src/css/**/*.css'])
+  var processors = [
+    autoprefixer({browsers: ['last 1 version']}),
+    bemLinter('bem')
+  ];
+  return gulp.src([
+    'node_modules/normalize.css/normalize.css',
+    'www/src/css/**/*.css'
+  ])
+  .pipe(sourcemaps.init())
+  .pipe(postcss(processors))
   .pipe(csso())
-  .pipe(autoprefixer())
   .pipe(concat('webdm.css'))
+  .pipe(sourcemaps.write('./'))
   .pipe(gulp.dest('www/public/css'));
 });
 
