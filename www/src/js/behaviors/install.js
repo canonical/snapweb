@@ -77,6 +77,12 @@ module.exports = Marionette.Behavior.extend({
   onInstallClick: function(e) {
     var model = this.view.model;
     var status = model.get('status');
+    var isInstallable = model.get('isInstallable');
+
+    if (!isInstallable) {
+      return;
+    }
+
 
     if (status === CONF.INSTALL_STATE.INSTALLED) {
       // uninstall
