@@ -20,7 +20,6 @@ package snappy
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
 	"strings"
@@ -54,17 +53,11 @@ func types(v string) []string {
 func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(w)
-	dec := json.NewDecoder(r.Body)
 
 	filter := listFilter{
-		InstalledOnly: installedOnly(r.FormValue("installed_only")),
-		Types:         types(r.FormValue("types")),
-	}
-
-	if err := dec.Decode(&filter); err != nil && err != io.EOF {
-		w.WriteHeader(http.StatusInternalServerError)
-		enc.Encode(fmt.Sprintf("Error: %s", err))
-		return
+		installedOnly: installedOnly(r.FormValue("installed_only")),
+		types:         types(r.FormValue("types")),
+		query:         r.FormValue("q"),
 	}
 
 	payload, err := h.allPackages(&filter)
