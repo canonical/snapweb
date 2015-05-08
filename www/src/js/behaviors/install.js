@@ -83,7 +83,6 @@ module.exports = Marionette.Behavior.extend({
       return;
     }
 
-
     if (status === CONF.INSTALL_STATE.INSTALLED) {
       // uninstall
       model.set({
