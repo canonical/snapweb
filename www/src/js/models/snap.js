@@ -120,7 +120,7 @@ module.exports = Backbone.Model.extend({
 
   parse: function(response) {
 
-    var status = response.status; 
+    var status = response.status;
     var type = response.type;
     var id  = response.id;
 
@@ -135,7 +135,6 @@ module.exports = Backbone.Model.extend({
     ) {
       response.isInstalled = false;
     }
-
 
     if (response.hasOwnProperty('icon') && !response.icon.length) {
       response.icon = this.defaults.icon;
