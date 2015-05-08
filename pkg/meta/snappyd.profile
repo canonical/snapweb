@@ -75,8 +75,11 @@
   /usr/bin/debsig-verify                                          Uxr,
   /usr/bin/sc-filtergen                                           Uxr,
   /usr/bin/aa-clickhook                                           Uxr,
+  /usr/bin/aa-profile-hook                                        Uxr,
 
   # snappy requirements for services
+  /etc/dbus-1/system.d/                                             r,
+  /etc/dbus-1/system.d/**                                         rwl,
   /etc/mime.types                                                   r,
   /usr/share/click/hooks/                                           r,
   /usr/share/click/hooks/**                                         r,
@@ -84,6 +87,8 @@
   /etc/systemd/system/**                                          rwl,
   /var/lib/apparmor/clicks/                                         r,
   /var/lib/apparmor/clicks/**                                     rwl,
+  /var/lib/apparmor/snappy/                                         r,
+  /var/lib/apparmor/snappy/**                                     rwl,
   /bin/systemctl                                                  Uxr,
 
   capability net_admin,
