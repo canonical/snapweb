@@ -1,7 +1,7 @@
 var aliasify = require('aliasify');
 var postcss = require('gulp-postcss');
 var autoprefixer = require('autoprefixer-core');
-var bemLinter = require('postcss-bem-linter');
+var bemlinter = require('postcss-bem-linter');
 var browserify = require('browserify');
 var buffer = require('vinyl-buffer');
 var concat = require('gulp-concat');
@@ -75,7 +75,7 @@ gulp.task('js:lint', function() {
 gulp.task('styles', ['styles:clean'], function() {
   var processors = [
     autoprefixer({browsers: ['last 1 version']}),
-    bemLinter('bem')
+    bemlinter('bem')
   ];
   return gulp.src([
     'node_modules/normalize.css/normalize.css',
