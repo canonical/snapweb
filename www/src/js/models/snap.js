@@ -67,24 +67,25 @@ module.exports = Backbone.Model.extend({
     this.setInstallHTMLClass(model);
   },
 
+  // XXX move to install behaviour
   setInstallHTMLClass: function(model) {
     var state = model.get('status');
     var installHTMLClass = '';
 
     if (state === CONF.INSTALL_STATE.UNINSTALLED) {
-      installHTMLClass = 'b-installer--install';
+      installHTMLClass = 'b-installer_do_install';
     }
 
     if (state === CONF.INSTALL_STATE.INSTALLED) {
-      installHTMLClass = 'b-installer--uninstall';
+      installHTMLClass = 'b-installer_do_uninstall';
     }
 
     if (state === CONF.INSTALL_STATE.INSTALLING) {
-      installHTMLClass = 'b-installer--install b-installer--thinking';
+      installHTMLClass = 'b-installer_do_install b-installer_thinking';
     }
 
     if (state === CONF.INSTALL_STATE.UNINSTALLING) {
-      installHTMLClass = 'b-installer--uninstall b-installer--thinking';
+      installHTMLClass = 'b-installer_do_uninstall b-installer_thinking';
     }
 
     return model.set('installHTMLClass', installHTMLClass);
