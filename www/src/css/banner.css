@@ -1,3 +1,5 @@
+/** @define b-banner; weak */
+
 .b-banner {
   display:flex;
   align-items:center;
@@ -73,11 +75,11 @@
   border-right:1px solid #333;
 }
 
-.b-banner__nav-item--active {
+.b-banner__nav-item_active {
   position:relative;
 }
 
-.b-banner__nav-item--active::before {
+.b-banner__nav-item_active::before {
   position:absolute;
   content:'';
   background:#dd4814;
@@ -117,4 +119,3 @@
 .b-banner__secondary-nav .b-banner__nav-item:hover {
   background-color:#dd4814;
 }
-
