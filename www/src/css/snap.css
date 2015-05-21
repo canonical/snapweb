@@ -3,10 +3,7 @@
 .b-snap {
 }
 
-.b-snap__icon {
-}
-.b-snap__icon img {
-  display:block;
+.b-snap .b-icon {
 }
 
 .b-snap__banner {

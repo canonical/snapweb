@@ -5,34 +5,9 @@
 
 .b-snaplist__item {
   cursor: pointer;
+  font-size:0;
 }
 
-.b-snaplist__icon {
-  position:relative;
-}
-
-.b-snaplist__icon::before {
-  content: "";
-  position:absolute;
-  top:0;
-  left:0;
-  right:0;
-  bottom:0;
-  background-color:transparent;
-  background-image:url(/public/images/icon-mask.png);
-  background-repeat:no-repeat;
-  background-position:50% 50%;
-  background-size:100% 100%;
-}
-
-.b-snaplist__icon img {
-  display:block;
-  background-color:transparent;
-  background-image:url(/public/images/default-package-icon.svg);
-  background-repeat:no-repeat;
-  background-position:50% 50%;
-  background-size:100% 100%;
-}
 
 /** grid style **/
 
@@ -59,7 +34,7 @@
 }
 
 .b-snaplist_grid .b-snaplist__name,
-.b-snaplist_grid .b-snaplist__icon img {
+.b-snaplist_grid .b-icon img {
   width:90px;
 }
 
@@ -69,7 +44,7 @@
 
 @media (min-width:424px) {
   .b-snaplist_grid {
-    width:424px;
+    width: 424px;
   }
   .b-snaplist_grid .b-snaplist__item {
     padding:8px;
@@ -78,7 +53,7 @@
 
 @media (min-width:540px) {
   .b-snaplist_grid {
-    width:540px;
+    width: 540px;
   }
   .b-snaplist_grid .b-snaplist__item {
     padding:9px;
@@ -87,58 +62,11 @@
 
 @media (min-width:660px) {
   .b-snaplist_grid {
-    width:660px;
+    margin:0 7px;
+    width: 100%;
   }
   .b-snaplist_grid .b-snaplist__item {
     padding:10px;
-  }
-}
-
-@media (min-width:770px) {
-  .b-snaplist_grid {
-    width:770px;
-  }
-}
-
-@media (min-width:880px) {
-  .b-snaplist_grid {
-    width:880px;
-  }
-}
-
-@media (min-width:990px) {
-  .b-snaplist_grid {
-    width:990px;
-  }
-}
-
-@media (min-width:1100px) {
-  .b-snaplist_grid {
-    width:1100px;
-  }
-}
-
-@media (min-width:1210px) {
-  .b-snaplist_grid {
-    width:1210px;
-  }
-}
-
-@media (min-width:1320px) {
-  .b-snaplist_grid {
-    width:1320px;
-  }
-}
-
-@media (min-width:1430px) {
-  .b-snaplist_grid {
-    width:1430px;
-  }
-}
-
-@media (min-width:1540px) {
-  .b-snaplist_grid {
-    width:1540px;
   }
 }
 
@@ -156,6 +84,7 @@
   border-radius:4px;
   margin-bottom:0.6em;
   background-color:#fff;
+  font-size:13px;
 }
 
 .b-snaplist_row .b-snaplist__item:last-child {
@@ -163,15 +92,15 @@
 }
 
 
-.b-snaplist_row .b-snaplist__icon {
+.b-snaplist_row .b-icon {
   flex:0 0 40px;
 }
 
-.b-snaplist_row .b-snaplist__icon::before {
+.b-snaplist_row .b-icon::before {
   background-image: url(/public/images/icon-mask-on-white.png);
 }
 
-.b-snaplist_row .b-snaplist__icon img {
+.b-snaplist_row .b-icon img {
   display:block;
   width: 40px;
   height: 40px;
