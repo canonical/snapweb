@@ -6,7 +6,6 @@ var browserify = require('browserify');
 var buffer = require('vinyl-buffer');
 var concat = require('gulp-concat');
 var csso = require('gulp-csso');
-var customMedia = require("postcss-custom-media")
 var del = require('del');
 var gulp = require('gulp');
 var gutil = require('gulp-util');
@@ -76,8 +75,7 @@ gulp.task('js:lint', function() {
 gulp.task('styles', ['styles:clean'], function() {
   var processors = [
     autoprefixer({browsers: ['last 1 version']}),
-    bemlinter('bem'),
-    customMedia()
+    bemlinter('bem')
   ];
   return gulp.src([
     'node_modules/normalize.css/normalize.css',
