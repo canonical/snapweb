@@ -13,7 +13,7 @@ html, body {
 }
 
 body {
-  background: url('../images/image-background-paper.png') repeat-y fixed 50% 0 #f7f7f7;
+  background-color:#f7f7f7;
 }
 
 a {
