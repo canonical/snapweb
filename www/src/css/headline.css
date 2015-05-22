@@ -1,11 +1,10 @@
 /** @define b-headline; weak */
 
 .b-headline {
-  padding:20px 15px 5px 15px;
 }
 
 .b-headline__h1 {
   font-size:18px;
   font-weight:400;
-  margin: 0;
+  margin:20px 15px 5px 15px;
 }

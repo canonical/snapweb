@@ -6,6 +6,7 @@ var browserify = require('browserify');
 var buffer = require('vinyl-buffer');
 var concat = require('gulp-concat');
 var csso = require('gulp-csso');
+var customMedia = require("postcss-custom-media");
 var del = require('del');
 var gulp = require('gulp');
 var gutil = require('gulp-util');
@@ -75,7 +76,20 @@ gulp.task('js:lint', function() {
 gulp.task('styles', ['styles:clean'], function() {
   var processors = [
     autoprefixer({browsers: ['last 1 version']}),
-    bemlinter('bem')
+    bemlinter('bem'),
+    customMedia({
+      extensions: {
+        /** multiples of icon width in grid form **/
+        '--xxs':   '(min-width:  424px)',
+        '--xs':    '(min-width:  540px)',
+        '--s':     '(min-width:  660px)',
+        '--m':     '(min-width:  770px)',
+        '--l':     '(min-width:  880px)',
+        '--xl':    '(min-width:  1100px)',
+        '--xxl':   '(min-width:  1430px)',
+        '--xxxl':  '(min-width:  1870px)'
+      }
+    })
   ];
   return gulp.src([
     'node_modules/normalize.css/normalize.css',
