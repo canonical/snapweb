@@ -1,0 +1,11 @@
+/** @define b-alert; weak */
+
+.b-infobar {
+  padding:8px 0;
+  font-size:12px;
+}
+
+.b-infobar__datetime {
+  float:right;
+  display:inline-block;
+}
