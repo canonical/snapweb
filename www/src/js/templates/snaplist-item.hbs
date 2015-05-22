@@ -1,8 +1,9 @@
-<div class="b-icon">
+<div class="b-icon" data-type="{{type}}">
   <img src="{{ icon }}" width="90" height="90">
 </div>
 <div class="b-snaplist__name">{{ name }}</div>
 {{!-- only name is shown in grid view, everything after is hidden --}}
+<div class="b-snaplist__size">{{ prettyInstalledSize }}</div>
 <div class="b-snaplist__version">{{ version }}</div>
 <div class="b-snaplist__type">{{ type }}</div>
 <div class="b-snaplist__origin">{{ origin }}</div>
