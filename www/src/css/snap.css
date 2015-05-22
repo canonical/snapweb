@@ -9,7 +9,7 @@
 .b-snap__banner {
   display: flex;
   line-height:1.3;
-  padding:1.3em 3em 1.3em;
+  padding:1.3em 0;
   align-items: flex-start;
 }
 
@@ -32,13 +32,14 @@
 
 .b-snap__navigation {
   background-color:rgba(255,255,255,0.5);
-  display: flex;
-  align-items: center;
-  margin:0 0 1em 0;
   border-top:1px solid #efefef;
   border-bottom:1px solid #ddd;
   margin:0 0 1em 0;
-  padding:0 3em;
+}
+
+.b-snap__navigation .b-layout__container {
+  display: flex;
+  align-items: center;
 }
 
 .b-snap__nav-item {
