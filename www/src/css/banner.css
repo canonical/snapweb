@@ -1,11 +1,13 @@
 /** @define b-banner; weak */
 
 .b-banner {
-  display:flex;
-  align-items:center;
-  background-color:#202020;
+  background-color:#2f2f2f;
   color:#efefef;
   line-height:20px;
+}
+.b-banner .b-layout__container {
+  display:flex;
+  align-items:center;
 }
 
 .b-banner img {

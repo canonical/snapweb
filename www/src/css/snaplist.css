@@ -12,8 +12,6 @@
 /** grid style **/
 
 .b-snaplist_grid {
-  width:312px;
-  margin:0 auto;
   display:flex;
   flex-wrap: wrap;
 }
@@ -42,29 +40,19 @@
   display:none;
 }
 
-@media (min-width:424px) {
-  .b-snaplist_grid {
-    width: 424px;
-  }
+@media (--xxs) {
   .b-snaplist_grid .b-snaplist__item {
     padding:8px;
   }
 }
 
-@media (min-width:540px) {
-  .b-snaplist_grid {
-    width: 540px;
-  }
+@media (--xs) {
   .b-snaplist_grid .b-snaplist__item {
     padding:9px;
   }
 }
 
-@media (min-width:660px) {
-  .b-snaplist_grid {
-    margin:0 7px;
-    width: 100%;
-  }
+@media (--s) {
   .b-snaplist_grid .b-snaplist__item {
     padding:10px;
   }
