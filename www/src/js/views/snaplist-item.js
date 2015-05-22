@@ -13,7 +13,10 @@ Handlebars.registerPartial('installer', require('../templates/_installer.hbs'));
 
 module.exports = Marionette.ItemView.extend({
 
-  className: 'b-snaplist__item',
+  className: function() {
+    var type = this.model.get('type');
+    return 'b-snaplist__item b-snaplist__item-' + type;
+  },
 
   template: function(model) {
     return template(model);

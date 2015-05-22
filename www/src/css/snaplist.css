@@ -5,9 +5,7 @@
 
 .b-snaplist__item {
   cursor: pointer;
-  font-size:0;
 }
-
 
 /** grid style **/
 
@@ -19,6 +17,13 @@
 .b-snaplist_grid .b-snaplist__item {
   flex: 0 1 auto;
   padding:7px;
+  font-size:0;
+}
+
+.b-snaplist_grid .b-snaplist__item * {
+  font-size: 12px;
+  color:#999;
+  text-align: center;
 }
 
 .b-snaplist_grid .b-snaplist__name {
@@ -26,8 +31,6 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size:12px;
-  color:#999;
   margin-top:4px;
 }
 
@@ -36,7 +39,7 @@
   width:90px;
 }
 
-.b-snaplist_grid .b-snaplist__name ~ * {
+.b-snaplist_grid .b-snaplist__version ~ * {
   display:none;
 }
 
