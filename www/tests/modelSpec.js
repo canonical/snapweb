@@ -78,6 +78,16 @@ describe('Snap', function() {
       expect(this.model.get('prettyInstalledSize')).toBe('');
     });
 
+    it('should parse response to create prettyInstalledSize', function() {
+      this.model.parse({'installed_size': 0});
+      expect(this.model.get('prettyInstalledSize')).toBe('0 B');
+    });
+
+    it('should parse response to create prettyDownloadSize', function() {
+      this.model.parse({'download_size': 0});
+      expect(this.model.get('prettyDownloadSize')).toBe('0 B');
+    });
+
   });
 
   describe('sync methods', function() {
