@@ -90,24 +90,25 @@ module.exports = Backbone.Model.extend({
     this.setInstallHTMLClass(model);
   },
 
+  // XXX move to install behaviour
   setInstallHTMLClass: function(model) {
     var state = model.get('status');
     var installHTMLClass = '';
 
     if (state === CONF.INSTALL_STATE.UNINSTALLED) {
-      installHTMLClass = 'b-installer--install';
+      installHTMLClass = 'b-installer_do_install';
     }
 
     if (state === CONF.INSTALL_STATE.INSTALLED) {
-      installHTMLClass = 'b-installer--uninstall';
+      installHTMLClass = 'b-installer_do_uninstall';
     }
 
     if (state === CONF.INSTALL_STATE.INSTALLING) {
-      installHTMLClass = 'b-installer--install b-installer--thinking';
+      installHTMLClass = 'b-installer_do_install b-installer_thinking';
     }
 
     if (state === CONF.INSTALL_STATE.UNINSTALLING) {
-      installHTMLClass = 'b-installer--uninstall b-installer--thinking';
+      installHTMLClass = 'b-installer_do_uninstall b-installer_thinking';
     }
 
     return model.set('installHTMLClass', installHTMLClass);
@@ -143,8 +144,21 @@ module.exports = Backbone.Model.extend({
 
   parse: function(response) {
 
+    var status = response.status;
     var type = response.type;
     var id  = response.id;
+
+    if (
+      status === CONF.INSTALL_STATE.INSTALLED ||
+      status === CONF.INSTALL_STATE.UNINSTALLING
+    ) {
+      response.isInstalled = true;
+    } else if (
+      status === CONF.INSTALL_STATE.UNINSTALLED ||
+      status === CONF.INSTALL_STATE.INSTALLING
+    ) {
+      response.isInstalled = false;
+    }
 
     if (response.hasOwnProperty('icon') && !response.icon.length) {
       response.icon = this.defaults.icon;
@@ -164,6 +178,18 @@ module.exports = Backbone.Model.extend({
       if (_.contains(CONF.NON_INSTALLABLE_IDS, id)) {
         response.isInstallable = false;
       }
+    }
+
+    if (response.hasOwnProperty('downloadSize')) {
+      this.set(
+        'prettyDownloadSize', this._prettyBytes(downloadSize)
+      );
+    }
+
+    if (response.hasOwnProperty('installedSize')) {
+      this.set(
+        'prettyInstalledSize', this._prettyBytes(installedSize)
+      );
     }
 
     return response;

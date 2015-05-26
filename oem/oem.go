@@ -20,6 +20,9 @@ package oem
 import (
 	"errors"
 	"io/ioutil"
+	"path/filepath"
+
+	"launchpad.net/snappy/snappy"
 
 	"gopkg.in/yaml.v2"
 )
@@ -52,23 +55,26 @@ var ErrTooMany = errors.New("too many oem packages found")
 var ErrDecode = errors.New("decoding problem")
 
 // Oem returns an oem package
-func Oem() (pkg Snap, err error) {
-	pkgs, err := glob("/oem/", "package.yaml")
-
-	if len(pkgs) == 0 {
-		return pkg, ErrNotFound
-	} else if len(pkgs) > 1 || err != nil {
-		return pkg, ErrTooMany
-	}
-
-	f, err := ioutil.ReadFile(pkgs[0])
+func Oem() (*Snap, error) {
+	oem, err := snappy.ActiveSnapsByType(snappy.SnapTypeOem)
 	if err != nil {
-		return pkg, ErrDecode
+		return nil, err
+	} else if len(oem) > 1 {
+		return nil, ErrTooMany
+	} else if len(oem) == 0 {
+		return nil, ErrNotFound
 	}
 
+	yamlPath := filepath.Join("/oem", oem[0].Name(), oem[0].Version(), "meta", "package.yaml")
+	f, err := ioutil.ReadFile(yamlPath)
+	if err != nil {
+		return nil, ErrDecode
+	}
+
+	var pkg Snap
 	if err := yaml.Unmarshal([]byte(f), &pkg); err != nil {
-		return pkg, ErrDecode
+		return nil, ErrDecode
 	}
 
-	return pkg, nil
+	return &pkg, nil
 }

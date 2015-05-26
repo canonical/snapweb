@@ -1,3 +1,5 @@
+/** @define b-snaplist; weak */
+
 .b-snaplist {
 }
 
@@ -7,38 +9,38 @@
 
 /** grid style **/
 
-.b-snaplist--grid {
+.b-snaplist_grid {
   display:flex;
   flex-wrap: wrap;
 }
 
-.b-snaplist--grid .b-snaplist__item {
+.b-snaplist_grid .b-snaplist__item {
   flex: 0 1 20%;
   padding:10px;
 }
 
-.b-snaplist--grid .b-snaplist__icon {
+.b-snaplist_grid .b-snaplist__icon {
 }
 
-.b-snaplist--grid .b-snaplist__icon img {
+.b-snaplist_grid .b-snaplist__icon img {
   border-radius:15%;
   width:100%;
 }
 
-.b-snaplist--grid .b-snaplist__name {
+.b-snaplist_grid .b-snaplist__name {
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.b-snaplist--grid .b-snaplist__name ~ * {
+.b-snaplist_grid .b-snaplist__name ~ * {
   display:none;
 }
 
 /** row style **/
 
-.b-snaplist--row .b-snaplist__item {
+.b-snaplist_row .b-snaplist__item {
   width:100%;
   display:flex;
   align-items:center;
@@ -48,24 +50,24 @@
   background-color:#fff;
 }
 
-.b-snaplist--row .b-snaplist__item:last-child {
+.b-snaplist_row .b-snaplist__item:last-child {
   margin-bottom:0;
 }
 
-.b-snaplist--row .b-snaplist__icon {
+.b-snaplist_row .b-snaplist__icon {
   flex:0 0 40px;
 }
 
-.b-snaplist--row .b-snaplist__icon img {
+.b-snaplist_row .b-snaplist__icon img {
   display:block;
   width: 40px;
   height: 40px;
 }
 
-.b-snaplist--row .b-snaplist__name,
-.b-snaplist--row .b-snaplist__version,
-.b-snaplist--row .b-snaplist__type,
-.b-snaplist--row .b-snaplist__origin {
+.b-snaplist_row .b-snaplist__name,
+.b-snaplist_row .b-snaplist__version,
+.b-snaplist_row .b-snaplist__type,
+.b-snaplist_row .b-snaplist__origin {
   flex:1 1;
   margin:0 1em;
   white-space: nowrap;
@@ -74,19 +76,18 @@
   text-overflow: ellipsis;
 }
 
-.b-snaplist--row .b-snaplist__version {
+.b-snaplist_row .b-snaplist__version {
   min-width:100px;
 }
 
-.b-snaplist--row .b-snaplist__type {
+.b-snaplist_row .b-snaplist__type {
   text-align:center;
 }
 
-.b-snaplist--row .b-snaplist__actions {
-  flex: 1;
+.b-snaplist_row .b-snaplist__actions {
 }
 
-.b-snaplist--row .b-installer__message {
+.b-snaplist_row .b-installer__message {
   /** XXX hmm **/
   display:none;
 }

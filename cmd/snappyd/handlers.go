@@ -86,7 +86,6 @@ func makeMainPageHandler() (f http.HandlerFunc, err error) {
 	if err != nil && err != oem.ErrNotFound {
 		return f, err
 	} else if err != oem.ErrNotFound {
-		fmt.Println(pkg)
 		name = pkg.Branding.Name
 		subname = pkg.Branding.Subname
 	}
