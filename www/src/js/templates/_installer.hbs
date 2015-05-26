@@ -1,0 +1,21 @@
+{{#if isInstallable}}
+<div class="b-installer b-installer_small {{ installHTMLClass }}">
+{{#if installActionString}}
+<div class="b-installer__button">{{ installActionString }}</div>
+<div class="b-installer__progress" title="download progress">
+<div class="b-installer__value"></div>
+</div>
+{{/if}}
+<div class="b-installer__message"></div>
+</div>
+{{else}}
+<div class="b-installer b-installer_small b-installer_disabled {{ installHTMLClass }}">
+<div class="b-installer__button">
+{{#if isInstalled}}
+Installed
+{{else}}
+Not installable
+{{/if}}
+</div>
+</div>
+{{/if}}

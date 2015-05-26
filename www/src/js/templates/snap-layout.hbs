@@ -7,17 +7,7 @@
     </p>
   </div>
   <div class="b-snap__actions">
-  {{#if isInstallable}}
-    <div class="b-installer {{ installHTMLClass }}">
-      {{#if installActionString}}
-      <div class="b-installer__button">{{ installActionString }}</div>
-      <div class="b-installer__progress" title="download progress">
-        <div class="b-installer__value"></div>
-      </div>
-      {{/if}}
-      <div class="b-installer__message"></div>
-    </div>
-    {{/if}}
+    {{> installer}}
   </div>
 </div>
 <div class="region-menu"></div>

@@ -12,9 +12,9 @@ module.exports = Marionette.CollectionView.extend({
     var style = this.options.style || 'row';
 
     if (style === 'row') {
-      return 'b-snaplist b-snaplist--row';
+      return 'b-snaplist b-snaplist_row';
     } else if (style === 'grid') {
-      return 'b-snaplist b-snaplist--grid';
+      return 'b-snaplist b-snaplist_grid';
     }
   },
 

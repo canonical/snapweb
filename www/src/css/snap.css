@@ -1,3 +1,5 @@
+/** @define b-snap; weak */
+
 .b-snap {
 }
 
@@ -53,7 +55,7 @@
   padding:15px 0;
 }
 
-.b-snap__nav-item--active::before {
+.b-snap__nav-item_active::before {
   position:absolute;
   content:'';
   background:#dd4814;
