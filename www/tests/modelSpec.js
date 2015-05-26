@@ -67,6 +67,27 @@ describe('Snap', function() {
       expect(this.model.get('installActionString')).toBe(undefined);
     });
 
+    it('should set pretty byte attr or empty string if bad', function() {
+      this.model.set('installed_size', 0);
+      expect(this.model.get('prettyInstalledSize')).toBe('0 B');
+      // we coerce strings to numbers in the setters
+      this.model.set('installed_size', '1');
+      expect(this.model.get('prettyInstalledSize')).toBe('1 B');
+      // bad
+      this.model.set('installed_size', 'foo');
+      expect(this.model.get('prettyInstalledSize')).toBe('');
+    });
+
+    it('should parse response to create prettyInstalledSize', function() {
+      this.model.parse({'installed_size': 0});
+      expect(this.model.get('prettyInstalledSize')).toBe('0 B');
+    });
+
+    it('should parse response to create prettyDownloadSize', function() {
+      this.model.parse({'download_size': 0});
+      expect(this.model.get('prettyDownloadSize')).toBe('0 B');
+    });
+
   });
 
   describe('sync methods', function() {

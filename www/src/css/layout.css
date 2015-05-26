@@ -76,13 +76,13 @@
 
 @media (--l) {
 .b-layout__container {
-    width: 880px;
+    width: 990px;
   }
 }
 
 @media (--xl) {
 .b-layout__container {
-    width: 1100px;
+    width: 1210px;
   }
 }
 
@@ -94,6 +94,6 @@
 
 @media (--xxxl) {
 .b-layout__container {
-    width: 1870px;
+    width: 1650px;
   }
 }
