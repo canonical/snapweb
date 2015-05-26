@@ -59,26 +59,28 @@ module.exports = Backbone.Model.extend({
     });
 
     this.on('add change:status', this.onStatusChange);
-    this.on('add change:installedSize', this.onInstalledSizeChange);
-    this.on('add change:downloadSize', this.onDownloadSizeChange);
+    this.on('add change:installed_size', this.onInstalledSizeChange);
+    this.on('add change:download_size', this.onDownloadSizeChange);
   },
 
   onDownloadSizeChange: function(model) {
-    var bytes = model.get('downloadSize');
+    var bytes = model.get('download_size');
     model.set(
-      'prettyDownloadSize', this._prettyBytes(model.get('downloadSize'))
+      'prettyDownloadSize',
+      this.prettifyBytes(Number(model.get('download_size')))
     );
   },
 
   onInstalledSizeChange: function(model) {
-    var bytes = model.get('installedSize');
+    var bytes = model.get('installed_size');
     model.set(
-      'prettyInstalledSize', this._prettyBytes(model.get('installedSize'))
+      'prettyInstalledSize',
+      this.prettifyBytes(Number(model.get('installed_size')))
     );
   },
 
-  _prettyBytes: function(bytes) {
-    if (_.isNumber(bytes) && bytes >= 0) {
+  prettifyBytes: function(bytes) {
+    if (_.isFinite(bytes)) {
       return prettyBytes(bytes);
     } else {
       return '';
@@ -180,15 +182,17 @@ module.exports = Backbone.Model.extend({
       }
     }
 
-    if (response.hasOwnProperty('downloadSize')) {
+    if (response.hasOwnProperty('download_size')) {
       this.set(
-        'prettyDownloadSize', this._prettyBytes(downloadSize)
+        //jscs:disable requireCamelCaseOrUpperCaseIdentifiers
+        'prettyDownloadSize', this.prettifyBytes(Number(download_size))
       );
     }
 
-    if (response.hasOwnProperty('installedSize')) {
+    if (response.hasOwnProperty('installed_size')) {
       this.set(
-        'prettyInstalledSize', this._prettyBytes(installedSize)
+        //jscs:disable requireCamelCaseOrUpperCaseIdentifiers
+        'prettyInstalledSize', this.prettifyBytes(Number(installed_size))
       );
     }
 
@@ -199,8 +203,6 @@ module.exports = Backbone.Model.extend({
     icon: '/public/images/default-package-icon.svg',
     installActionString: false,
     origin: '-',
-    installedSize: false,
-    downloadSize: false,
     isInstallable: true
   }
 
