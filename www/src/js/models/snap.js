@@ -59,21 +59,21 @@ module.exports = Backbone.Model.extend({
     });
 
     this.on('add change:status', this.onStatusChange);
-    this.on('add change:installed_size', this.onInstalledSizeChange);
-    this.on('add change:download_size', this.onDownloadSizeChange);
+    this.on('add change:installedSize', this.onInstalledSizeChange);
+    this.on('add change:downloadSize', this.onDownloadSizeChange);
   },
 
   onDownloadSizeChange: function(model) {
-    var bytes = model.get('download_size');
+    var bytes = model.get('downloadSize');
     model.set(
-      'prettyDownloadSize', this._prettyBytes(model.get('download_size'))
+      'prettyDownloadSize', this._prettyBytes(model.get('downloadSize'))
     );
   },
 
   onInstalledSizeChange: function(model) {
-    var bytes = model.get('installed_size');
+    var bytes = model.get('installedSize');
     model.set(
-      'prettyInstalledSize', this._prettyBytes(model.get('installed_size'))
+      'prettyInstalledSize', this._prettyBytes(model.get('installedSize'))
     );
   },
 
@@ -173,8 +173,8 @@ module.exports = Backbone.Model.extend({
     icon: '/public/images/default-package-icon.svg',
     installActionString: false,
     origin: '-',
-    installed_size: false,
-    download_size: false,
+    installedSize: false,
+    downloadSize: false,
     isInstallable: true
   }
 
