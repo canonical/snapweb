@@ -46,6 +46,10 @@ orig_pwd=$(pwd)
 builddir=$(mktemp -d)
 trap 'rm -rf "$builddir"' EXIT
 
+echo Obtaining go dependencies
+go get launchpad.net/godeps
+godeps -u dependencies.tsv
+
 cp -r pkg/. $builddir
 mkdir $builddir/www
 cp -r www/public www/templates $builddir/www
