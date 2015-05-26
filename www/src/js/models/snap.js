@@ -59,29 +59,31 @@ module.exports = Backbone.Model.extend({
     });
 
     this.on('add change:status', this.onStatusChange);
-    this.on('add change:installed_size', this.onInstalledSizeChange);
-    this.on('add change:download_size', this.onDownloadSizeChange);
+    this.on('change:installed_size', this.onInstalledSizeChange);
+    this.on('change:download_size', this.onDownloadSizeChange);
   },
 
   onDownloadSizeChange: function(model) {
     var bytes = model.get('download_size');
     model.set(
-      'prettyDownloadSize', this._prettyBytes(model.get('download_size'))
+      'prettyDownloadSize',
+      this.prettifyBytes(Number(model.get('download_size')))
     );
   },
 
   onInstalledSizeChange: function(model) {
     var bytes = model.get('installed_size');
     model.set(
-      'prettyInstalledSize', this._prettyBytes(model.get('installed_size'))
+      'prettyInstalledSize',
+      this.prettifyBytes(Number(model.get('installed_size')))
     );
   },
 
-  _prettyBytes: function(bytes) {
-    if (_.isNumber(bytes) && bytes >= 0) {
+  prettifyBytes: function(bytes) {
+    if (_.isFinite(bytes)) {
       return prettyBytes(bytes);
     } else {
-      return false;
+      return '';
     }
   },
 
@@ -180,6 +182,22 @@ module.exports = Backbone.Model.extend({
       }
     }
 
+    if (response.hasOwnProperty('download_size')) {
+      this.set(
+        //jscs:disable requireCamelCaseOrUpperCaseIdentifiers
+        'prettyDownloadSize',
+        this.prettifyBytes(Number(response.download_size))
+      );
+    }
+
+    if (response.hasOwnProperty('installed_size')) {
+      this.set(
+        //jscs:disable requireCamelCaseOrUpperCaseIdentifiers
+        'prettyInstalledSize',
+        this.prettifyBytes(Number(response.installed_size))
+      );
+    }
+
     return response;
   },
 
@@ -187,8 +205,6 @@ module.exports = Backbone.Model.extend({
     icon: '/public/images/default-package-icon.svg',
     installActionString: false,
     origin: '-',
-    installed_size: 'n/a',
-    download_size: 'n/a',
     isInstallable: true
   }
 
