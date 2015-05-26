@@ -81,7 +81,7 @@ module.exports = Backbone.Model.extend({
     if (_.isNumber(bytes) && bytes >= 0) {
       return prettyBytes(bytes);
     } else {
-      return false;
+      return '';
     }
   },
 
