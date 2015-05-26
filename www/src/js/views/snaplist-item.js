@@ -15,7 +15,11 @@ module.exports = Marionette.ItemView.extend({
 
   className: function() {
     var type = this.model.get('type');
-    return 'b-snaplist__item b-snaplist__item-' + type;
+    var className = 'b-snaplist__item';
+    if (type) {
+      className += ' b-snaplist__item-' + type;
+    }
+    return className;
   },
 
   template: function(model) {
