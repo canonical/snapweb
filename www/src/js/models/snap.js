@@ -59,8 +59,8 @@ module.exports = Backbone.Model.extend({
     });
 
     this.on('add change:status', this.onStatusChange);
-    this.on('add change:installed_size', this.onInstalledSizeChange);
-    this.on('add change:download_size', this.onDownloadSizeChange);
+    this.on('change:installed_size', this.onInstalledSizeChange);
+    this.on('change:download_size', this.onDownloadSizeChange);
   },
 
   onDownloadSizeChange: function(model) {
