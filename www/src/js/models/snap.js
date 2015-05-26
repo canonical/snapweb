@@ -185,14 +185,14 @@ module.exports = Backbone.Model.extend({
     if (response.hasOwnProperty('download_size')) {
       this.set(
         //jscs:disable requireCamelCaseOrUpperCaseIdentifiers
-        'prettyDownloadSize', this.prettifyBytes(Number(download_size))
+        'prettyDownloadSize', this.prettifyBytes(Number(response.download_size))
       );
     }
 
     if (response.hasOwnProperty('installed_size')) {
       this.set(
         //jscs:disable requireCamelCaseOrUpperCaseIdentifiers
-        'prettyInstalledSize', this.prettifyBytes(Number(installed_size))
+        'prettyInstalledSize', this.prettifyBytes(Number(response.installed_size))
       );
     }
 
