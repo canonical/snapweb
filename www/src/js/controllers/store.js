@@ -2,14 +2,14 @@ var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
 var Radio = require('backbone.radio');
 var StoreLayoutView = require('../views/store.js');
-var Bask = require('../collections/snaplist.js');
+var Snaplist = require('../collections/snaplist.js');
 
 module.exports = {
   index: function() {
     var chan = Radio.channel('root');
-    var storeBask = new Bask();
+    var storeSnaplist = new Snaplist();
 
-    storeBask.fetch({
+    storeSnaplist.fetch({
       success: function(snaplist) {
         var view =  new StoreLayoutView({
           collection: snaplist
