@@ -60,7 +60,11 @@
   font-size:10px;
 }
 
-.b-snaplist_grid .b-snaplist__size ~ * {
+.b-snaplist_grid .b-snaplist__size,
+.b-snaplist_grid .b-snaplist__version,
+.b-snaplist_grid .b-snaplist__type,
+.b-snaplist_grid .b-snaplist__origin,
+.b-snaplist_grid .b-snaplist__actions {
   display:none;
 }
 
