@@ -6,6 +6,7 @@ var browserify = require('browserify');
 var buffer = require('vinyl-buffer');
 var concat = require('gulp-concat');
 var csso = require('gulp-csso');
+var customMedia = require('postcss-custom-media');
 var del = require('del');
 var gulp = require('gulp');
 var gutil = require('gulp-util');
@@ -47,7 +48,7 @@ function createBundler(watch) {
   }
 
   return bundleShared(bundler);
-} 
+}
 
 function bundleShared(bundler) {
   return bundler.bundle()
@@ -72,11 +73,33 @@ gulp.task('js:lint', function() {
 
 // Styles
 
+
 gulp.task('styles', ['styles:clean'], function() {
   var processors = [
     autoprefixer({browsers: ['last 1 version']}),
-    bemlinter('bem')
+    bemlinter('bem'),
+    customMedia({
+      extensions: {
+        '--xxs':   '(min-width:  ' + calcWidth(4,8) + 'px)',
+        '--xs':    '(min-width:  ' + calcWidth(5,9) + 'px)',
+        '--s':     '(min-width:  ' + calcWidth(6,10) + 'px)',
+        '--m':     '(min-width:  ' + calcWidth(7) + 'px)',
+        '--l':     '(min-width:  ' + calcWidth(9) + 'px)',
+        '--xl':    '(min-width:  ' + calcWidth(11) + 'px)',
+        '--xxl':   '(min-width:  ' + calcWidth(13) + 'px)',
+        '--xxxl':  '(min-width:  ' + calcWidth(15) + 'px)'
+      }
+    })
   ];
+
+  function calcWidth(units, padding, width) {
+    var scrollbar = 17;
+    width = width || 90; // width of an icon in grid style
+    padding = padding || 10;
+
+    return (((width + (padding*2)) * units) + (scrollbar * 2));
+  }
+
   return gulp.src([
     'node_modules/normalize.css/normalize.css',
     'www/src/css/**/*.css'

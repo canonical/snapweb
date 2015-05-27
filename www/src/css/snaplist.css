@@ -5,7 +5,9 @@
 
 .b-snaplist__item {
   cursor: pointer;
+  font-size:0;
 }
+
 
 /** grid style **/
 
@@ -15,16 +17,8 @@
 }
 
 .b-snaplist_grid .b-snaplist__item {
-  flex: 0 1 20%;
-  padding:10px;
-}
-
-.b-snaplist_grid .b-snaplist__icon {
-}
-
-.b-snaplist_grid .b-snaplist__icon img {
-  border-radius:15%;
-  width:100%;
+  flex: 0 1 auto;
+  padding:7px;
 }
 
 .b-snaplist_grid .b-snaplist__name {
@@ -32,13 +26,43 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-size:12px;
+  color:#999;
+  margin-top:4px;
+}
+
+.b-snaplist_grid .b-snaplist__name,
+.b-snaplist_grid .b-icon img {
+  width:90px;
 }
 
 .b-snaplist_grid .b-snaplist__name ~ * {
   display:none;
 }
 
+@media (--xxs) {
+  .b-snaplist_grid .b-snaplist__item {
+    padding:8px;
+  }
+}
+
+@media (--xs) {
+  .b-snaplist_grid .b-snaplist__item {
+    padding:9px;
+  }
+}
+
+@media (--s) {
+  .b-snaplist_grid .b-snaplist__item {
+    padding:10px;
+  }
+}
+
 /** row style **/
+
+.b-snaplist_row {
+  margin:3em;
+}
 
 .b-snaplist_row .b-snaplist__item {
   width:100%;
@@ -48,17 +72,23 @@
   border-radius:4px;
   margin-bottom:0.6em;
   background-color:#fff;
+  font-size:13px;
 }
 
 .b-snaplist_row .b-snaplist__item:last-child {
   margin-bottom:0;
 }
 
-.b-snaplist_row .b-snaplist__icon {
+
+.b-snaplist_row .b-icon {
   flex:0 0 40px;
 }
 
-.b-snaplist_row .b-snaplist__icon img {
+.b-snaplist_row .b-icon::before {
+  background-image: url(/public/images/icon-mask-on-white.png);
+}
+
+.b-snaplist_row .b-icon img {
   display:block;
   width: 40px;
   height: 40px;
