@@ -1,0 +1,22 @@
+.b-icon {
+  position:relative;
+  display:inline-block;
+}
+
+.b-icon::before {
+  content: "";
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  background-color:transparent;
+  background-image:url(/public/images/icon-mask.png);
+  background-repeat:no-repeat;
+  background-position:50% 50%;
+  background-size:100% 100%;
+}
+
+.b-icon img {
+  display:block;
+}

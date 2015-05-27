@@ -1,13 +1,18 @@
-<div class="b-snap__banner">
-  <div class="b-snap__meta">
-    <h1 class="b-snap__title">{{ name }} {{ version }} {{ binary_filesize }}</h1>
-    <p>
-    <span class="b-snap__origin" title="Origin">{{ origin }}</span>
-    <span class="b-snap__filesize" title="Package filesize">{{ binary_filesize}}</span>
-    </p>
-  </div>
-  <div class="b-snap__actions">
-    {{> installer}}
+<div class="b-layout__container">
+  <div class="b-snap__banner">
+    <div class="b-icon">
+      <img src="{{ icon }}" width="70" height="70">
+    </div>
+    <div class="b-snap__meta">
+      <h1 class="b-snap__title">{{ name }} {{ version }} {{ binary_filesize }}</h1>
+      <p>
+      <span title="Vendor">{{ vendor }}</span>
+      <span>{{ binary_filesize}}</span>
+      </p>
+    </div>
+    <div class="b-snap__actions">
+      {{> installer}}
+    </div>
   </div>
 </div>
 <div class="region-menu"></div>
