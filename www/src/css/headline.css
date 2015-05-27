@@ -3,7 +3,13 @@
 .b-headline {
 }
 
+.b-headline .b-layout__container {
+  display:flex;
+  align-items: baseline;
+}
+
 .b-headline__h1 {
+  flex:1;
   font-size:18px;
   font-weight:400;
   margin:20px 15px 5px 15px;

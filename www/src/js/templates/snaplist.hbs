@@ -1,0 +1,23 @@
+{{#if title}}
+<div class="b-headline">
+  <div class="b-layout__container">
+    <h1 class="b-headline__h1">{{ title }}</h1>
+    <div class="b-snaplist__actions">
+      {{#if canSort}}
+      <div class="b-button__group">
+        <div id="sortAlpha" class="b-button b-button_small{{#if isAlpha}} b-button_active{{/if}}">A-Z</div>
+        <div id="sortBytes" class="b-button b-button_small{{#unless isAlpha}} b-button_active{{/unless}}">kB</div>
+      </div>
+      {{/if}}
+      {{#if canStyle}}
+      <div class="b-button__group">
+        <div id="styleGrid" class="b-button b-button_small{{#if isGrid}} b-button_active{{/if}}">Grid</div>
+        <div id="styleRow" class="b-button b-button_small{{#unless isGrid}} b-button_active{{/unless}}">Row</div>
+      </div>
+      {{/if}}
+    </div>
+  </div>
+</div>
+{{/if}}
+<div class="b-snaplist b-snaplist_{{#if isGrid}}grid{{else}}row{{/if}}">
+</div>

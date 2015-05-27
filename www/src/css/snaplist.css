@@ -7,6 +7,12 @@
   cursor: pointer;
 }
 
+.b-snaplist__actions {
+  display:flex;
+  font-size: 11px;
+  justify-content: flex-end;
+}
+
 /** grid style **/
 
 .b-snaplist_grid {
@@ -79,7 +85,7 @@
 /** row style **/
 
 .b-snaplist_row {
-  margin:3em;
+  margin:1em 0;
 }
 
 .b-snaplist_row .b-snaplist__item {

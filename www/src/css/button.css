@@ -1,0 +1,50 @@
+/** @define b-button; weak */
+
+.b-button__group {
+  display:flex;
+}
+
+.b-button__group + .b-button__group {
+  margin-left:8px;
+}
+
+.b-button__group > * {
+  padding:3px 10px;
+}
+
+.b-button__group .b-button {
+  border:1px solid #ccc;
+  border-radius:3px;
+  background-color:#efefef;
+  color:#666;
+  user-select: none;
+  cursor: pointer;
+}
+
+.b-button__group .b-button_active {
+  background-color:#fff;
+}
+
+.b-button__group .b-button:hover {
+  background-color:#fff;
+}
+
+.b-button__group .b-button:nth-of-type(1) {
+  border-right:none;
+  border-top-right-radius:0;
+  border-bottom-right-radius:0;
+}
+
+.b-button__group .b-button:nth-last-of-type(1) {
+  border-top-left-radius:0;
+  border-bottom-left-radius:0;
+}
+
+.b-button__group .b-button:not(:nth-of-type(1)):not(:nth-last-of-type(1)) {
+  border-right:none;
+  border-radius:0;
+}
+
+.b-button__group .b-button:nth-of-type(1):nth-last-of-type(1) {
+  border-radius:3px;
+}

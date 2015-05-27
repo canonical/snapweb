@@ -7,5 +7,8 @@ var CONF = require('../config.js');
 
 module.exports = Backbone.Collection.extend({
   url: CONF.PACKAGES,
-  model: Snap
+  model: Snap,
+  comparator: function(model) {
+    return model.get('name');
+  }
 });
