@@ -54,8 +54,9 @@ type response struct {
 }
 
 type listFilter struct {
-	Types         []string
-	InstalledOnly bool
+	types         []string
+	installedOnly bool
+	query         string
 }
 
 // for easier stubbing during testing
@@ -97,12 +98,22 @@ func (h *Handler) allPackages(filter *listFilter) ([]snapPkg, error) {
 
 	typeFilter := func(string) bool { return true }
 
-	if len(filter.Types) != 0 {
-		regex, err := regexp.Compile("^(?:" + strings.Join(filter.Types, "|") + ")")
+	if len(filter.types) != 0 {
+		regex, err := regexp.Compile("^(?:" + strings.Join(filter.types, "|") + ")")
 		if err != nil {
 			return nil, err
 		}
 		typeFilter = regex.MatchString
+	}
+
+	queryFilter := func(string) bool { return true }
+
+	if filter.query != "" {
+		regex, err := regexp.Compile("^(?:" + filter.query + ")")
+		if err != nil {
+			return nil, err
+		}
+		queryFilter = regex.MatchString
 	}
 
 	installedSnapQs := make([]snapPkg, 0, len(installedSnaps))
@@ -110,11 +121,16 @@ func (h *Handler) allPackages(filter *listFilter) ([]snapPkg, error) {
 		if !typeFilter(string(installedSnaps[i].Type())) {
 			continue
 		}
+
+		if !queryFilter(installedSnaps[i].Name()) {
+			continue
+		}
+
 		installedSnapQs = append(installedSnapQs, h.snapQueryToPayload(installedSnaps[i]))
 	}
 
 	mStore := snappy.NewUbuntuStoreSnapRepository()
-	remoteSnaps, err := mStore.Search("*")
+	remoteSnaps, err := mStore.Search(filter.query)
 	if err != nil {
 		return nil, err
 	}
@@ -137,7 +153,7 @@ func (h *Handler) allPackages(filter *listFilter) ([]snapPkg, error) {
 		}
 	}
 
-	return mergeSnaps(installedSnapQs, remoteSnapQs, filter.InstalledOnly), nil
+	return mergeSnaps(installedSnapQs, remoteSnapQs, filter.installedOnly), nil
 }
 
 func (h *Handler) doRemovePackage(progress *webprogress.WebProgress, ID string) {
