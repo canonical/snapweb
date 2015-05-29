@@ -64,7 +64,7 @@
 
 
   # snappy unpack
-  /usr/bin/snappy                                                 Uxr,
+  /usr/bin/snappy                                                 uxr,
 
   # snappy tty change
   /dev/tty                                                          r,
