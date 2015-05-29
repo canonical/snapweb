@@ -7,6 +7,12 @@
   cursor: pointer;
 }
 
+.b-snaplist__actions {
+  display:flex;
+  font-size: 11px;
+  justify-content: flex-end;
+}
+
 /** grid style **/
 
 .b-snaplist_grid {
@@ -54,7 +60,10 @@
   font-size:10px;
 }
 
-.b-snaplist_grid .b-snaplist__size ~ * {
+.b-snaplist_grid .b-snaplist__version,
+.b-snaplist_grid .b-snaplist__type,
+.b-snaplist_grid .b-snaplist__origin,
+.b-snaplist_grid .b-snaplist__actions {
   display:none;
 }
 
@@ -79,7 +88,7 @@
 /** row style **/
 
 .b-snaplist_row {
-  margin:3em;
+  margin:1em 0;
 }
 
 .b-snaplist_row .b-snaplist__item {
