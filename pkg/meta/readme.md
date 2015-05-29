@@ -1,6 +1,6 @@
-# Snappyd
+# Ubuntu Core Snappy Device Manager
 
-This service allows you to manage your core device from a web interface.
+This service allows you to manage your Ubuntu Core device from a web interface or REST API.
 
 Features include:
 
