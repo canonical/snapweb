@@ -1,7 +1,7 @@
 // home view
 var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
-var BaskView = require('./snaplist.js');
+var SnapListView = require('./snaplist.js');
 var template = require('../templates/home.hbs');
 
 module.exports = Backbone.Marionette.LayoutView.extend({
@@ -14,9 +14,15 @@ module.exports = Backbone.Marionette.LayoutView.extend({
 
   onBeforeShow: function() {
     // TODO if collection empty use emptyView
-    this.showChildView('installedRegion', new BaskView({
-      collection: this.collection,
-      style: 'grid'
+    this.showChildView('installedRegion', new SnapListView({
+      model: new Backbone.Model({
+        title: 'Installed snaps',
+        isGrid: true,
+        isAlpha: true,
+        canSort: true,
+        canStyle: true
+      }),
+      collection: this.collection
     }));
   },
 
