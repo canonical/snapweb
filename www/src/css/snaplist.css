@@ -45,7 +45,11 @@
   width:90px;
 }
 
-.b-snaplist_grid :not(.b-snaplist__item-app) .b-icon::after {
+.b-snaplist_grid .b-snaplist__vendor {
+  display:none;
+}
+
+.b-snaplist :not(.b-snaplist__item-app) .b-icon::after {
   content: attr(data-type);
   position:absolute;
   width:100%;
@@ -69,19 +73,19 @@
 
 @media (--xxs) {
   .b-snaplist_grid .b-snaplist__item {
-    padding:8px;
+    padding:13px 8px;
   }
 }
 
 @media (--xs) {
   .b-snaplist_grid .b-snaplist__item {
-    padding:9px;
+    padding:14px 9px;
   }
 }
 
 @media (--s) {
   .b-snaplist_grid .b-snaplist__item {
-    padding:10px;
+    padding:15px 10px;
   }
 }
 
@@ -92,39 +96,47 @@
 }
 
 .b-snaplist_row .b-snaplist__item {
+  position:relative;
   width:100%;
   display:flex;
   align-items:center;
-  padding:0.6em;
-  border-radius:4px;
-  margin-bottom:0.6em;
-  background-color:#fff;
+  padding:8px 10px;
   font-size:13px;
+  border-top:1px solid #ddd;
+}
+
+.b-snaplist_row .b-snaplist__type {
+}
+
+.b-snaplist_row .b-snaplist__item:nth-of-type(2n+1) {
 }
 
 .b-snaplist_row .b-snaplist__item:last-child {
   margin-bottom:0;
+  border-bottom:1px solid #ddd;
 }
 
 
 .b-snaplist_row .b-icon {
-  flex:0 0 40px;
+  flex:0 0 60px;
 }
-
-.b-snaplist_row .b-icon::before {
-  background-image: url(/public/images/icon-mask-on-white.png);
-}
-
 
 .b-snaplist_row .b-icon img {
   display:block;
-  width: 40px;
-  height: 40px;
+  width: 60px;
+  height: 60px;
 }
 
-.b-snaplist_row .b-snaplist__name,
+.b-snaplist_row :not(.b-snaplist__item-app) .b-icon::after {
+  font-size:9px;
+  width:60px;
+  text-align:center;
+  padding: 1px 0 3px 0;
+}
+
+.b-snaplist_row .b-snaplist__id,
 .b-snaplist_row .b-snaplist__version,
-.b-snaplist_row .b-snaplist__type,
+.b-snaplist_row .b-snaplist__size,
 .b-snaplist_row .b-snaplist__origin {
   flex:1 1;
   margin:0 1em;
@@ -134,12 +146,21 @@
   text-overflow: ellipsis;
 }
 
-.b-snaplist_row .b-snaplist__version {
-  min-width:100px;
+.b-snaplist_row .b-snaplist__id {
+  margin:0 2em;
+  flex:2;
 }
 
-.b-snaplist_row .b-snaplist__type {
-  text-align:center;
+.b-snaplist__id p {
+  margin:0;
+}
+
+.b-snaplist_row .b-snaplist__vendor {
+  color:#999;
+}
+
+.b-snaplist_row .b-snaplist__origin {
+  text-transform: capitalize;
 }
 
 .b-snaplist_row .b-snaplist__actions {
