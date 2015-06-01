@@ -7,7 +7,7 @@ describe('SnapLayoutView', function() {
 
   beforeEach(function() {
     this.model = new Snap({
-      status: CONF.INSTALL_STATE.UNINSTALLED,
+      status: CONF.INSTALL_STATE.REMOVED,
       installActionString: 'Install'
     });
     this.view = new SnapLayoutView({
@@ -34,8 +34,8 @@ describe('SnapLayoutView', function() {
     expect(this.uiInstaller.hasClass('b-installer_thinking')).toBeTruthy();
   });
 
-  it('should be thinking when uninstalling', function() {
-    this.model.set('status', CONF.INSTALL_STATE.UNINSTALLING);
+  it('should be thinking when removing', function() {
+    this.model.set('status', CONF.INSTALL_STATE.REMOVING);
     expect(this.uiInstaller.hasClass('b-installer_thinking')).toBeTruthy();
   });
 
@@ -44,8 +44,8 @@ describe('SnapLayoutView', function() {
     expect(this.uiInstaller.hasClass('b-installer_thinking')).toBeFalsy();
   });
 
-  it('should not be thinking when uninstalled', function() {
-    this.model.set('status', CONF.INSTALL_STATE.UNINSTALLED);
+  it('should not be thinking when removeed', function() {
+    this.model.set('status', CONF.INSTALL_STATE.REMOVED);
     expect(this.uiInstaller.hasClass('b-installer_thinking')).toBeFalsy();
   });
 
