@@ -44,7 +44,7 @@ describe('SnapLayoutView', function() {
     expect(this.uiInstaller.hasClass('b-installer_thinking')).toBeFalsy();
   });
 
-  it('should not be thinking when removeed', function() {
+  it('should not be thinking when removed', function() {
     this.model.set('status', CONF.INSTALL_STATE.REMOVED);
     expect(this.uiInstaller.hasClass('b-installer_thinking')).toBeFalsy();
   });
