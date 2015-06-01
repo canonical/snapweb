@@ -43,13 +43,13 @@ describe('Snap', function() {
 
     it('should set installActionString from model state', function() {
       this.model.set('status', CONF.INSTALL_STATE.INSTALLED);
-      expect(this.model.get('installActionString')).toBe('Uninstall');
+      expect(this.model.get('installActionString')).toBe('Remove');
 
-      this.model.set('status', CONF.INSTALL_STATE.UNINSTALLED);
+      this.model.set('status', CONF.INSTALL_STATE.REMOVEED);
       expect(this.model.get('installActionString')).toBe('Install');
 
-      this.model.set('status', CONF.INSTALL_STATE.UNINSTALLING);
-      expect(this.model.get('installActionString')).toBe('Uninstalling…');
+      this.model.set('status', CONF.INSTALL_STATE.REMOVEING);
+      expect(this.model.get('installActionString')).toBe('Removeing…');
 
       this.model.set('status', CONF.INSTALL_STATE.INSTALLING);
       expect(this.model.get('installActionString')).toBe('Installing…');
@@ -100,7 +100,7 @@ describe('Snap', function() {
     });
 
     afterEach(function() {
-      jasmine.Ajax.uninstall();
+      jasmine.Ajax.remove();
       delete this.model;
       this.model = null;
     });
