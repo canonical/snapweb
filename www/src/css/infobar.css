@@ -1,8 +1,11 @@
 /** @define b-infobar; weak */
 
 .b-infobar {
-  padding:6px 0;
-  font-size:12px;
+  padding: 4px 0;
+  font-size: 12px;
+  background-color: #56565A;
+  border-bottom: 1px solid rgba(55,55,61,.15);
+  color: #D7D7D7;
 }
 
 .b-infobar .b-layout__container {
