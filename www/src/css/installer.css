@@ -28,7 +28,7 @@
   white-space: nowrap;
 }
 
-.b-installer_do_uninstall .b-installer__button {
+.b-installer_do_remove .b-installer__button {
   background-color:#ccc;
   color:#fff;
   font-weight:300;
