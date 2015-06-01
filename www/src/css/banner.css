@@ -1,7 +1,7 @@
 /** @define b-banner; weak */
 
 .b-banner {
-  background-color:#2f2f2f;
+  background-color:#37373d;
   color:#efefef;
   line-height:20px;
 }
@@ -26,11 +26,11 @@
 .b-banner__brand a {
   display: flex;
   align-items:center;
-  padding:15px 2em 15px 15px;
+  padding:10px 1em;
 }
 
 .b-banner__brand img {
-  margin:0 15px 0 0;
+  margin:0 1em 0 0;
 }
 
 .b-banner__search {
@@ -44,9 +44,9 @@
 .b-banner__search input[type=search] {
   width:50%;
   border:none;
-  height:30px;
+  height:24px;
   line-height:20px;
-  padding:15px 25px 15px 15px;
+  padding:12px 25px 12px 15px;
   background-color:#333;
 }
 
@@ -74,39 +74,37 @@
 }
 
 .b-banner__nav-item {
-  border-right:1px solid #333;
-}
-
-.b-banner__nav-item_active {
   position:relative;
 }
 
-.b-banner__nav-item_active::before {
+.b-banner__nav-item::before {
+  opacity:0;
   position:absolute;
   content:'';
   background:#dd4814;
   bottom:0;
-  left:-1px;
-  right:-1px;
-  height:3px;
+  left:0;
+  right:0;
+  height:2px;
+  transition: opacity 0.3s;
+}
+
+.b-banner__nav-item_active::before {
+  opacity:1;
 }
 
 .b-banner__primary-nav .b-banner__nav-item a {
   white-space: nowrap;
-  padding:20px 2em;
+  padding:12px 1em;
 }
 
-.b-banner__primary-nav .b-banner__nav-item:hover {
+.b-banner__nav-item:hover {
   background-color:#dd4814;
 }
 
 .b-banner__secondary-nav {
   margin-left:auto;
 }
-
-.b-banner__secondary-nav .b-banner__nav-item:last-child {
-  border-right:none;
-} 
 
 .b-banner__secondary-nav .b-banner__nav-item a {
   padding: 15px;
