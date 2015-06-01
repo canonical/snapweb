@@ -3,9 +3,8 @@
 .b-infobar {
   padding: 4px 0;
   font-size: 12px;
-  background-color: #56565A;
-  border-bottom: 1px solid rgba(55,55,61,.15);
-  color: #D7D7D7;
+  background-color: #eee;
+  box-shadow:0 2px 1px #ddd;
 }
 
 .b-infobar .b-layout__container {
