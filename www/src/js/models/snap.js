@@ -19,7 +19,7 @@ var chan = Radio.channel('root');
  * });
  *
  * // install (http PUT)
- * // uninstall (http DELETE)
+ * // remove (http DELETE)
  * // upgrade (http UPGRADE)
  *
  **/
@@ -35,7 +35,7 @@ module.exports = Backbone.Model.extend({
 
       if (
         status === CONF.INSTALL_STATE.INSTALLING ||
-        status === CONF.INSTALL_STATE.UNINSTALLING
+        status === CONF.INSTALL_STATE.REMOVING
       ) {
         _.delay(function(model) {
           model.fetch();
@@ -97,20 +97,20 @@ module.exports = Backbone.Model.extend({
     var state = model.get('status');
     var installHTMLClass = '';
 
-    if (state === CONF.INSTALL_STATE.UNINSTALLED) {
+    if (state === CONF.INSTALL_STATE.REMOVED) {
       installHTMLClass = 'b-installer_do_install';
     }
 
     if (state === CONF.INSTALL_STATE.INSTALLED) {
-      installHTMLClass = 'b-installer_do_uninstall';
+      installHTMLClass = 'b-installer_do_remove';
     }
 
     if (state === CONF.INSTALL_STATE.INSTALLING) {
       installHTMLClass = 'b-installer_do_install b-installer_thinking';
     }
 
-    if (state === CONF.INSTALL_STATE.UNINSTALLING) {
-      installHTMLClass = 'b-installer_do_uninstall b-installer_thinking';
+    if (state === CONF.INSTALL_STATE.REMOVING) {
+      installHTMLClass = 'b-installer_do_remove b-installer_thinking';
     }
 
     return model.set('installHTMLClass', installHTMLClass);
@@ -123,16 +123,16 @@ module.exports = Backbone.Model.extend({
 
     switch (state) {
       case CONF.INSTALL_STATE.INSTALLED:
-        action = 'Uninstall';
+        action = 'Remove';
         break;
       case CONF.INSTALL_STATE.INSTALLING:
         action = 'Installing…';
         break;
-      case CONF.INSTALL_STATE.UNINSTALLED:
+      case CONF.INSTALL_STATE.REMOVED:
         action = 'Install';
         break;
-      case CONF.INSTALL_STATE.UNINSTALLING:
-        action = 'Uninstalling…';
+      case CONF.INSTALL_STATE.REMOVING:
+        action = 'Removing…';
         break;
       default:
         // XXX
@@ -152,11 +152,11 @@ module.exports = Backbone.Model.extend({
 
     if (
       status === CONF.INSTALL_STATE.INSTALLED ||
-      status === CONF.INSTALL_STATE.UNINSTALLING
+      status === CONF.INSTALL_STATE.REMOVING
     ) {
       response.isInstalled = true;
     } else if (
-      status === CONF.INSTALL_STATE.UNINSTALLED ||
+      status === CONF.INSTALL_STATE.REMOVED ||
       status === CONF.INSTALL_STATE.INSTALLING
     ) {
       response.isInstalled = false;
