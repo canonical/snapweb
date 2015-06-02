@@ -52,6 +52,16 @@
   padding:15px 0;
 }
 
+.b-snap__nav-item[target="_blank"]::after {
+  content: '';
+  width:10px;
+  height:10px;
+  display:inline-block;
+  vertical-align:super;
+  background:transparent url("/public/images/external-link.svg") 0 0 no-repeat;
+  background-size:10px 10px;
+}
+
 .b-snap__nav-item_active::before {
   position:absolute;
   content:'';

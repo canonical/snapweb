@@ -17,13 +17,16 @@ module.exports = Backbone.Marionette.ItemView.extend({
     'click': 'onNavClick'
   },
 
-  template: function() {
-    return template();
+  template: function(model) {
+    return template(model);
   },
 
   onNavClick: function(e) {
     var link = e.target.getAttribute('href');
-    this.setActiveNav(link);
+    if (!e.target.getAttribute('target')) {
+      e.preventDefault();
+      this.setActiveNav(link);
+    }
   },
 
   setActiveNav: function(link) {
