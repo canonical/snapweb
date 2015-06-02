@@ -204,10 +204,15 @@ module.exports = Backbone.Model.extend({
       //jscs:disable requireCamelCaseOrUpperCaseIdentifiers
       var port = response.ui_port;
       //jscs:enable requireCamelCaseOrUpperCaseIdentifiers
-      var href = window.location.protocol + '//' +
-        window.location.hostname + ':' + port + '/';
 
-      this.set('vendorGuiHref', href);
+      if (_.isFinite(port) && port > 0) {
+
+        this.set('vendorGuiHref', window.location.protocol + '//' +
+            window.location.hostname + ':' + port + '/'
+        );
+      } else {
+        this.unset('vendorGuiHref');
+      }
     }
 
     return response;
