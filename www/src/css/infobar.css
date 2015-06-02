@@ -1,10 +1,8 @@
 /** @define b-infobar; weak */
 
 .b-infobar {
-  padding: 4px 0;
+  padding: 6px 0 0;
   font-size: 12px;
-  background-color: #eee;
-  box-shadow:0 2px 1px #ddd;
 }
 
 .b-infobar .b-layout__container {
