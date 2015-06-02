@@ -117,10 +117,10 @@
 }
 
 .b-snaplist_row .b-snaplist__name,
-.b-snaplist_row .b-snaplist__vendor,
 .b-snaplist_row .b-snaplist__version,
-.b-snaplist_row .b-snaplist__size,
-.b-snaplist_row .b-snaplist__origin {
+.b-snaplist_row .b-snaplist__origin,
+.b-snaplist_row .b-snaplist__vendor,
+.b-snaplist_row .b-snaplist__size {
   white-space: nowrap;
   width: 100%;
   overflow: hidden;
@@ -128,36 +128,31 @@
 }
 
 .b-snaplist_row .b-snaplist__id,
-.b-snaplist_row .b-snaplist__version,
-.b-snaplist_row .b-snaplist__size,
-.b-snaplist_row .b-snaplist__origin {
+.b-snaplist_row .b-snaplist__src,
+.b-snaplist_row .b-snaplist__size {
   margin:0 10px;
+}
+
+.b-snaplist_row .b-snaplist__id,
+.b-snaplist_row .b-snaplist__src {
+  flex:2;
+}
+
+.b-snaplist_row .b-snaplist__size {
   flex:1;
 }
 
-.b-snaplist_row .b-snaplist__version,
-.b-snaplist_row .b-snaplist__size,
-.b-snaplist_row .b-snaplist__origin {
+.b-snaplist_row .b-snaplist__src,
+.b-snaplist_row .b-snaplist__size {
   display:none;
 }
 
-.b-snaplist__id p {
-  margin:0;
-}
-
-.b-snaplist_row .b-snaplist__vendor {
-  color:#999;
-}
-
+.b-snaplist_row .b-snaplist__origin
 .b-snaplist_row .b-snaplist__origin {
   text-transform: capitalize;
 }
 
-.b-snaplist_row .b-snaplist__actions {
-}
-
 .b-snaplist_row .b-installer__message {
-  /** XXX hmm **/
   display:none;
 }
 
@@ -166,7 +161,7 @@
     padding:13px 8px;
   }
 
-  .b-snaplist_row .b-snaplist__version {
+  .b-snaplist_row .b-snaplist__src {
     display:block;
   }
 }
@@ -184,12 +179,6 @@
   .b-snaplist_grid .b-snaplist__item {
     padding:15px 10px;
   }
-  .b-snaplist_row .b-snaplist__origin {
-    display: block;
-  }
 }
 @media (--m) {
-  .b-snaplist_row .b-snaplist__origin {
-    display: block;
-  }
 }
