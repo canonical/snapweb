@@ -187,6 +187,7 @@ module.exports = Backbone.Model.extend({
         //jscs:disable requireCamelCaseOrUpperCaseIdentifiers
         'prettyDownloadSize',
         this.prettifyBytes(Number(response.download_size))
+        //jscs:enable requireCamelCaseOrUpperCaseIdentifiers
       );
     }
 
@@ -195,7 +196,23 @@ module.exports = Backbone.Model.extend({
         //jscs:disable requireCamelCaseOrUpperCaseIdentifiers
         'prettyInstalledSize',
         this.prettifyBytes(Number(response.installed_size))
+        //jscs:enable requireCamelCaseOrUpperCaseIdentifiers
       );
+    }
+
+    if (response.hasOwnProperty('ui_port')) {
+      //jscs:disable requireCamelCaseOrUpperCaseIdentifiers
+      var port = response.ui_port;
+      //jscs:enable requireCamelCaseOrUpperCaseIdentifiers
+
+      if (_.isFinite(port) && port > 0) {
+
+        this.set('vendorGuiHref', window.location.protocol + '//' +
+            window.location.hostname + ':' + port + '/'
+        );
+      } else {
+        this.unset('vendorGuiHref');
+      }
     }
 
     return response;
