@@ -46,9 +46,10 @@ module.exports = Marionette.LayoutView.extend({
   },
 
   onBeforeShow: function() {
-    var tabView = this._getSectionView(this.options.section);
+    var tabView = this.getSectionView(this.options.section);
     this.showChildView('menuRegion',
       new SnapMenuView({
+        model: this.model,
         section: this.options.section
       })
     );
@@ -60,7 +61,7 @@ module.exports = Marionette.LayoutView.extend({
     tabRegion: '.region-tab'
   },
 
-  _getSectionView: function(section) {
+  getSectionView: function(section) {
     var view;
     switch (section) {
       case 'reviews':
@@ -76,17 +77,19 @@ module.exports = Marionette.LayoutView.extend({
   },
 
   section: function(e) {
-    e.preventDefault();
-    var section = e.target.getAttribute('href');
-    var view = this._getSectionView(section);
-    var name = this.model.get('id');
-    // XXX url sane
-    var url = 'snap/' + name + '/' + section;
-    // if section is already in place, don't showChildView
-    var re = new RegExp('/' + section + '$', 'i');
-    if (!re.test(Backbone.history.fragment)) {
-      this.showChildView('tabRegion', view);
-      Backbone.history.navigate(url);
+    if (!e.target.getAttribute('target')) {
+      e.preventDefault();
+      var section = e.target.getAttribute('href');
+      var view = this.getSectionView(section);
+      var name = this.model.get('id');
+      // XXX url sane
+      var url = 'snap/' + name + '/' + section;
+      // if section is already in place, don't showChildView
+      var re = new RegExp('/' + section + '$', 'i');
+      if (!re.test(Backbone.history.fragment)) {
+        this.showChildView('tabRegion', view);
+        Backbone.history.navigate(url);
+      }
     }
   }
 });
