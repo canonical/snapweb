@@ -57,10 +57,10 @@ module.exports = Marionette.Behavior.extend({
     }
 
     if (
-      state === CONF.INSTALL_STATE.UNINSTALLED &&
-      oldState === CONF.INSTALL_STATE.UNINSTALLING
+      state === CONF.INSTALL_STATE.REMOVED &&
+      oldState === CONF.INSTALL_STATE.REMOVING
     ) {
-      this.ui.statusMessage.text('Uninstall successful!');
+      this.ui.statusMessage.text('Snap removed!');
     }
   },
 
@@ -84,15 +84,15 @@ module.exports = Marionette.Behavior.extend({
     }
 
     if (status === CONF.INSTALL_STATE.INSTALLED) {
-      // uninstall
+      // remove
       model.set({
-        status: CONF.INSTALL_STATE.UNINSTALLING
+        status: CONF.INSTALL_STATE.REMOVING
       });
       model.destroy({
         dataType : 'json',
         silent: true
       });
-    } else if (status === CONF.INSTALL_STATE.UNINSTALLED) {
+    } else if (status === CONF.INSTALL_STATE.REMOVED) {
       // install
       model.save({
         status: CONF.INSTALL_STATE.INSTALLING

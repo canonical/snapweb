@@ -15,8 +15,8 @@ module.exports = {
   INSTALL_STATE: {
     INSTALLED: 'installed',
     INSTALLING: 'installing',
-    UNINSTALLED: 'uninstalled',
-    UNINSTALLING: 'uninstalling'
+    REMOVED: 'uninstalled',
+    REMOVING: 'uninstalling'
   },
   INSTALL_POLL_WAIT: 16 // milliseconds
 };
