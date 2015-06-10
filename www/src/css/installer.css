@@ -7,8 +7,8 @@
 }
 
 .b-installer_small {
-  font-size:13px;
-  width:160px;
+  font-size:12px;
+  width:100px;
 }
 
 .b-installer__button {
@@ -19,7 +19,7 @@
   cursor:pointer;
   font-weight:400;
   overflow: hidden;
-  padding:8px 2em;
+  padding:8px 10px;
   position:relative;
   text-align:center;
   text-overflow: ellipsis;
