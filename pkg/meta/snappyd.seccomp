@@ -1,1 +1,4 @@
+# This has to be unrestricted since snappyd will fork/exec /usr/bin/snappy for
+# various things and seccomp would apply this policy to snappy and it then
+# doesn't run well. Once there is a proper IPC service, this can be revisited.
 @unrestricted
