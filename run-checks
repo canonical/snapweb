@@ -53,7 +53,7 @@ fi
 
 # www
 echo Obtaining npm dependencies
-npm install --loglevel error && npm update --loglevel error
+npm install --loglevel error
 
 # js unit tests
 echo "Running js unit tests (set JS_TESTER to override)"
