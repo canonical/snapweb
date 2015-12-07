@@ -36,7 +36,6 @@ Install:
 
 ## Building
 
-    go get github.com/gorilla/mux
     cd $GOPATH/src/launchpad.net/webdm
     ./build.sh
 
