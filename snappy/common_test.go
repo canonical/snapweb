@@ -20,7 +20,8 @@ package snappy
 import (
 	"testing"
 
-	"launchpad.net/snappy/snappy"
+	"github.com/ubuntu-core/snappy/pkg"
+	"github.com/ubuntu-core/snappy/snappy"
 
 	. "gopkg.in/check.v1"
 )
@@ -30,43 +31,41 @@ func Test(t *testing.T) { TestingT(t) }
 type fakeSnappyPart struct {
 	snappy.Part
 	name        string
-	namespace   string
+	origin      string
 	version     string
-	vendor      string
 	description string
 	installed   bool
 	icon        string
-	snapType    snappy.SnapType
+	snapType    pkg.Type
 }
 
 type fakeSnappyPartServices struct {
 	fakeSnappyPart
-	services []snappy.Service
+	serviceYamls []snappy.ServiceYaml
 }
 
 func newDefaultFakePart() *fakeSnappyPart {
 	return &fakeSnappyPart{
 		name:        "camlistore",
-		namespace:   "sergiusens",
+		origin:      "sergiusens",
 		version:     "2.0",
 		installed:   true,
-		snapType:    snappy.SnapTypeApp,
-		vendor:      "Sergiusens Incorporated",
+		snapType:    pkg.TypeApp,
 		description: "Camlistore",
 	}
 }
 
-func newFakePart(name, namespace, version string, installed bool) *fakeSnappyPart {
+func newFakePart(name, origin, version string, installed bool) *fakeSnappyPart {
 	return &fakeSnappyPart{
 		name:      name,
-		namespace: namespace,
+		origin:    origin,
 		version:   version,
 		installed: installed,
-		snapType:  snappy.SnapTypeApp,
+		snapType:  pkg.TypeApp,
 	}
 }
 
-func newParametrizedFake(name, version string, installed bool, snapType snappy.SnapType) *fakeSnappyPart {
+func newParametrizedFake(name, version string, installed bool, snapType pkg.Type) *fakeSnappyPart {
 	return &fakeSnappyPart{
 		name:      name,
 		version:   version,
@@ -78,17 +77,17 @@ func newParametrizedFake(name, version string, installed bool, snapType snappy.S
 func newDefaultFakeServices() *fakeSnappyPartServices {
 	return &fakeSnappyPartServices{
 		fakeSnappyPart: fakeSnappyPart{
-			name:      "camlistore.sergiusens",
-			namespace: "sergiusens",
+			name:      "camlistore",
+			origin:    "sergiusens",
 			version:   "2.0",
 			installed: true,
-			snapType:  snappy.SnapTypeApp,
+			snapType:  pkg.TypeApp,
 		},
 	}
 }
 
-func (p fakeSnappyPartServices) Services() []snappy.Service {
-	return p.services
+func (p fakeSnappyPartServices) ServiceYamls() []snappy.ServiceYaml {
+	return p.serviceYamls
 }
 
 func (p fakeSnappyPart) IsInstalled() bool {
@@ -115,15 +114,15 @@ func (p fakeSnappyPart) Name() string {
 	return p.name
 }
 
-func (p fakeSnappyPart) Namespace() string {
-	return p.namespace
+func (p fakeSnappyPart) Origin() string {
+	return p.origin
 }
 
 func (p fakeSnappyPart) Version() string {
 	return p.version
 }
 
-func (p fakeSnappyPart) Type() snappy.SnapType {
+func (p fakeSnappyPart) Type() pkg.Type {
 	return p.snapType
 }
 
@@ -131,20 +130,16 @@ func (p fakeSnappyPart) Icon() string {
 	return p.icon
 }
 
-func (p fakeSnappyPart) Vendor() string {
-	return p.vendor
-}
-
 func (p fakeSnappyPart) Description() string {
 	return p.description
 }
 
-func newFakeServicesNoExternalUI() []snappy.Service {
-	services := make([]snappy.Service, 0, 2)
+func newFakeServicesNoExternalUI() []snappy.ServiceYaml {
+	services := make([]snappy.ServiceYaml, 0, 2)
 
 	internal1 := map[string]snappy.Port{"ui": snappy.Port{Port: "200/tcp"}}
 	external1 := map[string]snappy.Port{"web": snappy.Port{Port: "1024/tcp"}}
-	s1 := snappy.Service{
+	s1 := snappy.ServiceYaml{
 		Name: "s1",
 		Ports: &snappy.Ports{
 			Internal: internal1,
@@ -153,7 +148,7 @@ func newFakeServicesNoExternalUI() []snappy.Service {
 	}
 	services = append(services, s1)
 
-	s2 := snappy.Service{
+	s2 := snappy.ServiceYaml{
 		Name: "s2",
 	}
 	services = append(services, s2)
@@ -161,17 +156,17 @@ func newFakeServicesNoExternalUI() []snappy.Service {
 	return services
 }
 
-func newFakeServicesWithExternalUI() []snappy.Service {
-	services := make([]snappy.Service, 0, 2)
+func newFakeServicesWithExternalUI() []snappy.ServiceYaml {
+	services := make([]snappy.ServiceYaml, 0, 2)
 
-	s1 := snappy.Service{
+	s1 := snappy.ServiceYaml{
 		Name: "s2",
 	}
 	services = append(services, s1)
 
 	internal2 := map[string]snappy.Port{"ui": snappy.Port{Port: "200/tcp"}}
 	external2 := map[string]snappy.Port{"ui": snappy.Port{Port: "1024/tcp"}}
-	s2 := snappy.Service{
+	s2 := snappy.ServiceYaml{
 		Name: "s1",
 		Ports: &snappy.Ports{
 			Internal: internal2,

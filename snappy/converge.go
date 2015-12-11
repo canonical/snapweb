@@ -25,7 +25,8 @@ import (
 
 	"log"
 
-	"launchpad.net/snappy/snappy"
+	"github.com/ubuntu-core/snappy/pkg"
+	"github.com/ubuntu-core/snappy/snappy"
 	"launchpad.net/webdm/webprogress"
 )
 
@@ -34,7 +35,6 @@ type snapPkg struct {
 	Name          string             `json:"name"`
 	Origin        string             `json:"origin"`
 	Version       string             `json:"version"`
-	Vendor        string             `json:"vendor"`
 	Description   string             `json:"description"`
 	Icon          string             `json:"icon"`
 	Status        webprogress.Status `json:"status"`
@@ -43,7 +43,7 @@ type snapPkg struct {
 	Progress      float64            `json:"progress,omitempty"`
 	InstalledSize int64              `json:"installed_size,omitempty"`
 	DownloadSize  int64              `json:"download_size,omitempty"`
-	Type          snappy.SnapType    `json:"type,omitempty"`
+	Type          pkg.Type           `json:"type,omitempty"`
 	UIPort        uint64             `json:"ui_port,omitempty"`
 	UIUri         string             `json:"ui_uri,omitempty"`
 }
@@ -63,10 +63,10 @@ type listFilter struct {
 var activeSnapByName = snappy.ActiveSnapByName
 
 func (h *Handler) packagePayload(resource string) (snapPkg, error) {
-	var pkgName, namespace string
+	var pkgName, origin string
 	if s := strings.Split(resource, "."); len(s) == 2 {
 		pkgName = s[0]
-		namespace = s[1]
+		origin = s[1]
 	} else {
 		pkgName = resource
 	}
@@ -74,13 +74,13 @@ func (h *Handler) packagePayload(resource string) (snapPkg, error) {
 	snapQ := activeSnapByName(pkgName)
 	if snapQ != nil {
 		// the second check is for locally installed snaps that lose their origin.
-		if snapQ.Namespace() == namespace || snapQ.Type() != snappy.SnapTypeApp {
+		if snapQ.Origin() == origin || snapQ.Type() != pkg.TypeApp {
 			return h.snapQueryToPayload(snapQ), nil
 		}
 	}
 
 	mStore := snappy.NewMetaStoreRepository()
-	found, err := mStore.Details(resource)
+	found, err := mStore.Details(pkgName, origin)
 	if err == nil && len(found) != 0 {
 		return h.snapQueryToPayload(found[0]), nil
 	}
@@ -225,33 +225,32 @@ func mergeSnaps(installed, remote []snapPkg, installedOnly bool) []snapPkg {
 	return snapPkgs
 }
 
-func isNamespaceless(snap snappy.Part) bool {
-	return snap.Type() == snappy.SnapTypeOem || snap.Type() == snappy.SnapTypeFramework
+func isOriginless(snap snappy.Part) bool {
+	return snap.Type() == pkg.TypeOem || snap.Type() == pkg.TypeFramework
 }
 
 func hasPortInformation(snap snappy.Part) bool {
-	return snap.Type() == snappy.SnapTypeApp || snap.Type() == snappy.SnapTypeFramework
+	return snap.Type() == pkg.TypeApp || snap.Type() == pkg.TypeFramework
 }
 
 func (h *Handler) snapQueryToPayload(snapQ snappy.Part) snapPkg {
 	snap := snapPkg{
 		Name:        snapQ.Name(),
-		Origin:      snapQ.Namespace(),
+		Origin:      snapQ.Origin(),
 		Version:     snapQ.Version(),
-		Vendor:      snapQ.Vendor(),
 		Description: snapQ.Description(),
 		Type:        snapQ.Type(),
 	}
 
-	if isNamespaceless(snapQ) {
+	if isOriginless(snapQ) {
 		snap.ID = snapQ.Name()
 	} else {
-		snap.ID = snapQ.Name() + "." + snapQ.Namespace()
+		snap.ID = snapQ.Name() + "." + snapQ.Origin()
 	}
 
 	if hasPortInformation(snapQ) {
-		if snapInstalled, ok := snapQ.(snappy.Services); ok {
-			port, uri := uiAccess(snapInstalled.Services())
+		if snapInstalled, ok := snapQ.(snappy.ServiceYamler); ok {
+			port, uri := uiAccess(snapInstalled.ServiceYamls())
 			snap.UIPort = port
 			snap.UIUri = uri
 		}
@@ -293,7 +292,7 @@ func (h *Handler) snapQueryToPayload(snapQ snappy.Part) snapPkg {
 	return snap
 }
 
-func uiAccess(services []snappy.Service) (port uint64, uri string) {
+func uiAccess(services []snappy.ServiceYaml) (port uint64, uri string) {
 	for i := range services {
 		if services[i].Ports == nil {
 			continue
