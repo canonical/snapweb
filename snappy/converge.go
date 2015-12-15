@@ -225,27 +225,18 @@ func mergeSnaps(installed, remote []snapPkg, installedOnly bool) []snapPkg {
 	return snapPkgs
 }
 
-func isOriginless(snap snappy.Part) bool {
-	return snap.Type() == pkg.TypeOem || snap.Type() == pkg.TypeFramework
-}
-
 func hasPortInformation(snap snappy.Part) bool {
 	return snap.Type() == pkg.TypeApp || snap.Type() == pkg.TypeFramework
 }
 
 func (h *Handler) snapQueryToPayload(snapQ snappy.Part) snapPkg {
 	snap := snapPkg{
+		ID:          snapQ.Name() + "." + snapQ.Origin(),
 		Name:        snapQ.Name(),
 		Origin:      snapQ.Origin(),
 		Version:     snapQ.Version(),
 		Description: snapQ.Description(),
 		Type:        snapQ.Type(),
-	}
-
-	if isOriginless(snapQ) {
-		snap.ID = snapQ.Name()
-	} else {
-		snap.ID = snapQ.Name() + "." + snapQ.Origin()
 	}
 
 	if hasPortInformation(snapQ) {
