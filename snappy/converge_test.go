@@ -51,7 +51,6 @@ func (s *PayloadSuite) TestPayloadWithNoServices(c *C) {
 	c.Check(q.Status, Equals, webprogress.StatusInstalled)
 	c.Check(q.Type, Equals, fakeSnap.snapType)
 	c.Check(q.UIPort, Equals, uint64(0))
-	c.Check(q.UIUri, Equals, "")
 	c.Check(q.Icon, Equals, "/icons/camlistore.sergiusens_icon.png")
 	c.Check(q.Description, Equals, fakeSnap.description)
 }
@@ -66,7 +65,6 @@ func (s *PayloadSuite) TestPayloadWithServicesButNoUI(c *C) {
 	c.Assert(q.Status, Equals, webprogress.StatusInstalled)
 	c.Assert(q.Type, Equals, fakeSnap.snapType)
 	c.Assert(q.UIPort, Equals, uint64(0))
-	c.Assert(q.UIUri, Equals, "")
 }
 
 func (s *PayloadSuite) TestPayloadWithServicesUI(c *C) {
@@ -79,7 +77,6 @@ func (s *PayloadSuite) TestPayloadWithServicesUI(c *C) {
 	c.Assert(q.Status, Equals, webprogress.StatusInstalled)
 	c.Assert(q.Type, Equals, fakeSnap.snapType)
 	c.Assert(q.UIPort, Equals, uint64(1024))
-	c.Assert(q.UIUri, Equals, "")
 }
 
 func (s *PayloadSuite) TestPayloadTypeOem(c *C) {
@@ -94,7 +91,6 @@ func (s *PayloadSuite) TestPayloadTypeOem(c *C) {
 	c.Assert(q.Status, Equals, webprogress.StatusInstalled)
 	c.Assert(q.Type, Equals, fakeSnap.snapType)
 	c.Assert(q.UIPort, Equals, uint64(0))
-	c.Assert(q.UIUri, Equals, "")
 }
 
 type MergeSuite struct {
