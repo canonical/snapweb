@@ -24,7 +24,7 @@ import (
 	"net/http"
 	"strings"
 
-	"launchpad.net/snappy/snappy"
+	"github.com/ubuntu-core/snappy/snappy"
 	"launchpad.net/webdm/webprogress"
 
 	"github.com/gorilla/mux"

@@ -45,10 +45,6 @@
   width:90px;
 }
 
-.b-snaplist_grid .b-snaplist__vendor {
-  display:none;
-}
-
 .b-snaplist :not(.b-snaplist__item-app) .b-icon::after {
   content: attr(data-type);
   position:absolute;
@@ -119,7 +115,6 @@
 .b-snaplist_row .b-snaplist__name,
 .b-snaplist_row .b-snaplist__version,
 .b-snaplist_row .b-snaplist__origin,
-.b-snaplist_row .b-snaplist__vendor,
 .b-snaplist_row .b-snaplist__size {
   white-space: nowrap;
   width: 100%;

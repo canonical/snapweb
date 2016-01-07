@@ -77,6 +77,16 @@
   /usr/bin/aa-clickhook                                           Uxr,
   /usr/bin/aa-profile-hook                                        Uxr,
 
+  # TODO: attention needed here
+  /etc/lsb-release                                                  r,
+  /sbin/apparmor_parser                                           Uxr,
+  /usr/bin/unsquashfs                                             Uxr,
+  /usr/share/apparmor/easyprof/policygroups/**                      r,
+  /usr/share/apparmor/easyprof/templates/**                         r,
+  /usr/share/seccomp/policygroups/**                                r,
+  /usr/share/seccomp/templates/**                                   r,
+  /var/cache/apparmor/**                                            w,
+
   # snappy requirements for services
   /etc/dbus-1/system.d/                                             r,
   /etc/dbus-1/system.d/**                                         rwl,

@@ -17,7 +17,7 @@
 
 package webprogress
 
-import "launchpad.net/snappy/progress"
+import "github.com/ubuntu-core/snappy/progress"
 
 // Operation indicates the desired operation to perform
 type Operation uint

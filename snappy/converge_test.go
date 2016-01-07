@@ -22,8 +22,8 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/ubuntu-core/snappy/pkg"
 	. "gopkg.in/check.v1"
-	"launchpad.net/snappy/snappy"
 	"launchpad.net/webdm/webprogress"
 )
 
@@ -54,12 +54,11 @@ func (s *PayloadSuite) TestPayloadWithNoServices(c *C) {
 	c.Check(q.UIUri, Equals, "")
 	c.Check(q.Icon, Equals, "/icons/camlistore.sergiusens_icon.png")
 	c.Check(q.Description, Equals, fakeSnap.description)
-	c.Check(q.Vendor, Equals, fakeSnap.vendor)
 }
 
 func (s *PayloadSuite) TestPayloadWithServicesButNoUI(c *C) {
 	fakeSnap := newDefaultFakeServices()
-	fakeSnap.services = newFakeServicesNoExternalUI()
+	fakeSnap.serviceYamls = newFakeServicesNoExternalUI()
 	q := s.h.snapQueryToPayload(fakeSnap)
 
 	c.Assert(q.Name, Equals, fakeSnap.name)
@@ -72,7 +71,7 @@ func (s *PayloadSuite) TestPayloadWithServicesButNoUI(c *C) {
 
 func (s *PayloadSuite) TestPayloadWithServicesUI(c *C) {
 	fakeSnap := newDefaultFakeServices()
-	fakeSnap.services = newFakeServicesWithExternalUI()
+	fakeSnap.serviceYamls = newFakeServicesWithExternalUI()
 	q := s.h.snapQueryToPayload(fakeSnap)
 
 	c.Assert(q.Name, Equals, fakeSnap.name)
@@ -85,8 +84,8 @@ func (s *PayloadSuite) TestPayloadWithServicesUI(c *C) {
 
 func (s *PayloadSuite) TestPayloadTypeOem(c *C) {
 	fakeSnap := newDefaultFakeServices()
-	fakeSnap.services = newFakeServicesWithExternalUI()
-	fakeSnap.snapType = snappy.SnapTypeOem
+	fakeSnap.serviceYamls = newFakeServicesWithExternalUI()
+	fakeSnap.snapType = pkg.TypeOem
 
 	q := s.h.snapQueryToPayload(fakeSnap)
 

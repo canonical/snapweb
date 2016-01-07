@@ -81,7 +81,7 @@ func makeMainPageHandler() (f http.HandlerFunc, err error) {
 	name := "Ubuntu"
 	subname := ""
 
-	// TODO: use oem information from launchpad.net/snappy
+	// TODO: use oem information from github.com/ubuntu-core/snappy
 	pkg, err := oem.Oem()
 	if err != nil && err != oem.ErrNotFound {
 		return f, err

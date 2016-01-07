@@ -22,15 +22,15 @@ import (
 	"io/ioutil"
 	"path/filepath"
 
-	"launchpad.net/snappy/snappy"
+	"github.com/ubuntu-core/snappy/pkg"
+	"github.com/ubuntu-core/snappy/snappy"
 
 	"gopkg.in/yaml.v2"
 )
 
-// Snap holds the package.yaml for a snappy.SnapTypeOem package.
+// Snap holds the package.yaml for a pkg.TypeOem package.
 type Snap struct {
 	Name     string `yaml:"name" json:"name"`
-	Vendor   string `yaml:"vendor" json:"vendor"`
 	Icon     string `yaml:"icon" json:"icon"`
 	Version  string `yaml:"version" json:"version"`
 	Type     string `yaml:"type" json:"type"`
@@ -56,7 +56,7 @@ var ErrDecode = errors.New("decoding problem")
 
 // Oem returns an oem package
 func Oem() (*Snap, error) {
-	oem, err := snappy.ActiveSnapsByType(snappy.SnapTypeOem)
+	oem, err := snappy.ActiveSnapsByType(pkg.TypeOem)
 	if err != nil {
 		return nil, err
 	} else if len(oem) > 1 {
