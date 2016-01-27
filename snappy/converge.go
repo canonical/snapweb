@@ -45,7 +45,6 @@ type snapPkg struct {
 	DownloadSize  int64              `json:"download_size,omitempty"`
 	Type          pkg.Type           `json:"type,omitempty"`
 	UIPort        uint64             `json:"ui_port,omitempty"`
-	UIUri         string             `json:"ui_uri,omitempty"`
 }
 
 type response struct {
@@ -241,9 +240,7 @@ func (h *Handler) snapQueryToPayload(snapQ snappy.Part) snapPkg {
 
 	if hasPortInformation(snapQ) {
 		if snapInstalled, ok := snapQ.(snappy.ServiceYamler); ok {
-			port, uri := uiAccess(snapInstalled.ServiceYamls())
-			snap.UIPort = port
-			snap.UIUri = uri
+			snap.UIPort = uiAccess(snapInstalled.ServiceYamls())
 		}
 	}
 
@@ -283,7 +280,7 @@ func (h *Handler) snapQueryToPayload(snapQ snappy.Part) snapPkg {
 	return snap
 }
 
-func uiAccess(services []snappy.ServiceYaml) (port uint64, uri string) {
+func uiAccess(services []snappy.ServiceYaml) uint64 {
 	for i := range services {
 		if services[i].Ports == nil {
 			continue
@@ -294,14 +291,13 @@ func uiAccess(services []snappy.ServiceYaml) (port uint64, uri string) {
 			if len(ui) == 2 {
 				port, err := strconv.ParseUint(ui[0], 0, 64)
 				if err != nil {
-					return 0, ""
+					return 0
 				}
 
-				// FIXME ui[1] holds the proto, not the uri handler
-				return port, ""
+				return port
 			}
 		}
 	}
 
-	return 0, ""
+	return 0
 }
