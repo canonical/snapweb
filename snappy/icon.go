@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2015 Canonical Ltd
+ * Copyright (C) 2014-2016 Canonical Ltd
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -18,10 +18,9 @@
 package snappy
 
 import (
-	"bufio"
 	"errors"
 	"fmt"
-	"io"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 )
@@ -37,30 +36,29 @@ var (
 	ErrIconNotExist = errors.New("the icon does not exist")
 )
 
-func localIconPath(ID, iconPath string) (relativePath string, err error) {
+func localIconPath(c snapdClient, ID string) (relativePath string, err error) {
 	dataPath, relativePath, err := IconDir()
 	if err != nil {
 		return "", err
 	}
 
-	baseIcon := fmt.Sprintf("%s_%s", ID, filepath.Base(iconPath))
+	icon, err := c.Icon(ID)
+	if err != nil {
+		return "", ErrIconNotExist
+	}
+
+	baseIcon := fmt.Sprintf("%s_%s", ID, icon.Filename)
 
 	relativePath = filepath.Join(relativePath, baseIcon)
 	iconDstPath := filepath.Join(dataPath, baseIcon)
 
-	// if the icon specified is bad, return
-	if _, err := os.Stat(iconPath); os.IsNotExist(err) {
-		return "", ErrIconNotExist
-	}
-
 	// if we already have the icon, return
 	if _, err := os.Stat(iconDstPath); err == nil {
 		return filepath.Join("/", relativePath), nil
-	} else if !os.IsNotExist(err) {
-		return "", err
 	}
 
-	if err := copyFile(iconPath, iconDstPath); err != nil {
+	err = ioutil.WriteFile(iconDstPath, icon.Content, 0644)
+	if err != nil {
 		return "", err
 	}
 
@@ -81,31 +79,4 @@ func IconDir() (dataPath, relativeBasePath string, err error) {
 	}
 
 	return dataPath, "icons", nil
-}
-
-func copyFile(src, dst string) error {
-	dstFile, err := os.Create(dst)
-	if err != nil {
-		return err
-	}
-	defer dstFile.Close()
-
-	srcFile, err := os.Open(src)
-	if err != nil {
-		return err
-	}
-	defer srcFile.Close()
-
-	reader := bufio.NewReader(srcFile)
-	writer := bufio.NewWriter(dstFile)
-	defer func() {
-		if err != nil {
-			writer.Flush()
-		}
-	}()
-	if _, err = io.Copy(writer, reader); err != nil {
-		return err
-	}
-	writer.Flush()
-	return nil
 }

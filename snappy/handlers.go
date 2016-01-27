@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2015 Canonical Ltd
+ * Copyright (C) 2014-2016 Canonical Ltd
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -24,6 +24,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/ubuntu-core/snappy/client"
 	"github.com/ubuntu-core/snappy/snappy"
 	"launchpad.net/webdm/webprogress"
 
@@ -33,13 +34,19 @@ import (
 // Handler implements snappy's packages api.
 type Handler struct {
 	statusTracker *webprogress.StatusTracker
+	snapdClient   snapdClient
 }
 
 // NewHandler creates an instance that implements snappy's packages api.
 func NewHandler() *Handler {
 	return &Handler{
 		statusTracker: webprogress.New(),
+		snapdClient:   client.New(),
 	}
+}
+
+func (h *Handler) setClient(c snapdClient) {
+	h.snapdClient = c
 }
 
 func installedOnly(v string) bool {

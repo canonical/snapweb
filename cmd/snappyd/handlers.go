@@ -25,7 +25,7 @@ import (
 	"path/filepath"
 	"text/template"
 
-	"launchpad.net/webdm/oem"
+	"launchpad.net/webdm/gadget"
 	"launchpad.net/webdm/snappy"
 )
 
@@ -82,10 +82,10 @@ func makeMainPageHandler() (f http.HandlerFunc, err error) {
 	subname := ""
 
 	// TODO: use oem information from github.com/ubuntu-core/snappy
-	pkg, err := oem.Oem()
-	if err != nil && err != oem.ErrNotFound {
+	pkg, err := gadget.Gadget()
+	if err != nil && err != gadget.ErrNotFound {
 		return f, err
-	} else if err != oem.ErrNotFound {
+	} else if err != gadget.ErrNotFound {
 		name = pkg.Branding.Name
 		subname = pkg.Branding.Subname
 	}

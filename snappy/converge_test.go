@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2015 Canonical Ltd
+ * Copyright (C) 2014-2016 Canonical Ltd
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -18,11 +18,9 @@
 package snappy
 
 import (
-	"io/ioutil"
 	"os"
-	"path/filepath"
 
-	"github.com/ubuntu-core/snappy/pkg"
+	"github.com/ubuntu-core/snappy/snap"
 	. "gopkg.in/check.v1"
 	"launchpad.net/webdm/webprogress"
 )
@@ -36,13 +34,11 @@ var _ = Suite(&PayloadSuite{})
 func (s *PayloadSuite) SetUpTest(c *C) {
 	os.Setenv("SNAP_APP_DATA_PATH", c.MkDir())
 	s.h.statusTracker = webprogress.New()
+	s.h.setClient(&fakeSnapdClient{})
 }
 
 func (s *PayloadSuite) TestPayloadWithNoServices(c *C) {
 	fakeSnap := newDefaultFakePart()
-	icon := filepath.Join(c.MkDir(), "icon.png")
-	c.Assert(ioutil.WriteFile(icon, []byte{}, 0644), IsNil)
-	fakeSnap.icon = icon
 
 	q := s.h.snapQueryToPayload(fakeSnap)
 
@@ -82,7 +78,7 @@ func (s *PayloadSuite) TestPayloadWithServicesUI(c *C) {
 func (s *PayloadSuite) TestPayloadTypeOem(c *C) {
 	fakeSnap := newDefaultFakeServices()
 	fakeSnap.serviceYamls = newFakeServicesWithExternalUI()
-	fakeSnap.snapType = pkg.TypeOem
+	fakeSnap.snapType = snap.TypeGadget
 
 	q := s.h.snapQueryToPayload(fakeSnap)
 
@@ -102,6 +98,7 @@ var _ = Suite(&MergeSuite{})
 func (s *MergeSuite) SetUpTest(c *C) {
 	os.Setenv("SNAP_APP_DATA_PATH", c.MkDir())
 	s.h.statusTracker = webprogress.New()
+	s.h.setClient(&fakeSnapdClient{})
 }
 
 func (s *MergeSuite) TestOneInstalledAndNoRemote(c *C) {

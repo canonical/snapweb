@@ -15,20 +15,20 @@
  *
  */
 
-package oem
+package gadget
 
 import (
 	"errors"
 	"io/ioutil"
 	"path/filepath"
 
-	"github.com/ubuntu-core/snappy/pkg"
+	"github.com/ubuntu-core/snappy/snap"
 	"github.com/ubuntu-core/snappy/snappy"
 
 	"gopkg.in/yaml.v2"
 )
 
-// Snap holds the package.yaml for a pkg.TypeOem package.
+// Snap holds the package.yaml for a snap.TypeGadget package.
 type Snap struct {
 	Name     string `yaml:"name" json:"name"`
 	Icon     string `yaml:"icon" json:"icon"`
@@ -39,33 +39,33 @@ type Snap struct {
 		Subname string `yaml:"subname" json:"subname"`
 	} `yaml:"branding" json:"branding"`
 	Store struct {
-		OemKey string `yaml:"oem-key" json:"oem-key"`
+		ID string `yaml:"id" json:"id"`
 	} `yaml:"store" json:"store"`
 }
 
-// ErrNotFound indicates that there is no oem package.
-var ErrNotFound = errors.New("no oem package installed")
+// ErrNotFound indicates that there is no gadget package.
+var ErrNotFound = errors.New("no gadget package installed")
 
-// ErrTooMany indicates that there are too many active snappy.SnapTypeOem packages, which
+// ErrTooMany indicates that there are too many active snap.TypeGadget packages, which
 // should never happen on a snappy managed system.
-var ErrTooMany = errors.New("too many oem packages found")
+var ErrTooMany = errors.New("too many gadget packages found")
 
 // ErrDecode indicates that there has been an issue while decoding the contents of the
-// oem package.
+// gadget package.
 var ErrDecode = errors.New("decoding problem")
 
-// Oem returns an oem package
-func Oem() (*Snap, error) {
-	oem, err := snappy.ActiveSnapsByType(pkg.TypeOem)
+// Gadget returns an gadget package
+func Gadget() (*Snap, error) {
+	gadget, err := snappy.ActiveSnapsByType(snap.TypeGadget)
 	if err != nil {
 		return nil, err
-	} else if len(oem) > 1 {
+	} else if len(gadget) > 1 {
 		return nil, ErrTooMany
-	} else if len(oem) == 0 {
+	} else if len(gadget) == 0 {
 		return nil, ErrNotFound
 	}
 
-	yamlPath := filepath.Join("/oem", oem[0].Name(), oem[0].Version(), "meta", "package.yaml")
+	yamlPath := filepath.Join("/gadget", gadget[0].Name(), gadget[0].Version(), "meta", "package.yaml")
 	f, err := ioutil.ReadFile(yamlPath)
 	if err != nil {
 		return nil, ErrDecode

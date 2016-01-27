@@ -12,16 +12,16 @@
   @{CLICK_DIR}/@{APP_PKGNAME}/@{APP_VERSION}/**                mrklix,
 
   # Writable home area
-  owner @{HOMEDIRS}/apps/@{APP_PKGNAME}/@{APP_VERSION}/            rw,
-  owner @{HOMEDIRS}/apps/@{APP_PKGNAME}/@{APP_VERSION}/**     mrwklix,
+  owner @{HOMEDIRS}/snaps/@{APP_PKGNAME}/@{APP_VERSION}/           rw,
+  owner @{HOMEDIRS}/snaps/@{APP_PKGNAME}/@{APP_VERSION}/**    mrwklix,
 
   # Read-only system area for other versions
-  /var/lib/apps/@{APP_PKGNAME}/                                    rw,
-  /var/lib/apps/@{APP_PKGNAME}/**                               mrkix,
+  /var/lib/snaps/@{APP_PKGNAME}/                                   rw,
+  /var/lib/snaps/@{APP_PKGNAME}/**                              mrkix,
 
   # Writable system area only for this version.
-  /var/lib/apps/@{APP_PKGNAME}/@{APP_VERSION}/                      w,
-  /var/lib/apps/@{APP_PKGNAME}/@{APP_VERSION}/**                   wl,
+  /var/lib/snaps/@{APP_PKGNAME}/@{APP_VERSION}/                     w,
+  /var/lib/snaps/@{APP_PKGNAME}/@{APP_VERSION}/**                  wl,
 
   # temp dirs
   /tmp/snaps/@{APP_PKGNAME}/                                        r,
@@ -47,14 +47,14 @@
   /writable/cache/system/etc/system-image/channel.ini               r,
 
   # snaps
-  /apps/                                                            r,
-  /apps/**                                                        rwl,
-  /oem/                                                             r,
-  /oem/**                                                         rwl,
+  /snaps/                                                           r,
+  /snaps/**                                                       rwl,
+  /gadget/                                                          r,
+  /gadget/**                                                      rwl,
   /tmp/                                                             r,
   /tmp/**                                                         rwl,
-  /var/lib/apps/                                                    r,
-  /var/lib/apps/**                                                rwl,
+  /var/lib/snaps/                                                   r,
+  /var/lib/snaps/**                                               rwl,
   /var/lib/snappy/                                                  r,
   /var/lib/snappy/**                                              rwl,
   /var/lib/click/hooks/                                             r,
@@ -72,10 +72,14 @@
   # snappy requirements
   /bin/lsblk                                                      Uxr,
   /bin/mountpoint                                                 Uxr,
+  /bin/cp                                                         Uxr,
   /usr/bin/debsig-verify                                          Uxr,
   /usr/bin/sc-filtergen                                           Uxr,
   /usr/bin/aa-clickhook                                           Uxr,
   /usr/bin/aa-profile-hook                                        Uxr,
+
+  # snapd REST API
+  /run/snapd.socket                                                rw,
 
   # TODO: attention needed here
   /etc/lsb-release                                                  r,
