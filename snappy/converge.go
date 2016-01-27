@@ -59,33 +59,13 @@ type listFilter struct {
 	query         string
 }
 
-// for easier stubbing during testing
-var activeSnapByName = snappy.ActiveSnapByName
-
 func (h *Handler) packagePayload(resource string) (snapPkg, error) {
-	var pkgName, origin string
-	if s := strings.Split(resource, "."); len(s) == 2 {
-		pkgName = s[0]
-		origin = s[1]
-	} else {
-		pkgName = resource
+	pkg, err := h.snapdClient.Package(resource)
+	if err != nil {
+		return snapPkg{}, err
 	}
 
-	snapQ := activeSnapByName(pkgName)
-	if snapQ != nil {
-		// the second check is for locally installed snaps that lose their origin.
-		if snapQ.Origin() == origin || snapQ.Type() != snap.TypeApp {
-			return h.snapQueryToPayload(snapQ), nil
-		}
-	}
-
-	mStore := snappy.NewMetaStoreRepository()
-	found, err := mStore.Details(pkgName, origin)
-	if err == nil && len(found) != 0 {
-		return h.snapQueryToPayload(found[0]), nil
-	}
-
-	return snapPkg{}, snappy.ErrPackageNotFound
+	return h.snapQueryToPayload(packagePart{*pkg}), nil
 }
 
 func (h *Handler) allPackages(filter *listFilter) ([]snapPkg, error) {
