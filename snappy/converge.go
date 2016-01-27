@@ -25,7 +25,7 @@ import (
 
 	"log"
 
-	"github.com/ubuntu-core/snappy/pkg"
+	"github.com/ubuntu-core/snappy/snap"
 	"github.com/ubuntu-core/snappy/snappy"
 	"launchpad.net/webdm/webprogress"
 )
@@ -43,7 +43,7 @@ type snapPkg struct {
 	Progress      float64            `json:"progress,omitempty"`
 	InstalledSize int64              `json:"installed_size,omitempty"`
 	DownloadSize  int64              `json:"download_size,omitempty"`
-	Type          pkg.Type           `json:"type,omitempty"`
+	Type          snap.Type          `json:"type,omitempty"`
 	UIPort        uint64             `json:"ui_port,omitempty"`
 }
 
@@ -73,7 +73,7 @@ func (h *Handler) packagePayload(resource string) (snapPkg, error) {
 	snapQ := activeSnapByName(pkgName)
 	if snapQ != nil {
 		// the second check is for locally installed snaps that lose their origin.
-		if snapQ.Origin() == origin || snapQ.Type() != pkg.TypeApp {
+		if snapQ.Origin() == origin || snapQ.Type() != snap.TypeApp {
 			return h.snapQueryToPayload(snapQ), nil
 		}
 	}
@@ -224,8 +224,8 @@ func mergeSnaps(installed, remote []snapPkg, installedOnly bool) []snapPkg {
 	return snapPkgs
 }
 
-func hasPortInformation(snap snappy.Part) bool {
-	return snap.Type() == pkg.TypeApp || snap.Type() == pkg.TypeFramework
+func hasPortInformation(snapQ snappy.Part) bool {
+	return snapQ.Type() == snap.TypeApp || snapQ.Type() == snap.TypeFramework
 }
 
 func (h *Handler) snapQueryToPayload(snapQ snappy.Part) snapPkg {

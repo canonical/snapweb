@@ -22,7 +22,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/ubuntu-core/snappy/pkg"
+	"github.com/ubuntu-core/snappy/snap"
 	. "gopkg.in/check.v1"
 	"launchpad.net/webdm/webprogress"
 )
@@ -82,7 +82,7 @@ func (s *PayloadSuite) TestPayloadWithServicesUI(c *C) {
 func (s *PayloadSuite) TestPayloadTypeOem(c *C) {
 	fakeSnap := newDefaultFakeServices()
 	fakeSnap.serviceYamls = newFakeServicesWithExternalUI()
-	fakeSnap.snapType = pkg.TypeOem
+	fakeSnap.snapType = snap.TypeGadget
 
 	q := s.h.snapQueryToPayload(fakeSnap)
 

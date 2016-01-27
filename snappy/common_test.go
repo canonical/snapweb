@@ -20,7 +20,7 @@ package snappy
 import (
 	"testing"
 
-	"github.com/ubuntu-core/snappy/pkg"
+	"github.com/ubuntu-core/snappy/snap"
 	"github.com/ubuntu-core/snappy/snappy"
 
 	. "gopkg.in/check.v1"
@@ -36,7 +36,7 @@ type fakeSnappyPart struct {
 	description string
 	installed   bool
 	icon        string
-	snapType    pkg.Type
+	snapType    snap.Type
 }
 
 type fakeSnappyPartServices struct {
@@ -50,7 +50,7 @@ func newDefaultFakePart() *fakeSnappyPart {
 		origin:      "sergiusens",
 		version:     "2.0",
 		installed:   true,
-		snapType:    pkg.TypeApp,
+		snapType:    snap.TypeApp,
 		description: "Camlistore",
 	}
 }
@@ -61,11 +61,11 @@ func newFakePart(name, origin, version string, installed bool) *fakeSnappyPart {
 		origin:    origin,
 		version:   version,
 		installed: installed,
-		snapType:  pkg.TypeApp,
+		snapType:  snap.TypeApp,
 	}
 }
 
-func newParametrizedFake(name, version string, installed bool, snapType pkg.Type) *fakeSnappyPart {
+func newParametrizedFake(name, version string, installed bool, snapType snap.Type) *fakeSnappyPart {
 	return &fakeSnappyPart{
 		name:      name,
 		version:   version,
@@ -81,7 +81,7 @@ func newDefaultFakeServices() *fakeSnappyPartServices {
 			origin:    "sergiusens",
 			version:   "2.0",
 			installed: true,
-			snapType:  pkg.TypeApp,
+			snapType:  snap.TypeApp,
 		},
 	}
 }
@@ -122,7 +122,7 @@ func (p fakeSnappyPart) Version() string {
 	return p.version
 }
 
-func (p fakeSnappyPart) Type() pkg.Type {
+func (p fakeSnappyPart) Type() snap.Type {
 	return p.snapType
 }
 

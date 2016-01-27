@@ -10,7 +10,7 @@ module.exports = {
     'ubuntu-core.ubuntu'
   ],
   NON_INSTALLABLE_TYPES: [
-    'oem'
+    'gadget'
   ],
   INSTALL_STATE: {
     INSTALLED: 'installed',
