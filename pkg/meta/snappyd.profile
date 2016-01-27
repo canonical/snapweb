@@ -78,6 +78,9 @@
   /usr/bin/aa-clickhook                                           Uxr,
   /usr/bin/aa-profile-hook                                        Uxr,
 
+  # snapd REST API
+  /run/snapd.socket                                                rw,
+
   # TODO: attention needed here
   /etc/lsb-release                                                  r,
   /sbin/apparmor_parser                                           Uxr,
