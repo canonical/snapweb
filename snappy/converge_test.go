@@ -52,8 +52,9 @@ func (s *PayloadSuite) TestPayloadWithNoServices(c *C) {
 }
 
 func (s *PayloadSuite) TestPayloadWithServicesButNoUI(c *C) {
-	fakeSnap := newDefaultFakeServices()
-	fakeSnap.serviceYamls = newFakeServicesNoExternalUI()
+	s.h.setClient(&fakeSnapdClientServicesNoExternalUI{})
+
+	fakeSnap := newDefaultFakePart()
 	q := s.h.snapQueryToPayload(fakeSnap)
 
 	c.Assert(q.Name, Equals, fakeSnap.name)
@@ -64,8 +65,9 @@ func (s *PayloadSuite) TestPayloadWithServicesButNoUI(c *C) {
 }
 
 func (s *PayloadSuite) TestPayloadWithServicesUI(c *C) {
-	fakeSnap := newDefaultFakeServices()
-	fakeSnap.serviceYamls = newFakeServicesWithExternalUI()
+	s.h.setClient(&fakeSnapdClientServicesExternalUI{})
+
+	fakeSnap := newDefaultFakePart()
 	q := s.h.snapQueryToPayload(fakeSnap)
 
 	c.Assert(q.Name, Equals, fakeSnap.name)
@@ -75,9 +77,10 @@ func (s *PayloadSuite) TestPayloadWithServicesUI(c *C) {
 	c.Assert(q.UIPort, Equals, uint64(1024))
 }
 
-func (s *PayloadSuite) TestPayloadTypeOem(c *C) {
-	fakeSnap := newDefaultFakeServices()
-	fakeSnap.serviceYamls = newFakeServicesWithExternalUI()
+func (s *PayloadSuite) TestPayloadTypeGadget(c *C) {
+	s.h.setClient(&fakeSnapdClientServicesExternalUI{})
+
+	fakeSnap := newDefaultFakePart()
 	fakeSnap.snapType = snap.TypeGadget
 
 	q := s.h.snapQueryToPayload(fakeSnap)
