@@ -66,15 +66,6 @@ func newFakePart(name, origin, version string, installed bool) *fakeSnappyPart {
 	}
 }
 
-func newParametrizedFake(name, version string, installed bool, snapType snap.Type) *fakeSnappyPart {
-	return &fakeSnappyPart{
-		name:      name,
-		version:   version,
-		installed: installed,
-		snapType:  snapType,
-	}
-}
-
 func newDefaultFakeServices() *fakeSnappyPartServices {
 	return &fakeSnappyPartServices{
 		fakeSnappyPart: fakeSnappyPart{
