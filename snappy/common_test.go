@@ -18,6 +18,7 @@
 package snappy
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/ubuntu-core/snappy/client"
@@ -40,11 +41,6 @@ type fakeSnappyPart struct {
 	snapType    snap.Type
 }
 
-type fakeSnappyPartServices struct {
-	fakeSnappyPart
-	serviceYamls []snappy.ServiceYaml
-}
-
 func newDefaultFakePart() *fakeSnappyPart {
 	return &fakeSnappyPart{
 		name:        "camlistore",
@@ -64,31 +60,6 @@ func newFakePart(name, origin, version string, installed bool) *fakeSnappyPart {
 		installed: installed,
 		snapType:  snap.TypeApp,
 	}
-}
-
-func newParametrizedFake(name, version string, installed bool, snapType snap.Type) *fakeSnappyPart {
-	return &fakeSnappyPart{
-		name:      name,
-		version:   version,
-		installed: installed,
-		snapType:  snapType,
-	}
-}
-
-func newDefaultFakeServices() *fakeSnappyPartServices {
-	return &fakeSnappyPartServices{
-		fakeSnappyPart: fakeSnappyPart{
-			name:      "camlistore",
-			origin:    "sergiusens",
-			version:   "2.0",
-			installed: true,
-			snapType:  snap.TypeApp,
-		},
-	}
-}
-
-func (p fakeSnappyPartServices) ServiceYamls() []snappy.ServiceYaml {
-	return p.serviceYamls
 }
 
 func (p fakeSnappyPart) IsInstalled() bool {
@@ -135,50 +106,6 @@ func (p fakeSnappyPart) Description() string {
 	return p.description
 }
 
-func newFakeServicesNoExternalUI() []snappy.ServiceYaml {
-	services := make([]snappy.ServiceYaml, 0, 2)
-
-	internal1 := map[string]snappy.Port{"ui": snappy.Port{Port: "200/tcp"}}
-	external1 := map[string]snappy.Port{"web": snappy.Port{Port: "1024/tcp"}}
-	s1 := snappy.ServiceYaml{
-		Name: "s1",
-		Ports: &snappy.Ports{
-			Internal: internal1,
-			External: external1,
-		},
-	}
-	services = append(services, s1)
-
-	s2 := snappy.ServiceYaml{
-		Name: "s2",
-	}
-	services = append(services, s2)
-
-	return services
-}
-
-func newFakeServicesWithExternalUI() []snappy.ServiceYaml {
-	services := make([]snappy.ServiceYaml, 0, 2)
-
-	s1 := snappy.ServiceYaml{
-		Name: "s2",
-	}
-	services = append(services, s1)
-
-	internal2 := map[string]snappy.Port{"ui": snappy.Port{Port: "200/tcp"}}
-	external2 := map[string]snappy.Port{"ui": snappy.Port{Port: "1024/tcp"}}
-	s2 := snappy.ServiceYaml{
-		Name: "s1",
-		Ports: &snappy.Ports{
-			Internal: internal2,
-			External: external2,
-		},
-	}
-	services = append(services, s2)
-
-	return services
-}
-
 type fakeSnapdClient struct{}
 
 func (f *fakeSnapdClient) Icon(pkgID string) (*client.Icon, error) {
@@ -189,4 +116,60 @@ func (f *fakeSnapdClient) Icon(pkgID string) (*client.Icon, error) {
 	return icon, nil
 }
 
+func (f *fakeSnapdClient) Services(pkg string) (map[string]*client.Service, error) {
+	return nil, errors.New("the package has no services")
+}
+
 var _ snapdClient = (*fakeSnapdClient)(nil)
+
+type fakeSnapdClientServicesNoExternalUI struct {
+	fakeSnapdClient
+}
+
+func (f *fakeSnapdClientServicesNoExternalUI) Services(pkg string) (map[string]*client.Service, error) {
+	internal := map[string]client.ServicePort{"ui": client.ServicePort{Port: "200/tcp"}}
+	external := map[string]client.ServicePort{"web": client.ServicePort{Port: "1024/tcp"}}
+	s1 := &client.Service{
+		Spec: client.ServiceSpec{
+			Ports: client.ServicePorts{
+				Internal: internal,
+				External: external,
+			},
+		},
+	}
+
+	s2 := &client.Service{}
+
+	services := map[string]*client.Service{
+		"s1": s1,
+		"s2": s2,
+	}
+
+	return services, nil
+}
+
+type fakeSnapdClientServicesExternalUI struct {
+	fakeSnapdClient
+}
+
+func (f *fakeSnapdClientServicesExternalUI) Services(pkg string) (map[string]*client.Service, error) {
+	s1 := &client.Service{}
+
+	internal := map[string]client.ServicePort{"ui": client.ServicePort{Port: "200/tcp"}}
+	external := map[string]client.ServicePort{"ui": client.ServicePort{Port: "1024/tcp"}}
+	s2 := &client.Service{
+		Spec: client.ServiceSpec{
+			Ports: client.ServicePorts{
+				Internal: internal,
+				External: external,
+			},
+		},
+	}
+
+	services := map[string]*client.Service{
+		"s1": s1,
+		"s2": s2,
+	}
+
+	return services, nil
+}

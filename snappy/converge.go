@@ -25,6 +25,7 @@ import (
 
 	"log"
 
+	"github.com/ubuntu-core/snappy/client"
 	"github.com/ubuntu-core/snappy/snap"
 	"github.com/ubuntu-core/snappy/snappy"
 	"launchpad.net/webdm/webprogress"
@@ -239,8 +240,8 @@ func (h *Handler) snapQueryToPayload(snapQ snappy.Part) snapPkg {
 	}
 
 	if hasPortInformation(snapQ) {
-		if snapInstalled, ok := snapQ.(snappy.ServiceYamler); ok {
-			snap.UIPort = uiAccess(snapInstalled.ServiceYamls())
+		if services, err := h.snapdClient.Services(snap.ID); err == nil {
+			snap.UIPort = uiAccess(services)
 		}
 	}
 
@@ -280,13 +281,13 @@ func (h *Handler) snapQueryToPayload(snapQ snappy.Part) snapPkg {
 	return snap
 }
 
-func uiAccess(services []snappy.ServiceYaml) uint64 {
+func uiAccess(services map[string]*client.Service) uint64 {
 	for i := range services {
-		if services[i].Ports == nil {
+		if services[i].Spec.Ports.External == nil {
 			continue
 		}
 
-		if ui, ok := services[i].Ports.External["ui"]; ok {
+		if ui, ok := services[i].Spec.Ports.External["ui"]; ok {
 			ui := strings.Split(ui.Port, "/")
 			if len(ui) == 2 {
 				port, err := strconv.ParseUint(ui[0], 0, 64)
