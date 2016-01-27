@@ -18,10 +18,12 @@
 package snappy
 
 import (
-	"fmt"
+	"errors"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+
+	"github.com/ubuntu-core/snappy/client"
 
 	. "gopkg.in/check.v1"
 )
@@ -59,8 +61,17 @@ func (s *IconSuite) TestIconDirCreateFails(c *C) {
 }
 
 type IconPathSuite struct {
-	dataPath    string
-	pkgIconPath string
+	snapdClient
+	dataPath string
+	err      error
+}
+
+func (s *IconPathSuite) Icon(pkgID string) (*client.Icon, error) {
+	icon := &client.Icon{
+		Filename: "pkgIcon.png",
+		Content:  []byte("png"),
+	}
+	return icon, s.err
 }
 
 var _ = Suite(&IconPathSuite{})
@@ -68,15 +79,13 @@ var _ = Suite(&IconPathSuite{})
 func (s *IconPathSuite) SetUpTest(c *C) {
 	s.dataPath = c.MkDir()
 	os.Setenv("SNAP_APP_DATA_PATH", s.dataPath)
-
-	s.pkgIconPath = filepath.Join(c.MkDir(), "pkgIcon.png")
-	c.Assert(ioutil.WriteFile(s.pkgIconPath, []byte("png"), 07555), IsNil)
+	s.err = nil
 }
 
 func (s *IconPathSuite) TestIconCopy(c *C) {
-	relativePath, err := localIconPath("mypackage.sergiusens", s.pkgIconPath)
+	relativePath, err := localIconPath(s, "mypackage.sergiusens")
 	c.Assert(err, IsNil)
-	iconBaseName := fmt.Sprintf("icons/mypackage.sergiusens_%s", filepath.Base(s.pkgIconPath))
+	iconBaseName := "icons/mypackage.sergiusens_pkgIcon.png"
 	c.Check(relativePath, Equals, filepath.Join("/", iconBaseName))
 
 	contents, err := ioutil.ReadFile(filepath.Join(s.dataPath, iconBaseName))
@@ -87,21 +96,22 @@ func (s *IconPathSuite) TestIconCopy(c *C) {
 
 func (s *IconPathSuite) TestIconCopyNoDataPath(c *C) {
 	os.Setenv("SNAP_APP_DATA_PATH", "")
-	_, err := localIconPath("mypackage.sergiusens", s.pkgIconPath)
+	_, err := localIconPath(s, "mypackage.sergiusens")
 	c.Assert(err, Equals, ErrDataPathNotSet)
 }
 
 func (s *IconPathSuite) TestIconCopyNoIcon(c *C) {
-	_, err := localIconPath("mypackage.sergiusens", "somerandompath")
+	s.err = errors.New("Not Found")
+	_, err := localIconPath(s, "mypackage.sergiusens")
 	c.Assert(err, Equals, ErrIconNotExist)
 }
 
 func (s *IconPathSuite) TestIconCopyTargetIconExists(c *C) {
-	iconBaseName := fmt.Sprintf("icons/mypackage.sergiusens_%s", filepath.Base(s.pkgIconPath))
+	iconBaseName := "icons/mypackage.sergiusens_pkgIcon.png"
 	c.Assert(os.MkdirAll(filepath.Join(s.dataPath, "icons"), 0755), IsNil)
 	c.Assert(ioutil.WriteFile(filepath.Join(s.dataPath, iconBaseName), []byte{}, 0644), IsNil)
 
-	relativePath, err := localIconPath("mypackage.sergiusens", s.pkgIconPath)
+	relativePath, err := localIconPath(s, "mypackage.sergiusens")
 	c.Assert(err, IsNil)
 	c.Check(relativePath, Equals, filepath.Join("/", iconBaseName))
 }

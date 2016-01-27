@@ -20,6 +20,7 @@ package snappy
 import (
 	"testing"
 
+	"github.com/ubuntu-core/snappy/client"
 	"github.com/ubuntu-core/snappy/snap"
 	"github.com/ubuntu-core/snappy/snappy"
 
@@ -177,3 +178,15 @@ func newFakeServicesWithExternalUI() []snappy.ServiceYaml {
 
 	return services
 }
+
+type fakeSnapdClient struct{}
+
+func (f *fakeSnapdClient) Icon(pkgID string) (*client.Icon, error) {
+	icon := &client.Icon{
+		Filename: "icon.png",
+		Content:  []byte("png"),
+	}
+	return icon, nil
+}
+
+var _ snapdClient = (*fakeSnapdClient)(nil)
