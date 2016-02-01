@@ -25,6 +25,42 @@ import (
 	"launchpad.net/webdm/webprogress"
 )
 
+type PackagePayloadSuite struct {
+	h Handler
+}
+
+var _ = Suite(&PackagePayloadSuite{})
+
+func (s *PackagePayloadSuite) SetUpTest(c *C) {
+	os.Setenv("SNAP_APP_DATA_PATH", c.MkDir())
+	s.h.statusTracker = webprogress.New()
+	s.h.setClient(&fakeSnapdClient{})
+}
+
+func (s *PackagePayloadSuite) TestPackageNotFound(c *C) {
+	_, err := s.h.packagePayload("chatroom.ogra")
+	c.Assert(err, NotNil)
+}
+
+func (s *PackagePayloadSuite) TestPackage(c *C) {
+	s.h.setClient(&fakeSnapdClientPackage{})
+
+	pkg, err := s.h.packagePayload("chatroom.ogra")
+	c.Assert(err, IsNil)
+	c.Assert(pkg, DeepEquals, snapPkg{
+		ID:            "chatroom.ogra",
+		Description:   "WebRTC Video chat server for Snappy",
+		DownloadSize:  0,
+		Icon:          "/icons/chatroom.ogra_icon.png",
+		InstalledSize: 18976651,
+		Name:          "chatroom",
+		Origin:        "ogra",
+		Status:        "installed",
+		Type:          "app",
+		Version:       "0.1-8",
+	})
+}
+
 type PayloadSuite struct {
 	h Handler
 }
