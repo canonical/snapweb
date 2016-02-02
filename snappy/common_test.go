@@ -52,16 +52,6 @@ func newDefaultFakePart() *fakeSnappyPart {
 	}
 }
 
-func newFakePart(name, origin, version string, installed bool) *fakeSnappyPart {
-	return &fakeSnappyPart{
-		name:      name,
-		origin:    origin,
-		version:   version,
-		installed: installed,
-		snapType:  snap.TypeApp,
-	}
-}
-
 func (p fakeSnappyPart) IsInstalled() bool {
 	return p.installed
 }
@@ -124,6 +114,12 @@ func newDefaultSnap() *client.Snap {
 		Type:          client.TypeApp,
 		Version:       "0.1-8",
 	}
+	return snap
+}
+
+func newSnap(name string) *client.Snap {
+	snap := newDefaultSnap()
+	snap.Name = name
 	return snap
 }
 

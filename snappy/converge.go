@@ -18,7 +18,6 @@
 package snappy
 
 import (
-	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -53,12 +52,6 @@ type response struct {
 	Message string `json:"message"`
 }
 
-type listFilter struct {
-	types         []string
-	installedOnly bool
-	query         string
-}
-
 func (h *Handler) packagePayload(resource string) (snapPkg, error) {
 	pkg, err := h.snapdClient.Snap(resource)
 	if err != nil {
@@ -68,72 +61,20 @@ func (h *Handler) packagePayload(resource string) (snapPkg, error) {
 	return h.snapQueryToPayload(snapPart{*pkg}), nil
 }
 
-func (h *Handler) allPackages(filter *listFilter) ([]snapPkg, error) {
-	mLocal := snappy.NewMetaLocalRepository()
-
-	installedSnaps, err := mLocal.Installed()
+func (h *Handler) allPackages(filter client.SnapFilter) ([]snapPkg, error) {
+	snaps, err := h.snapdClient.FilterSnaps(filter)
 	if err != nil {
 		return nil, err
 	}
 
-	typeFilter := func(string) bool { return true }
-
-	if len(filter.types) != 0 {
-		regex, err := regexp.Compile("^(?:" + strings.Join(filter.types, "|") + ")")
-		if err != nil {
-			return nil, err
-		}
-		typeFilter = regex.MatchString
+	snapPkgs := make([]snapPkg, 0, len(snaps))
+	for _, snap := range snaps {
+		snapPkgs = append(snapPkgs, h.snapQueryToPayload(snapPart{*snap}))
 	}
 
-	queryFilter := func(string) bool { return true }
+	sort.Sort(snapPkgsByName(snapPkgs))
 
-	if filter.query != "" {
-		regex, err := regexp.Compile("^(?:" + filter.query + ")")
-		if err != nil {
-			return nil, err
-		}
-		queryFilter = regex.MatchString
-	}
-
-	installedSnapQs := make([]snapPkg, 0, len(installedSnaps))
-	for i := range installedSnaps {
-		if !typeFilter(string(installedSnaps[i].Type())) {
-			continue
-		}
-
-		if !queryFilter(installedSnaps[i].Name()) {
-			continue
-		}
-
-		installedSnapQs = append(installedSnapQs, h.snapQueryToPayload(installedSnaps[i]))
-	}
-
-	mStore := snappy.NewUbuntuStoreSnapRepository()
-	remoteSnaps, err := mStore.Search(filter.query)
-	if err != nil {
-		return nil, err
-	}
-
-	remoteSnapQs := make([]snapPkg, 0, len(remoteSnaps))
-
-	for _, remote := range remoteSnaps {
-		if alias := remote.Alias; alias != nil {
-			if !typeFilter(string(alias.Type())) {
-				continue
-			}
-			remoteSnapQs = append(remoteSnapQs, h.snapQueryToPayload(alias))
-		} else {
-			for _, part := range remote.Parts {
-				if !typeFilter(string(part.Type())) {
-					continue
-				}
-				remoteSnapQs = append(remoteSnapQs, h.snapQueryToPayload(part))
-			}
-		}
-	}
-
-	return mergeSnaps(installedSnapQs, remoteSnapQs, filter.installedOnly), nil
+	return snapPkgs, nil
 }
 
 func (h *Handler) doRemovePackage(progress *webprogress.WebProgress, ID string) {
@@ -170,39 +111,6 @@ func (h *Handler) installPackage(ID string) error {
 	go h.doInstallPackage(progress, ID)
 
 	return nil
-}
-
-func mergeSnaps(installed, remote []snapPkg, installedOnly bool) []snapPkg {
-	remoteMap := make(map[string]*snapPkg, len(remote))
-
-	// we start with the installed set
-	allMap := make(map[string]*snapPkg, len(installed))
-
-	for i := range remote {
-		remoteMap[remote[i].Name] = &remote[i]
-	}
-
-	for i := range installed {
-		allMap[installed[i].Name] = &installed[i]
-	}
-
-	for pkgName := range remoteMap {
-		if _, ok := allMap[pkgName]; ok {
-			// TODO add details about cost and pricing, and then delete
-		} else if !installedOnly {
-			allMap[pkgName] = remoteMap[pkgName]
-		}
-	}
-
-	snapPkgs := make([]snapPkg, 0, len(allMap))
-
-	for _, v := range allMap {
-		snapPkgs = append(snapPkgs, *v)
-	}
-
-	sort.Sort(snapPkgsByName(snapPkgs))
-
-	return snapPkgs
 }
 
 func hasPortInformation(snapQ snappy.Part) bool {
