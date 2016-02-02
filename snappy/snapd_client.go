@@ -25,4 +25,5 @@ type snapdClient interface {
 	Icon(pkgID string) (*client.Icon, error)
 	Services(pkg string) (map[string]*client.Service, error)
 	Snap(name string) (*client.Snap, error)
+	FilterSnaps(filter client.SnapFilter) (map[string]*client.Snap, error)
 }

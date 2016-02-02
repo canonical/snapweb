@@ -18,8 +18,10 @@
 package snappy
 
 import (
+	"errors"
 	"os"
 
+	"github.com/ubuntu-core/snappy/client"
 	"github.com/ubuntu-core/snappy/snap"
 	. "gopkg.in/check.v1"
 	"launchpad.net/webdm/webprogress"
@@ -27,6 +29,7 @@ import (
 
 type PackagePayloadSuite struct {
 	h Handler
+	c *fakeSnapdClient
 }
 
 var _ = Suite(&PackagePayloadSuite{})
@@ -34,16 +37,19 @@ var _ = Suite(&PackagePayloadSuite{})
 func (s *PackagePayloadSuite) SetUpTest(c *C) {
 	os.Setenv("SNAP_APP_DATA_PATH", c.MkDir())
 	s.h.statusTracker = webprogress.New()
-	s.h.setClient(&fakeSnapdClient{})
+	s.c = &fakeSnapdClient{}
+	s.h.setClient(s.c)
 }
 
 func (s *PackagePayloadSuite) TestPackageNotFound(c *C) {
+	s.c.err = errors.New("the snap could not be retrieved")
+
 	_, err := s.h.packagePayload("chatroom.ogra")
 	c.Assert(err, NotNil)
 }
 
 func (s *PackagePayloadSuite) TestPackage(c *C) {
-	s.h.setClient(&fakeSnapdClientSnap{})
+	s.c.snaps = []*client.Snap{newDefaultSnap()}
 
 	pkg, err := s.h.packagePayload("chatroom.ogra")
 	c.Assert(err, IsNil)

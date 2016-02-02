@@ -106,7 +106,26 @@ func (p fakeSnappyPart) Description() string {
 	return p.description
 }
 
-type fakeSnapdClient struct{}
+type fakeSnapdClient struct {
+	snaps  []*client.Snap
+	err    error
+	filter client.SnapFilter
+}
+
+func newDefaultSnap() *client.Snap {
+	snap := &client.Snap{
+		Description:   "WebRTC Video chat server for Snappy",
+		DownloadSize:  6930947,
+		Icon:          "/1.0/icons/chatroom.ogra/icon",
+		InstalledSize: 18976651,
+		Name:          "chatroom",
+		Origin:        "ogra",
+		Status:        client.StatusActive,
+		Type:          client.TypeApp,
+		Version:       "0.1-8",
+	}
+	return snap
+}
 
 func (f *fakeSnapdClient) Icon(pkgID string) (*client.Icon, error) {
 	icon := &client.Icon{
@@ -121,7 +140,21 @@ func (f *fakeSnapdClient) Services(pkg string) (map[string]*client.Service, erro
 }
 
 func (f *fakeSnapdClient) Snap(name string) (*client.Snap, error) {
-	return nil, errors.New("the snap could not be retrieved")
+	if len(f.snaps) > 0 {
+		return f.snaps[0], f.err
+	}
+	return nil, f.err
+}
+
+func (f *fakeSnapdClient) FilterSnaps(filter client.SnapFilter) (map[string]*client.Snap, error) {
+	f.filter = filter // record the filter used
+
+	snaps := make(map[string]*client.Snap)
+	for _, s := range f.snaps {
+		snaps[s.Name] = s
+	}
+
+	return snaps, f.err
 }
 
 var _ snapdClient = (*fakeSnapdClient)(nil)
@@ -176,24 +209,4 @@ func (f *fakeSnapdClientServicesExternalUI) Services(pkg string) (map[string]*cl
 	}
 
 	return services, nil
-}
-
-type fakeSnapdClientSnap struct {
-	fakeSnapdClient
-}
-
-func (f *fakeSnapdClientSnap) Snap(name string) (*client.Snap, error) {
-	snap := &client.Snap{
-		Description:   "WebRTC Video chat server for Snappy",
-		DownloadSize:  6930947,
-		Icon:          "/1.0/icons/chatroom.ogra/icon",
-		InstalledSize: 18976651,
-		Name:          "chatroom",
-		Origin:        "ogra",
-		Status:        client.StatusActive,
-		Type:          client.TypeApp,
-		Version:       "0.1-8",
-	}
-
-	return snap, nil
 }
