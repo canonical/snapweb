@@ -60,12 +60,12 @@ type listFilter struct {
 }
 
 func (h *Handler) packagePayload(resource string) (snapPkg, error) {
-	pkg, err := h.snapdClient.Package(resource)
+	pkg, err := h.snapdClient.Snap(resource)
 	if err != nil {
 		return snapPkg{}, err
 	}
 
-	return h.snapQueryToPayload(packagePart{*pkg}), nil
+	return h.snapQueryToPayload(snapPart{*pkg}), nil
 }
 
 func (h *Handler) allPackages(filter *listFilter) ([]snapPkg, error) {

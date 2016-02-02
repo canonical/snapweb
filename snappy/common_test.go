@@ -120,8 +120,8 @@ func (f *fakeSnapdClient) Services(pkg string) (map[string]*client.Service, erro
 	return nil, errors.New("the package has no services")
 }
 
-func (f *fakeSnapdClient) Package(name string) (*client.Package, error) {
-	return nil, errors.New("the package could not be retrieved")
+func (f *fakeSnapdClient) Snap(name string) (*client.Snap, error) {
+	return nil, errors.New("the snap could not be retrieved")
 }
 
 var _ snapdClient = (*fakeSnapdClient)(nil)
@@ -178,12 +178,12 @@ func (f *fakeSnapdClientServicesExternalUI) Services(pkg string) (map[string]*cl
 	return services, nil
 }
 
-type fakeSnapdClientPackage struct {
+type fakeSnapdClientSnap struct {
 	fakeSnapdClient
 }
 
-func (f *fakeSnapdClientPackage) Package(name string) (*client.Package, error) {
-	pkg := &client.Package{
+func (f *fakeSnapdClientSnap) Snap(name string) (*client.Snap, error) {
+	snap := &client.Snap{
 		Description:   "WebRTC Video chat server for Snappy",
 		DownloadSize:  6930947,
 		Icon:          "/1.0/icons/chatroom.ogra/icon",
@@ -195,5 +195,5 @@ func (f *fakeSnapdClientPackage) Package(name string) (*client.Package, error) {
 		Version:       "0.1-8",
 	}
 
-	return pkg, nil
+	return snap, nil
 }

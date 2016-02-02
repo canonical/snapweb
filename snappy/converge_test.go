@@ -43,7 +43,7 @@ func (s *PackagePayloadSuite) TestPackageNotFound(c *C) {
 }
 
 func (s *PackagePayloadSuite) TestPackage(c *C) {
-	s.h.setClient(&fakeSnapdClientPackage{})
+	s.h.setClient(&fakeSnapdClientSnap{})
 
 	pkg, err := s.h.packagePayload("chatroom.ogra")
 	c.Assert(err, IsNil)

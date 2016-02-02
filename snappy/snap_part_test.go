@@ -24,15 +24,15 @@ import (
 	. "gopkg.in/check.v1"
 )
 
-type PackagePartSuite struct {
-	pkg     client.Package
-	pkgPart packagePart
+type SnapPartSuite struct {
+	snap     client.Snap
+	snapPart snapPart
 }
 
-var _ = Suite(&PackagePartSuite{})
+var _ = Suite(&SnapPartSuite{})
 
-func (s *PackagePartSuite) SetUpTest(c *C) {
-	s.pkg = client.Package{
+func (s *SnapPartSuite) SetUpTest(c *C) {
+	s.snap = client.Snap{
 		Description:   "WebRTC Video chat server for Snappy",
 		DownloadSize:  6930947,
 		Icon:          "/1.0/icons/chatroom.ogra/icon",
@@ -43,17 +43,17 @@ func (s *PackagePartSuite) SetUpTest(c *C) {
 		Type:          client.TypeApp,
 		Version:       "0.1-8",
 	}
-	s.pkgPart = packagePart{s.pkg}
+	s.snapPart = snapPart{s.snap}
 }
 
-func (s *PackagePartSuite) TestPackagePart(c *C) {
-	c.Assert(s.pkgPart.Name(), Equals, s.pkg.Name)
-	c.Assert(s.pkgPart.Version(), Equals, s.pkg.Version)
-	c.Assert(s.pkgPart.Origin(), Equals, s.pkg.Origin)
-	c.Assert(s.pkgPart.Description(), Equals, s.pkg.Description)
-	c.Assert(s.pkgPart.InstalledSize(), Equals, s.pkg.InstalledSize)
-	c.Assert(s.pkgPart.DownloadSize(), Equals, s.pkg.DownloadSize)
-	c.Assert(s.pkgPart.Icon(), Equals, s.pkg.Icon)
-	c.Assert(s.pkgPart.IsInstalled(), Equals, true)
-	c.Assert(s.pkgPart.Type(), Equals, snap.TypeApp)
+func (s *SnapPartSuite) TestPackagePart(c *C) {
+	c.Assert(s.snapPart.Name(), Equals, s.snap.Name)
+	c.Assert(s.snapPart.Version(), Equals, s.snap.Version)
+	c.Assert(s.snapPart.Origin(), Equals, s.snap.Origin)
+	c.Assert(s.snapPart.Description(), Equals, s.snap.Description)
+	c.Assert(s.snapPart.InstalledSize(), Equals, s.snap.InstalledSize)
+	c.Assert(s.snapPart.DownloadSize(), Equals, s.snap.DownloadSize)
+	c.Assert(s.snapPart.Icon(), Equals, s.snap.Icon)
+	c.Assert(s.snapPart.IsInstalled(), Equals, true)
+	c.Assert(s.snapPart.Type(), Equals, snap.TypeApp)
 }

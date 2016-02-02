@@ -24,5 +24,5 @@ import (
 type snapdClient interface {
 	Icon(pkgID string) (*client.Icon, error)
 	Services(pkg string) (map[string]*client.Service, error)
-	Package(name string) (*client.Package, error)
+	Snap(name string) (*client.Snap, error)
 }
