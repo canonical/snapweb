@@ -134,6 +134,15 @@ func (s *PayloadSuite) TestPayloadTypeGadget(c *C) {
 	c.Assert(q.UIPort, Equals, uint64(0))
 }
 
+func (s *PayloadSuite) TestPayloadSnapInstalling(c *C) {
+	fakeSnap := newDefaultFakePart()
+	fakeSnapID := fakeSnap.Name() + "." + fakeSnap.Origin()
+	s.h.statusTracker.Add(fakeSnapID, webprogress.OperationInstall)
+
+	payload := s.h.snapQueryToPayload(fakeSnap)
+	c.Assert(payload.Status, Equals, webprogress.StatusInstalling)
+}
+
 type AllPackagesSuite struct {
 	c *fakeSnapdClient
 	h Handler
