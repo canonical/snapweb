@@ -53,12 +53,12 @@ type response struct {
 }
 
 func (h *Handler) packagePayload(resource string) (snapPkg, error) {
-	pkg, err := h.snapdClient.Snap(resource)
+	snap, err := h.snapdClient.Snap(resource)
 	if err != nil {
 		return snapPkg{}, err
 	}
 
-	return h.snapQueryToPayload(snapPart{*pkg}), nil
+	return h.snapToPayload(snap), nil
 }
 
 func (h *Handler) allPackages(filter client.SnapFilter) ([]snapPkg, error) {
@@ -69,7 +69,7 @@ func (h *Handler) allPackages(filter client.SnapFilter) ([]snapPkg, error) {
 
 	snapPkgs := make([]snapPkg, 0, len(snaps))
 	for _, snap := range snaps {
-		snapPkgs = append(snapPkgs, h.snapQueryToPayload(snapPart{*snap}))
+		snapPkgs = append(snapPkgs, h.snapToPayload(snap))
 	}
 
 	sort.Sort(snapPkgsByName(snapPkgs))
@@ -113,18 +113,19 @@ func (h *Handler) installPackage(ID string) error {
 	return nil
 }
 
-func hasPortInformation(snapQ snappy.Part) bool {
-	return snapQ.Type() == snap.TypeApp || snapQ.Type() == snap.TypeFramework
+func hasPortInformation(snapQ *client.Snap) bool {
+	snapType := snap.Type(snapQ.Type)
+	return snapType == snap.TypeApp || snapType == snap.TypeFramework
 }
 
-func (h *Handler) snapQueryToPayload(snapQ snappy.Part) snapPkg {
+func (h *Handler) snapToPayload(snapQ *client.Snap) snapPkg {
 	snap := snapPkg{
-		ID:          snapQ.Name() + "." + snapQ.Origin(),
-		Name:        snapQ.Name(),
-		Origin:      snapQ.Origin(),
-		Version:     snapQ.Version(),
-		Description: snapQ.Description(),
-		Type:        snapQ.Type(),
+		ID:          snapQ.Name + "." + snapQ.Origin,
+		Name:        snapQ.Name,
+		Origin:      snapQ.Origin,
+		Version:     snapQ.Version,
+		Description: snapQ.Description,
+		Type:        snap.Type(snapQ.Type),
 	}
 
 	if hasPortInformation(snapQ) {
@@ -133,7 +134,9 @@ func (h *Handler) snapQueryToPayload(snapQ snappy.Part) snapPkg {
 		}
 	}
 
-	if snapQ.IsInstalled() {
+	isInstalled := snapQ.Status == client.StatusInstalled || snapQ.Status == client.StatusActive
+
+	if isInstalled {
 		iconPath, err := localIconPath(h.snapdClient, snap.ID)
 		if err != nil {
 			log.Println("Icon path for installed package cannot be set", err)
@@ -141,10 +144,10 @@ func (h *Handler) snapQueryToPayload(snapQ snappy.Part) snapPkg {
 		}
 
 		snap.Icon = iconPath
-		snap.InstalledSize = snapQ.InstalledSize()
+		snap.InstalledSize = snapQ.InstalledSize
 	} else {
-		snap.Icon = snapQ.Icon()
-		snap.DownloadSize = snapQ.DownloadSize()
+		snap.Icon = snapQ.Icon
+		snap.DownloadSize = snapQ.DownloadSize
 	}
 
 	if stat, ok := h.statusTracker.Get(snap.ID); ok {
@@ -160,7 +163,7 @@ func (h *Handler) snapQueryToPayload(snapQ snappy.Part) snapPkg {
 		} else {
 			snap.Progress = stat.Progress()
 		}
-	} else if snapQ.IsInstalled() {
+	} else if isInstalled {
 		snap.Status = webprogress.StatusInstalled
 	} else {
 		snap.Status = webprogress.StatusUninstalled

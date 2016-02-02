@@ -22,79 +22,11 @@ import (
 	"testing"
 
 	"github.com/ubuntu-core/snappy/client"
-	"github.com/ubuntu-core/snappy/snap"
-	"github.com/ubuntu-core/snappy/snappy"
 
 	. "gopkg.in/check.v1"
 )
 
 func Test(t *testing.T) { TestingT(t) }
-
-type fakeSnappyPart struct {
-	snappy.Part
-	name        string
-	origin      string
-	version     string
-	description string
-	installed   bool
-	icon        string
-	snapType    snap.Type
-}
-
-func newDefaultFakePart() *fakeSnappyPart {
-	return &fakeSnappyPart{
-		name:        "camlistore",
-		origin:      "sergiusens",
-		version:     "2.0",
-		installed:   true,
-		snapType:    snap.TypeApp,
-		description: "Camlistore",
-	}
-}
-
-func (p fakeSnappyPart) IsInstalled() bool {
-	return p.installed
-}
-
-func (p fakeSnappyPart) InstalledSize() int64 {
-	if p.installed {
-		return 30
-	}
-
-	return -1
-}
-
-func (p fakeSnappyPart) DownloadSize() int64 {
-	if !p.installed {
-		return 60
-	}
-
-	return -1
-}
-
-func (p fakeSnappyPart) Name() string {
-	return p.name
-}
-
-func (p fakeSnappyPart) Origin() string {
-	return p.origin
-}
-
-func (p fakeSnappyPart) Version() string {
-	return p.version
-}
-
-func (p fakeSnappyPart) Type() snap.Type {
-	return p.snapType
-}
-
-func (p fakeSnappyPart) Icon() string {
-	return p.icon
-}
-
-func (p fakeSnappyPart) Description() string {
-	return p.description
-}
 
 type fakeSnapdClient struct {
 	snaps  []*client.Snap

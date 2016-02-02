@@ -80,66 +80,66 @@ func (s *PayloadSuite) SetUpTest(c *C) {
 }
 
 func (s *PayloadSuite) TestPayloadWithNoServices(c *C) {
-	fakeSnap := newDefaultFakePart()
+	fakeSnap := newDefaultSnap()
 
-	q := s.h.snapQueryToPayload(fakeSnap)
+	q := s.h.snapToPayload(fakeSnap)
 
-	c.Check(q.Name, Equals, fakeSnap.name)
-	c.Check(q.Version, Equals, fakeSnap.version)
+	c.Check(q.Name, Equals, fakeSnap.Name)
+	c.Check(q.Version, Equals, fakeSnap.Version)
 	c.Check(q.Status, Equals, webprogress.StatusInstalled)
-	c.Check(q.Type, Equals, fakeSnap.snapType)
+	c.Check(q.Type, Equals, snap.Type(fakeSnap.Type))
 	c.Check(q.UIPort, Equals, uint64(0))
-	c.Check(q.Icon, Equals, "/icons/camlistore.sergiusens_icon.png")
-	c.Check(q.Description, Equals, fakeSnap.description)
+	c.Check(q.Icon, Equals, "/icons/chatroom.ogra_icon.png")
+	c.Check(q.Description, Equals, fakeSnap.Description)
 }
 
 func (s *PayloadSuite) TestPayloadWithServicesButNoUI(c *C) {
 	s.h.setClient(&fakeSnapdClientServicesNoExternalUI{})
 
-	fakeSnap := newDefaultFakePart()
-	q := s.h.snapQueryToPayload(fakeSnap)
+	fakeSnap := newDefaultSnap()
+	q := s.h.snapToPayload(fakeSnap)
 
-	c.Assert(q.Name, Equals, fakeSnap.name)
-	c.Assert(q.Version, Equals, fakeSnap.version)
+	c.Assert(q.Name, Equals, fakeSnap.Name)
+	c.Assert(q.Version, Equals, fakeSnap.Version)
 	c.Assert(q.Status, Equals, webprogress.StatusInstalled)
-	c.Assert(q.Type, Equals, fakeSnap.snapType)
+	c.Assert(q.Type, Equals, snap.Type(fakeSnap.Type))
 	c.Assert(q.UIPort, Equals, uint64(0))
 }
 
 func (s *PayloadSuite) TestPayloadWithServicesUI(c *C) {
 	s.h.setClient(&fakeSnapdClientServicesExternalUI{})
 
-	fakeSnap := newDefaultFakePart()
-	q := s.h.snapQueryToPayload(fakeSnap)
+	fakeSnap := newDefaultSnap()
+	q := s.h.snapToPayload(fakeSnap)
 
-	c.Assert(q.Name, Equals, fakeSnap.name)
-	c.Assert(q.Version, Equals, fakeSnap.version)
+	c.Assert(q.Name, Equals, fakeSnap.Name)
+	c.Assert(q.Version, Equals, fakeSnap.Version)
 	c.Assert(q.Status, Equals, webprogress.StatusInstalled)
-	c.Assert(q.Type, Equals, fakeSnap.snapType)
+	c.Assert(q.Type, Equals, snap.Type(fakeSnap.Type))
 	c.Assert(q.UIPort, Equals, uint64(1024))
 }
 
 func (s *PayloadSuite) TestPayloadTypeGadget(c *C) {
 	s.h.setClient(&fakeSnapdClientServicesExternalUI{})
 
-	fakeSnap := newDefaultFakePart()
-	fakeSnap.snapType = snap.TypeGadget
+	fakeSnap := newDefaultSnap()
+	fakeSnap.Type = string(snap.TypeGadget)
 
-	q := s.h.snapQueryToPayload(fakeSnap)
+	q := s.h.snapToPayload(fakeSnap)
 
-	c.Assert(q.Name, Equals, fakeSnap.name)
-	c.Assert(q.Version, Equals, fakeSnap.version)
+	c.Assert(q.Name, Equals, fakeSnap.Name)
+	c.Assert(q.Version, Equals, fakeSnap.Version)
 	c.Assert(q.Status, Equals, webprogress.StatusInstalled)
-	c.Assert(q.Type, Equals, fakeSnap.snapType)
+	c.Assert(q.Type, Equals, snap.Type(fakeSnap.Type))
 	c.Assert(q.UIPort, Equals, uint64(0))
 }
 
 func (s *PayloadSuite) TestPayloadSnapInstalling(c *C) {
-	fakeSnap := newDefaultFakePart()
-	fakeSnapID := fakeSnap.Name() + "." + fakeSnap.Origin()
+	fakeSnap := newDefaultSnap()
+	fakeSnapID := fakeSnap.Name + "." + fakeSnap.Origin
 	s.h.statusTracker.Add(fakeSnapID, webprogress.OperationInstall)
 
-	payload := s.h.snapQueryToPayload(fakeSnap)
+	payload := s.h.snapToPayload(fakeSnap)
 	c.Assert(payload.Status, Equals, webprogress.StatusInstalling)
 }
 
