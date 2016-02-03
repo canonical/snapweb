@@ -56,7 +56,7 @@ cp -r www/public www/templates $builddir/www
 cd $builddir
 
 sed -i 's/\(architecture: \)UNKNOWN_ARCH/\1[amd64, armhf]/' \
-    $builddir/meta/package.yaml
+    $builddir/meta/snap.yaml
 
 gobuild arm
 gobuild amd64
