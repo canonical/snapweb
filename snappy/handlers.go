@@ -49,25 +49,21 @@ func (h *Handler) setClient(c snapdClient) {
 	h.snapdClient = c
 }
 
-func installedOnly(v string) bool {
-	return v == "true"
-}
-
-func types(v string) []string {
-	return strings.Split(v, ",")
-}
-
 func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(w)
 
-	filter := listFilter{
-		installedOnly: installedOnly(r.FormValue("installed_only")),
-		types:         types(r.FormValue("types")),
-		query:         r.FormValue("q"),
+	filter := client.SnapFilter{
+		Query: r.FormValue("q"),
+	}
+	if r.FormValue("installed_only") == "true" {
+		filter.Sources = []string{"local"}
+	}
+	if len(r.FormValue("types")) > 0 {
+		filter.Types = strings.Split(r.FormValue("types"), ",")
 	}
 
-	payload, err := h.allPackages(&filter)
+	payload, err := h.allPackages(filter)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		enc.Encode(fmt.Sprintf("Error: %s", err))

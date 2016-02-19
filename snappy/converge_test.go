@@ -18,8 +18,10 @@
 package snappy
 
 import (
+	"errors"
 	"os"
 
+	"github.com/ubuntu-core/snappy/client"
 	"github.com/ubuntu-core/snappy/snap"
 	. "gopkg.in/check.v1"
 	"launchpad.net/webdm/webprogress"
@@ -27,6 +29,7 @@ import (
 
 type PackagePayloadSuite struct {
 	h Handler
+	c *fakeSnapdClient
 }
 
 var _ = Suite(&PackagePayloadSuite{})
@@ -34,16 +37,19 @@ var _ = Suite(&PackagePayloadSuite{})
 func (s *PackagePayloadSuite) SetUpTest(c *C) {
 	os.Setenv("SNAP_APP_DATA_PATH", c.MkDir())
 	s.h.statusTracker = webprogress.New()
-	s.h.setClient(&fakeSnapdClient{})
+	s.c = &fakeSnapdClient{}
+	s.h.setClient(s.c)
 }
 
 func (s *PackagePayloadSuite) TestPackageNotFound(c *C) {
+	s.c.err = errors.New("the snap could not be retrieved")
+
 	_, err := s.h.packagePayload("chatroom.ogra")
 	c.Assert(err, NotNil)
 }
 
 func (s *PackagePayloadSuite) TestPackage(c *C) {
-	s.h.setClient(&fakeSnapdClientPackage{})
+	s.c.snaps = []*client.Snap{newDefaultSnap()}
 
 	pkg, err := s.h.packagePayload("chatroom.ogra")
 	c.Assert(err, IsNil)
@@ -74,222 +80,100 @@ func (s *PayloadSuite) SetUpTest(c *C) {
 }
 
 func (s *PayloadSuite) TestPayloadWithNoServices(c *C) {
-	fakeSnap := newDefaultFakePart()
+	fakeSnap := newDefaultSnap()
 
-	q := s.h.snapQueryToPayload(fakeSnap)
+	q := s.h.snapToPayload(fakeSnap)
 
-	c.Check(q.Name, Equals, fakeSnap.name)
-	c.Check(q.Version, Equals, fakeSnap.version)
+	c.Check(q.Name, Equals, fakeSnap.Name)
+	c.Check(q.Version, Equals, fakeSnap.Version)
 	c.Check(q.Status, Equals, webprogress.StatusInstalled)
-	c.Check(q.Type, Equals, fakeSnap.snapType)
+	c.Check(q.Type, Equals, snap.Type(fakeSnap.Type))
 	c.Check(q.UIPort, Equals, uint64(0))
-	c.Check(q.Icon, Equals, "/icons/camlistore.sergiusens_icon.png")
-	c.Check(q.Description, Equals, fakeSnap.description)
+	c.Check(q.Icon, Equals, "/icons/chatroom.ogra_icon.png")
+	c.Check(q.Description, Equals, fakeSnap.Description)
 }
 
 func (s *PayloadSuite) TestPayloadWithServicesButNoUI(c *C) {
 	s.h.setClient(&fakeSnapdClientServicesNoExternalUI{})
 
-	fakeSnap := newDefaultFakePart()
-	q := s.h.snapQueryToPayload(fakeSnap)
+	fakeSnap := newDefaultSnap()
+	q := s.h.snapToPayload(fakeSnap)
 
-	c.Assert(q.Name, Equals, fakeSnap.name)
-	c.Assert(q.Version, Equals, fakeSnap.version)
+	c.Assert(q.Name, Equals, fakeSnap.Name)
+	c.Assert(q.Version, Equals, fakeSnap.Version)
 	c.Assert(q.Status, Equals, webprogress.StatusInstalled)
-	c.Assert(q.Type, Equals, fakeSnap.snapType)
+	c.Assert(q.Type, Equals, snap.Type(fakeSnap.Type))
 	c.Assert(q.UIPort, Equals, uint64(0))
 }
 
 func (s *PayloadSuite) TestPayloadWithServicesUI(c *C) {
 	s.h.setClient(&fakeSnapdClientServicesExternalUI{})
 
-	fakeSnap := newDefaultFakePart()
-	q := s.h.snapQueryToPayload(fakeSnap)
+	fakeSnap := newDefaultSnap()
+	q := s.h.snapToPayload(fakeSnap)
 
-	c.Assert(q.Name, Equals, fakeSnap.name)
-	c.Assert(q.Version, Equals, fakeSnap.version)
+	c.Assert(q.Name, Equals, fakeSnap.Name)
+	c.Assert(q.Version, Equals, fakeSnap.Version)
 	c.Assert(q.Status, Equals, webprogress.StatusInstalled)
-	c.Assert(q.Type, Equals, fakeSnap.snapType)
+	c.Assert(q.Type, Equals, snap.Type(fakeSnap.Type))
 	c.Assert(q.UIPort, Equals, uint64(1024))
 }
 
 func (s *PayloadSuite) TestPayloadTypeGadget(c *C) {
 	s.h.setClient(&fakeSnapdClientServicesExternalUI{})
 
-	fakeSnap := newDefaultFakePart()
-	fakeSnap.snapType = snap.TypeGadget
+	fakeSnap := newDefaultSnap()
+	fakeSnap.Type = string(snap.TypeGadget)
 
-	q := s.h.snapQueryToPayload(fakeSnap)
+	q := s.h.snapToPayload(fakeSnap)
 
-	c.Assert(q.Name, Equals, fakeSnap.name)
-	c.Assert(q.Version, Equals, fakeSnap.version)
+	c.Assert(q.Name, Equals, fakeSnap.Name)
+	c.Assert(q.Version, Equals, fakeSnap.Version)
 	c.Assert(q.Status, Equals, webprogress.StatusInstalled)
-	c.Assert(q.Type, Equals, fakeSnap.snapType)
+	c.Assert(q.Type, Equals, snap.Type(fakeSnap.Type))
 	c.Assert(q.UIPort, Equals, uint64(0))
 }
 
-type MergeSuite struct {
+func (s *PayloadSuite) TestPayloadSnapInstalling(c *C) {
+	fakeSnap := newDefaultSnap()
+	fakeSnapID := fakeSnap.Name + "." + fakeSnap.Origin
+	s.h.statusTracker.Add(fakeSnapID, webprogress.OperationInstall)
+
+	payload := s.h.snapToPayload(fakeSnap)
+	c.Assert(payload.Status, Equals, webprogress.StatusInstalling)
+}
+
+type AllPackagesSuite struct {
+	c *fakeSnapdClient
 	h Handler
 }
 
-var _ = Suite(&MergeSuite{})
+var _ = Suite(&AllPackagesSuite{})
 
-func (s *MergeSuite) SetUpTest(c *C) {
+func (s *AllPackagesSuite) SetUpTest(c *C) {
 	os.Setenv("SNAP_APP_DATA_PATH", c.MkDir())
 	s.h.statusTracker = webprogress.New()
-	s.h.setClient(&fakeSnapdClient{})
+	s.c = &fakeSnapdClient{}
+	s.h.setClient(s.c)
 }
 
-func (s *MergeSuite) TestOneInstalledAndNoRemote(c *C) {
-	installed := []snapPkg{
-		s.h.snapQueryToPayload(newFakePart("app1", "canonical", "1.0", true)),
-	}
+func (s *AllPackagesSuite) TestNoSnaps(c *C) {
+	s.c.err = errors.New("snaps could not be filtered")
 
-	snaps := mergeSnaps(installed, nil, true)
-
-	c.Assert(snaps, HasLen, 1)
-	c.Assert(snaps[0].Name, Equals, "app1")
-	c.Assert(snaps[0].Version, Equals, "1.0")
-	c.Assert(snaps[0].Status, Equals, webprogress.StatusInstalled)
-
-	snaps = mergeSnaps(installed, nil, false)
-	c.Assert(snaps, HasLen, 1)
+	snaps, err := s.h.allPackages(client.SnapFilter{})
+	c.Assert(snaps, IsNil)
+	c.Assert(err, NotNil)
 }
 
-func (s *MergeSuite) TestManyInstalledAndNoRemote(c *C) {
-	installed := []snapPkg{
-		s.h.snapQueryToPayload(newFakePart("app1", "canonical", "1.0", true)),
-		s.h.snapQueryToPayload(newFakePart("app2", "canonical", "2.0", true)),
-		s.h.snapQueryToPayload(newFakePart("app3", "canonical", "3.0", true)),
+func (s *AllPackagesSuite) TestHasSnaps(c *C) {
+	s.c.snaps = []*client.Snap{
+		newSnap("app2"),
+		newSnap("app1"),
 	}
 
-	snaps := mergeSnaps(installed, nil, true)
-
-	c.Assert(snaps, HasLen, 3)
+	snaps, err := s.h.allPackages(client.SnapFilter{})
+	c.Assert(err, IsNil)
+	c.Assert(snaps, HasLen, 2)
 	c.Assert(snaps[0].Name, Equals, "app1")
-	c.Assert(snaps[0].Version, Equals, "1.0")
-	c.Assert(snaps[0].Status, Equals, webprogress.StatusInstalled)
-
 	c.Assert(snaps[1].Name, Equals, "app2")
-	c.Assert(snaps[1].Version, Equals, "2.0")
-	c.Assert(snaps[1].Status, Equals, webprogress.StatusInstalled)
-
-	c.Assert(snaps[2].Name, Equals, "app3")
-	c.Assert(snaps[2].Version, Equals, "3.0")
-	c.Assert(snaps[2].Status, Equals, webprogress.StatusInstalled)
-}
-
-func (s *MergeSuite) TestManyInstalledAndManyRemotes(c *C) {
-	installed := []snapPkg{
-		s.h.snapQueryToPayload(newFakePart("app1", "canonical", "1.0", true)),
-		s.h.snapQueryToPayload(newFakePart("app2", "canonical", "2.0", true)),
-		s.h.snapQueryToPayload(newFakePart("app3", "canonical", "3.0", true)),
-	}
-
-	remotes := []snapPkg{
-		s.h.snapQueryToPayload(newFakePart("app1", "canonical", "1.0", false)),
-		s.h.snapQueryToPayload(newFakePart("app2", "canonical", "2.0", false)),
-		s.h.snapQueryToPayload(newFakePart("app4", "ubuntu", "3.0", false)),
-	}
-
-	// Only installed
-	snaps := mergeSnaps(installed, remotes, true)
-
-	c.Assert(snaps, HasLen, 3)
-	c.Check(snaps[0].Name, Equals, "app1")
-	c.Check(snaps[0].Origin, Equals, "canonical")
-	c.Check(snaps[0].Version, Equals, "1.0")
-	c.Check(snaps[0].Status, Equals, webprogress.StatusInstalled)
-	c.Check(snaps[0].InstalledSize, Equals, int64(30))
-	c.Check(snaps[0].DownloadSize, Equals, int64(0))
-
-	c.Check(snaps[1].Name, Equals, "app2")
-	c.Check(snaps[1].Origin, Equals, "canonical")
-	c.Check(snaps[1].Version, Equals, "2.0")
-	c.Check(snaps[1].Status, Equals, webprogress.StatusInstalled)
-	c.Check(snaps[1].InstalledSize, Equals, int64(30))
-	c.Check(snaps[1].DownloadSize, Equals, int64(0))
-
-	c.Check(snaps[2].Name, Equals, "app3")
-	c.Check(snaps[0].Origin, Equals, "canonical")
-	c.Check(snaps[2].Version, Equals, "3.0")
-	c.Check(snaps[2].Status, Equals, webprogress.StatusInstalled)
-	c.Check(snaps[2].InstalledSize, Equals, int64(30))
-	c.Check(snaps[2].DownloadSize, Equals, int64(0))
-
-	// Installed and remotes
-	snaps = mergeSnaps(installed, remotes, false)
-
-	c.Assert(snaps, HasLen, 4)
-	c.Check(snaps[0].Name, Equals, "app1")
-	c.Check(snaps[0].Origin, Equals, "canonical")
-	c.Check(snaps[0].Version, Equals, "1.0")
-	c.Check(snaps[0].Status, Equals, webprogress.StatusInstalled)
-	c.Check(snaps[0].InstalledSize, Equals, int64(30))
-	c.Check(snaps[0].DownloadSize, Equals, int64(0))
-
-	c.Check(snaps[1].Name, Equals, "app2")
-	c.Check(snaps[1].Origin, Equals, "canonical")
-	c.Check(snaps[1].Version, Equals, "2.0")
-	c.Check(snaps[1].Status, Equals, webprogress.StatusInstalled)
-	c.Check(snaps[1].InstalledSize, Equals, int64(30))
-	c.Check(snaps[1].DownloadSize, Equals, int64(0))
-
-	c.Check(snaps[2].Name, Equals, "app3")
-	c.Check(snaps[2].Origin, Equals, "canonical")
-	c.Check(snaps[2].Version, Equals, "3.0")
-	c.Check(snaps[2].Status, Equals, webprogress.StatusInstalled)
-	c.Check(snaps[2].InstalledSize, Equals, int64(30))
-	c.Check(snaps[2].DownloadSize, Equals, int64(0))
-
-	c.Check(snaps[3].Name, Equals, "app4")
-	c.Check(snaps[3].Origin, Equals, "ubuntu")
-	c.Check(snaps[3].Version, Equals, "3.0")
-	c.Check(snaps[3].Status, Equals, webprogress.StatusUninstalled)
-	c.Check(snaps[3].InstalledSize, Equals, int64(0))
-	c.Check(snaps[3].DownloadSize, Equals, int64(60))
-}
-
-func (s *MergeSuite) TestManyInstalledAndManyRemotesSomeInstalling(c *C) {
-	s.h.statusTracker.Add("app4.ubuntu", webprogress.OperationInstall)
-
-	installed := []snapPkg{
-		s.h.snapQueryToPayload(newFakePart("app1", "canonical", "1.0", true)),
-		s.h.snapQueryToPayload(newFakePart("app2", "canonical", "2.0", true)),
-		s.h.snapQueryToPayload(newFakePart("app3", "canonical", "3.0", true)),
-	}
-
-	remotes := []snapPkg{
-		s.h.snapQueryToPayload(newFakePart("app1", "canonical", "1.0", false)),
-		s.h.snapQueryToPayload(newFakePart("app4", "ubuntu", "2.0", false)),
-		s.h.snapQueryToPayload(newFakePart("app5", "ubuntu", "3.0", false)),
-	}
-
-	// Installed and remotes
-	snaps := mergeSnaps(installed, remotes, false)
-
-	c.Assert(snaps, HasLen, 5)
-	c.Check(snaps[0].Name, Equals, "app1")
-	c.Check(snaps[0].Version, Equals, "1.0")
-	c.Check(snaps[0].Status, Equals, webprogress.StatusInstalled)
-
-	c.Check(snaps[1].Name, Equals, "app2")
-	c.Check(snaps[1].Version, Equals, "2.0")
-	c.Check(snaps[1].Status, Equals, webprogress.StatusInstalled)
-
-	c.Check(snaps[2].Name, Equals, "app3")
-	c.Check(snaps[2].Version, Equals, "3.0")
-	c.Check(snaps[2].Status, Equals, webprogress.StatusInstalled)
-
-	c.Check(snaps[3].Name, Equals, "app4")
-	c.Check(snaps[3].Version, Equals, "2.0")
-	c.Check(snaps[3].Status, Equals, webprogress.StatusInstalling)
-	c.Check(snaps[3].InstalledSize, Equals, int64(0))
-	c.Check(snaps[3].DownloadSize, Equals, int64(60))
-
-	c.Check(snaps[4].Name, Equals, "app5")
-	c.Check(snaps[4].Version, Equals, "3.0")
-	c.Check(snaps[4].Status, Equals, webprogress.StatusUninstalled)
-	c.Check(snaps[4].InstalledSize, Equals, int64(0))
-	c.Check(snaps[4].DownloadSize, Equals, int64(60))
 }

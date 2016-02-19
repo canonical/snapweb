@@ -1,4 +1,3 @@
-github.com/blakesmith/ar	git	c9a977dd0cc1392b023382c7bfa5a22af8d3b730	2013-02-19T04:59:55Z
 github.com/cheggaaa/pb	git	e8c7cc515bfde3e267957a3b110080ceed51354e	2014-12-02T07:01:21Z
 github.com/davecheney/gmx	git	d765420e7fbaccecb2a38cf2a02701fe3e0888a3	2014-12-23T12:57:49Z
 github.com/davecheney/mdns	git	de174d86a3d3e87bfad9cb66cedd0433380b67b0	2014-09-13T23:56:41Z
@@ -8,6 +7,7 @@ github.com/gosexy/gettext	git	98b7b91596d20b96909e6b60d57411547dd9959c	2013-02-2
 github.com/miekg/dns	git	5a357a6fc5e85268b929350aa6423e2d56dcc4ff	2015-04-18T05:52:30Z
 github.com/mvo5/goconfigparser	git	26426272dda20cc76aa1fa44286dc743d2972fe8	2015-02-12T09:37:50Z
 github.com/mvo5/uboot-go	git	69978a3e4b05cca9d7cfee489b3453dfed45e72c	2015-07-23T08:17:10Z
-github.com/ubuntu-core/snappy	git	a3adae1bef38f4e6d4335006493432de1d8ab8c1	2016-01-13T11:03:09Z
+github.com/ubuntu-core/snappy	git	9e90331723fb41951b6ff99dbcd3c927cf0ac339	2016-02-02T17:55:45Z
+golang.org/x/crypto	git	60052bd85f2d91293457e8811b0cf26b773de469	2015-06-22T23:34:07Z
 gopkg.in/check.v1	git	64131543e7896d5bcc6bd5a76287eb75ea96c673	2014-10-24T13:38:53Z
 gopkg.in/yaml.v2	git	49c95bdc21843256fb6c4e0d370a05f24a0bf213	2015-02-24T22:57:58Z

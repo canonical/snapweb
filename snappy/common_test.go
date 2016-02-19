@@ -22,91 +22,38 @@ import (
 	"testing"
 
 	"github.com/ubuntu-core/snappy/client"
-	"github.com/ubuntu-core/snappy/snap"
-	"github.com/ubuntu-core/snappy/snappy"
 
 	. "gopkg.in/check.v1"
 )
 
 func Test(t *testing.T) { TestingT(t) }
 
-type fakeSnappyPart struct {
-	snappy.Part
-	name        string
-	origin      string
-	version     string
-	description string
-	installed   bool
-	icon        string
-	snapType    snap.Type
+type fakeSnapdClient struct {
+	snaps  []*client.Snap
+	err    error
+	filter client.SnapFilter
 }
 
-func newDefaultFakePart() *fakeSnappyPart {
-	return &fakeSnappyPart{
-		name:        "camlistore",
-		origin:      "sergiusens",
-		version:     "2.0",
-		installed:   true,
-		snapType:    snap.TypeApp,
-		description: "Camlistore",
+func newDefaultSnap() *client.Snap {
+	snap := &client.Snap{
+		Description:   "WebRTC Video chat server for Snappy",
+		DownloadSize:  6930947,
+		Icon:          "/1.0/icons/chatroom.ogra/icon",
+		InstalledSize: 18976651,
+		Name:          "chatroom",
+		Origin:        "ogra",
+		Status:        client.StatusActive,
+		Type:          client.TypeApp,
+		Version:       "0.1-8",
 	}
+	return snap
 }
 
-func newFakePart(name, origin, version string, installed bool) *fakeSnappyPart {
-	return &fakeSnappyPart{
-		name:      name,
-		origin:    origin,
-		version:   version,
-		installed: installed,
-		snapType:  snap.TypeApp,
-	}
+func newSnap(name string) *client.Snap {
+	snap := newDefaultSnap()
+	snap.Name = name
+	return snap
 }
-
-func (p fakeSnappyPart) IsInstalled() bool {
-	return p.installed
-}
-
-func (p fakeSnappyPart) InstalledSize() int64 {
-	if p.installed {
-		return 30
-	}
-
-	return -1
-}
-
-func (p fakeSnappyPart) DownloadSize() int64 {
-	if !p.installed {
-		return 60
-	}
-
-	return -1
-}
-
-func (p fakeSnappyPart) Name() string {
-	return p.name
-}
-
-func (p fakeSnappyPart) Origin() string {
-	return p.origin
-}
-
-func (p fakeSnappyPart) Version() string {
-	return p.version
-}
-
-func (p fakeSnappyPart) Type() snap.Type {
-	return p.snapType
-}
-
-func (p fakeSnappyPart) Icon() string {
-	return p.icon
-}
-
-func (p fakeSnappyPart) Description() string {
-	return p.description
-}
-
-type fakeSnapdClient struct{}
 
 func (f *fakeSnapdClient) Icon(pkgID string) (*client.Icon, error) {
 	icon := &client.Icon{
@@ -120,8 +67,22 @@ func (f *fakeSnapdClient) Services(pkg string) (map[string]*client.Service, erro
 	return nil, errors.New("the package has no services")
 }
 
-func (f *fakeSnapdClient) Package(name string) (*client.Package, error) {
-	return nil, errors.New("the package could not be retrieved")
+func (f *fakeSnapdClient) Snap(name string) (*client.Snap, error) {
+	if len(f.snaps) > 0 {
+		return f.snaps[0], f.err
+	}
+	return nil, f.err
+}
+
+func (f *fakeSnapdClient) FilterSnaps(filter client.SnapFilter) (map[string]*client.Snap, error) {
+	f.filter = filter // record the filter used
+
+	snaps := make(map[string]*client.Snap)
+	for _, s := range f.snaps {
+		snaps[s.Name] = s
+	}
+
+	return snaps, f.err
 }
 
 var _ snapdClient = (*fakeSnapdClient)(nil)
@@ -176,24 +137,4 @@ func (f *fakeSnapdClientServicesExternalUI) Services(pkg string) (map[string]*cl
 	}
 
 	return services, nil
-}
-
-type fakeSnapdClientPackage struct {
-	fakeSnapdClient
-}
-
-func (f *fakeSnapdClientPackage) Package(name string) (*client.Package, error) {
-	pkg := &client.Package{
-		Description:   "WebRTC Video chat server for Snappy",
-		DownloadSize:  6930947,
-		Icon:          "/1.0/icons/chatroom.ogra/icon",
-		InstalledSize: 18976651,
-		Name:          "chatroom",
-		Origin:        "ogra",
-		Status:        client.StatusActive,
-		Type:          client.TypeApp,
-		Version:       "0.1-8",
-	}
-
-	return pkg, nil
 }
