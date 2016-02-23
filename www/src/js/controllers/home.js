@@ -17,7 +17,7 @@ module.exports = {
       }),
       success: function(snaplist) {
         var view = new HomeLayoutView({
-          collection: snaplist
+          collection: snaplist.installed()
         });
         chan.command('set:content', view);
       }

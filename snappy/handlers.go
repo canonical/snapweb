@@ -41,7 +41,7 @@ type Handler struct {
 func NewHandler() *Handler {
 	return &Handler{
 		statusTracker: webprogress.New(),
-		snapdClient:   client.New(),
+		snapdClient:   client.New(nil),
 	}
 }
 
