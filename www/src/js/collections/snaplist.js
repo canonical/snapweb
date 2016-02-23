@@ -8,6 +8,9 @@ var CONF = require('../config.js');
 module.exports = Backbone.Collection.extend({
   url: CONF.PACKAGES,
   model: Snap,
+  installed: function() {
+    return new this.constructor(this.where({status: 'installed'}));
+  },
   comparator: function(model) {
     return model.get('name');
   }
