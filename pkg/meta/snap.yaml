@@ -10,7 +10,7 @@ description: |
   - browse the store to install new snappy packages.
 icon: meta/webdm-icon.png
 source: lp:webdm
-type: framework
+type: app
 version: 0.9
 architecture: UNKNOWN_ARCH
 services:
