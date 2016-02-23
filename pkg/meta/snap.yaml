@@ -1,4 +1,5 @@
 name: webdm
+version: 0.14
 summary: Ubuntu Core Snappy Device Manager
 description: |
   This service allows you to manage your Ubuntu Core device from a web interface or REST API.
@@ -11,8 +12,7 @@ description: |
 icon: meta/webdm-icon.png
 source: lp:webdm
 type: framework
-version: 0.9
-architecture: UNKNOWN_ARCH
+architectures: UNKNOWN_ARCH
 services:
   ports:
     external:

@@ -65,7 +65,7 @@ func Gadget() (*Snap, error) {
 		return nil, ErrNotFound
 	}
 
-	yamlPath := filepath.Join("/gadget", gadget[0].Name(), gadget[0].Version(), "meta", "package.yaml")
+	yamlPath := filepath.Join("/snaps", gadget[0].Name(), gadget[0].Version(), "meta", "snap.yaml")
 	f, err := ioutil.ReadFile(yamlPath)
 	if err != nil {
 		return nil, ErrDecode

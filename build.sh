@@ -18,6 +18,9 @@ get_platform_abi() {
         armhf)
             plat_abi=arm-linux-gnueabihf
         ;;
+        arm64)
+            plat_abi=aarch64-linux-gnu
+        ;;
         *)
             echo "unknown platform for snappy-magic: $arch remember to file a bug or better yet: fix it :)"
             exit 1
@@ -55,11 +58,12 @@ mkdir $builddir/www
 cp -r www/public www/templates $builddir/www
 cd $builddir
 
-sed -i 's/\(architecture: \)UNKNOWN_ARCH/\1[amd64, armhf]/' \
+sed -i 's/\(architectures: \)UNKNOWN_ARCH/\1[amd64, arm64, armhf]/' \
     $builddir/meta/snap.yaml
 
 gobuild arm
 gobuild amd64
+gobuild arm64
 
 cd "$orig_pwd"
 
