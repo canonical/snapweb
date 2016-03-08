@@ -26,21 +26,21 @@ import (
 
 	"github.com/ubuntu-core/snappy/client"
 	"github.com/ubuntu-core/snappy/snappy"
-	"launchpad.net/webdm/webprogress"
+	"launchpad.net/webdm/statustracker"
 
 	"github.com/gorilla/mux"
 )
 
 // Handler implements snappy's packages api.
 type Handler struct {
-	statusTracker *webprogress.StatusTracker
+	statusTracker *statustracker.StatusTracker
 	snapdClient   snapdClient
 }
 
 // NewHandler creates an instance that implements snappy's packages api.
 func NewHandler() *Handler {
 	return &Handler{
-		statusTracker: webprogress.New(),
+		statusTracker: statustracker.New(),
 		snapdClient:   client.New(nil),
 	}
 }
@@ -90,10 +90,6 @@ func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
 		enc.Encode(fmt.Sprintln(err, resource))
 		return
-	}
-
-	if payload.IsError {
-		w.WriteHeader(http.StatusInternalServerError)
 	}
 
 	if err := enc.Encode(payload); err != nil {
@@ -155,9 +151,6 @@ func respond(err error) (msg string, status int) {
 	case snappy.ErrAlreadyInstalled:
 		status = http.StatusOK
 		msg = "Installed"
-	case webprogress.ErrPackageInstallInProgress:
-		status = http.StatusBadRequest
-		msg = "Operation in progress"
 	case snappy.ErrPackageNotFound:
 		status = http.StatusNotFound
 		msg = "Package not found"

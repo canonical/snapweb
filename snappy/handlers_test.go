@@ -23,7 +23,6 @@ import (
 	"os"
 
 	"github.com/ubuntu-core/snappy/client"
-	"launchpad.net/webdm/webprogress"
 
 	. "gopkg.in/check.v1"
 )
@@ -37,7 +36,6 @@ var _ = Suite(&HandlersSuite{})
 
 func (s *HandlersSuite) SetUpTest(c *C) {
 	os.Setenv("SNAP_APP_DATA_PATH", c.MkDir())
-	s.h.statusTracker = webprogress.New()
 	s.c = &fakeSnapdClient{}
 	s.h.setClient(s.c)
 }

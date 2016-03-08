@@ -26,25 +26,22 @@ import (
 
 	"github.com/ubuntu-core/snappy/client"
 	"github.com/ubuntu-core/snappy/snap"
-	"github.com/ubuntu-core/snappy/snappy"
-	"launchpad.net/webdm/webprogress"
 )
 
 type snapPkg struct {
-	ID            string             `json:"id"`
-	Name          string             `json:"name"`
-	Origin        string             `json:"origin"`
-	Version       string             `json:"version"`
-	Description   string             `json:"description"`
-	Icon          string             `json:"icon"`
-	Status        webprogress.Status `json:"status"`
-	Message       string             `json:"message,omitempty"`
-	IsError       bool               `json:"-"`
-	Progress      float64            `json:"progress,omitempty"`
-	InstalledSize int64              `json:"installed_size,omitempty"`
-	DownloadSize  int64              `json:"download_size,omitempty"`
-	Type          snap.Type          `json:"type,omitempty"`
-	UIPort        uint64             `json:"ui_port,omitempty"`
+	ID            string    `json:"id"`
+	Name          string    `json:"name"`
+	Origin        string    `json:"origin"`
+	Version       string    `json:"version"`
+	Description   string    `json:"description"`
+	Icon          string    `json:"icon"`
+	Status        string    `json:"status"`
+	Message       string    `json:"message,omitempty"`
+	Progress      float64   `json:"progress,omitempty"`
+	InstalledSize int64     `json:"installed_size,omitempty"`
+	DownloadSize  int64     `json:"download_size,omitempty"`
+	Type          snap.Type `json:"type,omitempty"`
+	UIPort        uint64    `json:"ui_port,omitempty"`
 }
 
 type response struct {
@@ -77,40 +74,28 @@ func (h *Handler) allPackages(filter client.SnapFilter) ([]snapPkg, error) {
 	return snapPkgs, nil
 }
 
-func (h *Handler) doRemovePackage(progress *webprogress.WebProgress, ID string) {
-	pkgName := strings.Split(ID, ".")[0]
-
-	err := snappy.Remove(pkgName, 0, progress)
-	progress.ErrorChan <- err
-	close(progress.ErrorChan)
-}
-
 func (h *Handler) removePackage(ID string) error {
-	progress, err := h.statusTracker.Add(ID, webprogress.OperationRemove)
+	snap, err := h.snapdClient.Snap(ID)
 	if err != nil {
 		return err
 	}
 
-	go h.doRemovePackage(progress, ID)
+	h.statusTracker.TrackUninstall(snap)
 
-	return nil
-}
-
-func (h *Handler) doInstallPackage(progress *webprogress.WebProgress, ID string) {
-	_, err := snappy.Install(ID, 0, progress)
-	progress.ErrorChan <- err
-	close(progress.ErrorChan)
+	_, err = h.snapdClient.RemoveSnap(ID)
+	return err
 }
 
 func (h *Handler) installPackage(ID string) error {
-	progress, err := h.statusTracker.Add(ID, webprogress.OperationInstall)
+	snap, err := h.snapdClient.Snap(ID)
 	if err != nil {
 		return err
 	}
 
-	go h.doInstallPackage(progress, ID)
+	h.statusTracker.TrackInstall(snap)
 
-	return nil
+	_, err = h.snapdClient.InstallSnap(ID)
+	return err
 }
 
 func hasPortInformation(snapQ *client.Snap) bool {
@@ -126,6 +111,7 @@ func (h *Handler) snapToPayload(snapQ *client.Snap) snapPkg {
 		Version:     snapQ.Version,
 		Description: snapQ.Description,
 		Type:        snap.Type(snapQ.Type),
+		Status:      h.statusTracker.Status(snapQ),
 	}
 
 	if hasPortInformation(snapQ) {
@@ -148,25 +134,6 @@ func (h *Handler) snapToPayload(snapQ *client.Snap) snapPkg {
 	} else {
 		snap.Icon = snapQ.Icon
 		snap.DownloadSize = snapQ.DownloadSize
-	}
-
-	if stat, ok := h.statusTracker.Get(snap.ID); ok {
-		snap.Status = stat.Status
-		if stat.Done() {
-			defer h.statusTracker.Remove(snap.ID)
-
-			if stat.Error != nil {
-				snap.Message = stat.Error.Error()
-				snap.IsError = true
-			}
-
-		} else {
-			snap.Progress = stat.Progress()
-		}
-	} else if isInstalled {
-		snap.Status = webprogress.StatusInstalled
-	} else {
-		snap.Status = webprogress.StatusUninstalled
 	}
 
 	return snap
