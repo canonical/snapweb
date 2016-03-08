@@ -24,10 +24,10 @@ apps:
     daemon: simple
     description: Snappy WebDM
     command: snappyd
-    uses: [snappyd]
-uses:
+    plugs: [snappyd]
+plugs:
   snappyd:
-    type: migration-skill
+    interface: old-security
     security-policy:
       apparmor: meta/snappyd.profile
       seccomp: meta/snappyd.seccomp
