@@ -25,7 +25,6 @@ import (
 	"path/filepath"
 	"text/template"
 
-	"launchpad.net/webdm/gadget"
 	"launchpad.net/webdm/snappy"
 )
 
@@ -54,11 +53,6 @@ func initURLHandlers(log *log.Logger) {
 	snappyHandler := snappy.NewHandler()
 	http.Handle("/api/v2/packages/", snappyHandler.MakeMuxer("/api/v2/packages"))
 
-	handleMainPage, err := makeMainPageHandler()
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	http.Handle("/public/", loggingHandler(http.FileServer(http.Dir("./www"))))
 
 	if iconDir, relativePath, err := snappy.IconDir(); err == nil {
@@ -67,7 +61,7 @@ func initURLHandlers(log *log.Logger) {
 		log.Println("Issues while getting icon dir:", err)
 	}
 
-	http.HandleFunc("/", handleMainPage)
+	http.HandleFunc("/", makeMainPageHandler())
 }
 
 func loggingHandler(h http.Handler) http.Handler {
@@ -77,33 +71,27 @@ func loggingHandler(h http.Handler) http.Handler {
 	})
 }
 
-func makeMainPageHandler() (f http.HandlerFunc, err error) {
-	name := "Ubuntu"
-	subname := ""
-
-	// TODO: use oem information from github.com/ubuntu-core/snappy
-	pkg, err := gadget.Gadget()
-	if err != nil && err != gadget.ErrNotFound {
-		return f, err
-	} else if err != gadget.ErrNotFound {
-		name = pkg.Branding.Name
-		subname = pkg.Branding.Subname
+func getBranding() branding {
+	return branding{
+		Name:    "Ubuntu",
+		Subname: "",
 	}
+}
+
+func makeMainPageHandler() http.HandlerFunc {
+	b := getBranding()
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		data := page{
-			Pages: p,
-			Title: "Home",
-			Params: branding{
-				Name:    name,
-				Subname: subname,
-			},
+			Pages:  p,
+			Title:  "Home",
+			Params: b,
 		}
 
 		if err := renderLayout("index.html", &data, w); err != nil {
 			log.Println(err)
 		}
-	}, nil
+	}
 }
 
 func renderLayout(html string, data *page, w http.ResponseWriter) error {
