@@ -26,6 +26,7 @@ package statustracker
 
 import (
 	"sync"
+	"time"
 
 	"github.com/ubuntu-core/snappy/client"
 )
@@ -40,6 +41,8 @@ const (
 	// StatusUninstalling indicates the package is in an uninstalling state.
 	StatusUninstalling = "uninstalling"
 )
+
+var trackerDuration = 1 * time.Minute
 
 // StatusTracker tracks statuses
 type StatusTracker struct {
@@ -78,10 +81,21 @@ func (s *StatusTracker) TrackInstall(snap *client.Snap) {
 		return
 	}
 
+	s.trackOperation(snapID(snap), StatusInstalling)
+}
+
+func (s *StatusTracker) trackOperation(id, operation string) {
 	s.Lock()
 	defer s.Unlock()
 
-	s.statuses[snapID(snap)] = StatusInstalling
+	s.statuses[id] = operation
+
+	go func() {
+		<-time.After(trackerDuration)
+		s.Lock()
+		delete(s.statuses, id)
+		s.Unlock()
+	}()
 }
 
 // TrackUninstall tracks the removal of the given snap
@@ -90,10 +104,7 @@ func (s *StatusTracker) TrackUninstall(snap *client.Snap) {
 		return
 	}
 
-	s.Lock()
-	defer s.Unlock()
-
-	s.statuses[snapID(snap)] = StatusUninstalling
+	s.trackOperation(snapID(snap), StatusUninstalling)
 }
 
 func snapID(s *client.Snap) string {

@@ -19,6 +19,7 @@ package statustracker
 
 import (
 	"testing"
+	"time"
 
 	"github.com/ubuntu-core/snappy/client"
 
@@ -90,6 +91,18 @@ func (s *StatusTrackerSuite) TestTrackInstall(c *C) {
 	// installation completes
 	snap.Status = client.StatusActive
 	c.Assert(s.t.Status(snap), Equals, StatusInstalled)
+}
+
+func (s *StatusTrackerSuite) TestTrackInstallExpiry(c *C) {
+	trackerDuration = 500 * time.Millisecond
+
+	snap := &client.Snap{Status: client.StatusNotInstalled}
+	s.t.TrackInstall(snap)
+	c.Assert(s.t.Status(snap), Equals, StatusInstalling)
+
+	// don't track indefinitely if operation fails
+	time.Sleep(trackerDuration)
+	c.Assert(s.t.Status(snap), Equals, StatusUninstalled)
 }
 
 func (s *StatusTrackerSuite) TestTrackUninstallNotInstalled(c *C) {
