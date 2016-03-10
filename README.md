@@ -61,50 +61,23 @@ portal.
 
 ## API
 
-### /api/v1/packages/
+### /api/v2/packages/
 
 To install a package:
 
-     curl -H "Content-Type: application/json" -d '{"package":"xkcd-webserver"}' http://localhost:4200/api/v1/packages/
+     curl -H "Content-Type: application/json" -d '{"package":"xkcd-webserver"}' http://localhost:4200/api/v2/packages/
 
 To uninstall a package:
 
-    curl -X DELETE http://localhost:4200/api/v1/packages/xkcd-webserver
+    curl -X DELETE http://localhost:4200/api/v2/packages/xkcd-webserver
 
 To list packages:
 
-     curl http://localhost:4200/api/v1/packages/
+     curl http://localhost:4200/api/v2/packages/
 
 To get a specific package:
 
-     curl http://localhost:4200/api/v1/packages/xkcd-webserver
-
-To start or stop a service from a package:
-
-    curl -w "\nstatus code: %{http_code}\n" -d '{"status":0}' http://localhost:4200/api/v1/packages/webdm/snappyd
-
-To get the icon for a package:
-
-     curl http://localhost:4200/api/v1/packages/xkcd-webserver/icon
-
-### /api/v1/gadget
-
-Grabs gadget information from the gadget package
-
-    curl http://localhost:4200/api/v1/gadget/ && echo
-    {“name”:”beagleboneblack.element14”,”vendor”:”element14”,”icon”:”meta/element14.png”,”version”:”1.0”,”type”:”gadget”,”branding”:{“name”:”Beagle Bone Black”,”subname”:”element14”},”store”:{“id”:”123456”}}
-
-And Gadget package needs to be installed, example Gadget package can be found on
-[https://chinstrap.canonical.com/~sergiusens/snaps/beagleboneblack.element14_1.0_all.snap]
-
-### /api/v1/store
-
-This basically is a proxy to the store
-
-    curl http://localhost:4200/api/v1/store/search
-    curl http://localhost:4200/api/v1/store/search?q=xkcd
-
-    curl http://localhost:4200/api/v1/store/package/com.ubuntu.snappy.xkcd-webserver
+     curl http://localhost:4200/api/v2/packages/xkcd-webserver
 
 ### Dependencies handling
 
