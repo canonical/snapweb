@@ -35,8 +35,14 @@ gobuild() {
 
     plat_abi=$(get_platform_abi $arch)
 
-    mkdir -p "bin/$plat_abi"
-    cd "bin/$plat_abi"
+    if [ $arch = "386" ]; then
+        output_dir="bin/i686-linux-gnu"
+    else
+        output_dir="bin/$plat_abi"
+    fi
+
+    mkdir -p $output_dir
+    cd $output_dir
     GOARCH=$arch GOARM=7 CGO_ENABLED=1 CC=${plat_abi}-gcc go build -ldflags "-extld=${plat_abi}-gcc" launchpad.net/webdm/cmd/snappyd
     cd - > /dev/null
 }
