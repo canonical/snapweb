@@ -9,7 +9,7 @@ get_platform_abi() {
     arch=$1
 
     case $arch in
-        amd64)
+        amd64|386)
             plat_abi=x86_64-linux-gnu
         ;;
         arm)
@@ -35,8 +35,14 @@ gobuild() {
 
     plat_abi=$(get_platform_abi $arch)
 
-    mkdir -p "bin/$plat_abi"
-    cd "bin/$plat_abi"
+    if [ $arch = "386" ]; then
+        output_dir="bin/i686-linux-gnu"
+    else
+        output_dir="bin/$plat_abi"
+    fi
+
+    mkdir -p $output_dir
+    cd $output_dir
     GOARCH=$arch GOARM=7 CGO_ENABLED=1 CC=${plat_abi}-gcc go build -ldflags "-extld=${plat_abi}-gcc" launchpad.net/webdm/cmd/snappyd
     cd - > /dev/null
 }
@@ -58,12 +64,13 @@ mkdir $builddir/www
 cp -r www/public www/templates $builddir/www
 cd $builddir
 
-sed -i 's/\(architectures: \)UNKNOWN_ARCH/\1[amd64, arm64, armhf]/' \
+sed -i 's/\(architectures: \)UNKNOWN_ARCH/\1[amd64, arm64, armhf, 386]/' \
     $builddir/meta/snap.yaml
 
 gobuild arm
 gobuild amd64
 gobuild arm64
+gobuild 386
 
 cd "$orig_pwd"
 
