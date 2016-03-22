@@ -9,7 +9,7 @@ get_platform_abi() {
     arch=$1
 
     case $arch in
-        amd64)
+        amd64|386)
             plat_abi=x86_64-linux-gnu
         ;;
         arm)
@@ -58,12 +58,13 @@ mkdir $builddir/www
 cp -r www/public www/templates $builddir/www
 cd $builddir
 
-sed -i 's/\(architectures: \)UNKNOWN_ARCH/\1[amd64, arm64, armhf]/' \
+sed -i 's/\(architectures: \)UNKNOWN_ARCH/\1[amd64, arm64, armhf, 386]/' \
     $builddir/meta/snap.yaml
 
 gobuild arm
 gobuild amd64
 gobuild arm64
+gobuild 386
 
 cd "$orig_pwd"
 
