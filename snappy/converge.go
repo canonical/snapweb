@@ -94,7 +94,7 @@ func (h *Handler) installPackage(ID string) error {
 
 	h.statusTracker.TrackInstall(snap)
 
-	_, err = h.snapdClient.InstallSnap(ID)
+	_, err = h.snapdClient.AddSnap(ID)
 	return err
 }
 

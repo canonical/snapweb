@@ -85,7 +85,7 @@ func (f *fakeSnapdClient) FilterSnaps(filter client.SnapFilter) (map[string]*cli
 	return snaps, f.err
 }
 
-func (f *fakeSnapdClient) InstallSnap(name string) (string, error) {
+func (f *fakeSnapdClient) AddSnap(name string) (string, error) {
 	return "", nil
 }
 
