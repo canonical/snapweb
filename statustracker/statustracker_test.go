@@ -94,14 +94,14 @@ func (s *StatusTrackerSuite) TestTrackInstall(c *C) {
 }
 
 func (s *StatusTrackerSuite) TestTrackInstallExpiry(c *C) {
-	trackerDuration = 500 * time.Millisecond
+	trackerDuration = 200 * time.Millisecond
 
 	snap := &client.Snap{Status: client.StatusNotInstalled}
 	s.t.TrackInstall(snap)
 	c.Assert(s.t.Status(snap), Equals, StatusInstalling)
 
 	// don't track indefinitely if operation fails
-	time.Sleep(trackerDuration)
+	time.Sleep(trackerDuration * 2)
 	c.Assert(s.t.Status(snap), Equals, StatusUninstalled)
 }
 
