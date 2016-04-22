@@ -24,7 +24,7 @@ import (
 	"github.com/ubuntu-core/snappy/client"
 	"github.com/ubuntu-core/snappy/snap"
 	. "gopkg.in/check.v1"
-	"launchpad.net/webdm/webprogress"
+	"launchpad.net/webdm/statustracker"
 )
 
 type PackagePayloadSuite struct {
@@ -36,7 +36,7 @@ var _ = Suite(&PackagePayloadSuite{})
 
 func (s *PackagePayloadSuite) SetUpTest(c *C) {
 	os.Setenv("SNAP_APP_DATA_PATH", c.MkDir())
-	s.h.statusTracker = webprogress.New()
+	s.h.statusTracker = statustracker.New()
 	s.c = &fakeSnapdClient{}
 	s.h.setClient(s.c)
 }
@@ -75,7 +75,7 @@ var _ = Suite(&PayloadSuite{})
 
 func (s *PayloadSuite) SetUpTest(c *C) {
 	os.Setenv("SNAP_APP_DATA_PATH", c.MkDir())
-	s.h.statusTracker = webprogress.New()
+	s.h.statusTracker = statustracker.New()
 	s.h.setClient(&fakeSnapdClient{})
 }
 
@@ -86,7 +86,7 @@ func (s *PayloadSuite) TestPayloadWithNoServices(c *C) {
 
 	c.Check(q.Name, Equals, fakeSnap.Name)
 	c.Check(q.Version, Equals, fakeSnap.Version)
-	c.Check(q.Status, Equals, webprogress.StatusInstalled)
+	c.Check(q.Status, Equals, statustracker.StatusInstalled)
 	c.Check(q.Type, Equals, snap.Type(fakeSnap.Type))
 	c.Check(q.UIPort, Equals, uint64(0))
 	c.Check(q.Icon, Equals, "/icons/chatroom.ogra_icon.png")
@@ -101,7 +101,7 @@ func (s *PayloadSuite) TestPayloadWithServicesButNoUI(c *C) {
 
 	c.Assert(q.Name, Equals, fakeSnap.Name)
 	c.Assert(q.Version, Equals, fakeSnap.Version)
-	c.Assert(q.Status, Equals, webprogress.StatusInstalled)
+	c.Assert(q.Status, Equals, statustracker.StatusInstalled)
 	c.Assert(q.Type, Equals, snap.Type(fakeSnap.Type))
 	c.Assert(q.UIPort, Equals, uint64(0))
 }
@@ -114,7 +114,7 @@ func (s *PayloadSuite) TestPayloadWithServicesUI(c *C) {
 
 	c.Assert(q.Name, Equals, fakeSnap.Name)
 	c.Assert(q.Version, Equals, fakeSnap.Version)
-	c.Assert(q.Status, Equals, webprogress.StatusInstalled)
+	c.Assert(q.Status, Equals, statustracker.StatusInstalled)
 	c.Assert(q.Type, Equals, snap.Type(fakeSnap.Type))
 	c.Assert(q.UIPort, Equals, uint64(1024))
 }
@@ -129,18 +129,18 @@ func (s *PayloadSuite) TestPayloadTypeGadget(c *C) {
 
 	c.Assert(q.Name, Equals, fakeSnap.Name)
 	c.Assert(q.Version, Equals, fakeSnap.Version)
-	c.Assert(q.Status, Equals, webprogress.StatusInstalled)
+	c.Assert(q.Status, Equals, statustracker.StatusInstalled)
 	c.Assert(q.Type, Equals, snap.Type(fakeSnap.Type))
 	c.Assert(q.UIPort, Equals, uint64(0))
 }
 
 func (s *PayloadSuite) TestPayloadSnapInstalling(c *C) {
 	fakeSnap := newDefaultSnap()
-	fakeSnapID := fakeSnap.Name + "." + fakeSnap.Origin
-	s.h.statusTracker.Add(fakeSnapID, webprogress.OperationInstall)
+	fakeSnap.Status = client.StatusNotInstalled
+	s.h.statusTracker.TrackInstall(fakeSnap)
 
 	payload := s.h.snapToPayload(fakeSnap)
-	c.Assert(payload.Status, Equals, webprogress.StatusInstalling)
+	c.Assert(payload.Status, Equals, statustracker.StatusInstalling)
 }
 
 type AllPackagesSuite struct {
@@ -152,7 +152,7 @@ var _ = Suite(&AllPackagesSuite{})
 
 func (s *AllPackagesSuite) SetUpTest(c *C) {
 	os.Setenv("SNAP_APP_DATA_PATH", c.MkDir())
-	s.h.statusTracker = webprogress.New()
+	s.h.statusTracker = statustracker.New()
 	s.c = &fakeSnapdClient{}
 	s.h.setClient(s.c)
 }

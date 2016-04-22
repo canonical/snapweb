@@ -26,4 +26,6 @@ type snapdClient interface {
 	Services(pkg string) (map[string]*client.Service, error)
 	Snap(name string) (*client.Snap, error)
 	FilterSnaps(filter client.SnapFilter) (map[string]*client.Snap, error)
+	AddSnap(name string) (string, error)
+	RemoveSnap(name string) (string, error)
 }

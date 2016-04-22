@@ -85,6 +85,14 @@ func (f *fakeSnapdClient) FilterSnaps(filter client.SnapFilter) (map[string]*cli
 	return snaps, f.err
 }
 
+func (f *fakeSnapdClient) AddSnap(name string) (string, error) {
+	return "", nil
+}
+
+func (f *fakeSnapdClient) RemoveSnap(name string) (string, error) {
+	return "", nil
+}
+
 var _ snapdClient = (*fakeSnapdClient)(nil)
 
 type fakeSnapdClientServicesNoExternalUI struct {
