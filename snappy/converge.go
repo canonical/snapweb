@@ -31,7 +31,7 @@ import (
 type snapPkg struct {
 	ID            string    `json:"id"`
 	Name          string    `json:"name"`
-	Origin        string    `json:"origin"`
+	Developer     string    `json:"developer"`
 	Version       string    `json:"version"`
 	Description   string    `json:"description"`
 	Icon          string    `json:"icon"`
@@ -105,9 +105,9 @@ func hasPortInformation(snapQ *client.Snap) bool {
 
 func (h *Handler) snapToPayload(snapQ *client.Snap) snapPkg {
 	snap := snapPkg{
-		ID:          snapQ.Name + "." + snapQ.Origin,
+		ID:          snapQ.Name + "." + snapQ.Developer,
 		Name:        snapQ.Name,
-		Origin:      snapQ.Origin,
+		Developer:   snapQ.Developer,
 		Version:     snapQ.Version,
 		Description: snapQ.Description,
 		Type:        snap.Type(snapQ.Type),

@@ -60,7 +60,7 @@ func (s *PackagePayloadSuite) TestPackage(c *C) {
 		Icon:          "/icons/chatroom.ogra_icon.png",
 		InstalledSize: 18976651,
 		Name:          "chatroom",
-		Origin:        "ogra",
+		Developer:     "ogra",
 		Status:        "installed",
 		Type:          "app",
 		Version:       "0.1-8",

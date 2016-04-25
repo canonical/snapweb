@@ -108,7 +108,7 @@ func (s *StatusTracker) TrackUninstall(snap *client.Snap) {
 }
 
 func snapID(s *client.Snap) string {
-	return s.Name + "." + s.Origin
+	return s.Name + "." + s.Developer
 }
 
 func isInstalled(s *client.Snap) bool {

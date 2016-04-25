@@ -41,7 +41,7 @@ func newDefaultSnap() *client.Snap {
 		Icon:          "/1.0/icons/chatroom.ogra/icon",
 		InstalledSize: 18976651,
 		Name:          "chatroom",
-		Origin:        "ogra",
+		Developer:     "ogra",
 		Status:        client.StatusActive,
 		Type:          client.TypeApp,
 		Version:       "0.1-8",
