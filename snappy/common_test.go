@@ -18,7 +18,6 @@
 package snappy
 
 import (
-	"errors"
 	"testing"
 
 	"github.com/ubuntu-core/snappy/client"
@@ -63,10 +62,6 @@ func (f *fakeSnapdClient) Icon(pkgID string) (*client.Icon, error) {
 	return icon, nil
 }
 
-func (f *fakeSnapdClient) Services(pkg string) (map[string]*client.Service, error) {
-	return nil, errors.New("the package has no services")
-}
-
 func (f *fakeSnapdClient) Snap(name string) (*client.Snap, *client.ResultInfo, error) {
 	if len(f.snaps) > 0 {
 		return f.snaps[0], nil, f.err
@@ -89,55 +84,3 @@ func (f *fakeSnapdClient) RemoveSnap(name string) (string, error) {
 }
 
 var _ snapdClient = (*fakeSnapdClient)(nil)
-
-type fakeSnapdClientServicesNoExternalUI struct {
-	fakeSnapdClient
-}
-
-func (f *fakeSnapdClientServicesNoExternalUI) Services(pkg string) (map[string]*client.Service, error) {
-	internal := map[string]client.ServicePort{"ui": client.ServicePort{Port: "200/tcp"}}
-	external := map[string]client.ServicePort{"web": client.ServicePort{Port: "1024/tcp"}}
-	s1 := &client.Service{
-		Spec: client.ServiceSpec{
-			Ports: client.ServicePorts{
-				Internal: internal,
-				External: external,
-			},
-		},
-	}
-
-	s2 := &client.Service{}
-
-	services := map[string]*client.Service{
-		"s1": s1,
-		"s2": s2,
-	}
-
-	return services, nil
-}
-
-type fakeSnapdClientServicesExternalUI struct {
-	fakeSnapdClient
-}
-
-func (f *fakeSnapdClientServicesExternalUI) Services(pkg string) (map[string]*client.Service, error) {
-	s1 := &client.Service{}
-
-	internal := map[string]client.ServicePort{"ui": client.ServicePort{Port: "200/tcp"}}
-	external := map[string]client.ServicePort{"ui": client.ServicePort{Port: "1024/tcp"}}
-	s2 := &client.Service{
-		Spec: client.ServiceSpec{
-			Ports: client.ServicePorts{
-				Internal: internal,
-				External: external,
-			},
-		},
-	}
-
-	services := map[string]*client.Service{
-		"s1": s1,
-		"s2": s2,
-	}
-
-	return services, nil
-}

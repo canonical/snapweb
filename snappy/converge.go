@@ -19,8 +19,6 @@ package snappy
 
 import (
 	"sort"
-	"strconv"
-	"strings"
 
 	"log"
 
@@ -41,7 +39,6 @@ type snapPkg struct {
 	InstalledSize int64     `json:"installed_size,omitempty"`
 	DownloadSize  int64     `json:"download_size,omitempty"`
 	Type          snap.Type `json:"type,omitempty"`
-	UIPort        uint64    `json:"ui_port,omitempty"`
 }
 
 type response struct {
@@ -98,11 +95,6 @@ func (h *Handler) installPackage(ID string) error {
 	return err
 }
 
-func hasPortInformation(snapQ *client.Snap) bool {
-	snapType := snap.Type(snapQ.Type)
-	return snapType == snap.TypeApp
-}
-
 func (h *Handler) snapToPayload(snapQ *client.Snap) snapPkg {
 	snap := snapPkg{
 		ID:          snapQ.Name + "." + snapQ.Developer,
@@ -112,12 +104,6 @@ func (h *Handler) snapToPayload(snapQ *client.Snap) snapPkg {
 		Description: snapQ.Description,
 		Type:        snap.Type(snapQ.Type),
 		Status:      h.statusTracker.Status(snapQ),
-	}
-
-	if hasPortInformation(snapQ) {
-		if services, err := h.snapdClient.Services(snap.ID); err == nil {
-			snap.UIPort = uiAccess(services)
-		}
 	}
 
 	isInstalled := snapQ.Status == client.StatusInstalled || snapQ.Status == client.StatusActive
@@ -137,26 +123,4 @@ func (h *Handler) snapToPayload(snapQ *client.Snap) snapPkg {
 	}
 
 	return snap
-}
-
-func uiAccess(services map[string]*client.Service) uint64 {
-	for i := range services {
-		if services[i].Spec.Ports.External == nil {
-			continue
-		}
-
-		if ui, ok := services[i].Spec.Ports.External["ui"]; ok {
-			ui := strings.Split(ui.Port, "/")
-			if len(ui) == 2 {
-				port, err := strconv.ParseUint(ui[0], 0, 64)
-				if err != nil {
-					return 0
-				}
-
-				return port
-			}
-		}
-	}
-
-	return 0
 }

@@ -23,7 +23,6 @@ import (
 
 type snapdClient interface {
 	Icon(pkgID string) (*client.Icon, error)
-	Services(pkg string) (map[string]*client.Service, error)
 	Snap(name string) (*client.Snap, *client.ResultInfo, error)
 	FilterSnaps(filter client.SnapFilter) ([]*client.Snap, *client.ResultInfo, error)
 	AddSnap(name string) (string, error)

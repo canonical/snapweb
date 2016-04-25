@@ -88,20 +88,6 @@ describe('Snap', function() {
       expect(this.model.get('prettyDownloadSize')).toBe('0 B');
     });
 
-    it('should parse response to create vendorGuiHref', function() {
-      this.model.parse({'ui_port': 8080});
-      expect(this.model.get('vendorGuiHref')).toBe('http://localhost:8080/');
-    });
-
-    it('should not set vendorGuiHref if not a finite number', function() {
-      this.model.parse({'ui_port': NaN});
-      expect(this.model.get('vendorGuiHref')).not.toBeDefined();
-      this.model.parse({'ui_port': ''});
-      expect(this.model.get('vendorGuiHref')).not.toBeDefined();
-      this.model.parse({'ui_port': -9});
-      expect(this.model.get('vendorGuiHref')).not.toBeDefined();
-    });
-
   });
 
   describe('sync methods', function() {

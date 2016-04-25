@@ -79,7 +79,7 @@ func (s *PayloadSuite) SetUpTest(c *C) {
 	s.h.setClient(&fakeSnapdClient{})
 }
 
-func (s *PayloadSuite) TestPayloadWithNoServices(c *C) {
+func (s *PayloadSuite) TestPayload(c *C) {
 	fakeSnap := newDefaultSnap()
 
 	q := s.h.snapToPayload(fakeSnap)
@@ -88,50 +88,8 @@ func (s *PayloadSuite) TestPayloadWithNoServices(c *C) {
 	c.Check(q.Version, Equals, fakeSnap.Version)
 	c.Check(q.Status, Equals, statustracker.StatusInstalled)
 	c.Check(q.Type, Equals, snap.Type(fakeSnap.Type))
-	c.Check(q.UIPort, Equals, uint64(0))
 	c.Check(q.Icon, Equals, "/icons/chatroom.ogra_icon.png")
 	c.Check(q.Description, Equals, fakeSnap.Description)
-}
-
-func (s *PayloadSuite) TestPayloadWithServicesButNoUI(c *C) {
-	s.h.setClient(&fakeSnapdClientServicesNoExternalUI{})
-
-	fakeSnap := newDefaultSnap()
-	q := s.h.snapToPayload(fakeSnap)
-
-	c.Assert(q.Name, Equals, fakeSnap.Name)
-	c.Assert(q.Version, Equals, fakeSnap.Version)
-	c.Assert(q.Status, Equals, statustracker.StatusInstalled)
-	c.Assert(q.Type, Equals, snap.Type(fakeSnap.Type))
-	c.Assert(q.UIPort, Equals, uint64(0))
-}
-
-func (s *PayloadSuite) TestPayloadWithServicesUI(c *C) {
-	s.h.setClient(&fakeSnapdClientServicesExternalUI{})
-
-	fakeSnap := newDefaultSnap()
-	q := s.h.snapToPayload(fakeSnap)
-
-	c.Assert(q.Name, Equals, fakeSnap.Name)
-	c.Assert(q.Version, Equals, fakeSnap.Version)
-	c.Assert(q.Status, Equals, statustracker.StatusInstalled)
-	c.Assert(q.Type, Equals, snap.Type(fakeSnap.Type))
-	c.Assert(q.UIPort, Equals, uint64(1024))
-}
-
-func (s *PayloadSuite) TestPayloadTypeGadget(c *C) {
-	s.h.setClient(&fakeSnapdClientServicesExternalUI{})
-
-	fakeSnap := newDefaultSnap()
-	fakeSnap.Type = string(snap.TypeGadget)
-
-	q := s.h.snapToPayload(fakeSnap)
-
-	c.Assert(q.Name, Equals, fakeSnap.Name)
-	c.Assert(q.Version, Equals, fakeSnap.Version)
-	c.Assert(q.Status, Equals, statustracker.StatusInstalled)
-	c.Assert(q.Type, Equals, snap.Type(fakeSnap.Type))
-	c.Assert(q.UIPort, Equals, uint64(0))
 }
 
 func (s *PayloadSuite) TestPayloadSnapInstalling(c *C) {
