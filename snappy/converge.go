@@ -50,7 +50,7 @@ type response struct {
 }
 
 func (h *Handler) packagePayload(resource string) (snapPkg, error) {
-	snap, err := h.snapdClient.Snap(resource)
+	snap, _, err := h.snapdClient.Snap(resource)
 	if err != nil {
 		return snapPkg{}, err
 	}
@@ -59,7 +59,7 @@ func (h *Handler) packagePayload(resource string) (snapPkg, error) {
 }
 
 func (h *Handler) allPackages(filter client.SnapFilter) ([]snapPkg, error) {
-	snaps, err := h.snapdClient.FilterSnaps(filter)
+	snaps, _, err := h.snapdClient.FilterSnaps(filter)
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +75,7 @@ func (h *Handler) allPackages(filter client.SnapFilter) ([]snapPkg, error) {
 }
 
 func (h *Handler) removePackage(ID string) error {
-	snap, err := h.snapdClient.Snap(ID)
+	snap, _, err := h.snapdClient.Snap(ID)
 	if err != nil {
 		return err
 	}
@@ -87,7 +87,7 @@ func (h *Handler) removePackage(ID string) error {
 }
 
 func (h *Handler) installPackage(ID string) error {
-	snap, err := h.snapdClient.Snap(ID)
+	snap, _, err := h.snapdClient.Snap(ID)
 	if err != nil {
 		return err
 	}

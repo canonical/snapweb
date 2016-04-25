@@ -67,22 +67,17 @@ func (f *fakeSnapdClient) Services(pkg string) (map[string]*client.Service, erro
 	return nil, errors.New("the package has no services")
 }
 
-func (f *fakeSnapdClient) Snap(name string) (*client.Snap, error) {
+func (f *fakeSnapdClient) Snap(name string) (*client.Snap, *client.ResultInfo, error) {
 	if len(f.snaps) > 0 {
-		return f.snaps[0], f.err
+		return f.snaps[0], nil, f.err
 	}
-	return nil, f.err
+	return nil, nil, f.err
 }
 
-func (f *fakeSnapdClient) FilterSnaps(filter client.SnapFilter) (map[string]*client.Snap, error) {
+func (f *fakeSnapdClient) FilterSnaps(filter client.SnapFilter) ([]*client.Snap, *client.ResultInfo, error) {
 	f.filter = filter // record the filter used
 
-	snaps := make(map[string]*client.Snap)
-	for _, s := range f.snaps {
-		snaps[s.Name] = s
-	}
-
-	return snaps, f.err
+	return f.snaps, nil, f.err
 }
 
 func (f *fakeSnapdClient) AddSnap(name string) (string, error) {
