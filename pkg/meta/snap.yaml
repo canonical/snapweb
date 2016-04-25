@@ -24,10 +24,4 @@ apps:
     daemon: simple
     description: Snappy WebDM
     command: snappyd
-    plugs: [snappyd]
-plugs:
-  snappyd:
-    interface: old-security
-    security-policy:
-      apparmor: meta/snappyd.profile
-      seccomp: meta/snappyd.seccomp
+    plugs: [network, network-bind, snapd-control]
