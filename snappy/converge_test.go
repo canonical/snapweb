@@ -35,7 +35,7 @@ type PackagePayloadSuite struct {
 var _ = Suite(&PackagePayloadSuite{})
 
 func (s *PackagePayloadSuite) SetUpTest(c *C) {
-	os.Setenv("SNAP_APP_DATA_PATH", c.MkDir())
+	os.Setenv("SNAP_DATA", c.MkDir())
 	s.h.statusTracker = statustracker.New()
 	s.c = &fakeSnapdClient{}
 	s.h.setClient(s.c)
@@ -74,7 +74,7 @@ type PayloadSuite struct {
 var _ = Suite(&PayloadSuite{})
 
 func (s *PayloadSuite) SetUpTest(c *C) {
-	os.Setenv("SNAP_APP_DATA_PATH", c.MkDir())
+	os.Setenv("SNAP_DATA", c.MkDir())
 	s.h.statusTracker = statustracker.New()
 	s.h.setClient(&fakeSnapdClient{})
 }
@@ -151,7 +151,7 @@ type AllPackagesSuite struct {
 var _ = Suite(&AllPackagesSuite{})
 
 func (s *AllPackagesSuite) SetUpTest(c *C) {
-	os.Setenv("SNAP_APP_DATA_PATH", c.MkDir())
+	os.Setenv("SNAP_DATA", c.MkDir())
 	s.h.statusTracker = statustracker.New()
 	s.c = &fakeSnapdClient{}
 	s.h.setClient(s.c)

@@ -35,7 +35,7 @@ type HandlersSuite struct {
 var _ = Suite(&HandlersSuite{})
 
 func (s *HandlersSuite) SetUpTest(c *C) {
-	os.Setenv("SNAP_APP_DATA_PATH", c.MkDir())
+	os.Setenv("SNAP_DATA", c.MkDir())
 	s.c = &fakeSnapdClient{}
 	s.h.setClient(s.c)
 }

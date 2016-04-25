@@ -36,7 +36,7 @@ var _ = Suite(&IconSuite{})
 
 func (s *IconSuite) SetUpTest(c *C) {
 	s.dataPath = c.MkDir()
-	os.Setenv("SNAP_APP_DATA_PATH", s.dataPath)
+	os.Setenv("SNAP_DATA", s.dataPath)
 }
 
 func (s *IconSuite) TestIconDir(c *C) {
@@ -47,7 +47,7 @@ func (s *IconSuite) TestIconDir(c *C) {
 }
 
 func (s *IconSuite) TestNoSnapAppDataPathCausesError(c *C) {
-	os.Setenv("SNAP_APP_DATA_PATH", "")
+	os.Setenv("SNAP_DATA", "")
 	_, _, err := IconDir()
 	c.Assert(err, Equals, ErrDataPathNotSet)
 }
@@ -55,7 +55,7 @@ func (s *IconSuite) TestNoSnapAppDataPathCausesError(c *C) {
 func (s *IconSuite) TestIconDirCreateFails(c *C) {
 	fileAsDir := filepath.Join(s.dataPath, "badDataPath")
 	c.Assert(ioutil.WriteFile(fileAsDir, []byte{}, 0644), IsNil)
-	os.Setenv("SNAP_APP_DATA_PATH", fileAsDir)
+	os.Setenv("SNAP_DATA", fileAsDir)
 	_, _, err := IconDir()
 	c.Assert(err, Equals, ErrOnIconDataPathSet)
 }
@@ -78,7 +78,7 @@ var _ = Suite(&IconPathSuite{})
 
 func (s *IconPathSuite) SetUpTest(c *C) {
 	s.dataPath = c.MkDir()
-	os.Setenv("SNAP_APP_DATA_PATH", s.dataPath)
+	os.Setenv("SNAP_DATA", s.dataPath)
 	s.err = nil
 }
 
@@ -95,7 +95,7 @@ func (s *IconPathSuite) TestIconCopy(c *C) {
 }
 
 func (s *IconPathSuite) TestIconCopyNoDataPath(c *C) {
-	os.Setenv("SNAP_APP_DATA_PATH", "")
+	os.Setenv("SNAP_DATA", "")
 	_, err := localIconPath(s, "mypackage.sergiusens")
 	c.Assert(err, Equals, ErrDataPathNotSet)
 }

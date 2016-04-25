@@ -18,7 +18,7 @@ case $platform in
         ;;
 esac
 
-exec $SNAP_APP_PATH/bin/$plat_abi/snappyd
+exec $SNAP/bin/$plat_abi/snappyd
 
 # never reach this
 exit 1

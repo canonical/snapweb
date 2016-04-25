@@ -26,7 +26,7 @@ import (
 )
 
 var (
-	// ErrDataPathNotSet indicates that SNAP_APP_DATA_PATH has not been set by the
+	// ErrDataPathNotSet indicates that SNAP_DATA has not been set by the
 	// launching system.
 	ErrDataPathNotSet = errors.New("package data path not set")
 	// ErrOnIconDataPathSet indicates that there has been an error when setting up
@@ -67,7 +67,7 @@ func localIconPath(c snapdClient, ID string) (relativePath string, err error) {
 
 // IconDir returns information to properly serve package icons with an http.FileServer
 func IconDir() (dataPath, relativeBasePath string, err error) {
-	dataPath = os.Getenv("SNAP_APP_DATA_PATH")
+	dataPath = os.Getenv("SNAP_DATA")
 	if dataPath == "" {
 		return "", "", ErrDataPathNotSet
 	}
