@@ -100,7 +100,7 @@ func (h *Handler) installPackage(ID string) error {
 
 func hasPortInformation(snapQ *client.Snap) bool {
 	snapType := snap.Type(snapQ.Type)
-	return snapType == snap.TypeApp || snapType == snap.TypeFramework
+	return snapType == snap.TypeApp
 }
 
 func (h *Handler) snapToPayload(snapQ *client.Snap) snapPkg {
