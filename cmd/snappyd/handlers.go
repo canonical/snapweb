@@ -53,7 +53,7 @@ func initURLHandlers(log *log.Logger) {
 	snappyHandler := snappy.NewHandler()
 	http.Handle("/api/v2/packages/", snappyHandler.MakeMuxer("/api/v2/packages"))
 
-	http.Handle("/public/", loggingHandler(http.FileServer(http.Dir("./www"))))
+	http.Handle("/public/", loggingHandler(http.FileServer(http.Dir(filepath.Join(os.Getenv("SNAP"), "www")))))
 
 	if iconDir, relativePath, err := snappy.IconDir(); err == nil {
 		http.Handle(fmt.Sprintf("/%s/", relativePath), loggingHandler(http.FileServer(http.Dir(filepath.Join(iconDir, "..")))))
@@ -95,13 +95,13 @@ func makeMainPageHandler() http.HandlerFunc {
 }
 
 func renderLayout(html string, data *page, w http.ResponseWriter) error {
-	htmlPath := filepath.Join("www", "templates", html)
+	htmlPath := filepath.Join(os.Getenv("SNAP"), "www", "templates", html)
 	if _, err := os.Stat(htmlPath); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return err
 	}
 
-	layoutPath := filepath.Join("www", "templates", "base.html")
+	layoutPath := filepath.Join(os.Getenv("SNAP"), "www", "templates", "base.html")
 	t, err := template.ParseFiles(layoutPath, htmlPath)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
