@@ -75,11 +75,11 @@ func (f *fakeSnapdClient) FilterSnaps(filter client.SnapFilter) ([]*client.Snap,
 	return f.snaps, nil, f.err
 }
 
-func (f *fakeSnapdClient) AddSnap(name string) (string, error) {
+func (f *fakeSnapdClient) Install(name string, options *client.SnapOptions) (string, error) {
 	return "", nil
 }
 
-func (f *fakeSnapdClient) RemoveSnap(name string) (string, error) {
+func (f *fakeSnapdClient) Remove(name string, options *client.SnapOptions) (string, error) {
 	return "", nil
 }
 

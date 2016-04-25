@@ -79,7 +79,7 @@ func (h *Handler) removePackage(ID string) error {
 
 	h.statusTracker.TrackUninstall(snap)
 
-	_, err = h.snapdClient.RemoveSnap(ID)
+	_, err = h.snapdClient.Remove(ID, nil)
 	return err
 }
 
@@ -91,7 +91,7 @@ func (h *Handler) installPackage(ID string) error {
 
 	h.statusTracker.TrackInstall(snap)
 
-	_, err = h.snapdClient.AddSnap(ID)
+	_, err = h.snapdClient.Install(ID, nil)
 	return err
 }
 
