@@ -94,7 +94,7 @@ func (s *PayloadSuite) TestPayload(c *C) {
 
 func (s *PayloadSuite) TestPayloadSnapInstalling(c *C) {
 	fakeSnap := newDefaultSnap()
-	fakeSnap.Status = client.StatusNotInstalled
+	fakeSnap.Status = client.StatusAvailable
 	s.h.statusTracker.TrackInstall(fakeSnap)
 
 	payload := s.h.snapToPayload(fakeSnap)

@@ -45,7 +45,7 @@ func (s *StatusTrackerSuite) TestTranslateStatus(c *C) {
 	}{
 		{client.StatusInstalled, StatusInstalled},
 		{client.StatusActive, StatusInstalled},
-		{client.StatusNotInstalled, StatusUninstalled},
+		{client.StatusAvailable, StatusUninstalled},
 		{client.StatusRemoved, StatusUninstalled},
 	}
 
@@ -85,7 +85,7 @@ func (s *StatusTrackerSuite) TestTrackInstallAlreadyInstalled(c *C) {
 }
 
 func (s *StatusTrackerSuite) TestTrackInstall(c *C) {
-	snap := &client.Snap{Status: client.StatusNotInstalled}
+	snap := &client.Snap{Status: client.StatusAvailable}
 	s.t.TrackInstall(snap)
 	c.Assert(s.t.Status(snap), Equals, StatusInstalling)
 	// installation completes
@@ -96,7 +96,7 @@ func (s *StatusTrackerSuite) TestTrackInstall(c *C) {
 func (s *StatusTrackerSuite) TestTrackInstallExpiry(c *C) {
 	trackerDuration = 200 * time.Millisecond
 
-	snap := &client.Snap{Status: client.StatusNotInstalled}
+	snap := &client.Snap{Status: client.StatusAvailable}
 	s.t.TrackInstall(snap)
 	c.Assert(s.t.Status(snap), Equals, StatusInstalling)
 
@@ -106,7 +106,7 @@ func (s *StatusTrackerSuite) TestTrackInstallExpiry(c *C) {
 }
 
 func (s *StatusTrackerSuite) TestTrackUninstallNotInstalled(c *C) {
-	snap := &client.Snap{Status: client.StatusNotInstalled}
+	snap := &client.Snap{Status: client.StatusAvailable}
 	s.t.TrackUninstall(snap)
 	c.Assert(s.t.Status(snap), Equals, StatusUninstalled)
 }
