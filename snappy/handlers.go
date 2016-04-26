@@ -82,13 +82,13 @@ func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	// Get the Key.
 	vars := mux.Vars(r)
-	resource := vars["id"]
+	name := vars["name"]
 	enc := json.NewEncoder(w)
 
-	payload, err := h.packagePayload(resource)
+	payload, err := h.packagePayload(name)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		enc.Encode(fmt.Sprintln(err, resource))
+		enc.Encode(fmt.Sprintln(err, name))
 		return
 	}
 
@@ -104,12 +104,12 @@ func (h *Handler) add(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	// Get the Key.
 	vars := mux.Vars(r)
-	ID := vars["id"]
+	name := vars["name"]
 
-	err := h.installPackage(ID)
+	err := h.installPackage(name)
 	msg, status := respond(err)
 
-	response := response{Message: msg, Package: ID}
+	response := response{Message: msg, Package: name}
 	bs, err := json.Marshal(response)
 	if err != nil {
 		// giving up on json
@@ -127,12 +127,12 @@ func (h *Handler) remove(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	// Get the Key.
 	vars := mux.Vars(r)
-	ID := vars["id"]
+	name := vars["name"]
 
-	err := h.removePackage(ID)
+	err := h.removePackage(name)
 	msg, status := respond(err)
 
-	response := response{Message: msg, Package: ID}
+	response := response{Message: msg, Package: name}
 	bs, err := json.Marshal(response)
 	if err != nil {
 		// giving up on json
@@ -180,13 +180,13 @@ func (h *Handler) MakeMuxer(prefix string) http.Handler {
 	m.HandleFunc("/", h.getAll).Methods("GET")
 
 	// get specific package
-	m.HandleFunc("/{id}", h.get).Methods("GET")
+	m.HandleFunc("/{name}", h.get).Methods("GET")
 
 	// Add a package
-	m.HandleFunc("/{id}", h.add).Methods("PUT")
+	m.HandleFunc("/{name}", h.add).Methods("PUT")
 
 	// Remove a package
-	m.HandleFunc("/{id}", h.remove).Methods("DELETE")
+	m.HandleFunc("/{name}", h.remove).Methods("DELETE")
 
 	return m
 }

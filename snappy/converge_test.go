@@ -44,20 +44,20 @@ func (s *PackagePayloadSuite) SetUpTest(c *C) {
 func (s *PackagePayloadSuite) TestPackageNotFound(c *C) {
 	s.c.err = errors.New("the snap could not be retrieved")
 
-	_, err := s.h.packagePayload("chatroom.ogra")
+	_, err := s.h.packagePayload("chatroom")
 	c.Assert(err, NotNil)
 }
 
 func (s *PackagePayloadSuite) TestPackage(c *C) {
 	s.c.snaps = []*client.Snap{newDefaultSnap()}
 
-	pkg, err := s.h.packagePayload("chatroom.ogra")
+	pkg, err := s.h.packagePayload("chatroom")
 	c.Assert(err, IsNil)
 	c.Assert(pkg, DeepEquals, snapPkg{
-		ID:            "chatroom.ogra",
+		ID:            "chatroom",
 		Description:   "WebRTC Video chat server for Snappy",
 		DownloadSize:  0,
-		Icon:          "/icons/chatroom.ogra_icon.png",
+		Icon:          "/icons/chatroom_icon.png",
 		InstalledSize: 18976651,
 		Name:          "chatroom",
 		Developer:     "ogra",
@@ -88,7 +88,7 @@ func (s *PayloadSuite) TestPayload(c *C) {
 	c.Check(q.Version, Equals, fakeSnap.Version)
 	c.Check(q.Status, Equals, statustracker.StatusInstalled)
 	c.Check(q.Type, Equals, snap.Type(fakeSnap.Type))
-	c.Check(q.Icon, Equals, "/icons/chatroom.ogra_icon.png")
+	c.Check(q.Icon, Equals, "/icons/chatroom_icon.png")
 	c.Check(q.Description, Equals, fakeSnap.Description)
 }
 

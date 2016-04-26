@@ -66,7 +66,7 @@ type IconPathSuite struct {
 	err      error
 }
 
-func (s *IconPathSuite) Icon(pkgID string) (*client.Icon, error) {
+func (s *IconPathSuite) Icon(name string) (*client.Icon, error) {
 	icon := &client.Icon{
 		Filename: "pkgIcon.png",
 		Content:  []byte("png"),
@@ -83,9 +83,9 @@ func (s *IconPathSuite) SetUpTest(c *C) {
 }
 
 func (s *IconPathSuite) TestIconCopy(c *C) {
-	relativePath, err := localIconPath(s, "mypackage.sergiusens")
+	relativePath, err := localIconPath(s, "mypackage")
 	c.Assert(err, IsNil)
-	iconBaseName := "icons/mypackage.sergiusens_pkgIcon.png"
+	iconBaseName := "icons/mypackage_pkgIcon.png"
 	c.Check(relativePath, Equals, filepath.Join("/", iconBaseName))
 
 	contents, err := ioutil.ReadFile(filepath.Join(s.dataPath, iconBaseName))
@@ -96,22 +96,22 @@ func (s *IconPathSuite) TestIconCopy(c *C) {
 
 func (s *IconPathSuite) TestIconCopyNoDataPath(c *C) {
 	os.Setenv("SNAP_DATA", "")
-	_, err := localIconPath(s, "mypackage.sergiusens")
+	_, err := localIconPath(s, "mypackage")
 	c.Assert(err, Equals, ErrDataPathNotSet)
 }
 
 func (s *IconPathSuite) TestIconCopyNoIcon(c *C) {
 	s.err = errors.New("Not Found")
-	_, err := localIconPath(s, "mypackage.sergiusens")
+	_, err := localIconPath(s, "mypackage")
 	c.Assert(err, Equals, ErrIconNotExist)
 }
 
 func (s *IconPathSuite) TestIconCopyTargetIconExists(c *C) {
-	iconBaseName := "icons/mypackage.sergiusens_pkgIcon.png"
+	iconBaseName := "icons/mypackage_pkgIcon.png"
 	c.Assert(os.MkdirAll(filepath.Join(s.dataPath, "icons"), 0755), IsNil)
 	c.Assert(ioutil.WriteFile(filepath.Join(s.dataPath, iconBaseName), []byte{}, 0644), IsNil)
 
-	relativePath, err := localIconPath(s, "mypackage.sergiusens")
+	relativePath, err := localIconPath(s, "mypackage")
 	c.Assert(err, IsNil)
 	c.Check(relativePath, Equals, filepath.Join("/", iconBaseName))
 }

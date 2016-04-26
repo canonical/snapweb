@@ -36,18 +36,18 @@ var (
 	ErrIconNotExist = errors.New("the icon does not exist")
 )
 
-func localIconPath(c snapdClient, ID string) (relativePath string, err error) {
+func localIconPath(c snapdClient, name string) (relativePath string, err error) {
 	dataPath, relativePath, err := IconDir()
 	if err != nil {
 		return "", err
 	}
 
-	icon, err := c.Icon(ID)
+	icon, err := c.Icon(name)
 	if err != nil {
 		return "", ErrIconNotExist
 	}
 
-	baseIcon := fmt.Sprintf("%s_%s", ID, icon.Filename)
+	baseIcon := fmt.Sprintf("%s_%s", name, icon.Filename)
 
 	relativePath = filepath.Join(relativePath, baseIcon)
 	iconDstPath := filepath.Join(dataPath, baseIcon)

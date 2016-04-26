@@ -71,33 +71,33 @@ func (h *Handler) allPackages(filter client.SnapFilter) ([]snapPkg, error) {
 	return snapPkgs, nil
 }
 
-func (h *Handler) removePackage(ID string) error {
-	snap, _, err := h.snapdClient.Snap(ID)
+func (h *Handler) removePackage(name string) error {
+	snap, _, err := h.snapdClient.Snap(name)
 	if err != nil {
 		return err
 	}
 
 	h.statusTracker.TrackUninstall(snap)
 
-	_, err = h.snapdClient.Remove(ID, nil)
+	_, err = h.snapdClient.Remove(name, nil)
 	return err
 }
 
-func (h *Handler) installPackage(ID string) error {
-	snap, _, err := h.snapdClient.Snap(ID)
+func (h *Handler) installPackage(name string) error {
+	snap, _, err := h.snapdClient.Snap(name)
 	if err != nil {
 		return err
 	}
 
 	h.statusTracker.TrackInstall(snap)
 
-	_, err = h.snapdClient.Install(ID, nil)
+	_, err = h.snapdClient.Install(name, nil)
 	return err
 }
 
 func (h *Handler) snapToPayload(snapQ *client.Snap) snapPkg {
 	snap := snapPkg{
-		ID:          snapQ.Name + "." + snapQ.Developer,
+		ID:          snapQ.Name,
 		Name:        snapQ.Name,
 		Developer:   snapQ.Developer,
 		Version:     snapQ.Version,
@@ -109,7 +109,7 @@ func (h *Handler) snapToPayload(snapQ *client.Snap) snapPkg {
 	isInstalled := snapQ.Status == client.StatusInstalled || snapQ.Status == client.StatusActive
 
 	if isInstalled {
-		iconPath, err := localIconPath(h.snapdClient, snap.ID)
+		iconPath, err := localIconPath(h.snapdClient, snap.Name)
 		if err != nil {
 			log.Println("Icon path for installed package cannot be set", err)
 			iconPath = ""

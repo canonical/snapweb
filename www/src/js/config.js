@@ -7,7 +7,7 @@ module.exports = {
   ],
   NON_INSTALLABLE_IDS: [
     'webdm',
-    'ubuntu-core.ubuntu'
+    'ubuntu-core'
   ],
   NON_INSTALLABLE_TYPES: [
     'gadget'

@@ -54,7 +54,7 @@ func newSnap(name string) *client.Snap {
 	return snap
 }
 
-func (f *fakeSnapdClient) Icon(pkgID string) (*client.Icon, error) {
+func (f *fakeSnapdClient) Icon(name string) (*client.Icon, error) {
 	icon := &client.Icon{
 		Filename: "icon.png",
 		Content:  []byte("png"),
