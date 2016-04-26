@@ -18,7 +18,6 @@
 package snappy
 
 import (
-	"errors"
 	"testing"
 
 	"github.com/ubuntu-core/snappy/client"
@@ -41,7 +40,7 @@ func newDefaultSnap() *client.Snap {
 		Icon:          "/1.0/icons/chatroom.ogra/icon",
 		InstalledSize: 18976651,
 		Name:          "chatroom",
-		Origin:        "ogra",
+		Developer:     "ogra",
 		Status:        client.StatusActive,
 		Type:          client.TypeApp,
 		Version:       "0.1-8",
@@ -55,7 +54,7 @@ func newSnap(name string) *client.Snap {
 	return snap
 }
 
-func (f *fakeSnapdClient) Icon(pkgID string) (*client.Icon, error) {
+func (f *fakeSnapdClient) Icon(name string) (*client.Icon, error) {
 	icon := &client.Icon{
 		Filename: "icon.png",
 		Content:  []byte("png"),
@@ -63,86 +62,25 @@ func (f *fakeSnapdClient) Icon(pkgID string) (*client.Icon, error) {
 	return icon, nil
 }
 
-func (f *fakeSnapdClient) Services(pkg string) (map[string]*client.Service, error) {
-	return nil, errors.New("the package has no services")
-}
-
-func (f *fakeSnapdClient) Snap(name string) (*client.Snap, error) {
+func (f *fakeSnapdClient) Snap(name string) (*client.Snap, *client.ResultInfo, error) {
 	if len(f.snaps) > 0 {
-		return f.snaps[0], f.err
+		return f.snaps[0], nil, f.err
 	}
-	return nil, f.err
+	return nil, nil, f.err
 }
 
-func (f *fakeSnapdClient) FilterSnaps(filter client.SnapFilter) (map[string]*client.Snap, error) {
+func (f *fakeSnapdClient) FilterSnaps(filter client.SnapFilter) ([]*client.Snap, *client.ResultInfo, error) {
 	f.filter = filter // record the filter used
 
-	snaps := make(map[string]*client.Snap)
-	for _, s := range f.snaps {
-		snaps[s.Name] = s
-	}
-
-	return snaps, f.err
+	return f.snaps, nil, f.err
 }
 
-func (f *fakeSnapdClient) AddSnap(name string) (string, error) {
+func (f *fakeSnapdClient) Install(name string, options *client.SnapOptions) (string, error) {
 	return "", nil
 }
 
-func (f *fakeSnapdClient) RemoveSnap(name string) (string, error) {
+func (f *fakeSnapdClient) Remove(name string, options *client.SnapOptions) (string, error) {
 	return "", nil
 }
 
 var _ snapdClient = (*fakeSnapdClient)(nil)
-
-type fakeSnapdClientServicesNoExternalUI struct {
-	fakeSnapdClient
-}
-
-func (f *fakeSnapdClientServicesNoExternalUI) Services(pkg string) (map[string]*client.Service, error) {
-	internal := map[string]client.ServicePort{"ui": client.ServicePort{Port: "200/tcp"}}
-	external := map[string]client.ServicePort{"web": client.ServicePort{Port: "1024/tcp"}}
-	s1 := &client.Service{
-		Spec: client.ServiceSpec{
-			Ports: client.ServicePorts{
-				Internal: internal,
-				External: external,
-			},
-		},
-	}
-
-	s2 := &client.Service{}
-
-	services := map[string]*client.Service{
-		"s1": s1,
-		"s2": s2,
-	}
-
-	return services, nil
-}
-
-type fakeSnapdClientServicesExternalUI struct {
-	fakeSnapdClient
-}
-
-func (f *fakeSnapdClientServicesExternalUI) Services(pkg string) (map[string]*client.Service, error) {
-	s1 := &client.Service{}
-
-	internal := map[string]client.ServicePort{"ui": client.ServicePort{Port: "200/tcp"}}
-	external := map[string]client.ServicePort{"ui": client.ServicePort{Port: "1024/tcp"}}
-	s2 := &client.Service{
-		Spec: client.ServiceSpec{
-			Ports: client.ServicePorts{
-				Internal: internal,
-				External: external,
-			},
-		},
-	}
-
-	services := map[string]*client.Service{
-		"s1": s1,
-		"s2": s2,
-	}
-
-	return services, nil
-}

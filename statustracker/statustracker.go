@@ -62,13 +62,13 @@ func (s *StatusTracker) Status(snap *client.Snap) string {
 	s.Lock()
 	defer s.Unlock()
 
-	status, ok := s.statuses[snapID(snap)]
+	status, ok := s.statuses[snap.Name]
 	if !ok {
 		return translateStatus(snap)
 	}
 
 	if hasCompleted(status, snap) {
-		delete(s.statuses, snapID(snap))
+		delete(s.statuses, snap.Name)
 		return translateStatus(snap)
 	}
 
@@ -81,19 +81,19 @@ func (s *StatusTracker) TrackInstall(snap *client.Snap) {
 		return
 	}
 
-	s.trackOperation(snapID(snap), StatusInstalling)
+	s.trackOperation(snap.Name, StatusInstalling)
 }
 
-func (s *StatusTracker) trackOperation(id, operation string) {
+func (s *StatusTracker) trackOperation(name, operation string) {
 	s.Lock()
 	defer s.Unlock()
 
-	s.statuses[id] = operation
+	s.statuses[name] = operation
 
 	go func() {
 		<-time.After(trackerDuration)
 		s.Lock()
-		delete(s.statuses, id)
+		delete(s.statuses, name)
 		s.Unlock()
 	}()
 }
@@ -104,11 +104,7 @@ func (s *StatusTracker) TrackUninstall(snap *client.Snap) {
 		return
 	}
 
-	s.trackOperation(snapID(snap), StatusUninstalling)
-}
-
-func snapID(s *client.Snap) string {
-	return s.Name + "." + s.Origin
+	s.trackOperation(snap.Name, StatusUninstalling)
 }
 
 func isInstalled(s *client.Snap) bool {

@@ -35,7 +35,7 @@ type PackagePayloadSuite struct {
 var _ = Suite(&PackagePayloadSuite{})
 
 func (s *PackagePayloadSuite) SetUpTest(c *C) {
-	os.Setenv("SNAP_APP_DATA_PATH", c.MkDir())
+	os.Setenv("SNAP_DATA", c.MkDir())
 	s.h.statusTracker = statustracker.New()
 	s.c = &fakeSnapdClient{}
 	s.h.setClient(s.c)
@@ -44,23 +44,23 @@ func (s *PackagePayloadSuite) SetUpTest(c *C) {
 func (s *PackagePayloadSuite) TestPackageNotFound(c *C) {
 	s.c.err = errors.New("the snap could not be retrieved")
 
-	_, err := s.h.packagePayload("chatroom.ogra")
+	_, err := s.h.packagePayload("chatroom")
 	c.Assert(err, NotNil)
 }
 
 func (s *PackagePayloadSuite) TestPackage(c *C) {
 	s.c.snaps = []*client.Snap{newDefaultSnap()}
 
-	pkg, err := s.h.packagePayload("chatroom.ogra")
+	pkg, err := s.h.packagePayload("chatroom")
 	c.Assert(err, IsNil)
 	c.Assert(pkg, DeepEquals, snapPkg{
-		ID:            "chatroom.ogra",
+		ID:            "chatroom",
 		Description:   "WebRTC Video chat server for Snappy",
 		DownloadSize:  0,
-		Icon:          "/icons/chatroom.ogra_icon.png",
+		Icon:          "/icons/chatroom_icon.png",
 		InstalledSize: 18976651,
 		Name:          "chatroom",
-		Origin:        "ogra",
+		Developer:     "ogra",
 		Status:        "installed",
 		Type:          "app",
 		Version:       "0.1-8",
@@ -74,12 +74,12 @@ type PayloadSuite struct {
 var _ = Suite(&PayloadSuite{})
 
 func (s *PayloadSuite) SetUpTest(c *C) {
-	os.Setenv("SNAP_APP_DATA_PATH", c.MkDir())
+	os.Setenv("SNAP_DATA", c.MkDir())
 	s.h.statusTracker = statustracker.New()
 	s.h.setClient(&fakeSnapdClient{})
 }
 
-func (s *PayloadSuite) TestPayloadWithNoServices(c *C) {
+func (s *PayloadSuite) TestPayload(c *C) {
 	fakeSnap := newDefaultSnap()
 
 	q := s.h.snapToPayload(fakeSnap)
@@ -88,55 +88,13 @@ func (s *PayloadSuite) TestPayloadWithNoServices(c *C) {
 	c.Check(q.Version, Equals, fakeSnap.Version)
 	c.Check(q.Status, Equals, statustracker.StatusInstalled)
 	c.Check(q.Type, Equals, snap.Type(fakeSnap.Type))
-	c.Check(q.UIPort, Equals, uint64(0))
-	c.Check(q.Icon, Equals, "/icons/chatroom.ogra_icon.png")
+	c.Check(q.Icon, Equals, "/icons/chatroom_icon.png")
 	c.Check(q.Description, Equals, fakeSnap.Description)
-}
-
-func (s *PayloadSuite) TestPayloadWithServicesButNoUI(c *C) {
-	s.h.setClient(&fakeSnapdClientServicesNoExternalUI{})
-
-	fakeSnap := newDefaultSnap()
-	q := s.h.snapToPayload(fakeSnap)
-
-	c.Assert(q.Name, Equals, fakeSnap.Name)
-	c.Assert(q.Version, Equals, fakeSnap.Version)
-	c.Assert(q.Status, Equals, statustracker.StatusInstalled)
-	c.Assert(q.Type, Equals, snap.Type(fakeSnap.Type))
-	c.Assert(q.UIPort, Equals, uint64(0))
-}
-
-func (s *PayloadSuite) TestPayloadWithServicesUI(c *C) {
-	s.h.setClient(&fakeSnapdClientServicesExternalUI{})
-
-	fakeSnap := newDefaultSnap()
-	q := s.h.snapToPayload(fakeSnap)
-
-	c.Assert(q.Name, Equals, fakeSnap.Name)
-	c.Assert(q.Version, Equals, fakeSnap.Version)
-	c.Assert(q.Status, Equals, statustracker.StatusInstalled)
-	c.Assert(q.Type, Equals, snap.Type(fakeSnap.Type))
-	c.Assert(q.UIPort, Equals, uint64(1024))
-}
-
-func (s *PayloadSuite) TestPayloadTypeGadget(c *C) {
-	s.h.setClient(&fakeSnapdClientServicesExternalUI{})
-
-	fakeSnap := newDefaultSnap()
-	fakeSnap.Type = string(snap.TypeGadget)
-
-	q := s.h.snapToPayload(fakeSnap)
-
-	c.Assert(q.Name, Equals, fakeSnap.Name)
-	c.Assert(q.Version, Equals, fakeSnap.Version)
-	c.Assert(q.Status, Equals, statustracker.StatusInstalled)
-	c.Assert(q.Type, Equals, snap.Type(fakeSnap.Type))
-	c.Assert(q.UIPort, Equals, uint64(0))
 }
 
 func (s *PayloadSuite) TestPayloadSnapInstalling(c *C) {
 	fakeSnap := newDefaultSnap()
-	fakeSnap.Status = client.StatusNotInstalled
+	fakeSnap.Status = client.StatusAvailable
 	s.h.statusTracker.TrackInstall(fakeSnap)
 
 	payload := s.h.snapToPayload(fakeSnap)
@@ -151,7 +109,7 @@ type AllPackagesSuite struct {
 var _ = Suite(&AllPackagesSuite{})
 
 func (s *AllPackagesSuite) SetUpTest(c *C) {
-	os.Setenv("SNAP_APP_DATA_PATH", c.MkDir())
+	os.Setenv("SNAP_DATA", c.MkDir())
 	s.h.statusTracker = statustracker.New()
 	s.c = &fakeSnapdClient{}
 	s.h.setClient(s.c)

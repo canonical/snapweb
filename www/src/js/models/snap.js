@@ -166,8 +166,8 @@ module.exports = Backbone.Model.extend({
       response.icon = this.defaults.icon;
     }
 
-    if (response.hasOwnProperty('origin') && !response.origin.length) {
-      response.origin = this.defaults.origin;
+    if (response.hasOwnProperty('developer') && !response.developer.length) {
+      response.developer = this.defaults.developer;
     }
 
     if (type) {
@@ -200,28 +200,13 @@ module.exports = Backbone.Model.extend({
       );
     }
 
-    if (response.hasOwnProperty('ui_port')) {
-      //jscs:disable requireCamelCaseOrUpperCaseIdentifiers
-      var port = response.ui_port;
-      //jscs:enable requireCamelCaseOrUpperCaseIdentifiers
-
-      if (_.isFinite(port) && port > 0) {
-
-        this.set('vendorGuiHref', window.location.protocol + '//' +
-            window.location.hostname + ':' + port + '/'
-        );
-      } else {
-        this.unset('vendorGuiHref');
-      }
-    }
-
     return response;
   },
 
   defaults: {
     icon: '/public/images/default-package-icon.svg',
     installActionString: false,
-    origin: '-',
+    developer: '-',
     isInstallable: true
   }
 

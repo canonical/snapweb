@@ -62,7 +62,7 @@
 
 .b-snaplist_grid .b-snaplist__version,
 .b-snaplist_grid .b-snaplist__type,
-.b-snaplist_grid .b-snaplist__origin,
+.b-snaplist_grid .b-snaplist__developer,
 .b-snaplist_grid .b-snaplist__actions {
   display:none;
 }
@@ -114,7 +114,7 @@
 
 .b-snaplist_row .b-snaplist__name,
 .b-snaplist_row .b-snaplist__version,
-.b-snaplist_row .b-snaplist__origin,
+.b-snaplist_row .b-snaplist__developer,
 .b-snaplist_row .b-snaplist__size {
   white-space: nowrap;
   width: 100%;
@@ -142,8 +142,8 @@
   display:none;
 }
 
-.b-snaplist_row .b-snaplist__origin
-.b-snaplist_row .b-snaplist__origin {
+.b-snaplist_row .b-snaplist__developer
+.b-snaplist_row .b-snaplist__developer {
   text-transform: capitalize;
 }
 
