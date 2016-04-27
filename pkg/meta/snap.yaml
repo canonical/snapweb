@@ -13,12 +13,6 @@ icon: meta/gui/icon.png
 source: lp:webdm
 type: app
 architecture: UNKNOWN_ARCH
-services:
-  ports:
-    external:
-      ui:
-        port: 4200/tcp
-        negotiable: false
 apps:
   snappyd:
     daemon: simple
