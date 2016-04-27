@@ -74,4 +74,4 @@ gobuild 386
 
 cd "$orig_pwd"
 
-snappy build $builddir
+snapcraft snap $builddir
