@@ -1,3 +1,4 @@
+var $ = require('jquery');
 var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
 var Radio = require('backbone.radio');
@@ -10,6 +11,9 @@ module.exports = {
     var searchBask = new Bask();
 
     searchBask.fetch({
+      data: $.param({
+        'q': q
+      }),
       success: function(snaplist) {
         var view =  new SearchLayoutView({
           collection: snaplist
