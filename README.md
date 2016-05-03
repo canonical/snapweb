@@ -5,7 +5,11 @@
 This assumes you have a working go environment with a GOPATH env var setup
 and nodejs and npm installed:
 
-    sudo apt-get install nodejs-legacy npm
+    sudo apt install nodejs-legacy npm
+
+For cross building:
+
+    sudo apt install gcc-arm-linux-gnueabihf gcc-aarch64-linux-gnu
 
 Install global npm modules without sudo:
 

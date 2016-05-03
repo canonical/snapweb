@@ -50,28 +50,36 @@ gobuild() {
 echo "Building web assets with gulp..."
 gulp
 
-orig_pwd=$(pwd)
+orig_pwd="$(pwd)"
 
-builddir=$(mktemp -d)
-trap 'rm -rf "$builddir"' EXIT
+top_builddir="$(mktemp -d)"
+trap 'rm -rf "$top_builddir"' EXIT
 
 echo Obtaining go dependencies
 go get launchpad.net/godeps
 godeps -u dependencies.tsv
 
-cp -r pkg/. $builddir
-mkdir $builddir/www
-cp -r www/public www/templates $builddir/www
-cd $builddir
+# build one snap per arch
+for ARCH in arm64 armhf 386 amd64; do
+    builddir="${top_builddir}/${ARCH}"
+    mkdir -p "$builddir"
+    
+    cp -r pkg/. ${builddir}/
+    mkdir $builddir/www
+    cp -r www/public www/templates $builddir/www
+    cd $builddir
 
-sed -i 's/\(architectures: \)UNKNOWN_ARCH/\1[amd64, arm64, armhf, 386]/' \
-    $builddir/meta/snap.yaml
+    sed -i "s/\(architectures: \)UNKNOWN_ARCH/\1[$ARCH]/" \
+        $builddir/meta/snap.yaml
 
-gobuild arm
-gobuild amd64
-gobuild arm64
-gobuild 386
+    # *sigh* armhf in snappy is the go arm arch
+    if [ $ARCH = armhf ]; then
+       gobuild arm
+    else
+        gobuild $ARCH
+    fi
 
-cd "$orig_pwd"
+    cd "$orig_pwd"
+    snapcraft snap $builddir
+done
 
-snapcraft snap $builddir
