@@ -22,8 +22,6 @@ import (
 	"net/http/httptest"
 	"os"
 
-	"github.com/ubuntu-core/snappy/client"
-
 	. "gopkg.in/check.v1"
 )
 
@@ -36,29 +34,35 @@ var _ = Suite(&HandlersSuite{})
 
 func (s *HandlersSuite) SetUpTest(c *C) {
 	os.Setenv("SNAP_DATA", c.MkDir())
+	s.resetFakeSnapdClient()
+}
+
+func (s *HandlersSuite) resetFakeSnapdClient() {
 	s.c = &fakeSnapdClient{}
 	s.h.setClient(s.c)
 }
 
-func (s *HandlersSuite) TestGetAllSnapFilter(c *C) {
-	filterTests := []struct {
-		URL    string
-		Filter client.SnapFilter
+func (s *HandlersSuite) TestGetAll(c *C) {
+	tests := []struct {
+		URL             string
+		CalledListSnaps bool
+		Query           string
 	}{
-		{"/", client.SnapFilter{}},
-		{"/?installed_only=true", client.SnapFilter{Sources: []string{"local"}}},
-		{"/?types=app", client.SnapFilter{Types: []string{"app"}}},
-		{"/?types=app,gadget", client.SnapFilter{Types: []string{"app", "gadget"}}},
-		{"/?q=foo", client.SnapFilter{Query: "foo"}},
-		{"/?installed_only=true&types=app&q=foo", client.SnapFilter{Sources: []string{"local"}, Types: []string{"app"}, Query: "foo"}},
+		{"/", false, ""},
+		{"/?installed_only=true", true, ""},
+		{"/?q=foo", false, "foo"},
+		{"/?installed_only=true&q=foo", true, ""},
 	}
 
-	for _, tt := range filterTests {
+	for _, tt := range tests {
+		s.resetFakeSnapdClient()
+
 		rec := httptest.NewRecorder()
 		req, err := http.NewRequest("GET", tt.URL, nil)
 		c.Assert(err, IsNil)
 
 		s.h.getAll(rec, req)
-		c.Assert(s.c.filter, DeepEquals, tt.Filter)
+		c.Assert(s.c.calledListSnaps, Equals, tt.CalledListSnaps)
+		c.Assert(s.c.query, Equals, tt.Query)
 	}
 }

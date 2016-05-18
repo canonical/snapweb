@@ -28,9 +28,10 @@ import (
 func Test(t *testing.T) { TestingT(t) }
 
 type fakeSnapdClient struct {
-	snaps  []*client.Snap
-	err    error
-	filter client.SnapFilter
+	snaps           []*client.Snap
+	err             error
+	calledListSnaps bool
+	query           string
 }
 
 func newDefaultSnap() *client.Snap {
@@ -69,8 +70,14 @@ func (f *fakeSnapdClient) Snap(name string) (*client.Snap, *client.ResultInfo, e
 	return nil, nil, f.err
 }
 
-func (f *fakeSnapdClient) FilterSnaps(filter client.SnapFilter) ([]*client.Snap, *client.ResultInfo, error) {
-	f.filter = filter // record the filter used
+func (f *fakeSnapdClient) ListSnaps(names []string) ([]*client.Snap, error) {
+	f.calledListSnaps = true
+
+	return f.snaps, f.err
+}
+
+func (f *fakeSnapdClient) FindSnaps(query string) ([]*client.Snap, *client.ResultInfo, error) {
+	f.query = query
 
 	return f.snaps, nil, f.err
 }

@@ -24,7 +24,8 @@ import (
 type snapdClient interface {
 	Icon(name string) (*client.Icon, error)
 	Snap(name string) (*client.Snap, *client.ResultInfo, error)
-	FilterSnaps(filter client.SnapFilter) ([]*client.Snap, *client.ResultInfo, error)
+	ListSnaps(names []string) ([]*client.Snap, error)
+	FindSnaps(query string) ([]*client.Snap, *client.ResultInfo, error)
 	Install(name string, options *client.SnapOptions) (string, error)
 	Remove(name string, options *client.SnapOptions) (string, error)
 }
