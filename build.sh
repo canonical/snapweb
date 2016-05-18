@@ -60,7 +60,7 @@ go get launchpad.net/godeps
 godeps -u dependencies.tsv
 
 # build one snap per arch
-for ARCH in arm64 armhf 386 amd64; do
+for ARCH in arm64 armhf i386 amd64; do
     builddir="${top_builddir}/${ARCH}"
     mkdir -p "$builddir"
     
@@ -74,7 +74,10 @@ for ARCH in arm64 armhf 386 amd64; do
 
     # *sigh* armhf in snappy is the go arm arch
     if [ $ARCH = armhf ]; then
-       gobuild arm
+        gobuild arm
+    # and 386 vs i386
+    elif [ $ARCH = i386 ]; then
+       gobuild 386
     else
         gobuild $ARCH
     fi
