@@ -52,10 +52,13 @@ func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(w)
 
-	installedOnly := r.FormValue("installed_only") == "true"
+	snapCondition := availableSnaps
+	if r.FormValue("installed_only") == "true" {
+		snapCondition = installedSnaps
+	}
 	query := r.FormValue("q")
 
-	payload, err := h.allPackages(installedOnly, query)
+	payload, err := h.allPackages(snapCondition, query)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		enc.Encode(fmt.Sprintf("Error: %s", err))

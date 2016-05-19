@@ -26,6 +26,11 @@ import (
 	"github.com/ubuntu-core/snappy/snap"
 )
 
+const (
+	installedSnaps = iota
+	availableSnaps
+)
+
 type snapPkg struct {
 	ID            string    `json:"id"`
 	Name          string    `json:"name"`
@@ -55,11 +60,11 @@ func (h *Handler) packagePayload(resource string) (snapPkg, error) {
 	return h.snapToPayload(snap), nil
 }
 
-func (h *Handler) allPackages(installedOnly bool, query string) ([]snapPkg, error) {
+func (h *Handler) allPackages(snapCondition int, query string) ([]snapPkg, error) {
 	var snaps []*client.Snap
 	var err error
 
-	if installedOnly {
+	if snapCondition == installedSnaps {
 		snaps, err = h.snapdClient.ListSnaps(nil)
 	} else {
 		snaps, _, err = h.snapdClient.FindSnaps(query)
