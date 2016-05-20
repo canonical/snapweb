@@ -45,14 +45,10 @@ Install:
 
 # Installing
 
-Once you have a click package you can install it onto a remote snappy system
-by running
+Once you have a snap you can transfer it onto a running snappy system and from
+there install it by running:
 
-     snappy-remote --url ssh://localhost:8022 install [package]
-
-Assuming that 8022 is where ssh is listening on, e.g.; launched as:
-
-     kvm -m 768 -redir :8022::22 -redir :4200::4200 -hda snappy.img
+     sudo snap install [snap]
 
 # Using
 
