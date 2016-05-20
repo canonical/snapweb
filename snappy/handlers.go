@@ -22,7 +22,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"strings"
 
 	"github.com/ubuntu-core/snappy/client"
 	"github.com/ubuntu-core/snappy/snappy"
@@ -53,17 +52,13 @@ func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(w)
 
-	filter := client.SnapFilter{
-		Query: r.FormValue("q"),
-	}
+	snapCondition := availableSnaps
 	if r.FormValue("installed_only") == "true" {
-		filter.Sources = []string{"local"}
+		snapCondition = installedSnaps
 	}
-	if len(r.FormValue("types")) > 0 {
-		filter.Types = strings.Split(r.FormValue("types"), ",")
-	}
+	query := r.FormValue("q")
 
-	payload, err := h.allPackages(filter)
+	payload, err := h.allPackages(snapCondition, query)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		enc.Encode(fmt.Sprintf("Error: %s", err))
