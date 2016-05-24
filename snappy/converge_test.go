@@ -21,8 +21,8 @@ import (
 	"errors"
 	"os"
 
-	"github.com/ubuntu-core/snappy/client"
-	"github.com/ubuntu-core/snappy/snap"
+	"github.com/snapcore/snapd/client"
+	"github.com/snapcore/snapd/snap"
 	. "gopkg.in/check.v1"
 	"launchpad.net/webdm/statustracker"
 )

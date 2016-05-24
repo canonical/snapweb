@@ -18,7 +18,7 @@
 package snappy
 
 import (
-	"github.com/ubuntu-core/snappy/client"
+	"github.com/snapcore/snapd/client"
 )
 
 type snapdClient interface {

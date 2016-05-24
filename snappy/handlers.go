@@ -23,8 +23,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/ubuntu-core/snappy/client"
-	"github.com/ubuntu-core/snappy/snappy"
+	"github.com/snapcore/snapd/client"
+	"github.com/snapcore/snapd/snappy"
 	"launchpad.net/webdm/statustracker"
 
 	"github.com/gorilla/mux"
