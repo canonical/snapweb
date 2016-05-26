@@ -36,7 +36,7 @@ var (
 	ErrIconNotExist = errors.New("the icon does not exist")
 )
 
-func localIconPath(c snapdClient, name string) (relativePath string, err error) {
+func localIconPath(c SnapdClient, name string) (relativePath string, err error) {
 	dataPath, relativePath, err := IconDir()
 	if err != nil {
 		return "", err

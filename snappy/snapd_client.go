@@ -21,7 +21,8 @@ import (
 	"github.com/snapcore/snapd/client"
 )
 
-type snapdClient interface {
+// SnapdClient is a client of the snapd REST API
+type SnapdClient interface {
 	Icon(name string) (*client.Icon, error)
 	Snap(name string) (*client.Snap, *client.ResultInfo, error)
 	ListSnaps(names []string) ([]*client.Snap, error)
