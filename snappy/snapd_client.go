@@ -29,4 +29,5 @@ type SnapdClient interface {
 	FindSnaps(query string) ([]*client.Snap, *client.ResultInfo, error)
 	Install(name string, options *client.SnapOptions) (string, error)
 	Remove(name string, options *client.SnapOptions) (string, error)
+	ServerVersion() (string, error)
 }

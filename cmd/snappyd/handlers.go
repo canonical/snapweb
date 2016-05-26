@@ -25,6 +25,8 @@ import (
 	"path/filepath"
 	"text/template"
 
+	"github.com/snapcore/snapd/client"
+
 	"launchpad.net/webdm/snappy"
 )
 
@@ -45,6 +47,22 @@ type page struct {
 	Pages  pages
 	Title  string
 	Params interface{}
+}
+
+var newSnapdClient = newSnapdClientImpl
+
+func newSnapdClientImpl() snappy.SnapdClient {
+	return client.New(nil)
+}
+
+func getSnappyVersion() string {
+	c := newSnapdClient()
+
+	if version, err := c.ServerVersion(); err != nil {
+		return "Snappy"
+	} else {
+		return "Snappy " + version
+	}
 }
 
 func initURLHandlers(log *log.Logger) {

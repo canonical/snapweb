@@ -27,6 +27,7 @@ type FakeSnapdClient struct {
 	Err             error
 	CalledListSnaps bool
 	Query           string
+	Version         string
 }
 
 func (f *FakeSnapdClient) Icon(name string) (*client.Icon, error) {
@@ -62,6 +63,10 @@ func (f *FakeSnapdClient) Install(name string, options *client.SnapOptions) (str
 
 func (f *FakeSnapdClient) Remove(name string, options *client.SnapOptions) (string, error) {
 	return "", nil
+}
+
+func (f *FakeSnapdClient) ServerVersion() (string, error) {
+	return f.Version, f.Err
 }
 
 var _ SnapdClient = (*FakeSnapdClient)(nil)
