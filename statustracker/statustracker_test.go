@@ -21,7 +21,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ubuntu-core/snappy/client"
+	"github.com/snapcore/snapd/client"
 
 	. "gopkg.in/check.v1"
 )

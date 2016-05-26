@@ -22,8 +22,8 @@ import (
 
 	"log"
 
-	"github.com/ubuntu-core/snappy/client"
-	"github.com/ubuntu-core/snappy/snap"
+	"github.com/snapcore/snapd/client"
+	"github.com/snapcore/snapd/snap"
 )
 
 const (
