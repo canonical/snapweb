@@ -38,15 +38,8 @@ type branding struct {
 	Subname string
 }
 
-var p = pages{
-	"Admin":    "/admin",
-	"Services": "/services",
-}
-
-type page struct {
-	Pages  pages
-	Title  string
-	Params interface{}
+type templateData struct {
+	Branding branding
 }
 
 var newSnapdClient = newSnapdClientImpl
@@ -100,10 +93,8 @@ func makeMainPageHandler() http.HandlerFunc {
 	b := getBranding()
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		data := page{
-			Pages:  p,
-			Title:  "Home",
-			Params: b,
+		data := templateData{
+			Branding: b,
 		}
 
 		if err := renderLayout("index.html", &data, w); err != nil {
@@ -112,7 +103,7 @@ func makeMainPageHandler() http.HandlerFunc {
 	}
 }
 
-func renderLayout(html string, data *page, w http.ResponseWriter) error {
+func renderLayout(html string, data *templateData, w http.ResponseWriter) error {
 	htmlPath := filepath.Join(os.Getenv("SNAP"), "www", "templates", html)
 	if _, err := os.Stat(htmlPath); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
