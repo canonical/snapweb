@@ -33,7 +33,7 @@ import (
 // Handler implements snappy's packages api.
 type Handler struct {
 	statusTracker *statustracker.StatusTracker
-	snapdClient   snapdClient
+	snapdClient   SnapdClient
 }
 
 // NewHandler creates an instance that implements snappy's packages api.
@@ -44,7 +44,7 @@ func NewHandler() *Handler {
 	}
 }
 
-func (h *Handler) setClient(c snapdClient) {
+func (h *Handler) setClient(c SnapdClient) {
 	h.snapdClient = c
 }
 

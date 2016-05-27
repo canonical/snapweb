@@ -25,6 +25,8 @@ import (
 	"path/filepath"
 	"text/template"
 
+	"github.com/snapcore/snapd/client"
+
 	"launchpad.net/webdm/snappy"
 )
 
@@ -36,15 +38,26 @@ type branding struct {
 	Subname string
 }
 
-var p = pages{
-	"Admin":    "/admin",
-	"Services": "/services",
+type templateData struct {
+	Branding     branding
+	SnapdVersion string
 }
 
-type page struct {
-	Pages  pages
-	Title  string
-	Params interface{}
+var newSnapdClient = newSnapdClientImpl
+
+func newSnapdClientImpl() snappy.SnapdClient {
+	return client.New(nil)
+}
+
+func getSnappyVersion() string {
+	c := newSnapdClient()
+
+	version, err := c.ServerVersion()
+	if err != nil {
+		return "snapd"
+	}
+
+	return "snapd " + version
 }
 
 func initURLHandlers(log *log.Logger) {
@@ -80,12 +93,12 @@ func getBranding() branding {
 
 func makeMainPageHandler() http.HandlerFunc {
 	b := getBranding()
+	v := getSnappyVersion()
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		data := page{
-			Pages:  p,
-			Title:  "Home",
-			Params: b,
+		data := templateData{
+			Branding:     b,
+			SnapdVersion: v,
 		}
 
 		if err := renderLayout("index.html", &data, w); err != nil {
@@ -94,7 +107,7 @@ func makeMainPageHandler() http.HandlerFunc {
 	}
 }
 
-func renderLayout(html string, data *page, w http.ResponseWriter) error {
+func renderLayout(html string, data *templateData, w http.ResponseWriter) error {
 	htmlPath := filepath.Join(os.Getenv("SNAP"), "www", "templates", html)
 	if _, err := os.Stat(htmlPath); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

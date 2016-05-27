@@ -27,13 +27,6 @@ import (
 
 func Test(t *testing.T) { TestingT(t) }
 
-type fakeSnapdClient struct {
-	snaps           []*client.Snap
-	err             error
-	calledListSnaps bool
-	query           string
-}
-
 func newDefaultSnap() *client.Snap {
 	snap := &client.Snap{
 		Description:   "WebRTC Video chat server for Snappy",
@@ -54,40 +47,3 @@ func newSnap(name string) *client.Snap {
 	snap.Name = name
 	return snap
 }
-
-func (f *fakeSnapdClient) Icon(name string) (*client.Icon, error) {
-	icon := &client.Icon{
-		Filename: "icon.png",
-		Content:  []byte("png"),
-	}
-	return icon, nil
-}
-
-func (f *fakeSnapdClient) Snap(name string) (*client.Snap, *client.ResultInfo, error) {
-	if len(f.snaps) > 0 {
-		return f.snaps[0], nil, f.err
-	}
-	return nil, nil, f.err
-}
-
-func (f *fakeSnapdClient) ListSnaps(names []string) ([]*client.Snap, error) {
-	f.calledListSnaps = true
-
-	return f.snaps, f.err
-}
-
-func (f *fakeSnapdClient) FindSnaps(query string) ([]*client.Snap, *client.ResultInfo, error) {
-	f.query = query
-
-	return f.snaps, nil, f.err
-}
-
-func (f *fakeSnapdClient) Install(name string, options *client.SnapOptions) (string, error) {
-	return "", nil
-}
-
-func (f *fakeSnapdClient) Remove(name string, options *client.SnapOptions) (string, error) {
-	return "", nil
-}
-
-var _ snapdClient = (*fakeSnapdClient)(nil)

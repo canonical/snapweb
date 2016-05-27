@@ -61,7 +61,7 @@ func (s *IconSuite) TestIconDirCreateFails(c *C) {
 }
 
 type IconPathSuite struct {
-	snapdClient
+	SnapdClient
 	dataPath string
 	err      error
 }

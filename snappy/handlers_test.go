@@ -26,7 +26,7 @@ import (
 )
 
 type HandlersSuite struct {
-	c *fakeSnapdClient
+	c *FakeSnapdClient
 	h Handler
 }
 
@@ -38,7 +38,7 @@ func (s *HandlersSuite) SetUpTest(c *C) {
 }
 
 func (s *HandlersSuite) resetFakeSnapdClient() {
-	s.c = &fakeSnapdClient{}
+	s.c = &FakeSnapdClient{}
 	s.h.setClient(s.c)
 }
 
@@ -62,7 +62,7 @@ func (s *HandlersSuite) TestGetAll(c *C) {
 		c.Assert(err, IsNil)
 
 		s.h.getAll(rec, req)
-		c.Assert(s.c.calledListSnaps, Equals, tt.CalledListSnaps)
-		c.Assert(s.c.query, Equals, tt.Query)
+		c.Assert(s.c.CalledListSnaps, Equals, tt.CalledListSnaps)
+		c.Assert(s.c.Query, Equals, tt.Query)
 	}
 }

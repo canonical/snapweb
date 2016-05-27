@@ -29,7 +29,7 @@ import (
 
 type PackagePayloadSuite struct {
 	h Handler
-	c *fakeSnapdClient
+	c *FakeSnapdClient
 }
 
 var _ = Suite(&PackagePayloadSuite{})
@@ -37,19 +37,19 @@ var _ = Suite(&PackagePayloadSuite{})
 func (s *PackagePayloadSuite) SetUpTest(c *C) {
 	os.Setenv("SNAP_DATA", c.MkDir())
 	s.h.statusTracker = statustracker.New()
-	s.c = &fakeSnapdClient{}
+	s.c = &FakeSnapdClient{}
 	s.h.setClient(s.c)
 }
 
 func (s *PackagePayloadSuite) TestPackageNotFound(c *C) {
-	s.c.err = errors.New("the snap could not be retrieved")
+	s.c.Err = errors.New("the snap could not be retrieved")
 
 	_, err := s.h.packagePayload("chatroom")
 	c.Assert(err, NotNil)
 }
 
 func (s *PackagePayloadSuite) TestPackage(c *C) {
-	s.c.snaps = []*client.Snap{newDefaultSnap()}
+	s.c.Snaps = []*client.Snap{newDefaultSnap()}
 
 	pkg, err := s.h.packagePayload("chatroom")
 	c.Assert(err, IsNil)
@@ -76,7 +76,7 @@ var _ = Suite(&PayloadSuite{})
 func (s *PayloadSuite) SetUpTest(c *C) {
 	os.Setenv("SNAP_DATA", c.MkDir())
 	s.h.statusTracker = statustracker.New()
-	s.h.setClient(&fakeSnapdClient{})
+	s.h.setClient(&FakeSnapdClient{})
 }
 
 func (s *PayloadSuite) TestPayload(c *C) {
@@ -102,7 +102,7 @@ func (s *PayloadSuite) TestPayloadSnapInstalling(c *C) {
 }
 
 type AllPackagesSuite struct {
-	c *fakeSnapdClient
+	c *FakeSnapdClient
 	h Handler
 }
 
@@ -111,12 +111,12 @@ var _ = Suite(&AllPackagesSuite{})
 func (s *AllPackagesSuite) SetUpTest(c *C) {
 	os.Setenv("SNAP_DATA", c.MkDir())
 	s.h.statusTracker = statustracker.New()
-	s.c = &fakeSnapdClient{}
+	s.c = &FakeSnapdClient{}
 	s.h.setClient(s.c)
 }
 
 func (s *AllPackagesSuite) TestNoSnaps(c *C) {
-	s.c.err = errors.New("snaps could not be filtered")
+	s.c.Err = errors.New("snaps could not be filtered")
 
 	snaps, err := s.h.allPackages(availableSnaps, "")
 	c.Assert(snaps, IsNil)
@@ -124,7 +124,7 @@ func (s *AllPackagesSuite) TestNoSnaps(c *C) {
 }
 
 func (s *AllPackagesSuite) TestHasSnaps(c *C) {
-	s.c.snaps = []*client.Snap{
+	s.c.Snaps = []*client.Snap{
 		newSnap("app2"),
 		newSnap("app1"),
 	}
