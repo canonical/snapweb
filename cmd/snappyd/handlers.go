@@ -39,8 +39,8 @@ type branding struct {
 }
 
 type templateData struct {
-	Branding      branding
-	SnappyVersion string
+	Branding     branding
+	SnapdVersion string
 }
 
 var newSnapdClient = newSnapdClientImpl
@@ -53,9 +53,9 @@ func getSnappyVersion() string {
 	c := newSnapdClient()
 
 	if version, err := c.ServerVersion(); err != nil {
-		return "Snappy"
+		return "snapd"
 	} else {
-		return "Snappy " + version
+		return "snapd " + version
 	}
 }
 
@@ -96,8 +96,8 @@ func makeMainPageHandler() http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		data := templateData{
-			Branding:      b,
-			SnappyVersion: v,
+			Branding:     b,
+			SnapdVersion: v,
 		}
 
 		if err := renderLayout("index.html", &data, w); err != nil {

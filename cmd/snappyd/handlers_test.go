@@ -50,10 +50,10 @@ func (s *HandlersSuite) TearDownTest(c *C) {
 
 func (s *HandlersSuite) TestGetSnappyVersionError(c *C) {
 	s.c.Err = errors.New("fail")
-	c.Assert(getSnappyVersion(), Equals, "Snappy")
+	c.Assert(getSnappyVersion(), Equals, "snapd")
 }
 
 func (s *HandlersSuite) TestGetSnappyVersion(c *C) {
 	s.c.Version = "1000 (series 16)"
-	c.Assert(getSnappyVersion(), Equals, "Snappy 1000 (series 16)")
+	c.Assert(getSnappyVersion(), Equals, "snapd 1000 (series 16)")
 }
