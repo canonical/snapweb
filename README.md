@@ -9,7 +9,7 @@ and nodejs and npm installed:
 
 For cross building:
 
-    sudo apt install gcc-arm-linux-gnueabihf gcc-aarch64-linux-gnu
+    sudo apt install snapcraft gcc-arm-linux-gnueabihf libc6-dev-armhf-cross gcc-aarch64-linux-gnu libc6-dev-arm64-cross libc6-dev-i386
 
 Install global npm modules without sudo:
 
