@@ -13,6 +13,7 @@ var gutil = require('gulp-util');
 var imagemin = require('gulp-imagemin');
 var jscs = require('gulp-jscs');
 var jshint = require('gulp-jshint');
+var sass = require('gulp-sass');
 var sourcemaps = require('gulp-sourcemaps');
 var source = require('vinyl-source-stream');
 var uglify = require('gulp-uglify');
@@ -102,8 +103,11 @@ gulp.task('styles', ['styles:clean'], function() {
 
   return gulp.src([
     'node_modules/normalize.css/normalize.css',
+    'www/src/css/lib/vanilla-includes.scss',
+    'www/src/css/lib/vanilla-overrides.scss',
     'www/src/css/**/*.css'
   ])
+  .pipe(sass())
   .pipe(sourcemaps.init())
   .pipe(postcss(processors))
   .pipe(csso())

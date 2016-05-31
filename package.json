@@ -20,6 +20,7 @@
     "gulp-jscs": "~1.4.0",
     "gulp-jshint": "~1.9.4",
     "gulp-postcss": "^5.1.6",
+    "gulp-sass": "^2.3.1",
     "gulp-sourcemaps": "~1.5.0",
     "gulp-uglify": "~1.1.0",
     "gulp-util": "~3.0.4",
@@ -40,6 +41,7 @@
     "postcss-bem-linter": "^0.6.0",
     "postcss-custom-media": "^3.0.0",
     "pretty-bytes": "^2.0.1",
+    "vanilla-framework": "0.0.77",
     "vinyl-buffer": "~1.0.0",
     "vinyl-source-stream": "~1.1.0",
     "watchify": "~3.1.2"
