@@ -8,14 +8,13 @@ var snapChannel = Radio.channel('snap');
 var rootChannel = Radio.channel('root');
 
 module.exports = {
-  snap: function(id, section) {
+  snap: function(id) {
     var snap = new Snap({id: id});
 
     snap.fetch({
       success: function(snap) {
         var view =  new SnapLayoutView({
-          model: snap,
-          section: section
+          model: snap
         });
         rootChannel.command('set:content', view);
       },
