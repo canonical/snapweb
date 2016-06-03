@@ -28,7 +28,7 @@ module.exports = {
 
 snapChannel.comply('show', function(model) {
   var name = model.get('id');
-  var url = 'snap/' + name + '/';
+  var url = 'snap/' + name;
   var view =  new SnapLayoutView({
     model: model
   });
