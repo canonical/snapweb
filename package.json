@@ -41,7 +41,7 @@
     "postcss-bem-linter": "^0.6.0",
     "postcss-custom-media": "^3.0.0",
     "pretty-bytes": "^2.0.1",
-    "vanilla-framework": "0.0.77",
+    "vanilla-framework": "0.0.78",
     "vinyl-buffer": "~1.0.0",
     "vinyl-source-stream": "~1.1.0",
     "watchify": "~3.1.2"
