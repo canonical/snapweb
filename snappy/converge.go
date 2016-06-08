@@ -60,7 +60,8 @@ func (h *Handler) getSnap(name string) (*client.Snap, error) {
 	}
 
 	// Snap() now only returns installed snaps so search the store as a fallback
-	snaps, _, err := h.snapdClient.FindSnaps(name)
+	opts := &client.FindOptions{Query: name}
+	snaps, _, err := h.snapdClient.Find(opts)
 	if err != nil {
 		return nil, err
 	}
@@ -94,9 +95,10 @@ func (h *Handler) allPackages(snapCondition int, query string) ([]snapPkg, error
 	var err error
 
 	if snapCondition == installedSnaps {
-		snaps, err = h.snapdClient.ListSnaps(nil)
+		snaps, err = h.snapdClient.List(nil)
 	} else {
-		snaps, _, err = h.snapdClient.FindSnaps(query)
+		opts := &client.FindOptions{Query: query}
+		snaps, _, err = h.snapdClient.Find(opts)
 	}
 
 	if err != nil {
