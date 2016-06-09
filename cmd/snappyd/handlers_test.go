@@ -23,7 +23,7 @@ import (
 
 	. "gopkg.in/check.v1"
 
-	"launchpad.net/webdm/snappy"
+	"github.com/snapcore/snapweb/snappy"
 )
 
 func Test(t *testing.T) { TestingT(t) }

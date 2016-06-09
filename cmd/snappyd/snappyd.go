@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2015 Canonical Ltd
+ * Copyright (C) 2014, 2015, 2016 Canonical Ltd
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -22,7 +22,7 @@ import (
 	"net/http"
 	"os"
 
-	"launchpad.net/webdm/avahi"
+	"github.com/snapcore/snapweb/avahi"
 )
 
 var logger *log.Logger

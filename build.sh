@@ -43,7 +43,7 @@ gobuild() {
 
     mkdir -p $output_dir
     cd $output_dir
-    GOARCH=$arch GOARM=7 CGO_ENABLED=1 CC=${plat_abi}-gcc go build -ldflags "-extld=${plat_abi}-gcc" launchpad.net/webdm/cmd/snappyd
+    GOARCH=$arch GOARM=7 CGO_ENABLED=1 CC=${plat_abi}-gcc go build -ldflags "-extld=${plat_abi}-gcc" github.com/snapcore/snapweb/cmd/snappyd
     cd - > /dev/null
 }
 
@@ -63,7 +63,7 @@ godeps -u dependencies.tsv
 for ARCH in arm64 armhf i386 amd64; do
     builddir="${top_builddir}/${ARCH}"
     mkdir -p "$builddir"
-    
+
     cp -r pkg/. ${builddir}/
     mkdir $builddir/www
     cp -r www/public www/templates $builddir/www
@@ -85,4 +85,3 @@ for ARCH in arm64 armhf i386 amd64; do
     cd "$orig_pwd"
     snapcraft snap $builddir
 done
-
