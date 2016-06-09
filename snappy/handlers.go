@@ -25,7 +25,7 @@ import (
 
 	"github.com/snapcore/snapd/client"
 	"github.com/snapcore/snapd/snappy"
-	"launchpad.net/webdm/statustracker"
+	"github.com/snapcore/snapweb/statustracker"
 
 	"github.com/gorilla/mux"
 )

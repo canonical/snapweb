@@ -28,10 +28,10 @@ Setup the environment:
 
 Branch:
 
-    mkdir -p $GOPATH/src/launchpad.net
-    cd $GOPATH/src/launchpad.net
-    bzr branch lp:webdm
-    cd webdm
+    mkdir -p $GOPATH/src/github.com/snapcore
+    cd $GOPATH/src/github.com/snapcore
+    git clone git@github.com:snapcore/snapweb.git
+    cd snapweb
 
 Install:
 
@@ -40,7 +40,7 @@ Install:
 
 ## Building
 
-    cd $GOPATH/src/launchpad.net/webdm
+    cd $GOPATH/src/github.com/snapcore/snapweb
     ./build.sh
 
 # Installing
@@ -92,4 +92,3 @@ To obtain the correct dependencies for the project, run:
 If the dependencies need updating
 
     godeps -t ./... > dependencies.tsv
-

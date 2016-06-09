@@ -24,7 +24,8 @@ import (
 	"github.com/snapcore/snapd/client"
 	"github.com/snapcore/snapd/snap"
 	. "gopkg.in/check.v1"
-	"launchpad.net/webdm/statustracker"
+
+	"github.com/snapcore/snapweb/statustracker"
 )
 
 type PackagePayloadSuite struct {
