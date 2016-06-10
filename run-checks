@@ -10,29 +10,29 @@ fi
 
 STATIC=""
 UNIT_GO=""
-UNIT_NODE=""
+UNIT_JS=""
 
 case "${1:-all}" in
     all)
         STATIC="yes"
         UNIT_GO="yes"
-        UNIT_NODE="yes"
+        UNIT_JS="yes"
         ;;
     --static)
         STATIC="yes"
         ;;
     --unit)
         UNIT_GO="yes"
-        UNIT_NODE="yes"
+        UNIT_JS="yes"
         ;;
     --unit-go)
         UNIT_GO="yes"
         ;;
-    --unit-node)
-        UNIT_NODE="yes"
+    --unit-js)
+        UNIT_JS="yes"
         ;;
     *)
-        echo "Wrong flag ${1}. To run a single suite use --static, --unit, --unit-go or --unit-node."
+        echo "Wrong flag ${1}. To run a single suite use --static, --unit, --unit-go or --unit-js."
         exit 1
 esac
 
@@ -80,7 +80,7 @@ if [ ! -z "$UNIT_GO" ]; then
 
 fi
 
-if [ ! -z "$UNIT_NODE" ]; then
+if [ ! -z "$UNIT_JS" ]; then
     # www
     echo Obtaining npm dependencies
     npm install --loglevel error
