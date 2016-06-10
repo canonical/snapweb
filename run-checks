@@ -32,8 +32,8 @@ case "${1:-all}" in
         UNIT_NODE="yes"
         ;;
     *)
-        echo "Wrong flat ${1}. To run a single suite use --static, --unit, --unit-go or --unit-node."
-        exit1
+        echo "Wrong flag ${1}. To run a single suite use --static, --unit, --unit-go or --unit-node."
+        exit 1
 esac
 
 if [ ! -z "$STATIC" ] || [ ! -z "$UNIT_GO" ]; then
