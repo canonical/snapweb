@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -e
+set -eu
 
 if which goctest >/dev/null; then
     goctest="goctest"
@@ -8,56 +8,87 @@ else
     goctest="go test"
 fi
 
-echo Checking formatting
-fmt=$(gofmt -l .)
+STATIC=""
+UNIT_GO=""
+UNIT_NODE=""
 
-if [ -n "$fmt" ]; then
-    echo "Formatting wrong in following files"
-    echo $fmt
-    exit 1
+case "${1:-all}" in
+    all)
+        STATIC="yes"
+        UNIT_GO="yes"
+        UNIT_NODE="yes"
+        ;;
+    --static)
+        STATIC="yes"
+        ;;
+    --unit)
+        UNIT_GO="yes"
+        UNIT_NODE="yes"
+        ;;
+    --unit-go)
+        UNIT_GO="yes"
+        ;;
+    --unit-node)
+        UNIT_NODE="yes"
+        ;;
+    *)
+        echo "Wrong flat ${1}. To run a single suite use --static, --unit, --unit-go or --unit-node."
+        exit1
+esac
+
+if [ ! -z "$STATIC" ] || [ ! -z "$UNIT_GO" ]; then
+    sh ./get-go-deps.sh
 fi
 
-echo Installing godeps
-go get launchpad.net/godeps
-export PATH=$PATH:$GOPATH/bin
+if [ ! -z "$STATIC" ]; then
+    # Run static tests.
 
-echo Install golint
-go get github.com/golang/lint/golint
-export PATH=$PATH:$GOPATH/bin
+    echo Checking formatting
+    fmt=$(gofmt -l .)
 
-echo Obtaining dependencies
-godeps -u dependencies.tsv
+    if [ -n "$fmt" ]; then
+        echo "Formatting wrong in following files"
+        echo $fmt
+        exit 1
+    fi
 
+    # go vet
+    echo Running vet
+    go vet ./...
 
+    echo Install golint
+    go get github.com/golang/lint/golint
+    export PATH=$PATH:$GOPATH/bin
 
-echo Building
-go build -v github.com/snapcore/snapweb/...
+    echo Running lint
+    lint=$(golint ./...)
+    if [ -n "$lint" ]; then
+        echo "Lint complains:"
+        echo $lint
+        exit 1
+    fi
 
-# tests
-echo Running tests from $(pwd)
-$goctest -v -cover ./...
-
-
-# go vet
-echo Running vet
-go vet ./...
-
-# golint
-echo Running lint
-lint=$(golint ./...)
-if [ -n "$lint" ]; then
-    echo "Lint complains:"
-    echo $lint
-    exit 1
 fi
 
-# www
-echo Obtaining npm dependencies
-npm install --loglevel error
+if [ ! -z "$UNIT_GO" ]; then
+    echo Building
+    go build -v github.com/snapcore/snapweb/...
 
-# js unit tests
-echo "Running js unit tests (set JS_TESTER to override)"
-${JS_TESTER:- ./node_modules/karma/bin/karma start --single-run}
+    # tests
+    echo Running tests from $(pwd)
+    $goctest -v -cover ./...
 
+fi
+
+if [ ! -z "$UNIT_NODE" ]; then
+    # www
+    echo Obtaining npm dependencies
+    npm install --loglevel error
+
+    # js unit tests
+    echo "Running js unit tests (set JS_TESTER to override)"
+    ${JS_TESTER:- ./node_modules/karma/bin/karma start --single-run}
+
+fi
 
 echo "All good, what could possibly go wrong"
