@@ -8,7 +8,8 @@ env:
   matrix:
     - TEST_SUITE="--static"
     - TEST_SUITE="--unit-go"
+    - TEST_SUITE="--unit-node"
 
 install:
-  - echo "Skip. Install is done by the test script."
+  - if [ "$TEST_SUITE" == "--unit-node" ]; then . $HOME/.nvm/nvm.sh && nvm install stable && nvm use stable; fi
 script: sh -v ./run-checks $TEST_SUITE
