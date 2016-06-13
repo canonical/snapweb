@@ -8,6 +8,8 @@
 //
 // before including any vanilla styles, override variables from _global_settings.scss
 $brand_color: #fff;
+$breakpoint-medium: 640px;
+$navigation-threshold: 640px;
 
 // IMPORT VANILLA
 @import "../../../../node_modules/vanilla-framework/scss/vanilla";
@@ -19,8 +21,6 @@ $brand_color: #fff;
 // https://github.com/ubuntudesign/vanilla-framework/blob/master/scss/_vanilla.scss
 
 @include vf-reset;
-// TODO: add other modules when necessary
-//
-// @include vf-boxes;
-// @include vf-grid;
-
+@include vf-header;
+@include vf-lists;
+@include vf-typography;

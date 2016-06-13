@@ -5,4 +5,55 @@
 // If any styles from vanilla framework need to be overridden, corresponding
 // SCSS rules should be put in this file (not mixed with other styles).
 
+// scss/modules/_header.scss
+.banner {
+  box-shadow:0;
+  border-bottom:1px solid #ccc;
+}
 
+.banner .nav-primary ul {
+  background-color:transparent;
+  display:block;
+  border-top:0;
+  box-shadow:0;
+}
+
+.banner .nav-primary ul li {
+  width:auto;
+  border:0;
+}
+
+.banner .nav-primary ul li:hover {
+  background-color:#f7f7f7;
+}
+
+// long selectors here for compatibility with those generated from Vanilla SCSS
+.banner .nav-primary ul li a,
+.banner .nav-primary ul li a:link,
+.banner .nav-primary ul li a:visited {
+  background-color:transparent;
+  border-left:0;
+}
+
+.banner .nav-primary ul li a:hover,
+.banner .nav-primary ul li a:link:hover,
+.banner .nav-primary ul li a:visited:hover {
+  background-color:transparent;
+}
+
+.banner .nav-primary ul li a.active,
+.banner .nav-primary ul li a:link.active,
+.banner .nav-primary ul li a:visited.active {
+  background-color:transparent;
+  border-bottom:3px solid #e95420;
+}
+
+@media screen and (min-width: $navigation-threshold) {
+  .banner .nav-primary ul li {
+    border-left:1px solid #ebebeb;
+  }
+
+  .banner .nav-primary span {
+    display:initial;
+  }
+}
