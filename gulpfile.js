@@ -104,7 +104,6 @@ gulp.task('styles', ['styles:clean'], function() {
   return gulp.src([
     'node_modules/normalize.css/normalize.css',
     'www/src/css/lib/vanilla-includes.scss',
-    'www/src/css/lib/vanilla-overrides.scss',
     'www/src/css/**/*.css'
   ])
   .pipe(sass())
