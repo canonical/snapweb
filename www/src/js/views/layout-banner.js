@@ -27,12 +27,12 @@ module.exports = Marionette.ItemView.extend({
 
   // XXX ugh, use a model
   serializeData: function() {
-    var webdm = window.WEBDM;
+    var snapweb = window.SNAPWEB;
     var path = window.location.pathname.split('/')[1];
     return {
       'query': window.decodeURI(window.location.search.slice(3)) || '',
-      'name': webdm.NAME,
-      'subname': webdm.SUBNAME,
+      'name': snapweb.NAME,
+      'subname': snapweb.SUBNAME,
       'isHomeActive': (path === ''),
       'isStoreActive': (path === 'store'),
       //'isSearchActive': (path === 'search'),

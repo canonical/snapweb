@@ -30,7 +30,7 @@ var logger *log.Logger
 const httpAddr string = ":4200"
 
 func init() {
-	logger = log.New(os.Stderr, "Snappy: ", log.Ldate|log.Ltime|log.Lshortfile)
+	logger = log.New(os.Stderr, "Snapweb: ", log.Ldate|log.Ltime|log.Lshortfile)
 }
 
 func main() {
@@ -38,7 +38,7 @@ func main() {
 
 	go avahi.Init(logger)
 
-	logger.Println("Snappy starting...")
+	logger.Println("Snapweb starting...")
 
 	if err := http.ListenAndServe(httpAddr, nil); err != nil {
 		logger.Printf("http.ListendAndServer() failed with %s\n", err)
