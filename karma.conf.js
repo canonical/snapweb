@@ -42,6 +42,11 @@ module.exports = function(config) {
     // web server port
     port: 9876,
 
+    // setting this seems required to run on Travis though possible values have
+    // changed for recent versions of karma:
+    // https://github.com/karma-runner/karma/blob/2dc4ac8dd39d014a8549e598173f9004b9b2a955/lib/config.js#L267
+    transports: ['xhr-polling', 'jsonp-polling'],
+
     // enable / disable colors in the output (reporters and logs)
     colors: true,
 
