@@ -19,10 +19,15 @@ apps:
       - network-bind
       - snapd-control
 parts:
+  assets:
+    plugin: gulp
+    gulp-tasks:
+      - install
+    source: .
+    snap:
+      - www
   snapweb:
     plugin: make
     build-packages:
       - golang-go
-      - nodejs-legacy
-      - npm
     source: .

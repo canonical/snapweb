@@ -116,4 +116,10 @@ gulp.task('watch', ['js:watch', 'styles', 'images'], function() {
   gulp.watch('www/src/js/**/*.js', ['js:lint']);
 });
 
+// for the benefit of snapcraft
+gulp.task('install', ['default'], function() {
+  gulp.src(['www/public/**/*', 'www/templates/*'], { base: '.' })
+    .pipe(gulp.dest('../install'));
+});
+
 gulp.task('default', ['js:build', 'styles', 'images']);
