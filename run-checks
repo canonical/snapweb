@@ -36,6 +36,15 @@ case "${1:-all}" in
         exit 1
 esac
 
+# Append the coverage profile of a package to the project coverage.
+append_go_coverage() {
+    local profile="$1"
+    if [ -f $profile ]; then
+        cat $profile | grep -v "mode: set" >> .coverage-go/coverage.out
+        rm $profile
+    fi
+}
+
 if [ ! -z "$STATIC" ] || [ ! -z "$UNIT_GO" ]; then
     sh ./get-go-deps.sh
 fi
@@ -74,10 +83,17 @@ if [ ! -z "$UNIT_GO" ]; then
     echo Building
     go build -v github.com/snapcore/snapweb/...
 
+    # Prepare the coverage output profile.
+    rm -rf .coverage-go
+    mkdir .coverage-go
+    echo "mode: set" > .coverage-go/coverage.out
+
     # tests
     echo Running tests from $(pwd)
-    $goctest -v -cover ./...
-
+    for pkg in $(go list ./... | grep -v integration-tests); do
+        $goctest -v -coverprofile=.coverage-go/profile.out $pkg
+        append_go_coverage .coverage/profile.out
+    done
 fi
 
 if [ ! -z "$UNIT_JS" ]; then
