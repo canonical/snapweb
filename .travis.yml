@@ -8,7 +8,7 @@ env:
   matrix:
     - TEST_SUITE="--static"
     - TEST_SUITE="--unit-go"
-    - TEST_SUITE="--unit-node"
+    - TEST_SUITE="--unit-js"
 
 cache:
   directories:
