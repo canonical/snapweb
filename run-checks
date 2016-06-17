@@ -92,7 +92,7 @@ if [ ! -z "$UNIT_GO" ]; then
     echo Running tests from $(pwd)
     for pkg in $(go list ./... | grep -v integration-tests); do
         $goctest -v -coverprofile=.coverage-go/profile.out $pkg
-        append_go_coverage .coverage/profile.out
+        append_go_coverage .coverage-go/profile.out
     done
 fi
 
