@@ -12,14 +12,14 @@ if (window.__agent) {
 var LayoutView = require('./views/layout.js');
 var router = require('./routers/router.js');
 
-var webdm = new Marionette.Application();
+var snapweb = new Marionette.Application();
 var layout = new LayoutView();
 layout.render();
 
 $(document).ready(function() {
-  webdm.start();
+  snapweb.start();
 });
 
-webdm.on('start', function() {
+snapweb.on('start', function() {
   Backbone.history.start({pushState: true});
 });

@@ -54,7 +54,7 @@ function createBundler(watch) {
 function bundleShared(bundler) {
   return bundler.bundle()
     .on('error', gutil.log.bind(gutil, 'Browserify Error'))
-    .pipe(source('webdm.js'))
+    .pipe(source('snapweb.js'))
       .pipe(buffer())
       .pipe(sourcemaps.init({loadMaps: true})) // loads map from browserify file
       .pipe(uglify())
@@ -111,7 +111,7 @@ gulp.task('styles', ['styles:clean'], function() {
   .pipe(sourcemaps.init())
   .pipe(postcss(processors))
   .pipe(csso())
-  .pipe(concat('webdm.css'))
+  .pipe(concat('snapweb.css'))
   .pipe(sourcemaps.write('./'))
   .pipe(gulp.dest('www/public/css'));
 });
