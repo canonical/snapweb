@@ -24,6 +24,7 @@ $navigation-threshold: 640px;
 @include vf-header;
 @include vf-lists;
 @include vf-typography;
+@include vf-grid;
 
 // IMPORT VANILLA OVERRIDES
 @import "vanilla-overrides";
