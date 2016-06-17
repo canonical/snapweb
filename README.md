@@ -1,3 +1,5 @@
+[![Build Status][travis-image]][travis-url] [![Coverage Status][coveralls-image]][coveralls-url]
+
 # Building
 
 ## Prerequisites
@@ -92,3 +94,9 @@ To obtain the correct dependencies for the project, run:
 If the dependencies need updating
 
     godeps -t ./... > dependencies.tsv
+
+[travis-image]: https://travis-ci.org/snapcore/snapweb.svg?branch=master
+[travis-url]: https://travis-ci.org/snapcore/snapweb
+
+[coveralls-image]: https://coveralls.io/repos/snapcore/snapweb/badge.svg?branch=master&service=github
+[coveralls-url]: https://coveralls.io/github/snapcore/snapweb?branch=master
