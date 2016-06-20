@@ -24,7 +24,9 @@ import (
 // FakeSnapdClient is a fake SnapdClient for testing purposes
 type FakeSnapdClient struct {
 	Snaps           []*client.Snap
+	StoreSnaps      []*client.Snap
 	Err             error
+	StoreErr        error
 	CalledListSnaps bool
 	Query           string
 	Version         string
@@ -58,7 +60,7 @@ func (f *FakeSnapdClient) ListSnaps(names []string) ([]*client.Snap, error) {
 func (f *FakeSnapdClient) FindSnaps(query string) ([]*client.Snap, *client.ResultInfo, error) {
 	f.Query = query
 
-	return f.Snaps, nil, f.Err
+	return f.StoreSnaps, nil, f.StoreErr
 }
 
 // Install adds the named snap to the system

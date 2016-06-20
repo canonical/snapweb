@@ -28,6 +28,63 @@ import (
 	"github.com/snapcore/snapweb/statustracker"
 )
 
+type GetSnapSuite struct {
+	h Handler
+	c *FakeSnapdClient
+}
+
+var _ = Suite(&GetSnapSuite{})
+
+func (s *GetSnapSuite) SetUpTest(c *C) {
+	s.c = &FakeSnapdClient{}
+	s.h.setClient(s.c)
+}
+
+func (s *GetSnapSuite) TestSnapDoesNotExist(c *C) {
+	s.c.Err = errors.New("the snap could not be retrieved locally")
+	s.c.StoreErr = errors.New("the snap could not be retrieved from the store")
+
+	_, err := s.h.getSnap("chatroom")
+	c.Assert(s.c.Query, Equals, "chatroom")
+	c.Assert(err, NotNil)
+}
+
+func (s *GetSnapSuite) TestSnapDoesNotExistButStoreHasEmptyResults(c *C) {
+	s.c.Err = errors.New("the snap could not be retrieved locally")
+	s.c.StoreSnaps = []*client.Snap{}
+
+	_, err := s.h.getSnap("chatroom")
+	c.Assert(err, NotNil)
+	c.Assert(s.c.Query, Equals, "chatroom")
+}
+
+func (s *GetSnapSuite) TestSnapDoesNotExistButStoreHasResults(c *C) {
+	s.c.Err = errors.New("the snap could not be retrieved locally")
+	s.c.StoreSnaps = []*client.Snap{newSnap("snap1"), newSnap("snap2")}
+
+	_, err := s.h.getSnap("chatroom")
+	c.Assert(err, NotNil)
+	c.Assert(s.c.Query, Equals, "chatroom")
+}
+
+func (s *GetSnapSuite) TestSnapExistsOnStore(c *C) {
+	s.c.Err = errors.New("the snap could not be retrieved locally")
+	s.c.StoreSnaps = []*client.Snap{newSnap("snap1"), newDefaultSnap(), newSnap("snap2")}
+
+	snap, err := s.h.getSnap("chatroom")
+	c.Assert(s.c.Query, Equals, "chatroom")
+	c.Assert(err, IsNil)
+	c.Assert(snap.Name, Equals, "chatroom")
+}
+
+func (s *GetSnapSuite) TestGetSnap(c *C) {
+	s.c.Snaps = []*client.Snap{newDefaultSnap()}
+
+	snap, err := s.h.getSnap("chatroom")
+	c.Assert(err, IsNil)
+	c.Assert(snap.Name, Equals, "chatroom")
+}
+
 type PackagePayloadSuite struct {
 	h Handler
 	c *FakeSnapdClient
@@ -117,7 +174,7 @@ func (s *AllPackagesSuite) SetUpTest(c *C) {
 }
 
 func (s *AllPackagesSuite) TestNoSnaps(c *C) {
-	s.c.Err = errors.New("snaps could not be filtered")
+	s.c.StoreErr = errors.New("snaps could not be filtered")
 
 	snaps, err := s.h.allPackages(availableSnaps, "")
 	c.Assert(snaps, IsNil)
@@ -125,7 +182,7 @@ func (s *AllPackagesSuite) TestNoSnaps(c *C) {
 }
 
 func (s *AllPackagesSuite) TestHasSnaps(c *C) {
-	s.c.Snaps = []*client.Snap{
+	s.c.StoreSnaps = []*client.Snap{
 		newSnap("app2"),
 		newSnap("app1"),
 	}

@@ -18,7 +18,9 @@
 package snappy
 
 import (
+	"errors"
 	"sort"
+	"strings"
 
 	"log"
 
@@ -51,8 +53,35 @@ type response struct {
 	Message string `json:"message"`
 }
 
+func (h *Handler) getSnap(name string) (*client.Snap, error) {
+	snap, _, err := h.snapdClient.Snap(name)
+	if err == nil {
+		return snap, nil
+	}
+
+	// Snap() now only returns installed snaps so search the store as a fallback
+	snaps, _, err := h.snapdClient.FindSnaps(name)
+	if err != nil {
+		return nil, err
+	}
+
+	snap = nil
+	for _, s := range snaps {
+		if strings.EqualFold(s.Name, name) {
+			snap = s
+			break
+		}
+	}
+
+	if snap == nil {
+		return nil, errors.New("snap could not be retrieved")
+	}
+
+	return snap, nil
+}
+
 func (h *Handler) packagePayload(resource string) (snapPkg, error) {
-	snap, _, err := h.snapdClient.Snap(resource)
+	snap, err := h.getSnap(resource)
 	if err != nil {
 		return snapPkg{}, err
 	}
@@ -85,7 +114,7 @@ func (h *Handler) allPackages(snapCondition int, query string) ([]snapPkg, error
 }
 
 func (h *Handler) removePackage(name string) error {
-	snap, _, err := h.snapdClient.Snap(name)
+	snap, err := h.getSnap(name)
 	if err != nil {
 		return err
 	}
@@ -97,7 +126,7 @@ func (h *Handler) removePackage(name string) error {
 }
 
 func (h *Handler) installPackage(name string) error {
-	snap, _, err := h.snapdClient.Snap(name)
+	snap, err := h.getSnap(name)
 	if err != nil {
 		return err
 	}
