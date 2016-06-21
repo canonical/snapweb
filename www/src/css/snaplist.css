@@ -150,30 +150,3 @@
 .b-snaplist_row .b-installer__message {
   display:none;
 }
-
-@media (--xxs) {
-  .b-snaplist_grid .b-snaplist__item {
-    padding:13px 8px;
-  }
-
-  .b-snaplist_row .b-snaplist__src {
-    display:block;
-  }
-}
-
-@media (--xs) {
-  .b-snaplist_grid .b-snaplist__item {
-    padding:14px 9px;
-  }
-  .b-snaplist_row .b-snaplist__size {
-    display: block;
-  }
-}
-
-@media (--s) {
-  .b-snaplist_grid .b-snaplist__item {
-    padding:15px 10px;
-  }
-}
-@media (--m) {
-}
