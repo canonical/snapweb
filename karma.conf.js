@@ -1,5 +1,7 @@
 // Karma configuration
 // Generated on Fri Mar 27 2015 18:06:02 GMT+0000 (GMT)
+//
+var istanbul = require('browserify-istanbul');
 
 module.exports = function(config) {
   config.set({
@@ -31,13 +33,34 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      'www/tests/**/*.js': ['browserify']
+      'www/tests/**/*Spec.js': ['browserify']
+    },
+
+    browserify: {
+      debug: true,
+      transform: [
+        'hbsfy',
+        ['browserify-istanbul', {
+          instrumenterConfig:  {
+            embedSource: true
+          }}
+        ]
+      ]
     },
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['dots'],
+    reporters: ['dots', 'coverage'],
+
+    coverageReporter: {
+      dir: '.coverage-js',
+      reporters: [
+        {type: 'html', subdir: 'report-html'},
+        {type: 'lcov', subdir: 'report-lcov'},
+        {type: 'text-summary', subdir: '.', file: 'text-summary.txt'},
+      ]
+    },
 
     // web server port
     port: 9876,
@@ -64,9 +87,5 @@ module.exports = function(config) {
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
     singleRun: false,
-    browserify: {
-      debug: true,
-      transform: ['hbsfy']
-    }
   });
 };
