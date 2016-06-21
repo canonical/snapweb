@@ -49,16 +49,16 @@ func (f *FakeSnapdClient) Snap(name string) (*client.Snap, *client.ResultInfo, e
 	return nil, nil, f.Err
 }
 
-// ListSnaps lists the installed snaps
-func (f *FakeSnapdClient) ListSnaps(names []string) ([]*client.Snap, error) {
+// List lists the installed snaps
+func (f *FakeSnapdClient) List(names []string) ([]*client.Snap, error) {
 	f.CalledListSnaps = true
 
 	return f.Snaps, f.Err
 }
 
-// FindSnaps returns the results of searching for snaps with the given query
-func (f *FakeSnapdClient) FindSnaps(query string) ([]*client.Snap, *client.ResultInfo, error) {
-	f.Query = query
+// Find returns the results of searching for snaps with the given options
+func (f *FakeSnapdClient) Find(opts *client.FindOptions) ([]*client.Snap, *client.ResultInfo, error) {
+	f.Query = opts.Query
 
 	return f.StoreSnaps, nil, f.StoreErr
 }

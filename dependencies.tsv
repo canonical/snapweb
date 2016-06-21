@@ -7,7 +7,7 @@ github.com/gosexy/gettext	git	98b7b91596d20b96909e6b60d57411547dd9959c	2013-02-2
 github.com/miekg/dns	git	5a357a6fc5e85268b929350aa6423e2d56dcc4ff	2015-04-18T05:52:30Z
 github.com/mvo5/goconfigparser	git	26426272dda20cc76aa1fa44286dc743d2972fe8	2015-02-12T09:37:50Z
 github.com/mvo5/uboot-go	git	69978a3e4b05cca9d7cfee489b3453dfed45e72c	2015-07-23T08:17:10Z
-github.com/snapcore/snapd	git	ea2cc34014d0a49c946971ef20acc23e5dd3ca76	2016-05-24T18:06:34Z
+github.com/snapcore/snapd	git	14ff9e23e48de107b34938a398a319bbb38730be	2016-06-08T05:58:01Z
 golang.org/x/crypto	git	60052bd85f2d91293457e8811b0cf26b773de469	2015-06-22T23:34:07Z
 gopkg.in/check.v1	git	64131543e7896d5bcc6bd5a76287eb75ea96c673	2014-10-24T13:38:53Z
 gopkg.in/yaml.v2	git	49c95bdc21843256fb6c4e0d370a05f24a0bf213	2015-02-24T22:57:58Z
