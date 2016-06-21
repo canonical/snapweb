@@ -11,4 +11,11 @@
 }
 
 .b-infobar__datetime {
+  margin-right:10px;
+}
+
+@media screen and (min-width: 640px) {
+  .b-infobar__datetime {
+    margin-right:15px;
+  }
 }
