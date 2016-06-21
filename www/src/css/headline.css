@@ -12,7 +12,7 @@
   flex:1;
   font-size:18px;
   font-weight:400;
-  margin:20px 15px 5px 10px;
+  margin:0 15px 5px 10px;
 }
 
 @media screen and (min-width: 640px) {
