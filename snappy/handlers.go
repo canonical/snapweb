@@ -58,6 +58,20 @@ func (h *Handler) jsonResponseOrError(v interface{}, w http.ResponseWriter) {
 	}
 }
 
+func (h *Handler) snapOperationResponse(name string, err error, w http.ResponseWriter) {
+	msg := "Accepted"
+	status := http.StatusAccepted
+
+	if err != nil {
+		msg = "Processing error"
+		status = http.StatusInternalServerError
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+	h.jsonResponseOrError(response{Message: msg, Package: name}, w)
+}
+
 func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
 	snapCondition := availableSnaps
 	if r.FormValue("installed_only") == "true" {
@@ -94,13 +108,8 @@ func (h *Handler) add(w http.ResponseWriter, r *http.Request) {
 	name := vars["name"]
 
 	err := h.installPackage(name)
-	msg, status := respond(err)
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(status)
-
-	response := response{Message: msg, Package: name}
-	h.jsonResponseOrError(response, w)
+	h.snapOperationResponse(name, err, w)
 }
 
 func (h *Handler) remove(w http.ResponseWriter, r *http.Request) {
@@ -108,21 +117,8 @@ func (h *Handler) remove(w http.ResponseWriter, r *http.Request) {
 	name := vars["name"]
 
 	err := h.removePackage(name)
-	msg, status := respond(err)
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(status)
-
-	response := response{Message: msg, Package: name}
-	h.jsonResponseOrError(response, w)
-}
-
-func respond(err error) (msg string, status int) {
-	if err != nil {
-		return "Processing error", http.StatusInternalServerError
-	}
-
-	return "Accepted", http.StatusAccepted
+	h.snapOperationResponse(name, err, w)
 }
 
 // MakeMuxer sets up the handlers multiplexing to handle requests against snappy's

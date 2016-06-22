@@ -19,6 +19,7 @@ package snappy
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -95,4 +96,30 @@ func (s *HandlersSuite) TestJsonResponseOrError(c *C) {
 	err := json.Unmarshal(rec.Body.Bytes(), &r)
 	c.Assert(err, IsNil)
 	c.Assert(r, Equals, response)
+}
+
+func (s *HandlersSuite) TestSnapOperationResponseError(c *C) {
+	rec := httptest.NewRecorder()
+
+	s.h.snapOperationResponse("foo", errors.New("bar"), rec)
+
+	c.Assert(rec.Code, Equals, http.StatusInternalServerError)
+
+	var r response
+	err := json.Unmarshal(rec.Body.Bytes(), &r)
+	c.Assert(err, IsNil)
+	c.Assert(r, DeepEquals, response{Message: "Processing error", Package: "foo"})
+}
+
+func (s *HandlersSuite) TestSnapOperationResponse(c *C) {
+	rec := httptest.NewRecorder()
+
+	s.h.snapOperationResponse("foo", nil, rec)
+
+	c.Assert(rec.Code, Equals, http.StatusAccepted)
+
+	var r response
+	err := json.Unmarshal(rec.Body.Bytes(), &r)
+	c.Assert(err, IsNil)
+	c.Assert(r, DeepEquals, response{Message: "Accepted", Package: "foo"})
 }
