@@ -24,7 +24,6 @@ import (
 	"net/http"
 
 	"github.com/snapcore/snapd/client"
-	"github.com/snapcore/snapd/snappy"
 	"github.com/snapcore/snapweb/statustracker"
 
 	"github.com/gorilla/mux"
@@ -142,22 +141,11 @@ func (h *Handler) remove(w http.ResponseWriter, r *http.Request) {
 }
 
 func respond(err error) (msg string, status int) {
-	switch err {
-	case snappy.ErrAlreadyInstalled:
-		status = http.StatusOK
-		msg = "Installed"
-	case snappy.ErrPackageNotFound:
-		status = http.StatusNotFound
-		msg = "Package not found"
-	case nil:
-		status = http.StatusAccepted
-		msg = "Accepted"
-	default:
-		status = http.StatusInternalServerError
-		msg = "Processing error"
+	if err != nil {
+		return "Processing error", http.StatusInternalServerError
 	}
 
-	return msg, status
+	return "Accepted", http.StatusAccepted
 }
 
 // MakeMuxer sets up the handlers multiplexing to handle requests against snappy's
