@@ -90,8 +90,7 @@ func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	name := vars["name"]
+	name := mux.Vars(r)["name"]
 
 	payload, err := h.packagePayload(name)
 	if err != nil {
@@ -104,8 +103,7 @@ func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) add(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	name := vars["name"]
+	name := mux.Vars(r)["name"]
 
 	err := h.installPackage(name)
 
@@ -113,8 +111,7 @@ func (h *Handler) add(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) remove(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	name := vars["name"]
+	name := mux.Vars(r)["name"]
 
 	err := h.removePackage(name)
 
