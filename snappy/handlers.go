@@ -47,10 +47,18 @@ func (h *Handler) setClient(c SnapdClient) {
 	h.snapdClient = c
 }
 
-func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) jsonResponseOrError(v interface{}, w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(w)
 
+	if err := enc.Encode(v); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "Error: %s", err)
+		log.Print(err)
+	}
+}
+
+func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
 	snapCondition := availableSnaps
 	if r.FormValue("installed_only") == "true" {
 		snapCondition = installedSnaps
@@ -60,84 +68,53 @@ func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
 	payload, err := h.allPackages(snapCondition, query)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		enc.Encode(fmt.Sprintf("Error: %s", err))
+		fmt.Fprintf(w, "Error: %s", err)
 		return
 	}
 
-	if err := enc.Encode(payload); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		// give up on json
-		fmt.Fprintf(w, "Error: %s", err)
-		log.Print(err)
-	}
+	h.jsonResponseOrError(payload, w)
 }
 
 func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	// Get the Key.
 	vars := mux.Vars(r)
 	name := vars["name"]
-	enc := json.NewEncoder(w)
 
 	payload, err := h.packagePayload(name)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		enc.Encode(fmt.Sprintln(err, name))
+		fmt.Fprintln(w, err, name)
 		return
 	}
 
-	if err := enc.Encode(payload); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		// give up on json
-		fmt.Fprintf(w, "Error: %s", err)
-		log.Print(err)
-	}
+	h.jsonResponseOrError(payload, w)
 }
 
 func (h *Handler) add(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	// Get the Key.
 	vars := mux.Vars(r)
 	name := vars["name"]
 
 	err := h.installPackage(name)
 	msg, status := respond(err)
 
-	response := response{Message: msg, Package: name}
-	bs, err := json.Marshal(response)
-	if err != nil {
-		// giving up on json
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(w, "Error: %s", err)
-		log.Print(err)
-		return
-	}
-
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
-	w.Write(bs)
+
+	response := response{Message: msg, Package: name}
+	h.jsonResponseOrError(response, w)
 }
 
 func (h *Handler) remove(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	// Get the Key.
 	vars := mux.Vars(r)
 	name := vars["name"]
 
 	err := h.removePackage(name)
 	msg, status := respond(err)
 
-	response := response{Message: msg, Package: name}
-	bs, err := json.Marshal(response)
-	if err != nil {
-		// giving up on json
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(w, "Error: %s", err)
-		log.Print(err)
-		return
-	}
-
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
-	w.Write(bs)
+
+	response := response{Message: msg, Package: name}
+	h.jsonResponseOrError(response, w)
 }
 
 func respond(err error) (msg string, status int) {
