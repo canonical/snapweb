@@ -6,7 +6,6 @@ Backbone.$ = $;
 var Marionette = require('backbone.marionette');
 var Radio = require('backbone.radio');
 var BannerView = require('./layout-banner.js');
-var InfobarView = require('./layout-infobar.js');
 var FooterView = require('./layout-footer.js');
 var NotificationsView = require('./alerts.js');
 var template = require('../templates/layout.hbs');
@@ -27,7 +26,6 @@ module.exports = Marionette.LayoutView.extend({
 
   onRender: function() {
     this.showChildView('bannerRegion', new BannerView());
-    this.showChildView('infobarRegion', new InfobarView());
     this.showChildView('footerRegion', new FooterView());
   },
 
@@ -43,7 +41,6 @@ module.exports = Marionette.LayoutView.extend({
 
   regions: {
     bannerRegion:   '.b-layout__banner',
-    infobarRegion:  '.b-layout__infobar',
     mainRegion:     '.b-layout__main',
     footerRegion:   '.b-layout__footer',
     alertsRegion:   '.b-layout__alerts'
