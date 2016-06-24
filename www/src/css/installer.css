@@ -2,11 +2,6 @@
 
 .b-installer {
   position:relative;
-  width:260px;
-  font-size:15px;
-}
-
-.b-installer_small {
   font-size:12px;
   width:100px;
 }
