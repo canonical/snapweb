@@ -10,8 +10,6 @@
 }
 
 .b-layout__main {
-  flex: 1;
-  position:relative;
 }
 
 .b-layout__main:empty::before {
@@ -36,4 +34,9 @@
   top: 30px;
   width: 100%;
   z-index: 10000;
+}
+
+.b-grey-wrapper {
+  background-color:#f7f7f7;
+  overflow:hidden;
 }

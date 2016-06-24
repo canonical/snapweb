@@ -42,24 +42,8 @@
   margin-top:4px;
 }
 
-.b-snaplist_grid .b-snaplist__name,
-.b-snaplist_grid .b-icon img {
+.b-snaplist_grid .b-snaplist__name {
   width:90px;
-}
-
-.b-snaplist :not(.b-snaplist__item-app) .b-icon::after {
-  content: attr(data-type);
-  position:absolute;
-  width:100%;
-  bottom:0;
-  left:0;
-  right:0;
-  background: rgba(221,72,20,0.8);
-  color:#fff;
-  z-index:0;
-  padding:3px 0 5px;
-  text-transform:uppercase;
-  font-size:10px;
 }
 
 .b-snaplist_grid .b-snaplist__version,
@@ -93,11 +77,6 @@
 .b-snaplist_row .b-snaplist__item:last-child {
   margin-bottom:0;
   border-bottom:1px solid #ddd;
-}
-
-
-.b-snaplist_row .b-icon {
-  flex:0 0 60px;
 }
 
 .b-snaplist_row .b-icon img {
