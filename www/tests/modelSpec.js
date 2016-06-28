@@ -101,6 +101,31 @@ describe('Snap', function() {
 
   });
 
+  describe('setInstallButtonClass', function() {
+
+    beforeEach(function() {
+      this.model = new Snap({id: 'foo'});
+    });
+
+    afterEach(function() {
+      delete this.model;
+    });
+
+    it('sets installButtonClass from the model state', function() {
+      this.model.set('status', CONF.INSTALL_STATE.INSTALLED);
+      expect(this.model.get('installButtonClass')).toBe('button--secondary');
+
+      this.model.set('status', CONF.INSTALL_STATE.REMOVED);
+      expect(this.model.get('installButtonClass')).toBe('button--primary');
+
+      this.model.set('status', CONF.INSTALL_STATE.REMOVING);
+      expect(this.model.get('installButtonClass')).toBe('button--primary');
+
+      this.model.set('status', CONF.INSTALL_STATE.INSTALLING);
+      expect(this.model.get('installButtonClass')).toBe('button--secondary');
+    });
+  });
+
   describe('sync methods', function() {
 
     beforeEach(function() {
