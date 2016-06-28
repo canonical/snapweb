@@ -124,13 +124,13 @@ module.exports = Backbone.Model.extend({
 
     switch (state) {
       case CONF.INSTALL_STATE.INSTALLED:
-        action = 'Remove';
+        action = 'Remove snap';
         break;
       case CONF.INSTALL_STATE.INSTALLING:
         action = 'Installing…';
         break;
       case CONF.INSTALL_STATE.REMOVED:
-        action = 'Install';
+        action = 'Install this snap';
         break;
       case CONF.INSTALL_STATE.REMOVING:
         action = 'Removing…';
