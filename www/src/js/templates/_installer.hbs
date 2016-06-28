@@ -1,21 +1,19 @@
 {{#if isInstallable}}
-<div class="b-installer {{ installHTMLClass }}">
-{{#if installActionString}}
-<div class="b-installer__button">{{ installActionString }}</div>
-<div class="b-installer__progress" title="download progress">
-<div class="b-installer__value"></div>
-</div>
-{{/if}}
-<div class="b-installer__message"></div>
-</div>
+  <div class="b-installer {{ installHTMLClass }}">
+    {{#if installActionString}}
+      <button class="b-installer__button {{ buttonClass }} {{ installButtonClass }}">{{ installActionString }}</button>
+      <div class="b-installer__progress" title="download progress">
+      <div class="b-installer__value"></div>
+      </div>
+    {{/if}}
+    <div class="b-installer__message"></div>
+  </div>
 {{else}}
-<div class="b-installer b-installer_disabled {{ installHTMLClass }}">
-<div class="b-installer__button">
-{{#if isInstalled}}
-Installed
-{{else}}
-Not installable
-{{/if}}
-</div>
-</div>
+  <div class="b-installer b-installer_disabled {{ installHTMLClass }}">
+    {{#if isInstalled}}
+      <button class="b-installer__button button--secondary {{ buttonClass }}">Installed</button>
+    {{else}}
+      <button class="b-installer__button button--secondary {{ buttonClass }}">Not installable</button>
+    {{/if}}
+  </div>
 {{/if}}
