@@ -10,6 +10,7 @@
 $brand_color: #fff;
 $breakpoint-medium: 640px;
 $navigation-threshold: 640px;
+$primary-button-color: #38b44a;
 
 // IMPORT VANILLA
 @import "../../../../node_modules/vanilla-framework/scss/vanilla";
@@ -25,6 +26,7 @@ $navigation-threshold: 640px;
 @include vf-lists;
 @include vf-typography;
 @include vf-grid;
+@include vf-buttons;
 
 // IMPORT VANILLA OVERRIDES
 @import "vanilla-overrides";
