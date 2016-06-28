@@ -90,6 +90,7 @@ module.exports = Backbone.Model.extend({
   onStatusChange: function(model) {
     this.setInstallActionString(model);
     this.setInstallHTMLClass(model);
+    this.setInstallButtonClass(model);
   },
 
   // XXX move to install behaviour
@@ -142,6 +143,23 @@ module.exports = Backbone.Model.extend({
     }
 
     return model.set('installActionString', action);
+  },
+
+  setInstallButtonClass: function(model) {
+    var state = model.get('status');
+    var installButtonClass;
+
+    switch (state) {
+      case CONF.INSTALL_STATE.INSTALLED:
+      case CONF.INSTALL_STATE.INSTALLING:
+        installButtonClass = 'button--secondary';
+        break;
+      case CONF.INSTALL_STATE.REMOVED:
+      case CONF.INSTALL_STATE.REMOVING:
+        installButtonClass = 'button--primary';
+    }
+
+    return model.set('installButtonClass', installButtonClass);
   },
 
   parse: function(response) {
