@@ -23,9 +23,9 @@ describe('SnapItemView', function() {
 
   it('should have a b-snaplist className with type modifier when present in model', function() {
     this.view.model.unset('type');
-    expect(this.view.className()).toBe('b-snaplist__item');
+    expect(this.view.className()).toBe('b-snaplist__item three-col');
     this.view.model.set('type', 'foo');
-    expect(this.view.className()).toBe('b-snaplist__item b-snaplist__item-foo');
+    expect(this.view.className()).toBe('b-snaplist__item three-col b-snaplist__item-foo');
   });
 
 });

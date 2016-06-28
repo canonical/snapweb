@@ -15,10 +15,16 @@ module.exports = Marionette.ItemView.extend({
 
   className: function() {
     var type = this.model.get('type');
-    var className = 'b-snaplist__item';
+    var className = 'b-snaplist__item three-col';
     if (type) {
       className += ' b-snaplist__item-' + type;
     }
+    // each snap occupies 3 columns of the 12 column grid, we need to know which
+    // sits in the last column in each row
+    if (this.options.lastCol) {
+      className += ' last-col';
+    }
+
     return className;
   },
 
