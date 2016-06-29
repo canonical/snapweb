@@ -27,6 +27,8 @@ $primary-button-color: #38b44a;
 @include vf-typography;
 @include vf-grid;
 @include vf-buttons;
+@include vf-left;
+@include vf-right;
 
 // IMPORT VANILLA OVERRIDES
 @import "vanilla-overrides";
