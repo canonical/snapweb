@@ -1,7 +1,7 @@
 /** @define b-headline; weak */
 
 .b-headline {
-  margin-top:20px;
+  margin:20px 0 0 0;
   padding:0 10px;
 }
 
