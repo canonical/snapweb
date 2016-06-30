@@ -2,24 +2,24 @@
 
 .b-headline {
   margin-top:20px;
+  padding:0 10px;
 }
 
-.b-headline__h2 {
-  margin:0 0 0 10px
-}
-
-.b-headline .b-headline__store-link {
+.b-headline__search-button {
+  background:none;
+  position:absolute;
+  top:6px;
+  right:9px;
+  padding:0;
   width:auto;
-  text-decoration:none;
-  margin-right:10px;
+}
+
+.b-headline__search-button:hover {
+  background-color:transparent;
 }
 
 @media screen and (min-width: 640px) {
-  .b-headline__h2 {
-    margin-left:15px;
-  }
-
-  .b-headline .b-headline__store-link {
-    margin-right:15px;
+  .b-headline {
+    padding:0 15px;
   }
 }
