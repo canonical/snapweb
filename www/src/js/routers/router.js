@@ -21,7 +21,8 @@ module.exports = {
   store: new Marionette.AppRouter({
     controller: storeController,
     appRoutes: {
-      'store': 'index'
+      'store': 'index',
+      'search?q=': 'index'
     }
   }),
 
