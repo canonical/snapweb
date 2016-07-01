@@ -43,8 +43,12 @@ func (f *FakeSnapdClient) Icon(name string) (*client.Icon, error) {
 
 // Snap returns the named snap
 func (f *FakeSnapdClient) Snap(name string) (*client.Snap, *client.ResultInfo, error) {
-	if len(f.Snaps) > 0 {
-		return f.Snaps[0], nil, f.Err
+	if f.Err == nil && len(f.Snaps) > 0 {
+		for _, s := range f.Snaps {
+			if s.Name == name {
+				return s, nil, nil
+			}
+		}
 	}
 	return nil, nil, f.Err
 }
