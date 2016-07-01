@@ -34,6 +34,10 @@
   margin-top:140%;
 }
 
+.b-store .b-snaplist_grid .b-snaplist__item:before {
+  margin-top:155%;
+}
+
 .b-snaplist_grid .b-snaplist__meta {
   border-top:1px dotted #cdcdcd;
   padding:10px 0 15px 0;
@@ -44,7 +48,13 @@
   width:100%;
 }
 
-.b-snaplist_grid .b-snaplist__meta * {
+.b-store .b-snaplist_grid .b-snaplist__meta {
+  height:105px;
+}
+
+.b-snaplist_grid .b-snaplist__name,
+.b-snaplist_grid .b-snaplist__developer,
+.b-snaplist_grid .b-snaplist__actions {
   margin:0 12px;
   white-space:nowrap;
   overflow:hidden;
@@ -62,12 +72,23 @@
   display:none;
 }
 
+.b-store .b-snaplist_grid .b-snaplist__actions {
+  display:block;
+  border-top:1px solid #d2d2d2;
+  margin:15px 10px 0;
+  padding:10px 0 0 0;
+}
+
 .b-snaplist__icon-wrapper {
   position:absolute;
   top:0;
   width:100%;
   height:100%;
   padding:25px 20px 100px 20px;
+}
+
+.b-store .b-snaplist__icon-wrapper {
+  padding-bottom:140px;
 }
 
 .b-snaplist__icon {
