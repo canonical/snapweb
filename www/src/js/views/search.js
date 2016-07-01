@@ -6,7 +6,7 @@ var template = require('../templates/search.hbs');
 
 module.exports = Backbone.Marionette.LayoutView.extend({
 
-  className: 'search',
+  className: 'b-store',
 
   template : function(model) {
     return template(model);

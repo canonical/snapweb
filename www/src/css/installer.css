@@ -12,6 +12,11 @@
   width:100%;
 }
 
+.b-installer__button_store {
+  float:right;
+  width:40%;
+}
+
 .b-installer_disabled .b-installer__button {
   background-color:#f7f7f7;
   cursor:not-allowed;
