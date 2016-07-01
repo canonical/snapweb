@@ -6,7 +6,7 @@ var template = require('../templates/store.hbs');
 
 module.exports = Backbone.Marionette.LayoutView.extend({
 
-  className: 'b-layout__container',
+  className: 'b-store',
 
   template : function() {
     return template();
