@@ -25,9 +25,3 @@
 .b-installer_thinking .b-installer__button {
   cursor:progress;
 }
-
-.b-installer__message {
-  margin-top:4px;
-  text-align:center;
-  font-size:12px;
-}
