@@ -17,7 +17,6 @@ module.exports = Marionette.Behavior.extend({
 
   ui: {
     errorMessage: '.b-installer__error',
-    statusMessage: '.b-installer__message',
     installer: '.b-installer',
     installerButton: '.b-installer__button'
   },
@@ -47,22 +46,6 @@ module.exports = Marionette.Behavior.extend({
       // in the rare case that a status isn't one we're expecting,
       // remove the install button
       installer.remove();
-    }
-
-    if (
-      state === CONF.INSTALL_STATE.INSTALLED &&
-      oldState === CONF.INSTALL_STATE.INSTALLING
-    ) {
-      this.ui.statusMessage.text('Install successful!');
-    } else {
-      this.ui.statusMessage.text('');
-    }
-
-    if (
-      state === CONF.INSTALL_STATE.REMOVED &&
-      oldState === CONF.INSTALL_STATE.REMOVING
-    ) {
-      this.ui.statusMessage.text('Snap removed!');
     }
   },
 
