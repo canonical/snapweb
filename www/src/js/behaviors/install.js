@@ -12,16 +12,14 @@ module.exports = Marionette.Behavior.extend({
   modelEvents: {
     'change:installHTMLClass': 'onHTMLClassChange',
     'change:installButtonClass': 'onButtonClassChange',
-    'change:status': 'onStatusChange',
-    'change:progress': 'onProgressChange'
+    'change:status': 'onStatusChange'
   },
 
   ui: {
     errorMessage: '.b-installer__error',
     statusMessage: '.b-installer__message',
     installer: '.b-installer',
-    installerButton: '.b-installer__button',
-    installerProgress: '.b-installer__value'
+    installerButton: '.b-installer__button'
   },
 
   onHTMLClassChange: function(model) {
@@ -42,9 +40,6 @@ module.exports = Marionette.Behavior.extend({
     var msg = model.get('installActionString');
     var installer = this.ui.installer;
     var installerButton = this.ui.installerButton;
-
-    // reset progress
-    this.ui.installerProgress.css('right', '100%');
 
     if (_.contains(CONF.INSTALL_STATE, state)) {
       installerButton.text(msg);
@@ -68,16 +63,6 @@ module.exports = Marionette.Behavior.extend({
       oldState === CONF.INSTALL_STATE.REMOVING
     ) {
       this.ui.statusMessage.text('Snap removed!');
-    }
-  },
-
-  onProgressChange: function(model) {
-    var state = model.get('status');
-    var progress;
-
-    if (state === CONF.INSTALL_STATE.INSTALLING) {
-      progress = (100 - (model.get('progress') | 0)) + '%';
-      this.ui.installerProgress.css('right', progress);
     }
   },
 

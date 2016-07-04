@@ -31,31 +31,3 @@
   text-align:center;
   font-size:12px;
 }
-
-.b-installer__progress {
-  background: white;
-  border-radius:10px;
-  border:1px solid #dd4814;
-  bottom:0;
-  display:none;
-  height:5px;
-  left:0;
-  margin:0;
-  padding:0;
-  position:absolute;
-  right:0;
-}
-
-.b-installer__value {
-  background-color:rgba(221, 72, 20, 1);
-  bottom:0;
-  left:0;
-  position:absolute;
-  right:100%;
-  top:0;
-  transition: right 0.1s;
-}
-
-.b-installer_thinking .b-installer__progress {
-  display:block;
-}
