@@ -81,6 +81,28 @@ func (h *Handler) getSnap(name string) (*client.Snap, error) {
 	return snap, nil
 }
 
+func (h *Handler) augmentAvailableWithInstalled(available, installed []*client.Snap) []*client.Snap {
+	indexOfSnap := func(snap *client.Snap, snaps []*client.Snap) int {
+		for i, s := range snaps {
+			if s.Name == snap.Name {
+				return i
+			}
+		}
+		return -1
+	}
+
+	augmented := make([]*client.Snap, len(available))
+	for i, s := range available {
+		if idx := indexOfSnap(s, installed); idx > -1 {
+			augmented[i] = installed[idx]
+		} else {
+			augmented[i] = s
+		}
+	}
+
+	return augmented
+}
+
 func (h *Handler) packagePayload(resource string) (snapPkg, error) {
 	snap, err := h.getSnap(resource)
 	if err != nil {
