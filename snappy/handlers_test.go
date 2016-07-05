@@ -18,6 +18,8 @@
 package snappy
 
 import (
+	"encoding/json"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -65,4 +67,59 @@ func (s *HandlersSuite) TestGetAll(c *C) {
 		c.Assert(s.c.CalledListSnaps, Equals, tt.CalledListSnaps)
 		c.Assert(s.c.Query, Equals, tt.Query)
 	}
+}
+
+func (s *HandlersSuite) TestJsonResponseOrErrorMarshalError(c *C) {
+	unmarshable := map[int]int{1: 1}
+	rec := httptest.NewRecorder()
+
+	s.h.jsonResponseOrError(unmarshable, rec)
+
+	c.Assert(rec.Code, Equals, http.StatusInternalServerError)
+	c.Assert(rec.Body.String(), Matches, "Error: .*")
+}
+
+func (s *HandlersSuite) TestJsonResponseOrError(c *C) {
+	type foo struct {
+		S string
+	}
+
+	response := foo{"hello"}
+	rec := httptest.NewRecorder()
+
+	s.h.jsonResponseOrError(response, rec)
+
+	c.Assert(rec.Code, Equals, http.StatusOK)
+	c.Assert(rec.HeaderMap["Content-Type"][0], Equals, "application/json")
+
+	var r foo
+	err := json.Unmarshal(rec.Body.Bytes(), &r)
+	c.Assert(err, IsNil)
+	c.Assert(r, Equals, response)
+}
+
+func (s *HandlersSuite) TestSnapOperationResponseError(c *C) {
+	rec := httptest.NewRecorder()
+
+	s.h.snapOperationResponse("foo", errors.New("bar"), rec)
+
+	c.Assert(rec.Code, Equals, http.StatusInternalServerError)
+
+	var r response
+	err := json.Unmarshal(rec.Body.Bytes(), &r)
+	c.Assert(err, IsNil)
+	c.Assert(r, DeepEquals, response{Message: "Processing error", Package: "foo"})
+}
+
+func (s *HandlersSuite) TestSnapOperationResponse(c *C) {
+	rec := httptest.NewRecorder()
+
+	s.h.snapOperationResponse("foo", nil, rec)
+
+	c.Assert(rec.Code, Equals, http.StatusAccepted)
+
+	var r response
+	err := json.Unmarshal(rec.Body.Bytes(), &r)
+	c.Assert(err, IsNil)
+	c.Assert(r, DeepEquals, response{Message: "Accepted", Package: "foo"})
 }

@@ -24,7 +24,6 @@ import (
 	"net/http"
 
 	"github.com/snapcore/snapd/client"
-	"github.com/snapcore/snapd/snappy"
 	"github.com/snapcore/snapweb/statustracker"
 
 	"github.com/gorilla/mux"
@@ -48,10 +47,32 @@ func (h *Handler) setClient(c SnapdClient) {
 	h.snapdClient = c
 }
 
-func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) jsonResponseOrError(v interface{}, w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(w)
 
+	if err := enc.Encode(v); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "Error: %s", err)
+		log.Print(err)
+	}
+}
+
+func (h *Handler) snapOperationResponse(name string, err error, w http.ResponseWriter) {
+	msg := "Accepted"
+	status := http.StatusAccepted
+
+	if err != nil {
+		msg = "Processing error"
+		status = http.StatusInternalServerError
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+	h.jsonResponseOrError(response{Message: msg, Package: name}, w)
+}
+
+func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
 	snapCondition := availableSnaps
 	if r.FormValue("installed_only") == "true" {
 		snapCondition = installedSnaps
@@ -61,103 +82,40 @@ func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
 	payload, err := h.allPackages(snapCondition, query)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		enc.Encode(fmt.Sprintf("Error: %s", err))
+		fmt.Fprintf(w, "Error: %s", err)
 		return
 	}
 
-	if err := enc.Encode(payload); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		// give up on json
-		fmt.Fprintf(w, "Error: %s", err)
-		log.Print(err)
-	}
+	h.jsonResponseOrError(payload, w)
 }
 
 func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	// Get the Key.
-	vars := mux.Vars(r)
-	name := vars["name"]
-	enc := json.NewEncoder(w)
+	name := mux.Vars(r)["name"]
 
 	payload, err := h.packagePayload(name)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		enc.Encode(fmt.Sprintln(err, name))
+		fmt.Fprintln(w, err, name)
 		return
 	}
 
-	if err := enc.Encode(payload); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		// give up on json
-		fmt.Fprintf(w, "Error: %s", err)
-		log.Print(err)
-	}
+	h.jsonResponseOrError(payload, w)
 }
 
 func (h *Handler) add(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	// Get the Key.
-	vars := mux.Vars(r)
-	name := vars["name"]
+	name := mux.Vars(r)["name"]
 
 	err := h.installPackage(name)
-	msg, status := respond(err)
 
-	response := response{Message: msg, Package: name}
-	bs, err := json.Marshal(response)
-	if err != nil {
-		// giving up on json
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(w, "Error: %s", err)
-		log.Print(err)
-		return
-	}
-
-	w.WriteHeader(status)
-	w.Write(bs)
+	h.snapOperationResponse(name, err, w)
 }
 
 func (h *Handler) remove(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	// Get the Key.
-	vars := mux.Vars(r)
-	name := vars["name"]
+	name := mux.Vars(r)["name"]
 
 	err := h.removePackage(name)
-	msg, status := respond(err)
 
-	response := response{Message: msg, Package: name}
-	bs, err := json.Marshal(response)
-	if err != nil {
-		// giving up on json
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(w, "Error: %s", err)
-		log.Print(err)
-		return
-	}
-
-	w.WriteHeader(status)
-	w.Write(bs)
-}
-
-func respond(err error) (msg string, status int) {
-	switch err {
-	case snappy.ErrAlreadyInstalled:
-		status = http.StatusOK
-		msg = "Installed"
-	case snappy.ErrPackageNotFound:
-		status = http.StatusNotFound
-		msg = "Package not found"
-	case nil:
-		status = http.StatusAccepted
-		msg = "Accepted"
-	default:
-		status = http.StatusInternalServerError
-		msg = "Processing error"
-	}
-
-	return msg, status
+	h.snapOperationResponse(name, err, w)
 }
 
 // MakeMuxer sets up the handlers multiplexing to handle requests against snappy's
