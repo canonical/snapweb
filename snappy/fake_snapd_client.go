@@ -23,13 +23,13 @@ import (
 
 // FakeSnapdClient is a fake SnapdClient for testing purposes
 type FakeSnapdClient struct {
-	Snaps           []*client.Snap
-	StoreSnaps      []*client.Snap
-	Err             error
-	StoreErr        error
-	CalledListSnaps bool
-	Query           string
-	Version         string
+	Snaps      []*client.Snap
+	StoreSnaps []*client.Snap
+	Err        error
+	StoreErr   error
+	CalledFind bool
+	Query      string
+	Version    string
 }
 
 // Icon returns the icon of an installed snap
@@ -51,13 +51,12 @@ func (f *FakeSnapdClient) Snap(name string) (*client.Snap, *client.ResultInfo, e
 
 // List lists the installed snaps
 func (f *FakeSnapdClient) List(names []string) ([]*client.Snap, error) {
-	f.CalledListSnaps = true
-
 	return f.Snaps, f.Err
 }
 
 // Find returns the results of searching for snaps with the given options
 func (f *FakeSnapdClient) Find(opts *client.FindOptions) ([]*client.Snap, *client.ResultInfo, error) {
+	f.CalledFind = true
 	f.Query = opts.Query
 
 	return f.StoreSnaps, nil, f.StoreErr
