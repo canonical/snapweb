@@ -5,7 +5,7 @@
   padding:0 10px;
 }
 
-.b-headline .b-headline__store-link {
+.region-installed .b-headline__store-link {
   width:auto;
   text-decoration:none;
   margin-right:10px;
@@ -27,5 +27,9 @@
 @media screen and (min-width: 640px) {
   .b-headline {
     padding:0 15px;
+  }
+
+  .region-installed .b-headline__store-link {
+    margin-right:15px;
   }
 }
