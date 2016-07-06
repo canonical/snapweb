@@ -114,17 +114,22 @@ func (h *Handler) packagePayload(resource string) (snapPkg, error) {
 
 func (h *Handler) allPackages(snapCondition int, query string) ([]snapPkg, error) {
 	var snaps []*client.Snap
-	var err error
 
-	if snapCondition == installedSnaps {
-		snaps, err = h.snapdClient.List(nil)
-	} else {
-		opts := &client.FindOptions{Query: query}
-		snaps, _, err = h.snapdClient.Find(opts)
-	}
-
+	installed, err := h.snapdClient.List(nil)
 	if err != nil {
 		return nil, err
+	}
+
+	if snapCondition == installedSnaps {
+		snaps = make([]*client.Snap, len(installed))
+		copy(snaps, installed)
+	} else {
+		opts := &client.FindOptions{Query: query}
+		available, _, err := h.snapdClient.Find(opts)
+		if err != nil {
+			return nil, err
+		}
+		snaps = h.augmentAvailableWithInstalled(available, installed)
 	}
 
 	snapPkgs := make([]snapPkg, 0, len(snaps))
