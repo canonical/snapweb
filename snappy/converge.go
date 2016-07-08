@@ -41,6 +41,7 @@ type snapPkg struct {
 	Description   string    `json:"description"`
 	Icon          string    `json:"icon"`
 	Status        string    `json:"status"`
+	Price         string    `json:"price,omitempty"`
 	Message       string    `json:"message,omitempty"`
 	Progress      float64   `json:"progress,omitempty"`
 	InstalledSize int64     `json:"installed_size,omitempty"`
@@ -148,6 +149,7 @@ func (h *Handler) snapToPayload(snapQ *client.Snap) snapPkg {
 		Description: snapQ.Description,
 		Type:        snap.Type(snapQ.Type),
 		Status:      h.statusTracker.Status(snapQ),
+		Price:       "", // TODO: get snap price
 	}
 
 	isInstalled := snapQ.Status == client.StatusInstalled || snapQ.Status == client.StatusActive

@@ -15,6 +15,13 @@
   margin-right:10px;
 }
 
+.b-snaplist__price {
+  float:left;
+  color:#888;
+  margin:7px 0 0 0;
+  font-size:14px;
+}
+
 /** grid style **/
 
 .b-snaplist_grid {
