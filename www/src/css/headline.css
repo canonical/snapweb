@@ -1,16 +1,25 @@
 /** @define b-headline; weak */
 
 .b-headline {
+  margin-top:20px;
 }
 
-.b-headline .b-layout__container {
-  display:flex;
-  align-items: baseline;
+.b-headline__h2 {
+  margin:0 0 0 10px
 }
 
-.b-headline__h1 {
-  flex:1;
-  font-size:18px;
-  font-weight:400;
-  margin:20px 15px 5px 15px;
+.b-headline .b-headline__store-link {
+  width:auto;
+  text-decoration:none;
+  margin-right:10px;
+}
+
+@media screen and (min-width: 640px) {
+  .b-headline__h2 {
+    margin-left:15px;
+  }
+
+  .b-headline .b-headline__store-link {
+    margin-right:15px;
+  }
 }

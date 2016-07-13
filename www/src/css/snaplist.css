@@ -1,6 +1,7 @@
 /** @define b-snaplist; weak */
 
 .b-snaplist {
+  margin:0 10px;
 }
 
 .b-snaplist__item {
@@ -11,25 +12,21 @@
   display:flex;
   font-size: 11px;
   justify-content: flex-end;
+  margin-right:10px;
 }
 
 /** grid style **/
 
 .b-snaplist_grid {
-  display:flex;
-  flex-wrap: wrap;
 }
 
 .b-snaplist_grid .b-snaplist__item {
-  flex: 0 1 auto;
-  padding:7px;
-  font-size:0;
 }
 
 .b-snaplist_grid .b-snaplist__item * {
-  font-size: 12px;
   color:#999;
   text-align: center;
+  width:100%;
 }
 
 .b-snaplist_grid .b-snaplist__name {
@@ -40,26 +37,6 @@
   margin-top:4px;
 }
 
-.b-snaplist_grid .b-snaplist__name,
-.b-snaplist_grid .b-icon img {
-  width:90px;
-}
-
-.b-snaplist :not(.b-snaplist__item-app) .b-icon::after {
-  content: attr(data-type);
-  position:absolute;
-  width:100%;
-  bottom:0;
-  left:0;
-  right:0;
-  background: rgba(221,72,20,0.8);
-  color:#fff;
-  z-index:0;
-  padding:3px 0 5px;
-  text-transform:uppercase;
-  font-size:10px;
-}
-
 .b-snaplist_grid .b-snaplist__version,
 .b-snaplist_grid .b-snaplist__type,
 .b-snaplist_grid .b-snaplist__developer,
@@ -67,10 +44,13 @@
   display:none;
 }
 
+.b-snaplist_grid .b-icon img {
+  height:auto;
+}
+
 /** row style **/
 
 .b-snaplist_row {
-  margin:1em 0;
 }
 
 .b-snaplist_row .b-snaplist__item {
@@ -92,11 +72,6 @@
 .b-snaplist_row .b-snaplist__item:last-child {
   margin-bottom:0;
   border-bottom:1px solid #ddd;
-}
-
-
-.b-snaplist_row .b-icon {
-  flex:0 0 60px;
 }
 
 .b-snaplist_row .b-icon img {
@@ -151,29 +126,12 @@
   display:none;
 }
 
-@media (--xxs) {
-  .b-snaplist_grid .b-snaplist__item {
-    padding:13px 8px;
+@media screen and (min-width: 640px) {
+  .b-snaplist {
+    margin:0 15px;
   }
 
-  .b-snaplist_row .b-snaplist__src {
-    display:block;
+  .b-snaplist__actions {
+    margin-right:15px;
   }
-}
-
-@media (--xs) {
-  .b-snaplist_grid .b-snaplist__item {
-    padding:14px 9px;
-  }
-  .b-snaplist_row .b-snaplist__size {
-    display: block;
-  }
-}
-
-@media (--s) {
-  .b-snaplist_grid .b-snaplist__item {
-    padding:15px 10px;
-  }
-}
-@media (--m) {
 }
