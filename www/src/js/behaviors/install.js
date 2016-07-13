@@ -11,6 +11,7 @@ module.exports = Marionette.Behavior.extend({
 
   modelEvents: {
     'change:installHTMLClass': 'onHTMLClassChange',
+    'change:installButtonClass': 'onButtonClassChange',
     'change:status': 'onStatusChange',
     'change:progress': 'onProgressChange'
   },
@@ -27,6 +28,12 @@ module.exports = Marionette.Behavior.extend({
     var installer = this.ui.installer;
     installer.removeClass(model.previous('installHTMLClass'))
     .addClass(model.get('installHTMLClass'));
+  },
+
+  onButtonClassChange: function(model) {
+    var button = this.ui.installerButton;
+    button.removeClass(model.previous('installButtonClass'))
+    .addClass(model.get('installButtonClass'));
   },
 
   onStatusChange: function(model) {
