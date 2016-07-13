@@ -16,6 +16,9 @@ module.exports = {
       }),
       success: function(snaplist) {
         var view =  new SearchLayoutView({
+          model: new Backbone.Model({
+            query: q
+          }),
           collection: snaplist
         });
         chan.command('set:content', view);

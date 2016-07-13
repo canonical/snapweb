@@ -29,6 +29,7 @@ $primary-button-color: #38b44a;
 @include vf-buttons;
 @include vf-left;
 @include vf-right;
+@include vf-forms;
 
 // IMPORT VANILLA OVERRIDES
 @import "vanilla-overrides";
