@@ -166,10 +166,6 @@ module.exports = Backbone.Model.extend({
       response.icon = this.defaults.icon;
     }
 
-    if (response.hasOwnProperty('developer') && !response.developer.length) {
-      response.developer = this.defaults.developer;
-    }
-
     if (type) {
       if (_.contains(CONF.NON_INSTALLABLE_TYPES, type)) {
         response.isInstallable = false;
@@ -206,7 +202,6 @@ module.exports = Backbone.Model.extend({
   defaults: {
     icon: '/public/images/default-package-icon.svg',
     installActionString: false,
-    developer: '-',
     isInstallable: true
   }
 
