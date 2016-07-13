@@ -6,20 +6,25 @@
 .b-snap .b-icon {
 }
 
+.b-icon-wrapper {
+  margin-left:10px;
+}
+
 .b-snap__banner {
-  display: flex;
-  line-height:1.3;
-  padding:1.3em 0;
-  align-items: flex-start;
+  padding-top:20px;
+  margin-bottom:0;
 }
 
 .b-snap__meta {
-  flex: 2;
-  margin-left:15px;
+  margin-left:10px;
 }
 
-.b-snap__meta > * {
-  margin:0;
+.b-snap__title {
+  margin-bottom:0.25em;
+}
+
+.b-snap__developer {
+  color:#B3B3B3;
 }
 
 .b-snap__actions {
@@ -27,7 +32,7 @@
 }
 
 .b-snap__actions .b-installer {
-  margin-left:auto;
+  margin:0 10px;
 }
 
 .b-snap__navigation {
@@ -74,4 +79,27 @@
 
 .b-snap__tab-content {
   padding:1.3em 0;
+}
+
+.b-snap__details {
+  margin:30px 10px 20px 10px;
+}
+
+@media screen and (min-width: 640px) {
+  .b-icon-wrapper {
+    margin-left:15px;
+  }
+
+  .b-snap__meta {
+    margin-left:0;
+  }
+
+  .b-snap__details {
+    margin-left:15px;
+    margin-right:15px;
+  }
+
+  .b-snap__actions .b-installer {
+    margin-right:15px;
+  }
 }

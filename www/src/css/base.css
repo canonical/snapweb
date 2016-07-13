@@ -7,19 +7,10 @@ html {
 }
 
 html, body {
-  font: normal 300 15px/1.4 'Ubuntu', 'Arial', 'libra sans', sans-serif;
   background-color:white;
   color:#333;
 }
 
-body {
-  background-color:#f7f7f7;
-}
-
 a {
   color:#dd4814;
-}
-
-h1 {
-  font-weight:300;
 }

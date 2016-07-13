@@ -90,6 +90,7 @@ module.exports = Backbone.Model.extend({
   onStatusChange: function(model) {
     this.setInstallActionString(model);
     this.setInstallHTMLClass(model);
+    this.setInstallButtonClass(model);
   },
 
   // XXX move to install behaviour
@@ -123,13 +124,13 @@ module.exports = Backbone.Model.extend({
 
     switch (state) {
       case CONF.INSTALL_STATE.INSTALLED:
-        action = 'Remove';
+        action = 'Remove snap';
         break;
       case CONF.INSTALL_STATE.INSTALLING:
         action = 'Installing…';
         break;
       case CONF.INSTALL_STATE.REMOVED:
-        action = 'Install';
+        action = 'Install this snap';
         break;
       case CONF.INSTALL_STATE.REMOVING:
         action = 'Removing…';
@@ -142,6 +143,23 @@ module.exports = Backbone.Model.extend({
     }
 
     return model.set('installActionString', action);
+  },
+
+  setInstallButtonClass: function(model) {
+    var state = model.get('status');
+    var installButtonClass;
+
+    switch (state) {
+      case CONF.INSTALL_STATE.INSTALLED:
+      case CONF.INSTALL_STATE.INSTALLING:
+        installButtonClass = 'button--secondary';
+        break;
+      case CONF.INSTALL_STATE.REMOVED:
+      case CONF.INSTALL_STATE.REMOVING:
+        installButtonClass = 'button--primary';
+    }
+
+    return model.set('installButtonClass', installButtonClass);
   },
 
   parse: function(response) {
@@ -164,10 +182,6 @@ module.exports = Backbone.Model.extend({
 
     if (response.hasOwnProperty('icon') && !response.icon.length) {
       response.icon = this.defaults.icon;
-    }
-
-    if (response.hasOwnProperty('developer') && !response.developer.length) {
-      response.developer = this.defaults.developer;
     }
 
     if (type) {
@@ -206,7 +220,6 @@ module.exports = Backbone.Model.extend({
   defaults: {
     icon: '/public/images/default-package-icon.svg',
     installActionString: false,
-    developer: '-',
     isInstallable: true
   }
 

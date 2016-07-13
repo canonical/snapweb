@@ -1,28 +1,29 @@
-<div class="b-layout__container">
-  <div class="b-snap__banner">
-    <div class="b-icon">
-      <img src="{{ icon }}" width="70" height="70">
-    </div>
-    <div class="b-snap__meta">
-      <h1 class="b-snap__title">{{ name }} {{ version }} {{ binary_filesize }}</h1>
-      <p>
-      <span>{{ binary_filesize}}</span>
-      </p>
-    </div>
-    <div class="b-snap__actions">
-      {{> installer}}
+<div class="b-grey-wrapper">
+  <div class="inner-wrapper">
+    <div class="b-snap__banner twelve-col last-col">
+      <div class="two-col">
+        <div class="b-icon-wrapper">
+          <img class="b-icon" src="{{ icon }}" width="125" height="125">
+        </div>
+      </div>
+      <div class="b-snap__meta six-col">
+        <h1 class="b-snap__title">{{ name }}</h1>
+        <div class="b-snap__developer">{{ developer }}</div>
+      </div>
+      <div class="b-snap__actions four-col last-col">
+        {{> installer buttonClass="b-installer__button_large"}}
+      </div>
     </div>
   </div>
 </div>
 
-<div class="b-layout__container">
-  {{#if description}}
-  <p>{{ description }}</p>
-  {{/if}}
-  {{#if prettyInstalledSize}}
-  <p>Installed size: {{prettyInstalledSize}}</p>
-  {{/if}}
-  {{#if prettyDownloadSize}}
-  <p>Download size: {{prettyDownloadSize}}</p>
-  {{/if}}
+<div class="inner-wrapper">
+  <div class="eight-col">
+    <div class="b-snap__details">
+	  <h3>About</h3>
+      {{#if description}}
+      <p>{{ description }}</p>
+      {{/if}}
+    </div>
+  </div>
 </div>

@@ -1,16 +1,31 @@
 /** @define b-headline; weak */
 
 .b-headline {
+  margin-top:20px;
+  padding:0 10px;
 }
 
-.b-headline .b-layout__container {
-  display:flex;
-  align-items: baseline;
+.b-headline .b-headline__store-link {
+  width:auto;
+  text-decoration:none;
+  margin-right:10px;
 }
 
-.b-headline__h1 {
-  flex:1;
-  font-size:18px;
-  font-weight:400;
-  margin:20px 15px 5px 15px;
+.b-headline__search-button {
+  background:none;
+  position:absolute;
+  top:6px;
+  right:9px;
+  padding:0;
+  width:auto;
+}
+
+.b-headline__search-button:hover {
+  background-color:transparent;
+}
+
+@media screen and (min-width: 640px) {
+  .b-headline {
+    padding:0 15px;
+  }
 }
