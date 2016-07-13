@@ -1,121 +1,43 @@
 /** @define b-banner; weak */
 
 .b-banner {
-  background-color:#37373d;
-  color:#efefef;
-  line-height:20px;
-}
-.b-banner .b-layout__container {
-  display:flex;
-  align-items:center;
 }
 
-.b-banner img {
-  display:block;
+.b-banner__primary-nav {
+  float:left;
+  margin:0 0 0 5px;
 }
 
-.b-banner a {
-  text-decoration:none;
-  color:#fff;
-  display:block;
-}
-
-.b-banner a.active {
-}
-
-.b-banner__brand a {
-  display: flex;
-  align-items:center;
-  padding:10px 1em;
-}
-
-.b-banner__brand img {
-  margin:0 10px 0 0;
-}
-
-.b-banner__search {
-  flex:1;
-}
-
-.b-banner__form {
-  display:flex;
-}
-
-.b-banner__search input[type=search] {
-  width:50%;
-  border:none;
-  height:24px;
-  line-height:20px;
-  padding:12px 25px 12px 15px;
-  background-color:#333;
-}
-
-.b-banner__search input[type=search]:focus {
-  outline:0;
-}
-
-.b-banner__submit {
-  display:block;
-  border:0;
-  height:60px;
-  width:60px;
-  background: #333 url(/public/images/search.svg) 50% 50% no-repeat;
-  background-size:20px;
-  cursor:pointer;
-}
-
-.b-banner__submit:active, 
-.b-banner__submit:focus {
-  outline:0;
-}
-
-.b-banner__submit:hover {
-  background-color:#dd4814;
-}
-
-.b-banner__nav-item {
+.b-banner__nav-item-icon {
+  width:25px;
+  height:25px;
   position:relative;
+  top:5px;
+  margin-top:1px;
 }
 
-.b-banner__nav-item::before {
-  opacity:0;
-  position:absolute;
-  content:'';
-  background:#dd4814;
-  bottom:0;
-  left:0;
-  right:0;
-  height:2px;
-  transition: opacity 0.3s;
+.b-banner__nav-item-link {
+  box-sizing:initial;
 }
 
-.b-banner__nav-item_active::before {
-  opacity:1;
+.b-banner__nav-item-link.active {
+  height:29px;
 }
 
-.b-banner__primary-nav .b-banner__nav-item a {
-  white-space: nowrap;
-  padding:12px 1em;
+.b-banner__nav-item-label {
+  display:none;
 }
 
-.b-banner__nav-item:hover {
-  background-color:#dd4814;
-}
+@media screen and (min-width: 640px) {
+  .b-banner__nav-item-icon {
+    display:none;
+  }
 
-.b-banner__secondary-nav {
-  margin-left:auto;
-}
+  .b-banner__primary-nav {
+    margin:0;
+  }
 
-.b-banner__secondary-nav .b-banner__nav-item a {
-  padding: 15px;
-}
-
-.b-banner__secondary-nav .b-banner__nav-item svg {
-  display:block;
-  height:30px;
-  width:30px;
-}
-
-.b-banner__secondary-nav .b-banner__nav-item:hover {
-  background-color:#dd4814;
+  .b-banner__nav-item-link.active {
+    height:18px;
+  }
 }

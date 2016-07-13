@@ -17,10 +17,11 @@ module.exports = Backbone.Marionette.LayoutView.extend({
     this.showChildView('installedRegion', new SnapListView({
       model: new Backbone.Model({
         title: 'Installed snaps',
+        isHomeActive: true,
         isGrid: true,
         isAlpha: true,
-        canSort: true,
-        canStyle: true
+        canSort: false,
+        canStyle: false
       }),
       collection: this.collection
     }));
