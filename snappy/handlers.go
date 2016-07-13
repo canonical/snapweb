@@ -47,6 +47,14 @@ func (h *Handler) setClient(c SnapdClient) {
 	h.snapdClient = c
 }
 
+func (h *Handler) handleAuthError(err error, w http.ResponseWriter) bool {
+	if e, ok := err.(*client.Error); ok && e.StatusCode == http.StatusUnauthorized {
+		w.WriteHeader(http.StatusUnauthorized)
+		return true
+	}
+	return false
+}
+
 func (h *Handler) jsonResponseOrError(v interface{}, w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(w)
@@ -80,6 +88,10 @@ func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
 	query := r.FormValue("q")
 
 	payload, err := h.allPackages(snapCondition, query)
+	if h.handleAuthError(err, w) {
+		return
+	}
+
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(w, "Error: %s", err)
@@ -93,6 +105,10 @@ func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
 	name := mux.Vars(r)["name"]
 
 	payload, err := h.packagePayload(name)
+	if h.handleAuthError(err, w) {
+		return
+	}
+
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, err, name)
@@ -106,6 +122,9 @@ func (h *Handler) add(w http.ResponseWriter, r *http.Request) {
 	name := mux.Vars(r)["name"]
 
 	err := h.installPackage(name)
+	if h.handleAuthError(err, w) {
+		return
+	}
 
 	h.snapOperationResponse(name, err, w)
 }
