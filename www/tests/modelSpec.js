@@ -68,6 +68,7 @@ describe('Snap', function() {
     });
 
     it('should set pretty byte attr or empty string if bad', function() {
+      // installed size
       this.model.set('installed_size', 0);
       expect(this.model.get('prettyInstalledSize')).toBe('0 B');
       // we coerce strings to numbers in the setters
@@ -76,6 +77,16 @@ describe('Snap', function() {
       // bad
       this.model.set('installed_size', 'foo');
       expect(this.model.get('prettyInstalledSize')).toBe('');
+
+      // download size
+      this.model.set('download_size', 0);
+      expect(this.model.get('prettyDownloadSize')).toBe('0 B');
+      // we coerce strings to numbers in the setters
+      this.model.set('download_size', '1');
+      expect(this.model.get('prettyDownloadSize')).toBe('1 B');
+      // bad
+      this.model.set('download_size', 'foo');
+      expect(this.model.get('prettyDownloadSize')).toBe('');
     });
 
     it('should parse response to create prettyInstalledSize', function() {
