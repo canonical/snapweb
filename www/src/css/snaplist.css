@@ -15,6 +15,10 @@
   margin-right:10px;
 }
 
+.b-add-more-snaps {
+  padding:0 10px;
+}
+
 /** grid style **/
 
 .b-snaplist_grid {
@@ -187,5 +191,9 @@
 
   .b-snaplist__actions {
     margin-right:15px;
+  }
+
+  .b-add-more-snaps {
+    padding:0 15px;
   }
 }
