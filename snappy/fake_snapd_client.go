@@ -30,6 +30,8 @@ type FakeSnapdClient struct {
 	CalledListSnaps bool
 	Query           string
 	Version         string
+	//RootMacaroon       string
+	//DischargeMacaroons []string
 }
 
 // Icon returns the icon of an installed snap
@@ -77,5 +79,16 @@ func (f *FakeSnapdClient) Remove(name string, options *client.SnapOptions) (stri
 func (f *FakeSnapdClient) ServerVersion() (string, error) {
 	return f.Version, f.Err
 }
+
+// UpdateMacaroons updates the macaroons used to control store authentication
+// XXX
+/*
+func (f *FakeSnapdClient) UpdateMacaroons(root string, discharges []string) error {
+	f.RootMacaroon = root
+	f.DischargeMacaroons = discharges
+
+	return f.Err
+}
+*/
 
 var _ SnapdClient = (*FakeSnapdClient)(nil)

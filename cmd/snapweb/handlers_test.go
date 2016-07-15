@@ -19,6 +19,9 @@ package main
 
 import (
 	"errors"
+	"fmt"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	. "gopkg.in/check.v1"
@@ -56,4 +59,41 @@ func (s *HandlersSuite) TestGetSnappyVersionError(c *C) {
 func (s *HandlersSuite) TestGetSnappyVersion(c *C) {
 	s.c.Version = "1000 (series 16)"
 	c.Assert(getSnappyVersion(), Equals, "snapd 1000 (series 16)")
+}
+
+const (
+	macaroon  = "store-root-macaroon"
+	discharge = "store-discharge-macaroon"
+)
+
+func (s *HandlersSuite) TestAuthHandlerIncorrectParams(c *C) {
+	urls := []string{
+		"/auth?foo=bar",
+		"/auth?macaroon=&discharge=",
+		"/auth?macaroon=XXX&discharge=",
+		"/auth?macaroon=&discharge=YYY",
+	}
+
+	for _, url := range urls {
+		rec := httptest.NewRecorder()
+		req, err := http.NewRequest("POST", url, nil)
+		c.Assert(err, IsNil)
+
+		authHandler(rec, req)
+
+		c.Assert(rec.Code, Equals, http.StatusBadRequest)
+	}
+}
+
+func (s *HandlersSuite) TestAuthHandler(c *C) {
+	rec := httptest.NewRecorder()
+	url := fmt.Sprintf("/auth?macaroon=%s&discharge=%s", macaroon, discharge)
+	req, err := http.NewRequest("POST", url, nil)
+	c.Assert(err, IsNil)
+
+	authHandler(rec, req)
+
+	// TODO: sends macaroons to snapd API via client
+	c.Assert(rec.Code, Equals, http.StatusMovedPermanently)
+	c.Assert(rec.HeaderMap["Location"][0], Equals, "/")
 }
