@@ -2,6 +2,8 @@ var _ = require('lodash');
 var Snap = require('../src/js/models/snap.js');
 var Backbone = require('backbone');
 var CONF = require('../src/js/config.js');
+var Radio = require('backbone.radio');
+var chan = Radio.channel('root');
 
 describe('Snap', function() {
 
@@ -156,6 +158,19 @@ describe('Snap', function() {
         'contentType': 'application/json',
         'responseText': '{}'
       });
+    });
+
+    it('redirects to SSO on authentication error', function() {
+      var redirects = 0;
+      chan.comply('redirect:sso', function() {
+        redirects++;
+      });
+
+      this.model.save();
+      jasmine.Ajax.requests.mostRecent().respondWith({
+        'status': 401
+      });
+      expect(redirects).toBe(1);
     });
   });
 });

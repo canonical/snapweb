@@ -6,6 +6,8 @@ var Backbone = require('backbone');
 Backbone.$ = $;
 var Marionette = require('backbone.marionette');
 var Radio = require('backbone.radio');
+var chan = Radio.channel('root');
+var CONF = require('./config.js');
 if (window.__agent) {
   window.__agent.start(Backbone, Marionette);
 }
@@ -22,4 +24,8 @@ $(document).ready(function() {
 
 snapweb.on('start', function() {
   Backbone.history.start({pushState: true});
+});
+
+chan.comply('redirect:sso', function() {
+  window.location = CONF.SSO_URL;
 });

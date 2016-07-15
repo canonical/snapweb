@@ -45,6 +45,11 @@ module.exports = Backbone.Model.extend({
     });
 
     this.on('error', function(model, response, opts) {
+      if (response.status == 401) {
+        chan.command('redirect:sso');
+        return;
+      }
+
       var json = JSON.parse(response.responseText);
       var previous = model.previousAttributes();
       var message;
