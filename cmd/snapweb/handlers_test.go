@@ -18,7 +18,12 @@
 package main
 
 import (
+	"bytes"
 	"errors"
+	"log"
+	"net/http"
+	"net/http/httptest"
+	"os"
 	"testing"
 
 	. "gopkg.in/check.v1"
@@ -56,4 +61,23 @@ func (s *HandlersSuite) TestGetSnappyVersionError(c *C) {
 func (s *HandlersSuite) TestGetSnappyVersion(c *C) {
 	s.c.Version = "1000 (series 16)"
 	c.Assert(getSnappyVersion(), Equals, "snapd 1000 (series 16)")
+}
+
+func (s *HandlersSuite) TestLoggingHandler(c *C) {
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {})
+	logged := loggingHandler(handler)
+
+	var output bytes.Buffer
+	log.SetOutput(&output)
+	defer func() {
+		log.SetOutput(os.Stdout)
+	}()
+
+	rec := httptest.NewRecorder()
+	req, err := http.NewRequest("GET", "/foo", nil)
+	c.Assert(err, IsNil)
+
+	logged.ServeHTTP(rec, req)
+
+	c.Assert(output.String(), Matches, ".*GET /foo\n")
 }
