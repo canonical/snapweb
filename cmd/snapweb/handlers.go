@@ -30,9 +30,6 @@ import (
 	"github.com/snapcore/snapweb/snappy"
 )
 
-type slug string
-type pages map[slug]string
-
 type branding struct {
 	Name    string
 	Subname string
