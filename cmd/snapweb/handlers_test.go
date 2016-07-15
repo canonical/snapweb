@@ -81,3 +81,7 @@ func (s *HandlersSuite) TestLoggingHandler(c *C) {
 
 	c.Assert(output.String(), Matches, ".*GET /foo\n")
 }
+
+func (s *HandlersSuite) TestGetBranding(c *C) {
+	c.Assert(getBranding(), DeepEquals, branding{Name: "Ubuntu", Subname: ""})
+}
