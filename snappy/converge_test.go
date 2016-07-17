@@ -159,6 +159,43 @@ func (s *PayloadSuite) TestPayloadSnapInstalling(c *C) {
 	c.Assert(payload.Status, Equals, statustracker.StatusInstalling)
 }
 
+type AugmentSuite struct {
+	h Handler
+}
+
+var _ = Suite(&AugmentSuite{})
+
+func (s *AugmentSuite) TestAugmentSideloadedSnap(c *C) {
+	available := []*client.Snap{
+		newSnap("app1"),
+	}
+	installed := []*client.Snap{
+		newSnap("app2"),
+	}
+	merged := s.h.augmentAvailableWithInstalled(available, installed)
+
+	c.Assert(merged, HasLen, 1)
+	c.Assert(merged[0].Name, Equals, "app1")
+}
+
+func (s *AugmentSuite) TestAugmentInstalledSnap(c *C) {
+	available := []*client.Snap{
+		newSnap("app1"),
+		newSnap("app2"),
+	}
+	installedSnap := newSnap("app2")
+	installedSnap.Version = "0.0.1"
+	installed := []*client.Snap{
+		installedSnap,
+	}
+	merged := s.h.augmentAvailableWithInstalled(available, installed)
+
+	c.Assert(merged, HasLen, 2)
+	c.Assert(merged[0].Name, Equals, "app1")
+	c.Assert(merged[1].Name, Equals, "app2")
+	c.Assert(merged[1].Version, Equals, "0.0.1")
+}
+
 type AllPackagesSuite struct {
 	c *FakeSnapdClient
 	h Handler

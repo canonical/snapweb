@@ -81,6 +81,28 @@ func (h *Handler) getSnap(name string) (*client.Snap, error) {
 	return snap, nil
 }
 
+func (h *Handler) augmentAvailableWithInstalled(available, installed []*client.Snap) []*client.Snap {
+	indexOfSnap := func(snap *client.Snap, snaps []*client.Snap) int {
+		for i, s := range snaps {
+			if s.Name == snap.Name {
+				return i
+			}
+		}
+		return -1
+	}
+
+	augmented := make([]*client.Snap, len(available))
+	for i, s := range available {
+		if idx := indexOfSnap(s, installed); idx > -1 {
+			augmented[i] = installed[idx]
+		} else {
+			augmented[i] = s
+		}
+	}
+
+	return augmented
+}
+
 func (h *Handler) packagePayload(resource string) (snapPkg, error) {
 	snap, err := h.getSnap(resource)
 	if err != nil {
@@ -92,17 +114,22 @@ func (h *Handler) packagePayload(resource string) (snapPkg, error) {
 
 func (h *Handler) allPackages(snapCondition int, query string) ([]snapPkg, error) {
 	var snaps []*client.Snap
-	var err error
 
-	if snapCondition == installedSnaps {
-		snaps, err = h.snapdClient.List(nil)
-	} else {
-		opts := &client.FindOptions{Query: query}
-		snaps, _, err = h.snapdClient.Find(opts)
-	}
-
+	installed, err := h.snapdClient.List(nil)
 	if err != nil {
 		return nil, err
+	}
+
+	if snapCondition == installedSnaps {
+		snaps = make([]*client.Snap, len(installed))
+		copy(snaps, installed)
+	} else {
+		opts := &client.FindOptions{Query: query}
+		available, _, err := h.snapdClient.Find(opts)
+		if err != nil {
+			return nil, err
+		}
+		snaps = h.augmentAvailableWithInstalled(available, installed)
 	}
 
 	snapPkgs := make([]snapPkg, 0, len(snaps))

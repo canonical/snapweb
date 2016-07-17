@@ -46,14 +46,14 @@ func (s *HandlersSuite) resetFakeSnapdClient() {
 
 func (s *HandlersSuite) TestGetAll(c *C) {
 	tests := []struct {
-		URL             string
-		CalledListSnaps bool
-		Query           string
+		URL        string
+		CalledFind bool
+		Query      string
 	}{
-		{"/", false, ""},
-		{"/?installed_only=true", true, ""},
-		{"/?q=foo", false, "foo"},
-		{"/?installed_only=true&q=foo", true, ""},
+		{"/", true, ""},
+		{"/?installed_only=true", false, ""},
+		{"/?q=foo", true, "foo"},
+		{"/?installed_only=true&q=foo", false, ""},
 	}
 
 	for _, tt := range tests {
@@ -64,7 +64,7 @@ func (s *HandlersSuite) TestGetAll(c *C) {
 		c.Assert(err, IsNil)
 
 		s.h.getAll(rec, req)
-		c.Assert(s.c.CalledListSnaps, Equals, tt.CalledListSnaps)
+		c.Assert(s.c.CalledFind, Equals, tt.CalledFind)
 		c.Assert(s.c.Query, Equals, tt.Query)
 	}
 }
