@@ -112,6 +112,30 @@ func (s *HandlersSuite) TestGet(c *C) {
 	c.Assert(sp.Name, Equals, "chatroom")
 }
 
+func (s *HandlersSuite) TestAdd(c *C) {
+	s.c.Snaps = []*client.Snap{newDefaultSnap()}
+
+	rec := httptest.NewRecorder()
+	req, err := http.NewRequest("PUT", "/chatroom", nil)
+	c.Assert(err, IsNil)
+
+	s.h.MakeMuxer("").ServeHTTP(rec, req)
+	c.Assert(rec.Code, Equals, http.StatusAccepted)
+	c.Assert(s.c.Installed, Equals, "chatroom")
+}
+
+func (s *HandlersSuite) TestRemove(c *C) {
+	s.c.Snaps = []*client.Snap{newDefaultSnap()}
+
+	rec := httptest.NewRecorder()
+	req, err := http.NewRequest("DELETE", "/chatroom", nil)
+	c.Assert(err, IsNil)
+
+	s.h.MakeMuxer("").ServeHTTP(rec, req)
+	c.Assert(rec.Code, Equals, http.StatusAccepted)
+	c.Assert(s.c.Removed, Equals, "chatroom")
+}
+
 func (s *HandlersSuite) TestJsonResponseOrErrorMarshalError(c *C) {
 	unmarshable := map[int]int{1: 1}
 	rec := httptest.NewRecorder()
