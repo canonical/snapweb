@@ -89,6 +89,37 @@ func (s *HandlersSuite) TestGetBranding(c *C) {
 	c.Assert(getBranding(), DeepEquals, branding{Name: "Ubuntu", Subname: ""})
 }
 
+func (s *HandlersSuite) TestServesIcons(c *C) {
+	tmp := c.MkDir()
+	icons := filepath.Join(tmp, "icons")
+	iconPath := filepath.Join(icons, "foo.png")
+
+	os.Setenv("SNAP_DATA", tmp)
+	c.Assert(os.Mkdir(icons, os.ModePerm), IsNil)
+	c.Assert(ioutil.WriteFile(iconPath, []byte{}, os.ModePerm), IsNil)
+
+	initURLHandlers(log.New(os.Stdout, "", 0))
+	defer func() {
+		http.DefaultServeMux = http.NewServeMux()
+	}()
+
+	// icon exists
+	rec := httptest.NewRecorder()
+	req, err := http.NewRequest("GET", "/icons/foo.png", nil)
+	c.Assert(err, IsNil)
+
+	http.DefaultServeMux.ServeHTTP(rec, req)
+	c.Assert(rec.Code, Equals, http.StatusOK)
+
+	// icon doesn't exist
+	rec = httptest.NewRecorder()
+	req, err = http.NewRequest("GET", "/icons/bar.png", nil)
+	c.Assert(err, IsNil)
+
+	http.DefaultServeMux.ServeHTTP(rec, req)
+	c.Assert(rec.Code, Equals, http.StatusNotFound)
+}
+
 func (s *HandlersSuite) TestMakeMainPageHandler(c *C) {
 	s.c.Version = "foo"
 
@@ -97,6 +128,9 @@ func (s *HandlersSuite) TestMakeMainPageHandler(c *C) {
 	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
 
 	initURLHandlers(log.New(os.Stdout, "", 0))
+	defer func() {
+		http.DefaultServeMux = http.NewServeMux()
+	}()
 
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest("GET", "/", nil)
