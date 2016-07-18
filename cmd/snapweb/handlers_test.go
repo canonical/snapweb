@@ -20,10 +20,13 @@ package main
 import (
 	"bytes"
 	"errors"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"path/filepath"
+	"strings"
 	"testing"
 
 	. "gopkg.in/check.v1"
@@ -84,4 +87,49 @@ func (s *HandlersSuite) TestLoggingHandler(c *C) {
 
 func (s *HandlersSuite) TestGetBranding(c *C) {
 	c.Assert(getBranding(), DeepEquals, branding{Name: "Ubuntu", Subname: ""})
+}
+
+func (s *HandlersSuite) TestRenderLayoutNoTemplateDir(c *C) {
+	os.Setenv("SNAP", c.MkDir())
+
+	rec := httptest.NewRecorder()
+	renderLayout("foo.html", &templateData{}, rec)
+	c.Assert(rec.Body.String(), Matches, ".*no such file or directory\n")
+	c.Assert(rec.Code, Equals, http.StatusInternalServerError)
+}
+
+func (s *HandlersSuite) TestRenderLayoutParseError(c *C) {
+	tmp := c.MkDir()
+	templateDir := filepath.Join(tmp, "www", "templates")
+	layoutPath := filepath.Join(templateDir, "base.html")
+	templatePath := filepath.Join(templateDir, "foo.html")
+
+	os.Setenv("SNAP", tmp)
+	c.Assert(os.MkdirAll(templateDir, os.ModePerm), IsNil)
+
+	c.Assert(ioutil.WriteFile(layoutPath, []byte("{{{"), os.ModePerm), IsNil)
+	c.Assert(ioutil.WriteFile(templatePath, []byte(""), os.ModePerm), IsNil)
+
+	rec := httptest.NewRecorder()
+	renderLayout("foo.html", &templateData{}, rec)
+	c.Assert(strings.HasPrefix(rec.Body.String(), "template:"), Equals, true)
+	c.Assert(rec.Code, Equals, http.StatusInternalServerError)
+}
+
+func (s *HandlersSuite) TestRenderLayout(c *C) {
+	tmp := c.MkDir()
+	templateDir := filepath.Join(tmp, "www", "templates")
+	layoutPath := filepath.Join(templateDir, "base.html")
+	templatePath := filepath.Join(templateDir, "foo.html")
+
+	os.Setenv("SNAP", tmp)
+	c.Assert(os.MkdirAll(templateDir, os.ModePerm), IsNil)
+
+	c.Assert(ioutil.WriteFile(layoutPath, []byte(`<title>{{template "title"}}</title>`), os.ModePerm), IsNil)
+	c.Assert(ioutil.WriteFile(templatePath, []byte(`{{define "title"}}foo{{end}}`), os.ModePerm), IsNil)
+
+	rec := httptest.NewRecorder()
+	renderLayout("foo.html", &templateData{}, rec)
+	c.Assert(rec.Body.String(), Equals, "<title>foo</title>")
+	c.Assert(rec.Code, Equals, http.StatusOK)
 }
