@@ -44,6 +44,17 @@ func (s *HandlersSuite) resetFakeSnapdClient() {
 	s.h.setClient(s.c)
 }
 
+func (s *HandlersSuite) TestGetAllError(c *C) {
+	s.c.StoreErr = errors.New("fail")
+
+	rec := httptest.NewRecorder()
+	req, err := http.NewRequest("GET", "/", nil)
+	c.Assert(err, IsNil)
+
+	s.h.MakeMuxer("").ServeHTTP(rec, req)
+	c.Assert(rec.Code, Equals, http.StatusInternalServerError)
+}
+
 func (s *HandlersSuite) TestGetAll(c *C) {
 	tests := []struct {
 		URL             string
