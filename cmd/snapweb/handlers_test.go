@@ -89,6 +89,26 @@ func (s *HandlersSuite) TestGetBranding(c *C) {
 	c.Assert(getBranding(), DeepEquals, branding{Name: "Ubuntu", Subname: ""})
 }
 
+func (s *HandlersSuite) TestMakeMainPageHandler(c *C) {
+	s.c.Version = "foo"
+
+	cwd, err := os.Getwd()
+	c.Assert(err, IsNil)
+	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
+
+	initURLHandlers(log.New(os.Stdout, "", 0))
+
+	rec := httptest.NewRecorder()
+	req, err := http.NewRequest("GET", "/", nil)
+	c.Assert(err, IsNil)
+
+	http.DefaultServeMux.ServeHTTP(rec, req)
+	body := rec.Body.String()
+
+	c.Assert(strings.Contains(body, "'Ubuntu'"), Equals, true)
+	c.Assert(strings.Contains(body, "'snapd foo'"), Equals, true)
+}
+
 func (s *HandlersSuite) TestRenderLayoutNoTemplateDir(c *C) {
 	os.Setenv("SNAP", c.MkDir())
 
