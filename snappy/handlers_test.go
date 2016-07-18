@@ -24,6 +24,9 @@ import (
 	"net/http/httptest"
 	"os"
 
+	"github.com/snapcore/snapd/client"
+	"github.com/snapcore/snapweb/statustracker"
+
 	. "gopkg.in/check.v1"
 )
 
@@ -42,6 +45,7 @@ func (s *HandlersSuite) SetUpTest(c *C) {
 func (s *HandlersSuite) resetFakeSnapdClient() {
 	s.c = &FakeSnapdClient{}
 	s.h.setClient(s.c)
+	s.h.statusTracker = statustracker.New()
 }
 
 func (s *HandlersSuite) TestGetAllError(c *C) {
@@ -78,6 +82,34 @@ func (s *HandlersSuite) TestGetAll(c *C) {
 		c.Assert(s.c.CalledListSnaps, Equals, tt.CalledListSnaps)
 		c.Assert(s.c.Query, Equals, tt.Query)
 	}
+}
+
+func (s *HandlersSuite) TestGetError(c *C) {
+	s.c.Err = errors.New("fail")
+	s.c.StoreErr = errors.New("fail")
+
+	rec := httptest.NewRecorder()
+	req, err := http.NewRequest("GET", "/foo", nil)
+	c.Assert(err, IsNil)
+
+	s.h.MakeMuxer("").ServeHTTP(rec, req)
+	c.Assert(rec.Code, Equals, http.StatusNotFound)
+}
+
+func (s *HandlersSuite) TestGet(c *C) {
+	s.c.Snaps = []*client.Snap{newDefaultSnap()}
+
+	rec := httptest.NewRecorder()
+	req, err := http.NewRequest("GET", "/chatroom", nil)
+	c.Assert(err, IsNil)
+
+	s.h.MakeMuxer("").ServeHTTP(rec, req)
+	c.Assert(rec.Code, Equals, http.StatusOK)
+
+	var sp snapPkg
+	err = json.Unmarshal(rec.Body.Bytes(), &sp)
+	c.Assert(err, IsNil)
+	c.Assert(sp.Name, Equals, "chatroom")
 }
 
 func (s *HandlersSuite) TestJsonResponseOrErrorMarshalError(c *C) {
