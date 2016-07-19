@@ -55,21 +55,6 @@ func tryPublish(hostname, ip string) {
 	}
 }
 
-var netInterfaceAddrs = net.InterfaceAddrs
-
-func ipAddrs() (addrs []net.Addr, err error) {
-	ifaces, err := netInterfaceAddrs()
-	if err != nil {
-		return nil, err
-	}
-
-	for _, iface := range ifaces {
-		addrs = append(addrs, iface)
-	}
-
-	return addrs, nil
-}
-
 // Init initializes the avahi subsystem.
 func Init(l *log.Logger) {
 	logger = l
@@ -87,10 +72,13 @@ func timeoutLoop() {
 	}
 }
 
-var osHostname = os.Hostname
+var (
+	netInterfaceAddrs = net.InterfaceAddrs
+	osHostname        = os.Hostname
+)
 
 func loop() {
-	addrs, err := ipAddrs()
+	addrs, err := netInterfaceAddrs()
 	if err != nil {
 		logger.Println("Cannot obtain IP addresses:", err)
 		return
