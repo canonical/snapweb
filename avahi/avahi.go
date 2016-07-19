@@ -39,12 +39,11 @@ const (
 )
 
 const timeoutMinutes = 10
-const inAddr = `%s.local. 60 IN A %s`
 
 var mdnsPublish = mdns.Publish
 
 func tryPublish(hostname, ip string) {
-	rr := fmt.Sprintf(inAddr, hostname, ip)
+	rr := fmt.Sprintf("%s.local. 60 IN A %s", hostname, ip)
 
 	logger.Println("Publishing", rr)
 
