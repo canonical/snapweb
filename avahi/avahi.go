@@ -51,7 +51,6 @@ func tryPublish(hostname, ip string) {
 
 	if err := mdnsPublish(rr); err != nil {
 		logger.Printf(`Unable to publish record "%s": %v`, rr, err)
-		return
 	}
 }
 
