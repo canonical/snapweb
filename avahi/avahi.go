@@ -29,16 +29,16 @@ import (
 	"github.com/davecheney/mdns"
 )
 
-var logger *log.Logger
-
-var initOnce sync.Once
+var (
+	logger   *log.Logger
+	initOnce sync.Once
+)
 
 const (
 	hostnameLocalhost = "localhost"
 	hostnameWedbm     = "webdm"
+	timeoutMinutes    = 10
 )
-
-const timeoutMinutes = 10
 
 var mdnsPublish = mdns.Publish
 
