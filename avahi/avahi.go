@@ -40,7 +40,6 @@ const (
 
 const timeoutMinutes = 10
 const inAddr = `%s.local. 60 IN A %s`
-const inPtr = `%s.in-addr.arpa. 60 IN PTR %s.local.`
 
 var mdnsPublish = mdns.Publish
 
