@@ -27,7 +27,10 @@ parts:
     snap:
       - www
   snapweb:
-    plugin: make
-    build-packages:
-      - golang-go
+    plugin: godeps
     source: .
+    go-importpath: 'github.com/snapcore/snapweb'
+    organize:
+      bin/snapweb: snapweb
+    snap:
+      - snapweb
