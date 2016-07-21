@@ -1,7 +1,7 @@
 // search layout view
 var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
-var BaskView = require('./snaplist.js');
+var BaskView = require('./storelist.js');
 var template = require('../templates/search.hbs');
 
 module.exports = Backbone.Marionette.LayoutView.extend({
