@@ -56,6 +56,16 @@ describe('Snap', function() {
       response = this.model.parse({status: CONF.INSTALL_STATE.INSTALLING});
       expect(response.isInstalled).toBeFalsy();
     });
+
+    it('sets default icon if empty', function() {
+      var response;
+
+      response = this.model.parse({icon: '/icon.png'});
+      expect(response.icon).toBe('/icon.png');
+
+      response = this.model.parse({icon: ''});
+      expect(response.icon).toBe(this.model.defaults.icon);
+    });
   });
 
   describe('setInstallActionString', function() {
