@@ -11,22 +11,26 @@ module.exports = Marionette.Behavior.extend({
 
   modelEvents: {
     'change:installHTMLClass': 'onHTMLClassChange',
-    'change:status': 'onStatusChange',
-    'change:progress': 'onProgressChange'
+    'change:installButtonClass': 'onButtonClassChange',
+    'change:status': 'onStatusChange'
   },
 
   ui: {
     errorMessage: '.b-installer__error',
-    statusMessage: '.b-installer__message',
     installer: '.b-installer',
-    installerButton: '.b-installer__button',
-    installerProgress: '.b-installer__value'
+    installerButton: '.b-installer__button'
   },
 
   onHTMLClassChange: function(model) {
     var installer = this.ui.installer;
     installer.removeClass(model.previous('installHTMLClass'))
     .addClass(model.get('installHTMLClass'));
+  },
+
+  onButtonClassChange: function(model) {
+    var button = this.ui.installerButton;
+    button.removeClass(model.previous('installButtonClass'))
+    .addClass(model.get('installButtonClass'));
   },
 
   onStatusChange: function(model) {
@@ -36,41 +40,12 @@ module.exports = Marionette.Behavior.extend({
     var installer = this.ui.installer;
     var installerButton = this.ui.installerButton;
 
-    // reset progress
-    this.ui.installerProgress.css('right', '100%');
-
     if (_.contains(CONF.INSTALL_STATE, state)) {
       installerButton.text(msg);
     } else {
       // in the rare case that a status isn't one we're expecting,
       // remove the install button
       installer.remove();
-    }
-
-    if (
-      state === CONF.INSTALL_STATE.INSTALLED &&
-      oldState === CONF.INSTALL_STATE.INSTALLING
-    ) {
-      this.ui.statusMessage.text('Install successful!');
-    } else {
-      this.ui.statusMessage.text('');
-    }
-
-    if (
-      state === CONF.INSTALL_STATE.REMOVED &&
-      oldState === CONF.INSTALL_STATE.REMOVING
-    ) {
-      this.ui.statusMessage.text('Snap removed!');
-    }
-  },
-
-  onProgressChange: function(model) {
-    var state = model.get('status');
-    var progress;
-
-    if (state === CONF.INSTALL_STATE.INSTALLING) {
-      progress = (100 - (model.get('progress') | 0)) + '%';
-      this.ui.installerProgress.css('right', progress);
     }
   },
 

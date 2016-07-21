@@ -2,82 +2,26 @@
 
 .b-installer {
   position:relative;
-  width:260px;
-  font-size:15px;
-}
-
-.b-installer_small {
-  font-size:12px;
-  width:100px;
 }
 
 .b-installer__button {
-  text-transform:uppercase;
-  background-color: #dd4814;
-  border-radius:4px;
-  color:#fff;
-  cursor:pointer;
-  font-weight:400;
-  overflow: hidden;
-  padding:8px 10px;
-  position:relative;
-  text-align:center;
-  text-overflow: ellipsis;
-  transition: background-color 0.3s;
-  user-select: none;
-  white-space: nowrap;
+  width:140px;
 }
 
-.b-installer_do_remove .b-installer__button {
-  background-color:#ccc;
-  color:#fff;
-  font-weight:300;
+.b-installer__button_large {
+  width:100%;
+}
+
+.b-installer__button_store {
+  float:right;
+  width:40%;
 }
 
 .b-installer_disabled .b-installer__button {
-  font-weight: inherit;
-  background-color: inherit;
-  color:#333;
+  background-color:#f7f7f7;
   cursor:not-allowed;
-  text-transform:none;
 }
 
 .b-installer_thinking .b-installer__button {
-  background-color:transparent;
   cursor:progress;
-  color:#dd4814;
-}
-
-.b-installer__message {
-  margin-top:4px;
-  text-align:center;
-  font-size:12px;
-}
-
-.b-installer__progress {
-  background: white;
-  border-radius:10px;
-  border:1px solid #dd4814;
-  bottom:0;
-  display:none;
-  height:5px;
-  left:0;
-  margin:0;
-  padding:0;
-  position:absolute;
-  right:0;
-}
-
-.b-installer__value {
-  background-color:rgba(221, 72, 20, 1);
-  bottom:0;
-  left:0;
-  position:absolute;
-  right:100%;
-  top:0;
-  transition: right 0.1s;
-}
-
-.b-installer_thinking .b-installer__progress {
-  display:block;
 }
