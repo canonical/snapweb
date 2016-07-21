@@ -66,6 +66,21 @@ describe('Snap', function() {
       response = this.model.parse({icon: ''});
       expect(response.icon).toBe(this.model.defaults.icon);
     });
+
+    it('sets isInstallable', function() {
+      var response;
+
+      expect(this.model.get('isInstallable')).toBeTruthy(); // default
+
+      response = this.model.parse({id: 'snapweb'});
+      expect(response.isInstallable).toBe(false);
+
+      response = this.model.parse({id: 'ubuntu-core'});
+      expect(response.isInstallable).toBe(false);
+
+      response = this.model.parse({type: 'gadget'});
+      expect(response.isInstallable).toBe(false);
+    });
   });
 
   describe('setInstallActionString', function() {
