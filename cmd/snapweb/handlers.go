@@ -23,6 +23,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"text/template"
 
 	"github.com/snapcore/snapd/client"
@@ -71,6 +72,8 @@ func initURLHandlers(log *log.Logger) {
 		log.Println("Issues while getting icon dir:", err)
 	}
 
+	http.HandleFunc("/auth", authHandler)
+
 	http.HandleFunc("/", makeMainPageHandler())
 }
 
@@ -79,6 +82,20 @@ func loggingHandler(h http.Handler) http.Handler {
 		log.Println(r.Method, r.URL.Path)
 		h.ServeHTTP(w, r)
 	})
+}
+
+func authHandler(w http.ResponseWriter, r *http.Request) {
+	macaroon := r.FormValue("macaroon")
+	discharge := r.FormValue("discharge")
+
+	if strings.TrimSpace(macaroon) == "" || strings.TrimSpace(discharge) == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintln(w, "Invalid store macaroon")
+		return
+	}
+
+	// TODO: store macaroons
+	http.Redirect(w, r, "/", http.StatusMovedPermanently)
 }
 
 func getBranding() branding {
