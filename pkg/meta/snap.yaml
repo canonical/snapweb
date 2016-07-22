@@ -9,12 +9,10 @@ description: |
   - manage updates to the system.
   - control the state of other snappy packages.
   - browse the store to install new snappy packages.
-icon: meta/gui/icon.png
 type: app
 architectures: UNKNOWN_ARCH
 apps:
   snapweb:
     daemon: simple
-    description: Snapweb
     command: snapweb
     plugs: [network, network-bind, snapd-control]
