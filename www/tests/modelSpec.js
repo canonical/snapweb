@@ -95,10 +95,10 @@ describe('Snap', function() {
 
     it('should set installActionString from model state', function() {
       this.model.set('status', CONF.INSTALL_STATE.INSTALLED);
-      expect(this.model.get('installActionString')).toBe('Remove snap');
+      expect(this.model.get('installActionString')).toBe('Remove');
 
       this.model.set('status', CONF.INSTALL_STATE.REMOVED);
-      expect(this.model.get('installActionString')).toBe('Install this snap');
+      expect(this.model.get('installActionString')).toBe('Install');
 
       this.model.set('status', CONF.INSTALL_STATE.REMOVING);
       expect(this.model.get('installActionString')).toBe('Removing…');
