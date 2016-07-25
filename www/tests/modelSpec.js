@@ -31,6 +31,58 @@ describe('Snap', function() {
 
   });
 
+  describe('parse', function() {
+
+    beforeEach(function() {
+      this.model = new Snap();
+    });
+
+    afterEach(function() {
+      delete this.model;
+    });
+
+    it('sets isInstalled', function() {
+      var response;
+
+      response = this.model.parse({status: CONF.INSTALL_STATE.REMOVED});
+      expect(response.isInstalled).toBeFalsy();
+
+      response = this.model.parse({status: CONF.INSTALL_STATE.REMOVING});
+      expect(response.isInstalled).toBeTruthy();
+
+      response = this.model.parse({status: CONF.INSTALL_STATE.INSTALLED});
+      expect(response.isInstalled).toBeTruthy();
+
+      response = this.model.parse({status: CONF.INSTALL_STATE.INSTALLING});
+      expect(response.isInstalled).toBeFalsy();
+    });
+
+    it('sets default icon if empty', function() {
+      var response;
+
+      response = this.model.parse({icon: '/icon.png'});
+      expect(response.icon).toBe('/icon.png');
+
+      response = this.model.parse({icon: ''});
+      expect(response.icon).toBe(this.model.defaults.icon);
+    });
+
+    it('sets isInstallable', function() {
+      var response;
+
+      expect(this.model.get('isInstallable')).toBeTruthy(); // default
+
+      response = this.model.parse({id: 'snapweb'});
+      expect(response.isInstallable).toBe(false);
+
+      response = this.model.parse({id: 'ubuntu-core'});
+      expect(response.isInstallable).toBe(false);
+
+      response = this.model.parse({type: 'gadget'});
+      expect(response.isInstallable).toBe(false);
+    });
+  });
+
   describe('setInstallActionString', function() {
 
     beforeEach(function() {

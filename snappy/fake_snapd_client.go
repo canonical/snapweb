@@ -30,6 +30,8 @@ type FakeSnapdClient struct {
 	CalledListSnaps bool
 	Query           string
 	Version         string
+	Installed       string
+	Removed         string
 }
 
 // Icon returns the icon of an installed snap
@@ -65,11 +67,15 @@ func (f *FakeSnapdClient) Find(opts *client.FindOptions) ([]*client.Snap, *clien
 
 // Install adds the named snap to the system
 func (f *FakeSnapdClient) Install(name string, options *client.SnapOptions) (string, error) {
+	f.Installed = name
+
 	return "", nil
 }
 
 // Remove removes the names snap from the system
 func (f *FakeSnapdClient) Remove(name string, options *client.SnapOptions) (string, error) {
+	f.Removed = name
+
 	return "", nil
 }
 
