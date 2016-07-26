@@ -62,3 +62,26 @@
 .button--secondary {
   color:#333;
 }
+
+// scss/modules/_grid.scss
+.b-snaplist__item.three-col {
+  @include column-spacing(6);
+}
+
+.b-snaplist__item.three-col:nth-child(even) {
+  margin-right:0;
+}
+
+@media screen and (min-width: 640px) {
+  .b-snaplist__item.three-col {
+    @include column-spacing(3);
+  }
+
+  .b-snaplist__item.three-col:nth-child(even) {
+    @include column-spacing(3);
+  }
+
+  .b-snaplist__item.three-col:nth-child(4n) {
+    margin-right:0;
+  }
+}
