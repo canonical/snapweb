@@ -1,20 +1,16 @@
 /** @define b-installer; weak */
 
 .b-installer {
-  position:relative;
+}
+
+.b-installer_small {
+  float:right;
+  width:50%;
 }
 
 .b-installer__button {
-  width:140px;
-}
-
-.b-installer__button_large {
   width:100%;
-}
-
-.b-installer__button_store {
-  float:right;
-  width:40%;
+  box-sizing:border-box;
 }
 
 .b-installer_disabled .b-installer__button {
