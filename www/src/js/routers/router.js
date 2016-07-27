@@ -6,7 +6,7 @@ var Marionette = require('backbone.marionette');
 var homeController = require('../controllers/home.js');
 var searchController = require('../controllers/search.js');
 var storeController = require('../controllers/store.js');
-var systemController = require('../controllers/system.js');
+var settingsController = require('../controllers/settings.js');
 var snapController = require('../controllers/snaps.js');
 
 module.exports = {
@@ -26,10 +26,10 @@ module.exports = {
     }
   }),
 
-  system: new Marionette.AppRouter({
-    controller: systemController,
+  settings: new Marionette.AppRouter({
+    controller: settingsController,
     appRoutes: {
-      'system-settings': 'index'
+      'settings': 'index'
     }
   }),
 
