@@ -1,0 +1,53 @@
+/** @define b-settings; weak */
+
+.b-settings {
+  margin:0;
+}
+
+.b-settings__row {
+  cursor:pointer;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  line-height:24px;
+  background-image:url("../images/icons/go-next.svg");
+  background-repeat:no-repeat;
+  background-size:25px;
+  background-position:right 15px top 10px;
+}
+
+li.b-settings__row {
+  padding-left:10px;
+  padding-right:10px;
+}
+
+li.b-settings__row:last-of-type {
+  padding-bottom:10px;
+}
+
+.b-settings__row_active {
+  background-color:#f7f7f7;
+}
+
+.b-settings__icon {
+  height:25px;
+  width:25px;
+  margin-right:8px;
+  float:left;
+}
+
+@media screen and (min-width: 640px) {
+  .b-settings {
+    margin:20px 0 0 15px;
+    border:1px solid #d2d2d2;
+  }
+
+  .b-settings__row {
+    background-image:none;
+  }
+
+  li.b-settings__row {
+    padding-left:20px;
+    padding-right:20px;
+  }
+}
