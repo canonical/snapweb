@@ -36,6 +36,10 @@ li.b-settings__row:last-of-type {
   float:left;
 }
 
+.b-settings__content {
+  margin:10px 0 0 10px;
+}
+
 @media screen and (min-width: 640px) {
   .b-settings {
     margin:20px 0 0 15px;
@@ -49,5 +53,9 @@ li.b-settings__row:last-of-type {
   li.b-settings__row {
     padding-left:20px;
     padding-right:20px;
+  }
+
+  .b-settings__content {
+    margin:20px 0 0 0;
   }
 }
