@@ -36,7 +36,7 @@ var (
 
 const (
 	hostnameLocalhost = "localhost"
-	hostnameWedbm     = "webdm"
+	hostnameSnapweb   = "snapweb"
 	timeoutMinutes    = 10
 )
 
@@ -92,7 +92,7 @@ func loop() {
 	}
 
 	if hostname == hostnameLocalhost {
-		hostname = hostnameWedbm
+		hostname = hostnameSnapweb
 	}
 
 	for _, ip := range addrs {
