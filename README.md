@@ -5,14 +5,10 @@
 
 ## Prerequisites
 
-This assumes you have a working go environment with a GOPATH env var setup
-and nodejs and npm installed:
+This assumes you have a working go environment with a GOPATH env var setup,
+snapcraft and nodejs and npm installed:
 
-    sudo apt install nodejs-legacy npm
-
-For cross building:
-
-    sudo apt install snapcraft gcc-arm-linux-gnueabihf libc6-dev-armhf-cross gcc-aarch64-linux-gnu libc6-dev-arm64-cross libc6-dev-i386
+    sudo apt install snapcraft nodejs-legacy npm
 
 Install global npm modules without sudo:
 
@@ -36,15 +32,10 @@ Branch:
     git clone git@github.com:snapcore/snapweb.git
     cd snapweb
 
-Install:
-
-    npm install -g --prefix=$(npm config get prefix) gulp
-    npm install
-
 ## Building
 
     cd $GOPATH/src/github.com/snapcore/snapweb
-    ./build.sh
+    snapcraft
 
 # Installing
 
