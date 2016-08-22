@@ -65,7 +65,7 @@ func (s *HandlersSuite) TestGetAll(c *C) {
 		CalledListSnaps bool
 		Query           string
 	}{
-		{"/", false, ""},
+		{"/", false, "."},
 		{"/?installed_only=true", true, ""},
 		{"/?q=foo", false, "foo"},
 		{"/?installed_only=true&q=foo", true, ""},
