@@ -78,6 +78,11 @@ func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
 		snapCondition = installedSnaps
 	}
 	query := r.FormValue("q")
+	// This is a workaround until there is a way to get the list of snaps:
+	// https://bugs.launchpad.net/ubuntu/+source/snapd/+bug/1609368
+	if query == "" {
+		query = "."
+	}
 
 	payload, err := h.allPackages(snapCondition, query)
 	if err != nil {
