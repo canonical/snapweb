@@ -34,3 +34,4 @@ parts:
       bin/snapweb: snapweb
     snap:
       - snapweb
+    build-packages: [git, g++]
