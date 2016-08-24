@@ -9,29 +9,10 @@ description: |
   - manage updates to the system.
   - control the state of other snappy packages.
   - browse the store to install new snappy packages.
-confinement: strict
+type: app
+architectures: UNKNOWN_ARCH
 apps:
   snapweb:
     daemon: simple
     command: snapweb
-    plugs:
-      - network
-      - network-bind
-      - snapd-control
-parts:
-  assets:
-    plugin: gulp
-    gulp-tasks:
-      - install
-    source: .
-    snap:
-      - www
-  snapweb:
-    plugin: godeps
-    source: .
-    go-importpath: 'github.com/snapcore/snapweb'
-    organize:
-      bin/snapweb: snapweb
-    snap:
-      - snapweb
-    build-packages: [git, g++]
+    plugs: [network, network-bind, snapd-control]
