@@ -78,7 +78,7 @@ func (s *AvahiSuite) TestLoopLocalCNetwork(c *C) {
 
 	loop()
 	c.Assert(s.publish, HasLen, 1)
-	c.Assert(s.publish[0], Equals, "webdm.local. 60 IN A 192.168.1.1")
+	c.Assert(s.publish[0], Equals, "snapweb.local. 60 IN A 192.168.1.1")
 }
 
 func (s *AvahiSuite) TestLoopLocalCAndv6Network(c *C) {
@@ -88,8 +88,8 @@ func (s *AvahiSuite) TestLoopLocalCAndv6Network(c *C) {
 
 	loop()
 	c.Assert(s.publish, HasLen, 2)
-	c.Assert(s.publish[0], Equals, "webdm.local. 60 IN A 192.168.1.1")
-	c.Assert(s.publish[1], Equals, "webdm.local. 60 IN A fe80::5054:ff:fe12:3456")
+	c.Assert(s.publish[0], Equals, "snapweb.local. 60 IN A 192.168.1.1")
+	c.Assert(s.publish[1], Equals, "snapweb.local. 60 IN A fe80::5054:ff:fe12:3456")
 }
 
 func (s *AvahiSuite) TestLoopLocalCNetworkOtherHostname(c *C) {
