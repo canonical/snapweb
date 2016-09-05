@@ -18,7 +18,6 @@
 package avahi
 
 import (
-	"fmt"
 	"log"
 	"net"
 	"os"
@@ -26,10 +25,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/davecheney/mdns"
+	"github.com/presotto/go-mdns-sd"
 )
 
 var logger *log.Logger
+
+var _mdns *mdns.MDNS
 
 var initOnce sync.Once
 
@@ -39,20 +40,20 @@ const (
 )
 
 const timeoutMinutes = 10
-const inAddr = `%s.local. 60 IN A %s`
-const inPtr = `%s.in-addr.arpa. 60 IN PTR %s.local.`
+//const inAddr = `%s.local. 60 IN A %s`
+//const inPtr = `%s.in-addr.arpa. 60 IN PTR %s.local.`
 
-var mdnsPublish = mdns.Publish
+//var mdnsPublish = mdns.Publish
 
 func tryPublish(hostname, ip string) {
-	rr := fmt.Sprintf(inAddr, hostname, ip)
+	//rr := fmt.Sprintf(inAddr, hostname, ip)
 
-	logger.Println("Publishing", rr)
+	//logger.Println("Publishing", rr)
 
-	if err := mdnsPublish(rr); err != nil {
-		logger.Printf(`Unable to publish record "%s": %v`, rr, err)
-		return
-	}
+	//if err := mdnsPublish(rr); err != nil {
+	//	logger.Printf(`Unable to publish record "%s": %v`, rr, err)
+	//	return
+	//}
 }
 
 var netInterfaceAddrs = net.InterfaceAddrs
@@ -74,20 +75,48 @@ func ipAddrs() (addrs []net.Addr, err error) {
 func Init(l *log.Logger) {
 	logger = l
 
+	var err error
+	hostname := getHostname()
+	logger.Println("Registering hostname: ", hostname)
+	_mdns, err = mdns.NewMDNS(hostname, "", "", false, 1)
+	if err != nil {
+		logger.Println("Cannot create MDNS instance:", err)
+		return
+	}
 	initOnce.Do(timeoutLoop)
 }
 
 func timeoutLoop() {
-	timeout := time.NewTimer(timeoutMinutes * time.Minute)
+	timeout := time.NewTimer(3*time.Second)
+	//timeout := time.NewTimer(timeoutMinutes * time.Minute)
 
 	for {
+		logger.Println("loop")
+		if _mdns != nil {
+			logger.Println("scan")
+			_mdns.ScanInterfaces()
+		}
 		loop()
-		timeout.Reset(timeoutMinutes * time.Minute)
+		//timeout.Reset(timeoutMinutes * time.Minute)
+		timeout.Reset(3*time.Second)
 		<-timeout.C
 	}
 }
 
 var osHostname = os.Hostname
+
+func getHostname() (hostname string) {
+	hostname, err := osHostname()
+	if err != nil {
+		logger.Println("Cannot obtain hostname, falling back to default:", err)
+		return hostnameWedbm
+	}
+	hostname = strings.Split(hostname, ".")[0]
+	if hostname == hostnameLocalhost {
+		hostname = hostnameWedbm
+	}
+	return hostname
+}
 
 func loop() {
 	addrs, err := ipAddrs()
