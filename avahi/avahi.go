@@ -29,45 +29,27 @@ import (
 	"github.com/davecheney/mdns"
 )
 
-var logger *log.Logger
-
-var initOnce sync.Once
+var (
+	logger   *log.Logger
+	initOnce sync.Once
+)
 
 const (
 	hostnameLocalhost = "localhost"
 	hostnameWedbm     = "webdm"
+	timeoutMinutes    = 10
 )
-
-const timeoutMinutes = 10
-const inAddr = `%s.local. 60 IN A %s`
-const inPtr = `%s.in-addr.arpa. 60 IN PTR %s.local.`
 
 var mdnsPublish = mdns.Publish
 
 func tryPublish(hostname, ip string) {
-	rr := fmt.Sprintf(inAddr, hostname, ip)
+	rr := fmt.Sprintf("%s.local. 60 IN A %s", hostname, ip)
 
 	logger.Println("Publishing", rr)
 
 	if err := mdnsPublish(rr); err != nil {
 		logger.Printf(`Unable to publish record "%s": %v`, rr, err)
-		return
 	}
-}
-
-var netInterfaceAddrs = net.InterfaceAddrs
-
-func ipAddrs() (addrs []net.Addr, err error) {
-	ifaces, err := netInterfaceAddrs()
-	if err != nil {
-		return nil, err
-	}
-
-	for _, iface := range ifaces {
-		addrs = append(addrs, iface)
-	}
-
-	return addrs, nil
 }
 
 // Init initializes the avahi subsystem.
@@ -87,10 +69,13 @@ func timeoutLoop() {
 	}
 }
 
-var osHostname = os.Hostname
+var (
+	netInterfaceAddrs = net.InterfaceAddrs
+	osHostname        = os.Hostname
+)
 
 func loop() {
-	addrs, err := ipAddrs()
+	addrs, err := netInterfaceAddrs()
 	if err != nil {
 		logger.Println("Cannot obtain IP addresses:", err)
 		return
