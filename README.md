@@ -3,7 +3,7 @@
 
 # Building
 
-To build from source just use snapcraft:
+To build from source just use snapcraft (works with ubuntu 16.04 or later):
 
     sudo apt update && sudo apt install -y snapcraft git
     git clone https://github.com/snapcore/snapweb && cd snapweb
