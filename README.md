@@ -3,38 +3,10 @@
 
 # Building
 
-## Prerequisites
+To build from source just use snapcraft:
 
-This assumes you have a working go environment with a GOPATH env var setup,
-snapcraft and nodejs and npm installed:
-
-    sudo apt install snapcraft nodejs-legacy npm
-
-Install global npm modules without sudo:
-
-    cat > ~/.npmrc <<-EOF
-	root = $HOME/node/lib/node_modules
-	prefix = $HOME/node
-	binroot = $HOME/node/bin
-	manroot = $HOME/node/man
-	EOF
-
-Setup the environment:
-
-    mkdir ~/node
-    export PATH=$PATH:$HOME/node/bin
-    export NODE_PATH=$HOME/node/lib/node_modules
-
-Branch:
-
-    mkdir -p $GOPATH/src/github.com/snapcore
-    cd $GOPATH/src/github.com/snapcore
-    git clone git@github.com:snapcore/snapweb.git
-    cd snapweb
-
-## Building
-
-    cd $GOPATH/src/github.com/snapcore/snapweb
+    sudo apt update && sudo apt install -y snapcraft git
+    git clone https://github.com/snapcore/snapweb && cd snapweb
     snapcraft
 
 # Installing
