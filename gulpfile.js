@@ -8,11 +8,14 @@ var concat = require('gulp-concat');
 var csso = require('gulp-csso');
 var del = require('del');
 var gulp = require('gulp');
+var gulp   = require("gulp");
+var golang = require("gulp-golang");
 var gutil = require('gulp-util');
 var imagemin = require('gulp-imagemin');
 var jscs = require('gulp-jscs');
 var jshint = require('gulp-jshint');
 var sass = require('gulp-sass');
+var sequence = require('gulp-sequence');
 var sourcemaps = require('gulp-sourcemaps');
 var source = require('vinyl-source-stream');
 var uglify = require('gulp-uglify');
@@ -110,10 +113,32 @@ gulp.task('images:clean', function(cb) {
   del(['www/public/images'], cb);
 });
 
-gulp.task('watch', ['js:watch', 'styles', 'images'], function() {
+// Snapweb HTTP server
+gulp.task('server:build', function() {
+  golang.build('cmd/snapweb/main.go', "snapweb", 'cmd/snapweb/handlers.go')
+});
+
+gulp.task('server:spawn', function() {
+  golang.spawn('snapweb')
+});
+
+gulp.task('server:run', function(callback) {
+  sequence('server:build', 'server:spawn')(callback)
+});
+
+
+gulp.task('livereload', ['js:watch', 'styles', 'images'], function() {
   gulp.watch('www/src/images/**/*.{svg,png,jpg,jpeg}', ['images']);
   gulp.watch('www/src/css/**/*.css', ['styles']);
   gulp.watch('www/src/js/**/*.js', ['js:lint']);
+
+  golang.livereload().listen();
+  gulp.start('server:run');
+
+  gulp.watch('**/*.go', function () {
+    gulp.start('server:run');
+    golang.livereload().reload();
+  });
 });
 
 // for the benefit of snapcraft
