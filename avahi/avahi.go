@@ -81,4 +81,3 @@ func getHostname() (hostname string) {
 	}
 	return hostname
 }
-
