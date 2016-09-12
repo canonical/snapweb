@@ -46,7 +46,7 @@ func Init(l *log.Logger) {
 	var err error
 	hostname := getHostname()
 	logger.Println("Registering hostname:", hostname)
-	_mdns, err = mdns.NewMDNS(hostname, "", "", false, 1)
+	_mdns, err = mdns.NewMDNS(hostname, "", "", false, 0)
 	if err != nil {
 		logger.Println("Cannot create mDNS instance:", err)
 		return
