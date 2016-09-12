@@ -10,7 +10,6 @@ env:
     - TEST_SUITE="--static"
     - TEST_SUITE="--unit-go"
     - TEST_SUITE="--unit-js"
-    - BUILD_SNAP="yes"
 
 cache:
   directories:
@@ -19,8 +18,8 @@ cache:
 install:
   - if [ "$TEST_SUITE" == "--unit-node" ]; then . $HOME/.nvm/nvm.sh && nvm install stable && nvm use stable; fi
 script:
-  - if [ "$BUILD_SNAP" != "yes" ]; then sh -v ./run-checks $TEST_SUITE; fi
-  - if [ "$BUILD_SNAP" == "yes" ]; then docker run -v $(pwd):/cwd didrocks/snapcraft sh -c 'cd /cwd; snapcraft'; fi
+  - sh -v ./run-checks $TEST_SUITE
+
 after_success:
   - go get github.com/mattn/goveralls
   - goveralls -coverprofile=.coverage-go/coverage.out -service=travis-ci
