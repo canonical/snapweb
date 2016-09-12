@@ -54,7 +54,7 @@ func getSnappyVersion() string {
 		return "snapd"
 	}
 
-	return "snapd " + version
+	return "snapd " + version.Version
 }
 
 func initURLHandlers(log *log.Logger) {
