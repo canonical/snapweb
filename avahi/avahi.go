@@ -37,6 +37,7 @@ const hostnameDefault = "snapweb"
 
 const addressUpdateDelay = 3 * time.Second
 
+// Init initializes the avahi subsystem.
 func Init(l *log.Logger) {
 	logger = l
 
