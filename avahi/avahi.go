@@ -33,7 +33,7 @@ var _mdns *mdns.MDNS
 
 var initOnce sync.Once
 
-const hostnameDefault = "webdm"
+const hostnameDefault = "snapweb"
 
 const addressUpdateDelay = 3 * time.Second
 
