@@ -26,8 +26,6 @@ import (
 	"path/filepath"
 	"text/template"
 
-	"github.com/snapcore/snapd/client"
-
 	"github.com/snapcore/snapweb/snappy"
 )
 
@@ -44,7 +42,7 @@ type templateData struct {
 var newSnapdClient = newSnapdClientImpl
 
 func newSnapdClientImpl() snappy.SnapdClient {
-	return client.New(nil)
+	return snappy.NewClientAdapter()
 }
 
 func getSnappyVersion() string {
