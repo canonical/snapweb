@@ -113,7 +113,7 @@ gulp.task('images:clean', function(cb) {
 gulp.task('watch', ['js:watch', 'styles', 'images'], function() {
   gulp.watch('www/src/images/**/*.{svg,png,jpg,jpeg}', ['images']);
   gulp.watch('www/src/css/**/*.css', ['styles']);
-  gulp.watch('www/src/js/**/*.js', ['js:lint']);
+  gulp.watch('www/src/js/**/*.{hbs,js}', ['js:build']);
 });
 
 // for the benefit of snapcraft
