@@ -29,7 +29,7 @@ type FakeSnapdClient struct {
 	StoreErr        error
 	CalledListSnaps bool
 	Query           string
-	Version         *client.ServerVersion
+	Version         client.ServerVersion
 	Installed       string
 	Removed         string
 }
@@ -81,7 +81,7 @@ func (f *FakeSnapdClient) Remove(name string, options *client.SnapOptions) (stri
 
 // ServerVersion returns the version of the running `snapd` daemon
 func (f *FakeSnapdClient) ServerVersion() (*client.ServerVersion, error) {
-	return f.Version, f.Err
+	return &f.Version, f.Err
 }
 
 var _ SnapdClient = (*FakeSnapdClient)(nil)

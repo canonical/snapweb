@@ -48,6 +48,8 @@ func (s *HandlersSuite) SetUpTest(c *C) {
 	newSnapdClient = func() snappy.SnapdClient {
 		return s.c
 	}
+	s.c.Version.Version = "1000"
+	s.c.Version.Series = "16"
 
 	s.c.Err = nil
 }
@@ -62,7 +64,6 @@ func (s *HandlersSuite) TestGetSnappyVersionError(c *C) {
 }
 
 func (s *HandlersSuite) TestGetSnappyVersion(c *C) {
-	s.c.Version = "1000 (series 16)"
 	c.Assert(getSnappyVersion(), Equals, "snapd 1000 (series 16)")
 }
 
@@ -121,8 +122,6 @@ func (s *HandlersSuite) TestServesIcons(c *C) {
 }
 
 func (s *HandlersSuite) TestMakeMainPageHandler(c *C) {
-	s.c.Version = "foo"
-
 	cwd, err := os.Getwd()
 	c.Assert(err, IsNil)
 	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
@@ -139,8 +138,8 @@ func (s *HandlersSuite) TestMakeMainPageHandler(c *C) {
 	http.DefaultServeMux.ServeHTTP(rec, req)
 	body := rec.Body.String()
 
-	c.Assert(strings.Contains(body, "'Ubuntu'"), Equals, true)
-	c.Assert(strings.Contains(body, "'snapd foo'"), Equals, true)
+	c.Check(strings.Contains(body, "'Ubuntu'"), Equals, true)
+	c.Check(strings.Contains(body, "'snapd 1000 (series 16)'"), Equals, true)
 }
 
 func (s *HandlersSuite) TestRenderLayoutNoTemplateDir(c *C) {
