@@ -70,8 +70,10 @@ func addressUpdateLoop() {
 	}
 }
 
+var osHostname = os.Hostname
+
 func getHostname() (hostname string) {
-	hostname, err := os.Hostname()
+	hostname, err := osHostname()
 	if err != nil {
 		logger.Println("Cannot obtain hostname, using default:", err)
 		return hostnameDefault
