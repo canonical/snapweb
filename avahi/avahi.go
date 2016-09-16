@@ -37,8 +37,8 @@ const hostnameDefault = "snapweb"
 
 const addressUpdateDelay = 3 * time.Second
 
-// Init initializes the avahi subsystem.
-func Init(l *log.Logger) {
+// InitMDNS initializes the avahi subsystem.
+func InitMDNS(l *log.Logger) {
 	logger = l
 
 	// the hostname is read once on startup; there is no Linux interface to

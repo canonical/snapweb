@@ -36,7 +36,7 @@ func init() {
 func main() {
 	initURLHandlers(logger)
 
-	go avahi.Init(logger)
+	go avahi.InitMDNS(logger)
 
 	logger.Println("Snapweb starting...")
 
