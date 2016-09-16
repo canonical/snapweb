@@ -19,7 +19,6 @@ package avahi
 
 import (
 	"log"
-	"net"
 	"os"
 	"strings"
 	"sync"
@@ -34,117 +33,52 @@ var _mdns *mdns.MDNS
 
 var initOnce sync.Once
 
-const (
-	hostnameLocalhost = "localhost"
-	hostnameWedbm     = "webdm"
-)
+const hostnameDefault = "snapweb"
 
-const timeoutMinutes = 10
-//const inAddr = `%s.local. 60 IN A %s`
-//const inPtr = `%s.in-addr.arpa. 60 IN PTR %s.local.`
-
-//var mdnsPublish = mdns.Publish
-
-func tryPublish(hostname, ip string) {
-	//rr := fmt.Sprintf(inAddr, hostname, ip)
-
-	//logger.Println("Publishing", rr)
-
-	//if err := mdnsPublish(rr); err != nil {
-	//	logger.Printf(`Unable to publish record "%s": %v`, rr, err)
-	//	return
-	//}
-}
-
-var netInterfaceAddrs = net.InterfaceAddrs
-
-func ipAddrs() (addrs []net.Addr, err error) {
-	ifaces, err := netInterfaceAddrs()
-	if err != nil {
-		return nil, err
-	}
-
-	for _, iface := range ifaces {
-		addrs = append(addrs, iface)
-	}
-
-	return addrs, nil
-}
+const addressUpdateDelay = 3 * time.Second
 
 // Init initializes the avahi subsystem.
 func Init(l *log.Logger) {
 	logger = l
 
+	// the hostname is read once on startup; there is no Linux interface to
+	// pickup hostname changes, so either polling has to be used to detect
+	// these or snapweb has to be restarted
 	var err error
 	hostname := getHostname()
-	logger.Println("Registering hostname: ", hostname)
-	_mdns, err = mdns.NewMDNS(hostname, "", "", false, 1)
+	logger.Println("Registering hostname:", hostname)
+	_mdns, err = mdns.NewMDNS(hostname, "", "", false, 0)
 	if err != nil {
-		logger.Println("Cannot create MDNS instance:", err)
+		logger.Println("Cannot create mDNS instance:", err)
 		return
 	}
-	initOnce.Do(timeoutLoop)
+	// poll to update published IP addresses for this mDNS name; ideally
+	// we'd use something like netlink to trigger updates to avoid wakeups;
+	// this might require extra permissions though
+	initOnce.Do(addressUpdateLoop)
 }
 
-func timeoutLoop() {
-	timeout := time.NewTimer(3*time.Second)
-	//timeout := time.NewTimer(timeoutMinutes * time.Minute)
+func addressUpdateLoop() {
+	timer := time.NewTimer(addressUpdateDelay)
 
 	for {
-		logger.Println("loop")
 		if _mdns != nil {
-			logger.Println("scan")
 			_mdns.ScanInterfaces()
 		}
-		loop()
-		//timeout.Reset(timeoutMinutes * time.Minute)
-		timeout.Reset(3*time.Second)
-		<-timeout.C
+		timer.Reset(addressUpdateDelay)
+		<-timer.C
 	}
 }
-
-var osHostname = os.Hostname
 
 func getHostname() (hostname string) {
-	hostname, err := osHostname()
+	hostname, err := os.Hostname()
 	if err != nil {
-		logger.Println("Cannot obtain hostname, falling back to default:", err)
-		return hostnameWedbm
+		logger.Println("Cannot obtain hostname, using default:", err)
+		return hostnameDefault
 	}
 	hostname = strings.Split(hostname, ".")[0]
-	if hostname == hostnameLocalhost {
-		hostname = hostnameWedbm
+	if hostname == "localhost" {
+		hostname = hostnameDefault
 	}
 	return hostname
-}
-
-func loop() {
-	addrs, err := ipAddrs()
-	if err != nil {
-		logger.Println("Cannot obtain IP addresses:", err)
-		return
-	}
-
-	hostname, err := osHostname()
-	if err != nil {
-		logger.Println("Cannot obtain hostname:", err)
-		return
-	}
-
-	if strings.ContainsRune(hostname, '.') {
-		hostname = strings.Split(hostname, ".")[0]
-	}
-
-	if hostname == hostnameLocalhost {
-		hostname = hostnameWedbm
-	}
-
-	for _, ip := range addrs {
-		ip := strings.Split(ip.String(), "/")[0]
-		if strings.HasPrefix(ip, "127.") {
-			continue
-		}
-
-		tryPublish(hostname, ip)
-	}
 }
