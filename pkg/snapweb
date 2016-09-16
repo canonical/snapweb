@@ -1,20 +1,18 @@
 #!/bin/sh
 set -e
 
-platform=$(uname -i)
-
-case $platform in
-    x86_64)
+case $SNAP_ARCH in
+    amd64)
         plat_abi=x86_64-linux-gnu
         ;;
-    armv7l)
+    armhf)
         plat_abi=arm-linux-gnueabihf
         ;;
-    aarch64)
+    arm64)
         plat_abi=aarch64-linux-gnu
         ;;
     *)
-        echo "unknown platform for snappy-magic: $platform. remember to file a bug or better yet: fix it :)"
+        echo "unknown platform for snappy-magic: $SNAP_ARCH. remember to file a bug or better yet: fix it :)"
         ;;
 esac
 

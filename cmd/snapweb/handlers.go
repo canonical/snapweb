@@ -49,12 +49,12 @@ func newSnapdClientImpl() snappy.SnapdClient {
 func getSnappyVersion() string {
 	c := newSnapdClient()
 
-	version, err := c.ServerVersion()
+	verInfo, err := c.ServerVersion()
 	if err != nil {
 		return "snapd"
 	}
 
-	return "snapd " + version
+	return fmt.Sprintf("snapd %s (series %s)", verInfo.Version, verInfo.Series)
 }
 
 func initURLHandlers(log *log.Logger) {

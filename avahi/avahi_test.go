@@ -20,30 +20,16 @@ package avahi
 import (
 	"io/ioutil"
 	"log"
-	"net"
 	"os"
 	"testing"
 
-	"github.com/davecheney/mdns"
 	. "gopkg.in/check.v1"
 )
 
 func Test(t *testing.T) { TestingT(t) }
 
-type stubAddr struct {
-	address string
-}
-
-func (a stubAddr) Network() string {
-	return ""
-}
-
-func (a stubAddr) String() string {
-	return a.address
-}
-
 type AvahiSuite struct {
-	publish []string
+	mockHostname string
 }
 
 var _ = Suite(&AvahiSuite{})
@@ -51,17 +37,22 @@ var _ = Suite(&AvahiSuite{})
 func (s *AvahiSuite) SetUpTest(c *C) {
 	logger = log.New(ioutil.Discard, "", 0)
 
-	mdnsPublish = func(rr string) error { s.publish = append(s.publish, rr); return nil }
-	osHostname = func() (string, error) { return "localhost", nil }
+	osHostname = func() (string, error) { return s.mockHostname, nil }
 }
 
 func (s *AvahiSuite) TearDownTest(c *C) {
-	mdnsPublish = mdns.Publish
 	osHostname = os.Hostname
-	netInterfaceAddrs = net.InterfaceAddrs
-	s.publish = nil
 }
 
+func (s *AvahiSuite) TestGetHostname(c *C) {
+	s.mockHostname = "localhost"
+	c.Check(getHostname(), Equals, hostnameDefault)
+
+	s.mockHostname = "something-else"
+	c.Check(getHostname(), Equals, "something-else")
+}
+
+/*
 func (s *AvahiSuite) TestLoopLocalAddressOnly(c *C) {
 	netInterfaceAddrs = func() ([]net.Addr, error) {
 		return []net.Addr{&stubAddr{"127.0.0.1"}}, nil
@@ -102,3 +93,4 @@ func (s *AvahiSuite) TestLoopLocalCNetworkOtherHostname(c *C) {
 	c.Assert(s.publish, HasLen, 1)
 	c.Assert(s.publish[0], Equals, "other.local. 60 IN A 192.168.1.1")
 }
+*/
