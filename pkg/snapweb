@@ -11,8 +11,12 @@ case $SNAP_ARCH in
     arm64)
         plat_abi=aarch64-linux-gnu
         ;;
+    i386)
+        plat_abi=i686-linux-gnu
+        ;;
     *)
         echo "unknown platform for snappy-magic: $SNAP_ARCH. remember to file a bug or better yet: fix it :)"
+        exit 1
         ;;
 esac
 
