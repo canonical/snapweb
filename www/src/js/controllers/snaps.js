@@ -17,10 +17,6 @@ module.exports = {
           model: snap
         });
         rootChannel.command('set:content', view);
-      },
-      error: function() {
-        // TODO error view
-        alert('Model.fetch() failed. :(');
       }
     });
   }

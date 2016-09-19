@@ -1,6 +1,7 @@
 module.exports = {
   PACKAGES: '/api/v2/packages/',
   SETTINGS: '/api/v2/packages/ubuntu-core',
+  SSO_URL: 'http://google.com', // XXX
   FILTERED_SNAPS: [
     'snapweb',
     'ubuntu-core'
