@@ -36,6 +36,9 @@ type SnapdClient interface {
 	Install(name string, options *client.SnapOptions) (string, error)
 	Remove(name string, options *client.SnapOptions) (string, error)
 	ServerVersion() (*client.ServerVersion, error)
+	SetCoreConfig(patch map[string]interface{}) (string, error)
+	GetCoreConfig(keys []string) (map[string]interface{}, error)
+	CreateUser(request *client.CreateUserRequest) (*client.CreateUserResult, error)
 }
 
 // ClientAdapter adapts our expectations to the snapd client API.
