@@ -18,6 +18,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -62,6 +63,7 @@ func initURLHandlers(log *log.Logger) {
 
 	snappyHandler := snappy.NewHandler()
 	http.Handle("/api/v2/packages/", snappyHandler.MakeMuxer("/api/v2/packages"))
+	http.HandleFunc("/api/v2/create-user", createUserHandler)
 
 	http.Handle("/public/", loggingHandler(http.FileServer(http.Dir(filepath.Join(os.Getenv("SNAP"), "www")))))
 
@@ -72,6 +74,30 @@ func initURLHandlers(log *log.Logger) {
 	}
 
 	http.HandleFunc("/", makeMainPageHandler())
+}
+
+func createUserHandler(w http.ResponseWriter, r *http.Request) {
+	defer func() {
+		if r := recover(); r != nil {
+			w.WriteHeader(http.StatusBadRequest)
+		}
+	}()
+
+	var createData client.CreateUserRequest
+
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&createData); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+	}
+
+	c := newSnapdClient()
+	user, _ := c.CreateUser(&createData)
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+
+	enc := json.NewEncoder(w)
+	enc.Encode(user)
 }
 
 func loggingHandler(h http.Handler) http.Handler {

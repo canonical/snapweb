@@ -30,4 +30,5 @@ type SnapdClient interface {
 	Install(name string, options *client.SnapOptions) (string, error)
 	Remove(name string, options *client.SnapOptions) (string, error)
 	ServerVersion() (*client.ServerVersion, error)
+	CreateUser(request *client.CreateUserRequest) (*client.CreateUserResult, error)
 }
