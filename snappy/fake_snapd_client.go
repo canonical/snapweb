@@ -84,6 +84,7 @@ func (f *FakeSnapdClient) ServerVersion() (*client.ServerVersion, error) {
 	return &f.Version, f.Err
 }
 
+// CreateUser creates a local user on the system
 func (f *FakeSnapdClient) CreateUser(request *client.CreateUserRequest) (*client.CreateUserResult, error) {
 	createResult := client.CreateUserResult{
 		Username:    "johndoe",
