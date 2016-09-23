@@ -1,0 +1,36 @@
+<div class="region-first-boot">
+  <div class="inner-wrapper">
+    <div class="prepend-one height-col empty-state">
+      <div class="p-strip--light">
+        <div class="row">
+          <h1>Welcome to hostname</h1>
+        </div>
+      </div>
+      <div class="p-card--highlighted">
+        <h3 class="p-card__title">Create an account</h3>
+        <form>
+          <fieldset>
+          <input type="radio" name="RadioOptions" id="RadioSSO" value="sso" checked>
+          <label for="RadioSSO">Ubuntu SSO</label>
+          &nbsp;
+          <input type="radio" name="RadioOptions" id="RadioLocal" value="local" disabled="disabled">
+          <label for="RadioLocal">Local</label>
+          </fieldset>
+          <fieldset>
+            <p>
+              <label for="EmailSSO">Email address</label>
+              <input type="text" id="exampleInputEmail1" placeholder="Enter your email...">
+            </p>
+            <p>
+              <label for="sshKey">SSH-Key</label>
+              <textarea rows="3" id="sshKey" placeholder="Paste your public SSH key here..." disabled="disabled"></textarea>
+            </p>
+            <p>
+              <button type="submit" class="p-button">Submit</button>
+            </p>
+          </fieldset>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
