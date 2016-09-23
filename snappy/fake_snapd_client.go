@@ -94,4 +94,13 @@ func (f *FakeSnapdClient) GetCoreConfig(keys []string) (map[string]interface{}, 
 	return nil, nil
 }
 
+func (f *FakeSnapdClient) CreateUser(request *client.CreateUserRequest) (*client.CreateUserResult, error) {
+	createResult := client.CreateUserResult{
+		Username:    "johndoe",
+		SSHKeyCount: 1,
+	}
+
+	return &createResult, nil
+}
+
 var _ SnapdClient = (*FakeSnapdClient)(nil)

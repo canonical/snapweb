@@ -108,6 +108,7 @@ func initURLHandlers(log *log.Logger) {
 	log.Println("Initializing HTTP handlers...")
 	snappyHandler := snappy.NewHandler()
 	http.Handle("/api/v2/packages/", snappyHandler.MakeMuxer("/api/v2/packages"))
+	http.HandleFunc("/api/v2/create-user", createUserHandler)
 
 	http.HandleFunc("/api/v2/time-info", handleTimeInfo)
 
@@ -120,6 +121,30 @@ func initURLHandlers(log *log.Logger) {
 	}
 
 	http.HandleFunc("/", makeMainPageHandler())
+}
+
+func createUserHandler(w http.ResponseWriter, r *http.Request) {
+	defer func() {
+		if r := recover(); r != nil {
+			w.WriteHeader(http.StatusBadRequest)
+		}
+	}()
+
+	var createData client.CreateUserRequest
+
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&createData); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+	}
+
+	c := newSnapdClient()
+	user, _ := c.CreateUser(&createData)
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+
+	enc := json.NewEncoder(w)
+	enc.Encode(user)
 }
 
 func loggingHandler(h http.Handler) http.Handler {
