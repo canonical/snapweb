@@ -94,6 +94,7 @@ func (f *FakeSnapdClient) GetCoreConfig(keys []string) (map[string]interface{}, 
 	return nil, nil
 }
 
+// CreateUser creates a local user on the system
 func (f *FakeSnapdClient) CreateUser(request *client.CreateUserRequest) (*client.CreateUserResult, error) {
 	createResult := client.CreateUserResult{
 		Username:    "johndoe",
