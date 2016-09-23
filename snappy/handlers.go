@@ -23,7 +23,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/snapcore/snapd/client"
 	"github.com/snapcore/snapweb/statustracker"
 
 	"github.com/gorilla/mux"
@@ -39,7 +38,7 @@ type Handler struct {
 func NewHandler() *Handler {
 	return &Handler{
 		statusTracker: statustracker.New(),
-		snapdClient:   client.New(nil),
+		snapdClient:   NewClientAdapter(),
 	}
 }
 

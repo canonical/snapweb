@@ -18,14 +18,14 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
 	"text/template"
-
-	"github.com/snapcore/snapd/client"
 
 	"github.com/snapcore/snapweb/snappy"
 )
@@ -42,8 +42,9 @@ type templateData struct {
 
 var newSnapdClient = newSnapdClientImpl
 
+// TODO: keep client connection up?
 func newSnapdClientImpl() snappy.SnapdClient {
-	return client.New(nil)
+	return snappy.NewClientAdapter()
 }
 
 func getSnappyVersion() string {
@@ -57,11 +58,96 @@ func getSnappyVersion() string {
 	return fmt.Sprintf("snapd %s (series %s)", verInfo.Version, verInfo.Series)
 }
 
+type TimeInfoResponse struct {
+	Date      string  `json:"date,omitempty"`
+	Time      string  `json:"time,omitempty"`
+	Timezone  float64 `json:"timezone,omitempty"`
+	NTPServer string  `json:"ntpServer,omitempty"`
+}
+
+func handleTimeInfo(w http.ResponseWriter, r *http.Request) {
+	c := newSnapdClient()
+
+	if r.Method == "GET" {
+		values, err := c.GetCoreConfig([]string{"Date", "Time", "Timezone", "NTPServer"})
+		if err != nil {
+			log.Println("Error extracting core config", err)
+			return
+		}
+
+		info := TimeInfoResponse{
+			Date:      values["Date"].(string),
+			Time:      values["Time"].(string),
+			Timezone:  values["Timezone"].(float64),
+			NTPServer: values["NTPServer"].(string),
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		if err := json.NewEncoder(w).Encode(info); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			log.Println("Error encoding time response", err)
+		}
+	} else if r.Method == "PATCH" {
+		data, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			log.Println("Error decoding time patch", err)
+			return
+		}
+
+		var timePatch map[string]interface{}
+		err = json.Unmarshal(data, &timePatch)
+		if err != nil {
+			log.Println("Error decoding time data", err)
+			return
+		}
+
+		c.SetCoreConfig(timePatch) // TODO: check result
+	}
+}
+
+type DeviceInfoResponse struct {
+	DeviceName string   `json:"deviceName"`
+	Brand      string   `json:"brand"`
+	Model      string   `json:"model"`
+	Serial     string   `json:"serial"`
+	OS         string   `json:"operatingSystem"`
+	Interfaces []string `json:"interfaces"`
+	Uptime     string   `json:"uptime"`
+}
+
+func handleDeviceInfo(w http.ResponseWriter, r *http.Request) {
+	c := newSnapdClient()
+
+	modelInfo, err := c.GetModelInfo()
+	if err != nil {
+		log.Println(fmt.Sprintf("handleDeviceInfo: error retrieving model info: %s", err))
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	var info DeviceInfoResponse
+	info.DeviceName = modelInfo["DeviceName"].(string)
+	info.Brand = modelInfo["Brand"].(string)
+	info.Model = modelInfo["Model"].(string)
+	info.Serial = modelInfo["Serial"].(string)
+	info.OS = modelInfo["OS"].(string)
+	info.Interfaces = modelInfo["Interfaces"].([]string)
+	info.Uptime = modelInfo["Uptime"].(string)
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(info); err != nil {
+		log.Println(fmt.Sprintf("handleDeviceInfo: error serializing json: %s", err))
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+}
+
 func initURLHandlers(log *log.Logger) {
 	log.Println("Initializing HTTP handlers...")
-
 	snappyHandler := snappy.NewHandler()
 	http.Handle("/api/v2/packages/", snappyHandler.MakeMuxer("/api/v2/packages"))
+
+	http.HandleFunc("/api/v2/time-info", handleTimeInfo)
+	http.HandleFunc("/api/v2/device-info", handleDeviceInfo)
 
 	http.Handle("/public/", loggingHandler(http.FileServer(http.Dir(filepath.Join(os.Getenv("SNAP"), "www")))))
 
