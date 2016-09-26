@@ -49,7 +49,7 @@ func (s *HandlersSuite) SetUpTest(c *C) {
 
 	s.c.Version.Version = "1000"
 	s.c.Version.Series = "16"
-//	s.c.Interfaces = client.Interfaces{Plugs: {Snap: "snap"}, Slots: {}}
+	//	s.c.Interfaces = client.Interfaces{Plugs: {Snap: "snap"}, Slots: {}}
 
 	s.c.Err = nil
 }
