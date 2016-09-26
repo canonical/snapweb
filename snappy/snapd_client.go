@@ -53,9 +53,7 @@ type SnapdClient interface {
 	Install(name string, options *client.SnapOptions) (string, error)
 	Remove(name string, options *client.SnapOptions) (string, error)
 	ServerVersion() (*client.ServerVersion, error)
-	SetCoreConfig(patch map[string]interface{}) (string, error)
-	GetCoreConfig(keys []string) (map[string]interface{}, error)
-	GetModelInfo() (map[string]interface{}, error)
+	Interfaces() (client.Interfaces, error)
 }
 
 // Adapt our expectations to the snapd client API
@@ -97,6 +95,10 @@ func (a *ClientAdapter) ServerVersion() (*client.ServerVersion, error) {
 	return a.snapdClient.ServerVersion()
 }
 
+func (a *ClientAdapter) Interfaces() (client.Interfaces, error) {
+	return a.snapdClient.Interfaces()
+}
+
 // internal
 func readNTPServer(c NTPConfigurationFiles) string {
 	timesyncdPath := c.GetDefaultConfFilename()
@@ -108,7 +110,7 @@ func readNTPServer(c NTPConfigurationFiles) string {
 
 	section, err := timesyncd.GetSection("Time")
 	if err != nil || !section.HasKey("NTP") {
-		log.Println("readNTPServer: no NTP servers are set")
+		log.Println("readNTPServer: no NTP servers are set ", timesyncdPath)
 		return ""
 	}
 
@@ -168,7 +170,7 @@ func writeNTPServer(c NTPConfigurationFiles, ntpServer string) {
 	saveTimeSyncd(c, timesyncd)
 }
 
-func (a *ClientAdapter) SetCoreConfig(patch map[string]interface{}) (string, error) {
+func SetCoreConfig(patch map[string]interface{}) (string, error) {
 	for k, v := range patch {
 		fmt.Printf("%s=%v\n", k, v)
 	}
@@ -179,7 +181,7 @@ func (a *ClientAdapter) SetCoreConfig(patch map[string]interface{}) (string, err
 var defaultNTPConfigurationFileLocator = NewDefaultNTPConfigurationFilesLocator()
 
 // XXX: current assumption, asking for timezone info
-func (a *ClientAdapter) GetCoreConfig(keys []string) (map[string]interface{}, error) {
+func GetCoreConfig(f NTPConfigurationFiles, keys []string) (map[string]interface{}, error) {
 	var dt = time.Now()
 	_, offset := dt.Zone()
 
@@ -187,19 +189,19 @@ func (a *ClientAdapter) GetCoreConfig(keys []string) (map[string]interface{}, er
 		"Date":      dt.Format("2006-01-02"), // Format for picker
 		"Time":      dt.Format("15:04"),      // Format for picker
 		"Timezone":  float64(offset) / 60 / 60,
-		"NTPServer": readNTPServer(defaultNTPConfigurationFileLocator),
+		"NTPServer": readNTPServer(f),
 	}, nil
 }
 
-func (a *ClientAdapter) GetModelInfo() (map[string]interface{}, error) {
+func GetModelInfo(c SnapdClient) (map[string]interface{}, error) {
 	// Server version
-	sysInfo, err := a.snapdClient.ServerVersion()
+	sysInfo, err := c.ServerVersion()
 	if err != nil {
 		return nil, err
 	}
 
 	// Interfaces
-	ifaces, err := a.snapdClient.Interfaces()
+	ifaces, err := c.Interfaces()
 	if err != nil {
 		return nil, err
 	}

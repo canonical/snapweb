@@ -40,16 +40,7 @@ type templateData struct {
 	SnapdVersion string
 }
 
-var newSnapdClient = newSnapdClientImpl
-
-// TODO: keep client connection up?
-func newSnapdClientImpl() snappy.SnapdClient {
-	return snappy.NewClientAdapter()
-}
-
-func getSnappyVersion() string {
-	c := newSnapdClient()
-
+func getSnappyVersion(c snappy.SnapdClient) string {
 	verInfo, err := c.ServerVersion()
 	if err != nil {
 		return "snapd"
@@ -65,11 +56,11 @@ type TimeInfoResponse struct {
 	NTPServer string  `json:"ntpServer,omitempty"`
 }
 
-func handleTimeInfo(w http.ResponseWriter, r *http.Request) {
-	c := newSnapdClient()
-
+func handleTimeInfo(f snappy.NTPConfigurationFiles, w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
-		values, err := c.GetCoreConfig([]string{"Date", "Time", "Timezone", "NTPServer"})
+		values, err := snappy.GetCoreConfig(
+			f,
+			[]string{"Date", "Time", "Timezone", "NTPServer"})
 		if err != nil {
 			log.Println("Error extracting core config", err)
 			return
@@ -101,7 +92,7 @@ func handleTimeInfo(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		c.SetCoreConfig(timePatch) // TODO: check result
+		snappy.SetCoreConfig(timePatch) // TODO: check result
 	}
 }
 
@@ -115,10 +106,8 @@ type DeviceInfoResponse struct {
 	Uptime     string   `json:"uptime"`
 }
 
-func handleDeviceInfo(w http.ResponseWriter, r *http.Request) {
-	c := newSnapdClient()
-
-	modelInfo, err := c.GetModelInfo()
+func handleDeviceInfo(c snappy.SnapdClient, w http.ResponseWriter, r *http.Request) {
+	modelInfo, err := snappy.GetModelInfo(c)
 	if err != nil {
 		log.Println(fmt.Sprintf("handleDeviceInfo: error retrieving model info: %s", err))
 		w.WriteHeader(http.StatusInternalServerError)
@@ -141,13 +130,18 @@ func handleDeviceInfo(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func initURLHandlers(log *log.Logger) {
+func initURLHandlers(c snappy.SnapdClient, f snappy.NTPConfigurationFiles, log *log.Logger) {
 	log.Println("Initializing HTTP handlers...")
 	snappyHandler := snappy.NewHandler()
+
 	http.Handle("/api/v2/packages/", snappyHandler.MakeMuxer("/api/v2/packages"))
 
-	http.HandleFunc("/api/v2/time-info", handleTimeInfo)
-	http.HandleFunc("/api/v2/device-info", handleDeviceInfo)
+	http.HandleFunc("/api/v2/time-info", func(w http.ResponseWriter, r *http.Request) {
+		handleTimeInfo(f, w, r)
+	})
+	http.HandleFunc("/api/v2/device-info", func(w http.ResponseWriter, r *http.Request) {
+		handleDeviceInfo(c, w, r)
+	})
 
 	http.Handle("/public/", loggingHandler(http.FileServer(http.Dir(filepath.Join(os.Getenv("SNAP"), "www")))))
 
@@ -157,7 +151,7 @@ func initURLHandlers(log *log.Logger) {
 		log.Println("Issues while getting icon dir:", err)
 	}
 
-	http.HandleFunc("/", makeMainPageHandler())
+	http.HandleFunc("/", makeMainPageHandler(c))
 }
 
 func loggingHandler(h http.Handler) http.Handler {
@@ -174,9 +168,9 @@ func getBranding() branding {
 	}
 }
 
-func makeMainPageHandler() http.HandlerFunc {
+func makeMainPageHandler(c snappy.SnapdClient) http.HandlerFunc {
 	b := getBranding()
-	v := getSnappyVersion()
+	v := getSnappyVersion(c)
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		data := templateData{

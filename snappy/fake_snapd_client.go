@@ -88,16 +88,8 @@ func (f *FakeSnapdClient) ServerVersion() (*client.ServerVersion, error) {
 	return &f.Version, f.Err
 }
 
-func (f *FakeSnapdClient) SetCoreConfig(patch map[string]interface{}) (string, error) {
-	return "", nil
-}
-
-func (f *FakeSnapdClient) GetCoreConfig(keys []string) (map[string]interface{}, error) {
-	return nil, nil
-}
-
-func (f *FakeSnapdClient) GetModelInfo() (map[string]interface{}, error) {
-	return map[string]interface{}{}, nil
+func (f *FakeSnapdClient) Interfaces() (client.Interfaces, error) {
+	return client.Interfaces{}, nil
 }
 
 var _ SnapdClient = (*FakeSnapdClient)(nil)
