@@ -35,7 +35,7 @@ module.exports = Marionette.ItemView.extend({
       'subname': snapweb.SUBNAME,
       'isHomeActive': (path === ''),
       'isStoreActive': (path === 'store' || path === 'search'),
-      'isSystemActive': (path === 'system-settings')
+      'isSettingsActive': (path === 'settings')
     };
   },
 

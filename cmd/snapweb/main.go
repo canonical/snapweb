@@ -23,18 +23,28 @@ import (
 	"os"
 
 	"github.com/snapcore/snapweb/avahi"
+	"github.com/snapcore/snapweb/snappy"
 )
 
 var logger *log.Logger
 
 const httpAddr string = ":4200"
 
+// TODO: keep client connection up?
+func newSnapdClient() snappy.SnapdClient {
+	return snappy.NewClientAdapter()
+}
+
 func init() {
 	logger = log.New(os.Stderr, "Snapweb: ", log.Ldate|log.Ltime|log.Lshortfile)
 }
 
 func main() {
-	initURLHandlers(logger)
+	c := newSnapdClient()
+
+	initURLHandlers(c,
+		snappy.NewDefaultNTPConfigurationFilesLocator(),
+		logger)
 
 	go avahi.InitMDNS(logger)
 

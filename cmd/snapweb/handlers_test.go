@@ -19,7 +19,9 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -45,26 +47,23 @@ var _ = Suite(&HandlersSuite{})
 func (s *HandlersSuite) SetUpTest(c *C) {
 	s.c = &snappy.FakeSnapdClient{}
 
-	newSnapdClient = func() snappy.SnapdClient {
-		return s.c
-	}
 	s.c.Version.Version = "1000"
 	s.c.Version.Series = "16"
+	//	s.c.Interfaces = client.Interfaces{Plugs: {Snap: "snap"}, Slots: {}}
 
 	s.c.Err = nil
 }
 
 func (s *HandlersSuite) TearDownTest(c *C) {
-	newSnapdClient = newSnapdClientImpl
 }
 
 func (s *HandlersSuite) TestGetSnappyVersionError(c *C) {
 	s.c.Err = errors.New("fail")
-	c.Assert(getSnappyVersion(), Equals, "snapd")
+	c.Assert(getSnappyVersion(s.c), Equals, "snapd")
 }
 
 func (s *HandlersSuite) TestGetSnappyVersion(c *C) {
-	c.Assert(getSnappyVersion(), Equals, "snapd 1000 (series 16)")
+	c.Assert(getSnappyVersion(s.c), Equals, "snapd 1000 (series 16)")
 }
 
 func (s *HandlersSuite) TestLoggingHandler(c *C) {
@@ -99,7 +98,7 @@ func (s *HandlersSuite) TestServesIcons(c *C) {
 	c.Assert(os.Mkdir(icons, os.ModePerm), IsNil)
 	c.Assert(ioutil.WriteFile(iconPath, []byte{}, os.ModePerm), IsNil)
 
-	initURLHandlers(log.New(os.Stdout, "", 0))
+	initURLHandlers(s.c, nil, log.New(os.Stdout, "", 0))
 	defer func() {
 		http.DefaultServeMux = http.NewServeMux()
 	}()
@@ -126,7 +125,7 @@ func (s *HandlersSuite) TestMakeMainPageHandler(c *C) {
 	c.Assert(err, IsNil)
 	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
 
-	initURLHandlers(log.New(os.Stdout, "", 0))
+	initURLHandlers(s.c, nil, log.New(os.Stdout, "", 0))
 	defer func() {
 		http.DefaultServeMux = http.NewServeMux()
 	}()
@@ -185,4 +184,90 @@ func (s *HandlersSuite) TestRenderLayout(c *C) {
 	renderLayout("foo.html", &templateData{}, rec)
 	c.Assert(rec.Body.String(), Equals, "<title>foo</title>")
 	c.Assert(rec.Code, Equals, http.StatusOK)
+}
+
+const timesyncFileName = "timesyncd.conf"
+
+type TempNTPConfigurationFiles struct {
+	timesyncdPath string
+}
+
+func (d *TempNTPConfigurationFiles) GetDefaultConfFilename() string {
+	return d.timesyncdPath
+}
+
+func NewTempNTPConfigurationFilesLocator(basePath string) snappy.NTPConfigurationFiles {
+	return &TempNTPConfigurationFiles{
+		timesyncdPath: filepath.Join(basePath, timesyncFileName),
+	}
+}
+
+func formatNTPContent(ntpServers []string) string {
+	return fmt.Sprintln(`
+[Time]
+NTP=`, strings.Join(ntpServers, " "))
+}
+
+func mockNTPFileContent(c *C, ntpFilePath string, content string) {
+	c.Assert(ioutil.WriteFile(ntpFilePath, []byte(content), 0644), IsNil)
+}
+
+func (s *HandlersSuite) TestTimeInfoHandler(c *C) {
+	cwd, err := os.Getwd()
+	tmpfolder := c.MkDir()
+
+	locator := NewTempNTPConfigurationFilesLocator(tmpfolder)
+	p := locator.GetDefaultConfFilename()
+	ntpServer := "1.1.1.1"
+	mockNTPFileContent(c, p, formatNTPContent([]string{ntpServer}))
+
+	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
+
+	initURLHandlers(s.c, locator, log.New(os.Stdout, "", 0))
+	defer func() {
+		http.DefaultServeMux = http.NewServeMux()
+	}()
+
+	rec := httptest.NewRecorder()
+	req, err := http.NewRequest("GET", "/api/v2/time-info", nil)
+	c.Assert(err, IsNil)
+
+	http.DefaultServeMux.ServeHTTP(rec, req)
+	body := rec.Body.String()
+
+	var timeInfos map[string]interface{}
+	err = json.Unmarshal([]byte(body), &timeInfos)
+	c.Assert(err, IsNil)
+
+	c.Check(timeInfos["date"], Matches, "\\d\\d\\d\\d-\\d\\d-\\d\\d")
+	c.Check(timeInfos["time"], Matches, "\\d\\d:\\d\\d")
+	// c.Check(timeInfos["timezone"], FitsTypeOf, float64(0))
+	c.Check(timeInfos["ntpServer"], Equals, "1.1.1.1")
+}
+
+func (s *HandlersSuite) TestModelInfoHandler(c *C) {
+	cwd, err := os.Getwd()
+
+	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
+
+	initURLHandlers(s.c, nil, log.New(os.Stdout, "", 0))
+	defer func() {
+		http.DefaultServeMux = http.NewServeMux()
+	}()
+
+	rec := httptest.NewRecorder()
+	req, err := http.NewRequest("GET", "/api/v2/device-info", nil)
+	c.Assert(err, IsNil)
+
+	http.DefaultServeMux.ServeHTTP(rec, req)
+	body := rec.Body.String()
+
+	var deviceInfos map[string]interface{}
+	err = json.Unmarshal([]byte(body), &deviceInfos)
+	c.Assert(err, IsNil)
+
+	c.Assert(deviceInfos["deviceName"], Equals, "Device name")
+	c.Assert(deviceInfos["brand"], Equals, "Brand")
+	c.Assert(deviceInfos["model"], Equals, "Model")
+	c.Assert(deviceInfos["serial"], Equals, "Serial")
 }
