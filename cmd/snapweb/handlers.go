@@ -18,7 +18,9 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -55,11 +57,59 @@ func getSnappyVersion() string {
 	return fmt.Sprintf("snapd %s (series %s)", verInfo.Version, verInfo.Series)
 }
 
+type timeInfoResponse struct {
+	Date      string  `json:"date,omitempty"`
+	Time      string  `json:"time,omitempty"`
+	Timezone  float64 `json:"timezone,omitempty"`
+	NTPServer string  `json:"ntpServer,omitempty"`
+}
+
+func handleTimeInfo(w http.ResponseWriter, r *http.Request) {
+	c := newSnapdClient()
+
+	if r.Method == "GET" {
+		values, err := c.GetCoreConfig([]string{"Date", "Time", "Timezone", "NTPServer"})
+		if err != nil {
+			log.Println("Error extracting core config", err)
+			return
+		}
+
+		info := timeInfoResponse{
+			Date:      values["Date"].(string),
+			Time:      values["Time"].(string),
+			Timezone:  values["Timezone"].(float64),
+			NTPServer: values["NTPServer"].(string),
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		if err := json.NewEncoder(w).Encode(info); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			log.Println("Error encoding time response", err)
+		}
+	} else if r.Method == "PATCH" {
+		data, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			log.Println("Error decoding time patch", err)
+			return
+		}
+
+		var timePatch map[string]interface{}
+		err = json.Unmarshal(data, &timePatch)
+		if err != nil {
+			log.Println("Error decoding time data", err)
+			return
+		}
+
+		c.SetCoreConfig(timePatch) // TODO: check result
+	}
+}
+
 func initURLHandlers(log *log.Logger) {
 	log.Println("Initializing HTTP handlers...")
-
 	snappyHandler := snappy.NewHandler()
 	http.Handle("/api/v2/packages/", snappyHandler.MakeMuxer("/api/v2/packages"))
+
+	http.HandleFunc("/api/v2/time-info", handleTimeInfo)
 
 	http.Handle("/public/", loggingHandler(http.FileServer(http.Dir(filepath.Join(os.Getenv("SNAP"), "www")))))
 
