@@ -3,7 +3,11 @@
     <div class="prepend-one height-col empty-state">
       <div class="p-strip--light">
         <div class="row">
-          <h1>Welcome to hostname</h1>
+          <h1>Ubuntu Core</h1>
+          <p>
+            <!-- Configure the network and -->
+            Setup an administrator account on this all-snap Ubuntu Core system. After this setup process you will have secure web or command access to the system.
+          </p>
         </div>
       </div>
       <div class="p-card--highlighted">
@@ -19,14 +23,16 @@
           <fieldset>
             <p>
               <label for="EmailSSO">Email address</label>
-              <input type="text" id="exampleInputEmail1" placeholder="Enter your email...">
+              <input type="text" id="emailSSO" placeholder="Enter an email address from your account in the store...">
             </p>
             <p>
               <label for="sshKey">SSH-Key</label>
               <textarea rows="3" id="sshKey" placeholder="Paste your public SSH key here..." disabled="disabled"></textarea>
             </p>
             <p>
-              <button class="p-button btn-create">Create</button>
+              <button class="p-button--positive" id="btn-create">Create</button>
+              <label class="statusmessage" style="display: inline-block; margin-left: 1em">
+              </label>
             </p>
           </fieldset>
         </form>
