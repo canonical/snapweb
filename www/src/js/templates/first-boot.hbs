@@ -1,0 +1,42 @@
+<div class="region-first-boot">
+  <div class="inner-wrapper">
+    <div class="prepend-one height-col empty-state">
+      <div class="p-strip--light">
+        <div class="row">
+          <h1>Ubuntu Core</h1>
+          <p>
+            <!-- Configure the network and -->
+            Setup an administrator account on this all-snap Ubuntu Core system. After this setup process you will have secure web or command access to the system.
+          </p>
+        </div>
+      </div>
+      <div class="p-card--highlighted">
+        <h3 class="p-card__title">Create an account</h3>
+        <form>
+          <fieldset>
+          <input type="radio" name="RadioOptions" id="RadioSSO" value="sso" checked>
+          <label for="RadioSSO">Ubuntu SSO</label>
+          &nbsp;
+          <input type="radio" name="RadioOptions" id="RadioLocal" value="local" disabled="disabled">
+          <label for="RadioLocal">Local</label>
+          </fieldset>
+          <fieldset>
+            <p>
+              <label for="EmailSSO">Email address</label>
+              <input type="text" id="emailSSO" placeholder="Enter an email address from your account in the store...">
+            </p>
+            <p>
+              <label for="sshKey">SSH-Key</label>
+              <textarea rows="3" id="sshKey" placeholder="Paste your public SSH key here..." disabled="disabled"></textarea>
+            </p>
+            <p>
+              <button class="p-button--positive" id="btn-create">Create</button>
+              <label class="statusmessage" style="display: inline-block; margin-left: 1em">
+              </label>
+            </p>
+          </fieldset>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

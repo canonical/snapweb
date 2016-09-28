@@ -84,4 +84,13 @@ func (f *FakeSnapdClient) ServerVersion() (*client.ServerVersion, error) {
 	return &f.Version, f.Err
 }
 
+func (f *FakeSnapdClient) CreateUser(request *client.CreateUserRequest) (*client.CreateUserResult, error) {
+	createResult := client.CreateUserResult{
+		Username:    "johndoe",
+		SSHKeyCount: 1,
+	}
+
+	return &createResult, nil
+}
+
 var _ SnapdClient = (*FakeSnapdClient)(nil)
