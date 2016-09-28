@@ -90,6 +90,8 @@ func createUserHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 	}
 
+	log.Println("/api/v2/create-user", createData);
+
 	c := newSnapdClient()
 	user, _ := c.CreateUser(&createData)
 

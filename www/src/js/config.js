@@ -1,6 +1,7 @@
 module.exports = {
   PACKAGES: '/api/v2/packages/',
   SETTINGS: '/api/v2/packages/ubuntu-core',
+  CREATE_USER: '/api/v2/create-user',
   FILTERED_SNAPS: [
     'snapweb',
     'ubuntu-core'
