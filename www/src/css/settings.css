@@ -40,6 +40,10 @@ li.b-settings__row:last-of-type {
   margin:10px 0 0 10px;
 }
 
+.b-settings__content__row__name {
+  font-weight: 500;
+}
+
 @media screen and (min-width: 640px) {
   .b-settings {
     margin:20px 0 0 15px;

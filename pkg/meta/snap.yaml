@@ -15,4 +15,4 @@ apps:
   snapweb:
     daemon: simple
     command: snapweb
-    plugs: [network, network-bind, snapd-control]
+    plugs: [network, network-bind, snapd-control, timeserver-control]

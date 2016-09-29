@@ -1,1 +1,31 @@
 <h2>Date and Time</h2>
+<div style="margin-top: 1em;">
+  <div class="eight-col last-col">
+    <div class="row no-border eight-col last-col">
+      <div class="b-settings__content__row__name three-col">Date</div>
+      <div class="five-col last-col">
+        <input type="date" id="date-picker" value="{{ date }}">
+      </div>
+    </div>
+    <div class="row no-border eight-col last-col">
+      <div class="b-settings__content__row__name three-col">Time</div>
+      <div class="five-col last-col">
+        <input type="time" id="time-picker" value="{{ time }}">
+      </div>
+    </div>
+    <div class="row no-border eight-col last-col">
+      <div class="b-settings__content__row__name three-col">Timezone</div>
+      <div class="five-col last-col">
+        <select id="time-zone-select">
+        </select>
+      </div>
+    </div>
+    <div class="row no-border eight-col last-col">
+      <div class="b-settings__content__row__name three-col">Custom NTP server</div>
+      <div class="five-col last-col">
+        <span><input type="checkbox" id="ntp-active-checkbox">
+        <span><input type="text" placeholder="URL" id="ntp-server-name" value="{{ ntpServer }}">
+       <div>
+    </div>
+  </div>
+</div>
