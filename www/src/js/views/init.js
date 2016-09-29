@@ -10,6 +10,7 @@ module.exports = Backbone.Marionette.LayoutView.extend({
 
   ui: {
     statusmessage: ".statusmessage",
+    btncreate: ".btn-create",
   },
 
   events: {
@@ -30,27 +31,27 @@ module.exports = Backbone.Marionette.LayoutView.extend({
       this.ui.statusmessage.addClass('has-error');
       this.ui.statusmessage.show();
     }, 
- },
+  },
 
   handleCreate: function(event) {
     event.preventDefault();
     console.log('create button pressed');
-    // this.$('#btn-create').attr('disabled', 'true');
-    this.model.trigger('status-update', 'Contacting store...');
-    this.model.save(
-      {
-        email: this.$('#emailSSO').val(),
-        sudoer: true,
-      },
-      {
-        success: function() {
-          console.log('success');
-        },
-        error: function() {
-          console.log('error');
-        }
-      }
-    );
+    this.model.set({
+      email: this.$('#emailSSO').val(),
+      sudoer: true,
+    });
+    if (this.model.isValid()) {
+      this.ui.btncreate.attr('disabled', 'true');
+      this.model.trigger('status-update', 'Contacting store...'); // via snapd...
+      this.model.save({}, {
+          success: function() {
+            console.log('success');
+          },
+          error: function() {
+            console.log('error');
+          }
+      });
+    }
   },
 
   template : function() {

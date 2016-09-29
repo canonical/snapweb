@@ -21,7 +21,7 @@ module.exports = Backbone.Model.extend({
     if (typeof attrs.email == 'undefined' || attrs.email == '') {
       return 'Empty email';
     }
-    if (!!attrs.email.match(emailPattern)) {
+    if (!attrs.email.match(emailPattern)) {
       return 'Invalid email';
     }
   },
