@@ -20,7 +20,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -65,10 +64,9 @@ type timeInfoResponse struct {
 }
 
 func handleTimeInfo(w http.ResponseWriter, r *http.Request) {
-	c := newSnapdClient()
-
 	if r.Method == "GET" {
-		values, err := c.GetCoreConfig([]string{"Date", "Time", "Timezone", "NTPServer"})
+		values, err := snappy.GetCoreConfig(
+			[]string{"Date", "Time", "Timezone", "NTPServer"})
 		if err != nil {
 			log.Println("Error extracting core config", err)
 			return
@@ -87,20 +85,7 @@ func handleTimeInfo(w http.ResponseWriter, r *http.Request) {
 			log.Println("Error encoding time response", err)
 		}
 	} else if r.Method == "PATCH" {
-		data, err := ioutil.ReadAll(r.Body)
-		if err != nil {
-			log.Println("Error decoding time patch", err)
-			return
-		}
-
-		var timePatch map[string]interface{}
-		err = json.Unmarshal(data, &timePatch)
-		if err != nil {
-			log.Println("Error decoding time data", err)
-			return
-		}
-
-		c.SetCoreConfig(timePatch) // TODO: check result
+		w.WriteHeader(http.StatusNotImplemented)
 	}
 }
 
