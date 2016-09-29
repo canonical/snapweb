@@ -13,6 +13,7 @@ var SettingsTimeView = require('./settings-time.js');
 module.exports = Backbone.Marionette.LayoutView.extend({
   initialize: function(options) {
     this.timeInfo = options.timeInfo;
+    this.deviceInfo = options.deviceInfo;
   },
 
   template: function(model) {
@@ -50,7 +51,9 @@ module.exports = Backbone.Marionette.LayoutView.extend({
         break;
       case 'device':
       default:
-        view = new SettingsDeviceView()
+        view = new SettingsDeviceView({
+            model: this.deviceInfo
+          });
     }
 
     this.showChildView('contentRegion', view);

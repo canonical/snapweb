@@ -100,4 +100,9 @@ func (f *FakeSnapdClient) CreateUser(request *client.CreateUserOptions) (*client
 	return &f.CrUser, f.Err
 }
 
+// GetModelInfo returns information about the device.
+func (f *FakeSnapdClient) GetModelInfo() (map[string]interface{}, error) {
+	return map[string]interface{}{}, nil
+}
+
 var _ SnapdClient = (*FakeSnapdClient)(nil)
