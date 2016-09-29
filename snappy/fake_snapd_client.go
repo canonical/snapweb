@@ -84,4 +84,9 @@ func (f *FakeSnapdClient) ServerVersion() (*client.ServerVersion, error) {
 	return &f.Version, f.Err
 }
 
+// GetModelInfo returns information about the device.
+func (f *FakeSnapdClient) GetModelInfo() (map[string]interface{}, error) {
+	return map[string]interface{}{}, nil
+}
+
 var _ SnapdClient = (*FakeSnapdClient)(nil)
