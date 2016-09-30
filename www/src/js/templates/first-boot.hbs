@@ -12,13 +12,16 @@
         <h2 class="p-card__title">Create an account</h2>
         <form>
           <fieldset>
-            <input type="radio" name="RadioOptions" id="RadioSSO" value="sso" checked>
-            <label for="RadioSSO">Ubuntu SSO</label>
-            &nbsp;
-            <input type="radio" name="RadioOptions" id="RadioLocal" value="local" disabled="disabled">
-            <label for="RadioLocal">Local</label>
-          </fieldset>
-          <fieldset>
+            <p>
+              <input type="radio" name="RadioOptions" id="RadioSSO" value="sso" checked>
+              <label for="RadioSSO">Ubuntu SSO</label>
+              &nbsp;
+              <input type="radio" name="RadioOptions" id="RadioLocal" value="local" disabled="disabled">
+              <label for="RadioLocal">Local</label>
+            </p>
+            <p>
+              Create a local system user with the username and SSH keys registered on the store account identified by the provided email address.
+            </p>
             <p>
               <label for="EmailSSO">Email address</label>
               <input type="text" id="emailSSO" placeholder="Enter an email address from your account in the store...">
