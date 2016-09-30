@@ -124,3 +124,8 @@ func GetCoreConfig(keys []string) (map[string]interface{}, error) {
 		"NTPServer": readNTPServer(),
 	}, nil
 }
+
+// CreateUser creates a local user on the system
+func (a *ClientAdapter) CreateUser(request *client.CreateUserRequest) (*client.CreateUserResult, error) {
+	return a.snapdClient.CreateUser(request)
+}
