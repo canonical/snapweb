@@ -32,6 +32,7 @@ type FakeSnapdClient struct {
 	Version         client.ServerVersion
 	Installed       string
 	Removed         string
+	CrUser          client.CreateUserResult
 }
 
 // Icon returns the icon of an installed snap
@@ -86,12 +87,7 @@ func (f *FakeSnapdClient) ServerVersion() (*client.ServerVersion, error) {
 
 // CreateUser creates a local user on the system
 func (f *FakeSnapdClient) CreateUser(request *client.CreateUserRequest) (*client.CreateUserResult, error) {
-	createResult := client.CreateUserResult{
-		Username:    "johndoe",
-		SSHKeyCount: 1,
-	}
-
-	return &createResult, nil
+	return &f.CrUser, f.Err
 }
 
 var _ SnapdClient = (*FakeSnapdClient)(nil)

@@ -83,3 +83,8 @@ func (a *ClientAdapter) Remove(name string, options *client.SnapOptions) (string
 func (a *ClientAdapter) ServerVersion() (*client.ServerVersion, error) {
 	return a.snapdClient.ServerVersion()
 }
+
+// CreateUser creates a local user on the system
+func (a *ClientAdapter) CreateUser(request *client.CreateUserRequest) (*client.CreateUserResult, error) {
+	return a.snapdClient.CreateUser(request)
+}
