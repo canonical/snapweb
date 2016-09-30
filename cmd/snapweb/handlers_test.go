@@ -21,6 +21,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -190,6 +191,13 @@ func (s *HandlersSuite) TestRenderLayout(c *C) {
 }
 
 func (s *HandlersSuite) TestCreateUserHandler(c *C) {
+
+	s.c.CrUser = client.CreateUserResult{
+		Username:    "johndoe",
+		SSHKeyCount: 1,
+	}
+	s.c.Err = nil
+
 	initURLHandlers(log.New(os.Stdout, "", 0))
 	defer func() {
 		http.DefaultServeMux = http.NewServeMux()
@@ -218,4 +226,17 @@ func (s *HandlersSuite) TestCreateUserHandler(c *C) {
 	// verify the result correctness as well
 	c.Assert(res.Username, Equals, "johndoe")
 	c.Assert(res.SSHKeyCount, Equals, 1)
+
+	// test creation error scenario
+	s.c.CrUser = client.CreateUserResult{ /* empty */ }
+	s.c.Err = fmt.Errorf("bad user result: unable to create")
+
+	rec = httptest.NewRecorder()
+	req, err = http.NewRequest("POST", "/api/v2/create-user",
+		strings.NewReader(`{ "email": "john.doe@test.com", "sudoer": true }`))
+
+	createUserHandler(rec, req)
+
+	c.Assert(rec.Code, Not(Equals), http.StatusOK)
+	c.Check(strings.Contains(rec.Body.String(), "error"), Equals, true)
 }

@@ -27,6 +27,10 @@ import (
 	"path/filepath"
 	"text/template"
 
+	// the CreateUser handler uses the snapd/client structures directly
+	"github.com/snapcore/snapd/client"
+
+	// most other handlers use the ClientAdapter for now
 	"github.com/snapcore/snapweb/snappy"
 )
 
@@ -137,13 +141,20 @@ func createUserHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 	}
 
+	log.Println("/api/v2/create-user", createData)
+
+	w.Header().Set("Content-Type", "application/json")
+	enc := json.NewEncoder(w)
+
 	c := newSnapdClient()
-	user, _ := c.CreateUser(&createData)
+	user, err := c.CreateUser(&createData)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, "{ error: \"%v\" }", err)
+		return
+	}
 
 	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Type", "application/json")
-
-	enc := json.NewEncoder(w)
 	enc.Encode(user)
 }
 
