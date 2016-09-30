@@ -18,7 +18,6 @@
 package snappy
 
 import (
-	"bufio"
 	"fmt"
 	"log"
 	"os"
@@ -119,47 +118,46 @@ func readNTPServer() string {
 func saveTimeSyncd(confFile *ini.File) error {
 	timesyncConf, err := os.OpenFile(timesyncdPath, os.O_WRONLY|os.O_TRUNC, 0644)
 	if err != nil {
-		log.Println(fmt.Sprintf("saveTimeSyncd: Failed to open conf file: %v", err))
+		log.Printf("saveTimeSyncd: Failed to open conf file: %v", err)
 		return err
 	}
 
 	defer timesyncConf.Close()
 
-	w := bufio.NewWriter(timesyncConf)
-	_, err = confFile.WriteTo(w)
+	_, err = confFile.WriteTo(timesyncConf)
 	if err != nil {
-		log.Println(fmt.Sprintf("saveTimeSyncd: Failed to write conf file: %v", err))
+		log.Printf("saveTimeSyncd: Failed to write conf file: %v", err)
 		return err
 	}
-	w.Flush()
 	return nil
 }
 
-func writeNTPServer(ntpServer string) {
-	log.Println(fmt.Sprintf("writeNTPServer: server=%s", ntpServer))
+func writeNTPServer(ntpServer string) error {
 	timesyncd, err := ini.Load(timesyncdPath)
 	if err != nil {
-		log.Println("writeNTPServer: unable to read /etc/system/timesyncd.conf")
-		return
+		log.Printf("writeNTPServer: unable to read /etc/system/timesyncd.conf: %v", err)
+		return err
 	}
 
 	section, err := timesyncd.GetSection("Time")
 	if err != nil || !section.HasKey("NTP") {
 		log.Println("writeNTPServer: no NTP servers are set")
-		return
+		return err
 	}
 
 	ntpKey := section.Key("NTP")
 	servers := ntpKey.Strings(" ")
 	if servers[0] == ntpServer {
 		log.Println("writeNTPServer: NTP server already set")
-		return
+		return nil
 	}
 
 	servers = append([]string{ntpServer}, servers...)
 	ntpKey.SetValue(strings.Join(servers, " "))
 
 	saveTimeSyncd(timesyncd)
+
+	return nil
 }
 
 // SetCoreConfig sets some aspect of core configuration
