@@ -7,10 +7,6 @@ var CONFIG = require('../config.js');
 module.exports = Backbone.Model.extend({
   url: CONFIG.CREATE_USER,
 
-  initialize: function() {
-    console.log('in create-user model init');
-  },
-
   // forces POST requests on every model update
   isNew: function() {
     return true;
