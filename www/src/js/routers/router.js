@@ -22,7 +22,7 @@ module.exports = {
   init: new Marionette.AppRouter({
     controller: initController,
     appRoutes: {
-      'init': 'index'
+      'firstboot': 'index'
     }
   }),
 
