@@ -18,18 +18,14 @@
 package snappy
 
 import (
-	"bufio"
-	"fmt"
 	"log"
-	"os"
-	"strings"
 	"time"
 
 	"github.com/snapcore/snapd/client"
 	"gopkg.in/ini.v1"
 )
 
-const timesyncdPath string = "/etc/systemd/timesyncd.conf"
+var timesyncdConfigurationFilePath = "/etc/systemd/timesyncd.conf"
 
 // SnapdClient is a client of the snapd REST API
 type SnapdClient interface {
@@ -40,8 +36,6 @@ type SnapdClient interface {
 	Install(name string, options *client.SnapOptions) (string, error)
 	Remove(name string, options *client.SnapOptions) (string, error)
 	ServerVersion() (*client.ServerVersion, error)
-	SetCoreConfig(patch map[string]interface{}) (string, error)
-	GetCoreConfig(keys []string) (map[string]interface{}, error)
 }
 
 // ClientAdapter adapts our expectations to the snapd client API.
@@ -97,83 +91,26 @@ func (a *ClientAdapter) ServerVersion() (*client.ServerVersion, error) {
 
 // internal
 func readNTPServer() string {
-	timesyncd, err := ini.Load(timesyncdPath)
+	timesyncd, err := ini.Load(timesyncdConfigurationFilePath)
 	if err != nil {
-		log.Println("readNTPServer: unable to read /etc/system/timesyncd.conf")
+		log.Println("readNTPServer: unable to read ",
+			timesyncdConfigurationFilePath)
 		return ""
 	}
 
 	section, err := timesyncd.GetSection("Time")
 	if err != nil || !section.HasKey("NTP") {
-		log.Println("readNTPServer: no NTP servers are set")
+		log.Println("readNTPServer: no NTP servers are set ",
+			timesyncdConfigurationFilePath)
 		return ""
 	}
 
 	return section.Key("NTP").Strings(" ")[0]
 }
 
-// Write back directly, rather than write-tmp(in same dir)+rename, as per the
-// internals of ini package, although better, write accessible locations may
-// not be on the same filesystem, removing the advantage.
-//  : timeserver-control grants rw access to /etc/systemd/timesyncd.conf
-func saveTimeSyncd(confFile *ini.File) error {
-	timesyncConf, err := os.OpenFile(timesyncdPath, os.O_WRONLY|os.O_TRUNC, 0644)
-	if err != nil {
-		log.Println(fmt.Sprintf("saveTimeSyncd: Failed to open conf file: %v", err))
-		return err
-	}
-
-	defer timesyncConf.Close()
-
-	w := bufio.NewWriter(timesyncConf)
-	_, err = confFile.WriteTo(w)
-	if err != nil {
-		log.Println(fmt.Sprintf("saveTimeSyncd: Failed to write conf file: %v", err))
-		return err
-	}
-	w.Flush()
-	return nil
-}
-
-func writeNTPServer(ntpServer string) {
-	log.Println(fmt.Sprintf("writeNTPServer: server=%s", ntpServer))
-	timesyncd, err := ini.Load(timesyncdPath)
-	if err != nil {
-		log.Println("writeNTPServer: unable to read /etc/system/timesyncd.conf")
-		return
-	}
-
-	section, err := timesyncd.GetSection("Time")
-	if err != nil || !section.HasKey("NTP") {
-		log.Println("writeNTPServer: no NTP servers are set")
-		return
-	}
-
-	ntpKey := section.Key("NTP")
-	servers := ntpKey.Strings(" ")
-	if servers[0] == ntpServer {
-		log.Println("writeNTPServer: NTP server already set")
-		return
-	}
-
-	servers = append([]string{ntpServer}, servers...)
-	ntpKey.SetValue(strings.Join(servers, " "))
-
-	saveTimeSyncd(timesyncd)
-}
-
-// SetCoreConfig sets some aspect of core configuration
-func (a *ClientAdapter) SetCoreConfig(patch map[string]interface{}) (string, error) {
-	for k, v := range patch {
-		fmt.Printf("%s=%v\n", k, v)
-	}
-
-	return "", nil
-}
-
 // GetCoreConfig gets some aspect of core configuration
 // XXX: current assumption, asking for timezone info
-func (a *ClientAdapter) GetCoreConfig(keys []string) (map[string]interface{}, error) {
+func GetCoreConfig(keys []string) (map[string]interface{}, error) {
 	var dt = time.Now()
 	_, offset := dt.Zone()
 
