@@ -41,15 +41,17 @@ module.exports = Backbone.Marionette.LayoutView.extend({
       sudoer: true,
     });
     if (this.model.isValid()) {
-      this.ui.btncreate.attr('disabled', 'true');
       this.model.trigger('status-update', 'Contacting store...'); // via snapd...
       this.model.save({}, {
-          success: function() {
-            console.log('success');
-          },
-          error: function() {
-            console.log('error');
-          }
+        success: function() {
+          console.log('success');
+        },
+        error: function(model, response) {
+          var error = eval(response.reponseText);
+          console.log('error', response.responseText);
+          console.log('model', model);
+          model.trigger('invalid', model, response.responseText);
+        }
       });
     }
   },
