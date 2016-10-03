@@ -14,7 +14,7 @@ module.exports = Backbone.Model.extend({
 
   validate: function(attrs) {
     var emailPattern = /^[\w\-]{1,}([\w\-\+.]{1,1}[\w\-]{1,}){0,}[@][\w\-]{1,}([.]([\w\-]{1,})){1,3}$/;
-    if (typeof attrs.email == 'undefined' || attrs.email == '') {
+    if (typeof attrs.email == 'undefined') {
       return 'Empty email';
     }
     if (!attrs.email.match(emailPattern)) {

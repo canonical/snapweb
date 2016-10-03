@@ -9,10 +9,14 @@ describe('FirstBoot', function() {
   describe('create-user model', function() {
 
     beforeEach(function() {
+      jasmine.Ajax.install();
       this.model = new CreateUser({});
+      spyOn(this.model, 'save').and.callThrough();
+      spyOn(this.model, 'validate').and.callThrough();
     });
 
     afterEach(function() {
+      jasmine.Ajax.uninstall();
       delete this.model;
     });
 
@@ -26,7 +30,14 @@ describe('FirstBoot', function() {
       expect(this.model.url).toBe(CONF.CREATE_USER);
     });
 
-    xit('should validate on save', function() {
+    it('should block empty or invalid email', function() {
+      expect(this.model.validate({})).toBeDefined();
+      expect(this.model.validate({email: 'bad-email'})).toBeDefined();
+    });
+
+    it('should validate on save', function() {
+      this.model.save();
+      expect(this.model.validate).toHaveBeenCalled();
     });
 
     xit('should always POST on save', function() {
@@ -62,6 +73,13 @@ describe('FirstBoot', function() {
       expect(this.emailSSO).toBeDefined();
       expect(this.sshKey).toBeDefined();
       expect(this.btnCreate).toBeDefined();
+    });
+
+    xit('should submit valid forms', function() {
+    });
+    
+    xit('should display error feedback', function() {
+
     });
     
   });
