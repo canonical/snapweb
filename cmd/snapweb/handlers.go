@@ -35,7 +35,7 @@ type branding struct {
 }
 
 type templateData struct {
-	Branding     branding
+	Branding     snappy.DeviceBranding
 	SnapdVersion string
 }
 
@@ -89,12 +89,31 @@ func handleTimeInfo(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func handleBranding(h snappy.Handler, w http.ResponseWriter, r *http.Request) {
+	brandingData, err := GetBrandingData(h)
+	if err != nil {
+		log.Println("Cannot get branding data", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(brandingData); err != nil {
+		log.Println("Error serializing branding json: ", err)
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+}
+
 func initURLHandlers(log *log.Logger) {
 	log.Println("Initializing HTTP handlers...")
 	snappyHandler := snappy.NewHandler()
 	http.Handle("/api/v2/packages/", snappyHandler.MakeMuxer("/api/v2/packages"))
 
 	http.HandleFunc("/api/v2/time-info", handleTimeInfo)
+
+	http.HandleFunc("/api/v2/branding-data", func(w http.ResponseWriter, r *http.Request) {
+		handleBranding(snappyHandler, w, r)
+	})
 
 	http.Handle("/public/", loggingHandler(http.FileServer(http.Dir(filepath.Join(os.Getenv("SNAP"), "www")))))
 
@@ -114,20 +133,11 @@ func loggingHandler(h http.Handler) http.Handler {
 	})
 }
 
-func getBranding() branding {
-	return branding{
-		Name:    "Ubuntu",
-		Subname: "",
-	}
-}
-
 func makeMainPageHandler() http.HandlerFunc {
-	b := getBranding()
 	v := getSnappyVersion()
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		data := templateData{
-			Branding:     b,
 			SnapdVersion: v,
 		}
 

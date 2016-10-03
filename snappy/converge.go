@@ -170,3 +170,18 @@ func (h *Handler) snapToPayload(snapQ *client.Snap) snapPkg {
 
 	return snap
 }
+
+func (h *Handler) getSnapByType(t string) ([]snapPkg, error) {
+	packages, err := h.allPackages()
+	if err != nil {
+		return nil, err
+	}
+
+	foundPackages := make([]snapPkg, 0)
+	for i := range packages {
+		if packages[i].Type == t {
+			append(foundPackages, packages[i])
+		}
+	}
+	return foundPackages
+}

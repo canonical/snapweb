@@ -1,0 +1,32 @@
+/** @define b-branding-header; weak */
+
+.b-branding-header {
+  margin:0 10px;
+  cursor: pointer;
+  position:relative;
+  width:100%;
+  display:flex;
+  align-items:center;
+  padding:8px 10px;
+  font-size:13px;
+  border-top:1px solid #ddd;
+}
+
+.b-branding-header img {
+  display:block;
+  width: 60px;
+  height: 60px;
+}
+
+.b-branding-header__name,
+.b-branding-header__subname,
+.b-branding-header__link {
+  white-space: nowrap;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media screen and (min-width: 640px) {
+    /* TODO */
+}

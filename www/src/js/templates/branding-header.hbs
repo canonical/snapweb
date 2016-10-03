@@ -1,0 +1,22 @@
+<div class="b-grey-wrapper">
+ 
+   <div class="b-branding-header">
+     {{#if icon}}
+       <img class="b-branding-header__icon" src="{{ icon }}">
+     {{else}}
+       {{ iconsvg }}
+     {{/if}}
+ 
+     <div class="b-branding-header">
+       <h3 class="b-branding-header__name">{{ name }}</h3>
+     </div>
+     <div class="b-branding-header__subname">
+       {{ subname }}
+     </div>
+     <div class="b-branding-header__link">
+       <a href="{{ linksrc }}">{{ link }}</a>
+     </div>
+   </div>
+ 
+ </div>
+ 
