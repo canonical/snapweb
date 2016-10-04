@@ -42,7 +42,7 @@ type SnapdClient interface {
 	ServerVersion() (*client.ServerVersion, error)
 	SetCoreConfig(patch map[string]interface{}) (string, error)
 	GetCoreConfig(keys []string) (map[string]interface{}, error)
-	CreateUser(request *client.CreateUserRequest) (*client.CreateUserResult, error)
+	CreateUser(request *client.CreateUserOptions) (*client.CreateUserResult, error)
 }
 
 // ClientAdapter adapts our expectations to the snapd client API.
@@ -187,6 +187,6 @@ func (a *ClientAdapter) GetCoreConfig(keys []string) (map[string]interface{}, er
 }
 
 // CreateUser creates a local user on the system
-func (a *ClientAdapter) CreateUser(request *client.CreateUserRequest) (*client.CreateUserResult, error) {
+func (a *ClientAdapter) CreateUser(request *client.CreateUserOptions) (*client.CreateUserResult, error) {
 	return a.snapdClient.CreateUser(request)
 }

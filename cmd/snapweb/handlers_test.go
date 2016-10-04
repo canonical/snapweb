@@ -19,9 +19,7 @@ package main
 
 import (
 	"bytes"
-	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -33,7 +31,6 @@ import (
 
 	. "gopkg.in/check.v1"
 
-	"github.com/snapcore/snapd/client"
 	"github.com/snapcore/snapweb/snappy"
 )
 
@@ -188,55 +185,4 @@ func (s *HandlersSuite) TestRenderLayout(c *C) {
 	renderLayout("foo.html", &templateData{}, rec)
 	c.Assert(rec.Body.String(), Equals, "<title>foo</title>")
 	c.Assert(rec.Code, Equals, http.StatusOK)
-}
-
-func (s *HandlersSuite) TestCreateUserHandler(c *C) {
-
-	s.c.CrUser = client.CreateUserResult{
-		Username:    "johndoe",
-		SSHKeyCount: 1,
-	}
-	s.c.Err = nil
-
-	initURLHandlers(log.New(os.Stdout, "", 0))
-	defer func() {
-		http.DefaultServeMux = http.NewServeMux()
-	}()
-
-	// check that malformed requests get rejected
-	rec := httptest.NewRecorder()
-	req, err := http.NewRequest("GET", "/api/v2/create-user?wrong", nil)
-	c.Assert(err, IsNil)
-	createUserHandler(rec, req)
-	c.Assert(rec.Code, Equals, http.StatusBadRequest)
-
-	// test correct request
-	var res client.CreateUserResult
-
-	rec = httptest.NewRecorder()
-	req, err = http.NewRequest("POST", "/api/v2/create-user",
-		strings.NewReader(`{ "email": "john.doe@test.com", "sudoer": true }`))
-	c.Assert(err, IsNil)
-
-	createUserHandler(rec, req)
-	c.Assert(rec.Code, Equals, http.StatusOK)
-	decoder := json.NewDecoder(rec.Body)
-	err = decoder.Decode(&res)
-	c.Assert(err, IsNil)
-	// verify the result correctness as well
-	c.Assert(res.Username, Equals, "johndoe")
-	c.Assert(res.SSHKeyCount, Equals, 1)
-
-	// test creation error scenario
-	s.c.CrUser = client.CreateUserResult{ /* empty */ }
-	s.c.Err = fmt.Errorf("bad user result: unable to create")
-
-	rec = httptest.NewRecorder()
-	req, err = http.NewRequest("POST", "/api/v2/create-user",
-		strings.NewReader(`{ "email": "john.doe@test.com", "sudoer": true }`))
-
-	createUserHandler(rec, req)
-
-	c.Assert(rec.Code, Not(Equals), http.StatusOK)
-	c.Check(strings.Contains(rec.Body.String(), "error"), Equals, true)
 }
