@@ -2,7 +2,7 @@ github.com/cheggaaa/pb	git	e8c7cc515bfde3e267957a3b110080ceed51354e	2014-12-02T0
 github.com/gorilla/context	git	50c25fb3b2b3b3cc724e9b6ac75fb44b3bccd0da	2014-11-26T16:34:05Z
 github.com/gorilla/mux	git	e444e69cbd2e2e3e0749a2f3c717cec491552bbf	2014-09-26T15:38:14Z
 github.com/presotto/go-mdns-sd	git	343772046ec1b3840b8591799a7bbcc68ea47b4b	2015-11-03T06:16:58Z
-github.com/snapcore/snapd	git	fd85491fd46396fdf754a12cd2bfa75037371c17	2016-09-12T14:34:41Z
+github.com/snapcore/snapd	git	ee12a51909e87b30b684573a9012c2029ff1259c	2016-10-04T09:45:38Z
 golang.org/x/crypto	git	60052bd85f2d91293457e8811b0cf26b773de469	2015-06-22T23:34:07Z
 gopkg.in/check.v1	git	64131543e7896d5bcc6bd5a76287eb75ea96c673	2014-10-24T13:38:53Z
 gopkg.in/ini.v1	git	6e4869b434bd001f6983749881c7ead3545887d8	2016-08-27T06:11:18Z
