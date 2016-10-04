@@ -27,7 +27,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"syscall"
 	"text/template"
 
 	"github.com/snapcore/snapd/dirs"
