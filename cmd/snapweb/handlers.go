@@ -53,8 +53,6 @@ func unixDialer() func(string, string) (net.Conn, error) {
 	file, err := os.OpenFile(socketPath, os.O_RDWR, 0666)
 	if err == nil {
 		file.Close()
-	} else if e, ok := err.(*os.PathError); ok && (e.Err == syscall.ENOENT || e.Err == syscall.EACCES) {
-		socketPath = dirs.SnapSocket
 	}
 
 	return func(_, _ string) (net.Conn, error) {
