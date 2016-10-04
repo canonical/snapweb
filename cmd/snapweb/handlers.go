@@ -20,15 +20,17 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
+	"net"
 	"net/http"
 	"os"
 	"path/filepath"
+	"syscall"
 	"text/template"
 
-	// the CreateUser handler uses the snapd/client structures directly
-	"github.com/snapcore/snapd/client"
+	"github.com/snapcore/snapd/dirs"
 
 	// most other handlers use the ClientAdapter for now
 	"github.com/snapcore/snapweb/snappy"
@@ -45,6 +47,18 @@ type templateData struct {
 }
 
 var newSnapdClient = newSnapdClientImpl
+
+func unixDialer() func(string, string) (net.Conn, error) {
+	socketPath := dirs.SnapdSocket
+	file, err := os.OpenFile(socketPath, os.O_RDWR, 0666)
+	if err == nil {
+		file.Close()
+	}
+
+	return func(_, _ string) (net.Conn, error) {
+		return net.Dial("unix", socketPath)
+	}
+}
 
 func newSnapdClientImpl() snappy.SnapdClient {
 	return snappy.NewClientAdapter()
@@ -112,7 +126,7 @@ func initURLHandlers(log *log.Logger) {
 	log.Println("Initializing HTTP handlers...")
 	snappyHandler := snappy.NewHandler()
 	http.Handle("/api/v2/packages/", snappyHandler.MakeMuxer("/api/v2/packages"))
-	http.HandleFunc("/api/v2/create-user", createUserHandler)
+	http.HandleFunc("/api/v2/create-user", passthrough)
 
 	http.HandleFunc("/api/v2/time-info", handleTimeInfo)
 
@@ -127,35 +141,19 @@ func initURLHandlers(log *log.Logger) {
 	http.HandleFunc("/", makeMainPageHandler())
 }
 
-func createUserHandler(w http.ResponseWriter, r *http.Request) {
-	defer func() {
-		if r := recover(); r != nil {
-			w.WriteHeader(http.StatusBadRequest)
-		}
-	}()
-
-	var createData client.CreateUserRequest
-
-	decoder := json.NewDecoder(r.Body)
-	if err := decoder.Decode(&createData); err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+// FIXME: this needs a test
+func passthrough(w http.ResponseWriter, r *http.Request) {
+	c := &http.Client{
+		Transport: &http.Transport{Dial: unixDialer()},
 	}
-
-	log.Println("/api/v2/create-user", createData)
-
-	w.Header().Set("Content-Type", "application/json")
-	enc := json.NewEncoder(w)
-
-	c := newSnapdClient()
-	user, err := c.CreateUser(&createData)
+	resp, err := c.Do(r)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintf(w, "{ error: \"%v\" }", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
-	enc.Encode(user)
+	w.WriteHeader(resp.StatusCode)
+	io.Copy(w, resp.Body)
 }
 
 func loggingHandler(h http.Handler) http.Handler {
