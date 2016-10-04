@@ -22,6 +22,7 @@ import (
 	"time"
 
 	"github.com/snapcore/snapd/client"
+	"github.com/snapcore/snapd/snap"
 	"gopkg.in/ini.v1"
 )
 
@@ -133,8 +134,8 @@ func GetCoreConfig(keys []string) (map[string]interface{}, error) {
 	}, nil
 }
 
-func getDefaultBranding() snappy.DeviceBranding {
-	return branding{
+func getDefaultBranding() DeviceBranding {
+	return DeviceBranding{
 		Name:      "Ubuntu",
 		Subname:   "",
 		Link:      "https://ubuntu.com",
@@ -146,16 +147,19 @@ func getDefaultBranding() snappy.DeviceBranding {
 	}
 }
 
-func GetBrandingData(h snappy.Handler) (snappy.DeviceBranding, error) {
-	snap := h.getSnapByType("gadget")
-	if snap == nil || len(snap) == 0 {
-		return getDefaultBranding()
+func GetBrandingData(h *Handler) (DeviceBranding, error) {
+	snap, err := h.getSnapByType(snap.TypeGadget)
+	if err != nil{
+		return getDefaultBranding(), err
+	}
+	if snap == nil || len(snap) != 1 {
+		return getDefaultBranding(), nil
 	}
 	// TODO get snapd conf
-	return snappy.DeviceBranding{
-		Name:      snap.Name,
-		Subname:   snap.Description,
-		Icon:      snap.Icon,
+	return DeviceBranding{
+		Name:      snap[0].Name,
+		Subname:   snap[0].Description,
+		Icon:      snap[0].Icon,
 		Link:      "https://ubuntu.com",
 		LinkSrc:   "https://ubuntu.com",
 		TextColor: "",

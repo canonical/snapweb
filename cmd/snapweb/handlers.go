@@ -89,12 +89,12 @@ func handleTimeInfo(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func handleBranding(h snappy.Handler, w http.ResponseWriter, r *http.Request) {
-	brandingData, err := GetBrandingData(h)
+func handleBranding(h *snappy.Handler, w http.ResponseWriter, r *http.Request) {
+	brandingData, err := snappy.GetBrandingData(h)
 	if err != nil {
 		log.Println("Cannot get branding data", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
+		// brandingData is still valid and we fallback to defaults
+		// no matter what
 	}
 
 	w.Header().Set("Content-Type", "application/json")

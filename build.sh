@@ -60,7 +60,7 @@ go get launchpad.net/godeps
 godeps -u dependencies.tsv
 
 # build one snap per arch
-for ARCH in arm64 armhf i386 amd64; do
+for ARCH in amd64 arm64 armhf i386; do
     builddir="${top_builddir}/${ARCH}"
     mkdir -p "$builddir"
 
