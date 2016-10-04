@@ -30,7 +30,17 @@ module.exports = Backbone.Marionette.LayoutView.extend({
       this.ui.statusmessage.text(error);
       this.ui.statusmessage.addClass('has-error');
       this.ui.statusmessage.show();
-    }, 
+    },
+    'success': function(model, response) {
+      console.log(response);
+      console.log(model);
+      this.model.set({ ipaddress: location.hostname });
+      this.$('#firstboot-step-1').hide();
+      this.$('#firstboot-step-2').show();
+    },
+    'change': function() {
+      this.render();
+    },
   },
 
   handleCreate: function(event) {
@@ -43,21 +53,21 @@ module.exports = Backbone.Marionette.LayoutView.extend({
     if (this.model.isValid()) {
       this.model.trigger('status-update', 'Contacting store...'); // via snapd...
       this.model.save({}, {
-        success: function() {
+        success: function(model, response) {
           console.log('success');
+          model.trigger('success', model, response);
         },
         error: function(model, response) {
           var error = eval(response.reponseText);
-          console.log('error', response.responseText);
-          console.log('model', model);
+          console.log('this', this);
           model.trigger('invalid', model, response.responseText);
         }
       });
     }
   },
 
-  template : function() {
-    return template();
+  template : function(model) {
+    return template(model);
   },
 
 });

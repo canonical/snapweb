@@ -1,14 +1,13 @@
 <div class="region-first-boot">
   <div class="inner-wrapper">
     <div class="b-headline seven-col last-col">
-      <div class="row">
+      <div class="row" id="firstboot-step-1">
         <h1>Ubuntu Core</h1>
+        <div class="p-card--highlighted" style="display:block">
         <p>
           <!-- Configure the network and -->
           Setup an administrator account on this all-snap Ubuntu Core system. After this setup process you will have secure web or command access to the system.
         </p>
-      </div>
-      <div class="p-card--highlighted">
         <h2 class="p-card__title">Create an account</h2>
         <form>
           <fieldset>
@@ -40,6 +39,27 @@
           </fieldset>
         </form>
       </div>
+      </div>
+      <div class="row" style="display:none" id="firstboot-step-2">
+        <h2>Configuration Complete</h2>
+        <p>
+          This device is registered to {{email}}.
+        <p>
+          Remote access was enabled via authentification with SSO user {{username}}.
+          Public SSH keys were added to the device for remote access.
+        </p>
+        <p>
+          {{email}} can connect remotely to this device via SSH:
+          <pre>
+            <code>
+              ssh {{username}}@{{ipaddress}}
+            </code>
+          </pre>
+        </p>
+        <a class="button--primary" id="btn-manage" href="/">
+          Manage your device
+        </a>
+        <p></p>
+      </div>
     </div>
-  </div>
 </div>
