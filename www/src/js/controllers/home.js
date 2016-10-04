@@ -11,17 +11,17 @@ module.exports = {
   index: function() {
     var chan = Radio.channel('root');
     var installedBask = new Bask();
-    var brandingData = new BrandingData();
+    var brandingData = new BrandingData({}, {parse: true});
 
     $.when(
         installedBask.fetch({data: $.param({'installed_only': true})})
         , brandingData.fetch()
-      ).then(function() {
-          var view = new HomeLayoutView({
-              collection: installedBask.installed(),
-              brandingData: brandingData,
-          });
-          chan.command('set:content', view);
+    ).then(function() {
+        var view = new HomeLayoutView({
+            collection: installedBask.installed(),
+            brandingData: brandingData,
+        });
+        chan.command('set:content', view);
     });
   }
 };

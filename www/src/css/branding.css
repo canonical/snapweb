@@ -9,7 +9,7 @@
   align-items:center;
   padding:8px 10px;
   font-size:13px;
-  border-top:1px solid #ddd;
+  border-bottom:1px solid #ccc;
 }
 
 .b-branding-header img {
