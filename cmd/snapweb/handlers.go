@@ -24,8 +24,10 @@ import (
 	"log"
 	"net"
 	"net/http"
+	// "net/url"
 	"os"
 	"path/filepath"
+	"strings"
 	"text/template"
 
 	"github.com/snapcore/snapd/dirs"
@@ -125,12 +127,24 @@ func initURLHandlers(log *log.Logger) {
 	http.HandleFunc("/", makeMainPageHandler())
 }
 
-// FIXME: this needs a test
 func passthrough(w http.ResponseWriter, r *http.Request) {
 	c := &http.Client{
 		Transport: &http.Transport{Dial: unixDialer()},
 	}
-	resp, err := c.Do(r)
+
+	// need to remove the RequestURI field
+	// and remove the /api prefix from snapweb URLs
+	r.URL.Scheme = "http"
+	r.URL.Host = "localhost"
+	r.URL.Path = strings.TrimPrefix(r.URL.Path, "/api")
+
+	outreq, err := http.NewRequest(r.Method, r.URL.String(), r.Body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	resp, err := c.Do(outreq)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
