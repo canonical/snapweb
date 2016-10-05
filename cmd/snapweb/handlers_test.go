@@ -33,7 +33,6 @@ import (
 
 	. "gopkg.in/check.v1"
 
-	"github.com/snapcore/snapd/dirs"
 	"github.com/snapcore/snapweb/snappy"
 )
 
@@ -191,10 +190,11 @@ func (s *HandlersSuite) TestRenderLayout(c *C) {
 }
 
 func (s *HandlersSuite) TestPassthroughHandler(c *C) {
-	c.Assert(os.MkdirAll(filepath.Dir(dirs.SnapdSocket), 0755), IsNil)
-	l, err := net.Listen("unix", dirs.SnapdSocket)
+	socketPath := "/tmp/snapd-test.socket"
+	c.Assert(os.MkdirAll(filepath.Dir(socketPath), 0755), IsNil)
+	l, err := net.Listen("unix", socketPath)
 	if err != nil {
-		c.Fatalf("unable to listen on %q: %v", dirs.SnapdSocket, err)
+		c.Fatalf("unable to listen on %q: %v", socketPath, err)
 	}
 
 	f := func(w http.ResponseWriter, r *http.Request) {
@@ -211,7 +211,7 @@ func (s *HandlersSuite) TestPassthroughHandler(c *C) {
 	srv.Start()
 	defer srv.Close()
 
-	handler := http.HandlerFunc(makePassthroughHandler("/tmp/snapd-test.socket", "/api"))
+	handler := http.HandlerFunc(makePassthroughHandler(socketPath, "/api"))
 
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest("GET", "/api/v2/system-info", nil)

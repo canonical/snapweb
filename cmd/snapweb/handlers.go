@@ -111,7 +111,7 @@ func initURLHandlers(log *log.Logger) {
 	log.Println("Initializing HTTP handlers...")
 	snappyHandler := snappy.NewHandler()
 	passThru := makePassthroughHandler(dirs.SnapdSocket, "/api")
-	
+
 	http.Handle("/api/v2/packages/", snappyHandler.MakeMuxer("/api/v2/packages"))
 	http.HandleFunc("/api/v2/create-user", passThru)
 
@@ -133,25 +133,25 @@ func makePassthroughHandler(socketPath string, prefix string) http.HandlerFunc {
 		c := &http.Client{
 			Transport: &http.Transport{Dial: unixDialer(socketPath)},
 		}
-		
+
 		// need to remove the RequestURI field
 		// and remove the /api prefix from snapweb URLs
 		r.URL.Scheme = "http"
 		r.URL.Host = "localhost"
 		r.URL.Path = strings.TrimPrefix(r.URL.Path, prefix)
-		
+
 		outreq, err := http.NewRequest(r.Method, r.URL.String(), r.Body)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		
+
 		resp, err := c.Do(outreq)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		
+
 		w.WriteHeader(resp.StatusCode)
 		io.Copy(w, resp.Body)
 	})
