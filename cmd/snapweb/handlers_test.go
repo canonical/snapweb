@@ -211,13 +211,14 @@ func (s *HandlersSuite) TestPassthroughHandler(c *C) {
 	srv.Start()
 	defer srv.Close()
 
-	handler := http.HandlerFunc(passthrough)
+	handler := http.HandlerFunc(makePassthroughHandler("/tmp/snapd-test.socket", "/api"))
 
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest("GET", "/api/v2/system-info", nil)
 	c.Assert(err, IsNil)
 
 	handler(rec, req)
+	body := rec.Body.String()
 	c.Assert(rec.Code, Equals, http.StatusOK)
-	/* ... */
+	c.Check(strings.Contains(body, "42"), Equals, true)
 }

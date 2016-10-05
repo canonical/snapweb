@@ -48,8 +48,7 @@ type templateData struct {
 
 var newSnapdClient = newSnapdClientImpl
 
-func unixDialer() func(string, string) (net.Conn, error) {
-	socketPath := dirs.SnapdSocket
+func unixDialer(socketPath string) func(string, string) (net.Conn, error) {
 	file, err := os.OpenFile(socketPath, os.O_RDWR, 0666)
 	if err == nil {
 		file.Close()
@@ -111,8 +110,10 @@ func handleTimeInfo(w http.ResponseWriter, r *http.Request) {
 func initURLHandlers(log *log.Logger) {
 	log.Println("Initializing HTTP handlers...")
 	snappyHandler := snappy.NewHandler()
+	passThru := makePassthroughHandler(dirs.SnapdSocket, "/api")
+	
 	http.Handle("/api/v2/packages/", snappyHandler.MakeMuxer("/api/v2/packages"))
-	http.HandleFunc("/api/v2/create-user", passthrough)
+	http.HandleFunc("/api/v2/create-user", passThru)
 
 	http.HandleFunc("/api/v2/time-info", handleTimeInfo)
 
@@ -127,31 +128,33 @@ func initURLHandlers(log *log.Logger) {
 	http.HandleFunc("/", makeMainPageHandler())
 }
 
-func passthrough(w http.ResponseWriter, r *http.Request) {
-	c := &http.Client{
-		Transport: &http.Transport{Dial: unixDialer()},
-	}
-
-	// need to remove the RequestURI field
-	// and remove the /api prefix from snapweb URLs
-	r.URL.Scheme = "http"
-	r.URL.Host = "localhost"
-	r.URL.Path = strings.TrimPrefix(r.URL.Path, "/api")
-
-	outreq, err := http.NewRequest(r.Method, r.URL.String(), r.Body)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	resp, err := c.Do(outreq)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.WriteHeader(resp.StatusCode)
-	io.Copy(w, resp.Body)
+func makePassthroughHandler(socketPath string, prefix string) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		c := &http.Client{
+			Transport: &http.Transport{Dial: unixDialer(socketPath)},
+		}
+		
+		// need to remove the RequestURI field
+		// and remove the /api prefix from snapweb URLs
+		r.URL.Scheme = "http"
+		r.URL.Host = "localhost"
+		r.URL.Path = strings.TrimPrefix(r.URL.Path, prefix)
+		
+		outreq, err := http.NewRequest(r.Method, r.URL.String(), r.Body)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		
+		resp, err := c.Do(outreq)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		
+		w.WriteHeader(resp.StatusCode)
+		io.Copy(w, resp.Body)
+	})
 }
 
 func loggingHandler(h http.Handler) http.Handler {
