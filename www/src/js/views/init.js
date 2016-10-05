@@ -31,6 +31,7 @@ module.exports = Backbone.Marionette.LayoutView.extend({
     },
     'success': function(model, response) {
       this.model.set({ ipaddress: location.hostname });
+      this.model.set({ username: response.result.username });
       this.$('#firstboot-step-1').hide();
       this.$('#firstboot-step-2').show();
     },
