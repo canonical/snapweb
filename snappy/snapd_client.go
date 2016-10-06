@@ -23,6 +23,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/snapcore/snapd/asserts"
 	"github.com/snapcore/snapd/client"
 	"gopkg.in/ini.v1"
 )
@@ -38,9 +39,9 @@ type SnapdClient interface {
 	Install(name string, options *client.SnapOptions) (string, error)
 	Remove(name string, options *client.SnapOptions) (string, error)
 	ServerVersion() (*client.ServerVersion, error)
-	GetModelInfo() (map[string]interface{}, error)
 	CreateUser(request *client.CreateUserOptions) (*client.CreateUserResult, error)
 	Interfaces() (client.Interfaces, error)
+	Known(assertTypeName string, headers map[string]string) ([]asserts.Assertion, error)
 }
 
 // ClientAdapter adapts our expectations to the snapd client API.
@@ -99,6 +100,11 @@ func (a *ClientAdapter) Interfaces() (client.Interfaces, error) {
 	return a.snapdClient.Interfaces()
 }
 
+// Known queries assertions with type assertTypeName and matching assertion headers.
+func (a *ClientAdapter) Known(assertTypeName string, headers map[string]string) ([]asserts.Assertion, error) {
+	return a.snapdClient.Known(assertTypeName, headers)
+}
+
 // internal
 func readNTPServer() string {
 	timesyncd, err := ini.Load(timesyncdConfigurationFilePath)
@@ -133,7 +139,7 @@ func GetCoreConfig(keys []string) (map[string]interface{}, error) {
 }
 
 // GetModelInfo returns information about the device.
-func GetModelInfo(c *SnapdClient) (map[string]interface{}, error) {
+func GetModelInfo(c SnapdClient) (map[string]interface{}, error) {
 	// Server version
 	sysInfo, err := c.ServerVersion()
 	if err != nil {

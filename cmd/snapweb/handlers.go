@@ -120,7 +120,7 @@ type deviceInfoResponse struct {
 func handleDeviceInfo(w http.ResponseWriter, r *http.Request) {
 	c := newSnapdClient()
 
-	modelInfo, err := c.GetModelInfo()
+	modelInfo, err := snappy.GetModelInfo(c)
 	if err != nil {
 		log.Println(fmt.Sprintf("handleDeviceInfo: error retrieving model info: %s", err))
 		w.WriteHeader(http.StatusInternalServerError)

@@ -19,6 +19,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -228,7 +229,7 @@ func (s *HandlersSuite) TestModelInfoHandler(c *C) {
 
 	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
 
-	initURLHandlers(s.c, log.New(os.Stdout, "", 0))
+	initURLHandlers(log.New(os.Stdout, "", 0))
 	defer func() {
 		http.DefaultServeMux = http.NewServeMux()
 	}()
@@ -244,9 +245,8 @@ func (s *HandlersSuite) TestModelInfoHandler(c *C) {
 	err = json.Unmarshal([]byte(body), &deviceInfos)
 	c.Assert(err, IsNil)
 
-	c.Assert(deviceInfos["deviceName"], Equals, "Device name")
+	c.Assert(deviceInfos["deviceName"], Equals, "Device Name")
 	c.Assert(deviceInfos["brand"], Equals, "Brand")
 	c.Assert(deviceInfos["model"], Equals, "Model")
-	c.Assert(deviceInfos["serial"], Equals, "Serial")
+	c.Assert(deviceInfos["serial"], Equals, "Serial Number")
 }
-
