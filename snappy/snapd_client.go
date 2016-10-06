@@ -36,6 +36,7 @@ type SnapdClient interface {
 	Install(name string, options *client.SnapOptions) (string, error)
 	Remove(name string, options *client.SnapOptions) (string, error)
 	ServerVersion() (*client.ServerVersion, error)
+	CreateUser(request *client.CreateUserOptions) (*client.CreateUserResult, error)
 }
 
 // ClientAdapter adapts our expectations to the snapd client API.
@@ -120,4 +121,9 @@ func GetCoreConfig(keys []string) (map[string]interface{}, error) {
 		"Timezone":  float64(offset) / 60 / 60,
 		"NTPServer": readNTPServer(),
 	}, nil
+}
+
+// CreateUser creates a local user on the system
+func (a *ClientAdapter) CreateUser(request *client.CreateUserOptions) (*client.CreateUserResult, error) {
+	return a.snapdClient.CreateUser(request)
 }
