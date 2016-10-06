@@ -22,6 +22,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/snapcore/snapweb/snappy"
 	"github.com/snapcore/snapweb/avahi"
 )
 

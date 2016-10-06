@@ -105,4 +105,9 @@ func (f *FakeSnapdClient) CreateUser(request *client.CreateUserOptions) (*client
 	return &f.CrUser, f.Err
 }
 
+// Interfaces returns the list of supported interfaces on the system
+func (f *FakeSnapdClient) Interfaces() (client.Interfaces, error) {
+	return client.Interfaces{}, nil
+}
+
 var _ SnapdClient = (*FakeSnapdClient)(nil)

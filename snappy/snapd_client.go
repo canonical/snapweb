@@ -40,6 +40,7 @@ type SnapdClient interface {
 	ServerVersion() (*client.ServerVersion, error)
 	GetModelInfo() (map[string]interface{}, error)
 	CreateUser(request *client.CreateUserOptions) (*client.CreateUserResult, error)
+	Interfaces() (client.Interfaces, error)
 }
 
 // ClientAdapter adapts our expectations to the snapd client API.
@@ -93,6 +94,11 @@ func (a *ClientAdapter) ServerVersion() (*client.ServerVersion, error) {
 	return a.snapdClient.ServerVersion()
 }
 
+// Interfaces returns the list of supported interfaces on the system
+func (a *ClientAdapter) Interfaces() (client.Interfaces, error) {
+	return a.snapdClient.Interfaces()
+}
+
 // internal
 func readNTPServer() string {
 	timesyncd, err := ini.Load(timesyncdConfigurationFilePath)
@@ -127,15 +133,15 @@ func GetCoreConfig(keys []string) (map[string]interface{}, error) {
 }
 
 // GetModelInfo returns information about the device.
-func (a *ClientAdapter) GetModelInfo() (map[string]interface{}, error) {
+func GetModelInfo(c *SnapdClient) (map[string]interface{}, error) {
 	// Server version
-	sysInfo, err := a.snapdClient.ServerVersion()
+	sysInfo, err := c.ServerVersion()
 	if err != nil {
 		return nil, err
 	}
 
 	// Interfaces
-	ifaces, err := a.snapdClient.Interfaces()
+	ifaces, err := c.Interfaces()
 	if err != nil {
 		return nil, err
 	}
@@ -152,7 +158,7 @@ func (a *ClientAdapter) GetModelInfo() (map[string]interface{}, error) {
 	modelName := "Model"
 	serialNumber := "Serial Number"
 
-	serialInfo, err := a.snapdClient.Known("serial", map[string]string{})
+	serialInfo, err := c.Known("serial", map[string]string{})
 	if err == nil {
 		if len(serialInfo) == 0 {
 			log.Println("GetModelInfo: No assertions returned for serial type")
