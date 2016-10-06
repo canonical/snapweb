@@ -39,6 +39,7 @@ type SnapdClient interface {
 	Remove(name string, options *client.SnapOptions) (string, error)
 	ServerVersion() (*client.ServerVersion, error)
 	GetModelInfo() (map[string]interface{}, error)
+	CreateUser(request *client.CreateUserOptions) (*client.CreateUserResult, error)
 }
 
 // ClientAdapter adapts our expectations to the snapd client API.
@@ -180,4 +181,9 @@ func (a *ClientAdapter) GetModelInfo() (map[string]interface{}, error) {
 		"Interfaces": allInterfaces,
 		"Uptime":     (time.Duration(msi.Uptime) * time.Second).String(),
 	}, nil
+}
+
+// CreateUser creates a local user on the system
+func (a *ClientAdapter) CreateUser(request *client.CreateUserOptions) (*client.CreateUserResult, error) {
+	return a.snapdClient.CreateUser(request)
 }

@@ -1,0 +1,65 @@
+<div class="region-first-boot">
+  <div class="inner-wrapper">
+    <div class="b-headline seven-col last-col">
+      <div class="row" id="firstboot-step-1">
+        <h1>Ubuntu Core</h1>
+        <div class="p-card--highlighted" style="display:block">
+        <p>
+          <!-- Configure the network and -->
+          Setup an administrator account on this all-snap Ubuntu Core system. After this setup process you will have secure web or command access to the system.
+        </p>
+        <h2 class="p-card__title">Create an account</h2>
+        <form>
+          <fieldset>
+            <p>
+              <input type="radio" name="RadioOptions" id="RadioSSO" value="sso" checked>
+              <label for="RadioSSO">Ubuntu SSO</label>
+              &nbsp;
+              <input type="radio" name="RadioOptions" id="RadioLocal" value="local" disabled="disabled">
+              <label for="RadioLocal">Local</label>
+            </p>
+            <p>
+              Create a local system user with the username and SSH keys registered on the store account identified by the provided email address.
+            </p>
+            <p>
+              <label for="EmailSSO">Email address</label>
+              <input type="text" id="emailSSO" placeholder="Enter an email address from your account in the store...">
+            </p>
+            <p style="display: none">
+              <label for="sshKey">SSH-Key</label>
+              <textarea rows="3" id="sshKey" placeholder="Paste your public SSH key here..." disabled="disabled"></textarea>
+            </p>
+            <p>
+              <button class="p-button--positive" id="btn-create" style="margin-bottom: 1em;">
+                Create
+              </button>
+              <label class="statusmessage" style="display: inline-block; margin-left: 1em">
+              </label>
+            </p>
+          </fieldset>
+        </form>
+      </div>
+      </div>
+      <div class="row" style="display:none" id="firstboot-step-2">
+        <h2>Configuration Complete</h2>
+        <p>
+          This device is registered to {{email}}.
+        <p>
+          Remote access was enabled via authentification with SSO user {{username}}.
+          Public SSH keys were added to the device for remote access.
+        </p>
+        <p>
+          {{email}} can connect remotely to this device via SSH:
+        </p>
+        <p>
+          <pre>
+            ssh {{username}}@{{ipaddress}}
+          </pre>
+        </p>
+        <a class="button--primary" id="btn-manage" href="/">
+          Manage your device
+        </a>
+        <p></p>
+      </div>
+    </div>
+</div>
