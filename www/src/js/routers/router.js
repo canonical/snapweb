@@ -4,6 +4,7 @@ var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
 
 var homeController = require('../controllers/home.js');
+var initController = require('../controllers/init.js');
 var searchController = require('../controllers/search.js');
 var storeController = require('../controllers/store.js');
 var settingsController = require('../controllers/settings.js');
@@ -15,6 +16,13 @@ module.exports = {
     controller: homeController,
     appRoutes: {
       '': 'index'
+    }
+  }),
+
+  init: new Marionette.AppRouter({
+    controller: initController,
+    appRoutes: {
+      'firstboot': 'index'
     }
   }),
 
