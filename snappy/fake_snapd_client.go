@@ -32,6 +32,7 @@ type FakeSnapdClient struct {
 	Version         client.ServerVersion
 	Installed       string
 	Removed         string
+	CrUser          client.CreateUserResult
 }
 
 // Icon returns the icon of an installed snap
@@ -82,6 +83,21 @@ func (f *FakeSnapdClient) Remove(name string, options *client.SnapOptions) (stri
 // ServerVersion returns the version of the running `snapd` daemon
 func (f *FakeSnapdClient) ServerVersion() (*client.ServerVersion, error) {
 	return &f.Version, f.Err
+}
+
+// SetCoreConfig sets some aspect of core configuration
+func (f *FakeSnapdClient) SetCoreConfig(patch map[string]interface{}) (string, error) {
+	return "", nil
+}
+
+// GetCoreConfig gets some aspect of core configuration
+func (f *FakeSnapdClient) GetCoreConfig(keys []string) (map[string]interface{}, error) {
+	return nil, nil
+}
+
+// CreateUser creates a local user on the system
+func (f *FakeSnapdClient) CreateUser(request *client.CreateUserOptions) (*client.CreateUserResult, error) {
+	return &f.CrUser, f.Err
 }
 
 var _ SnapdClient = (*FakeSnapdClient)(nil)
