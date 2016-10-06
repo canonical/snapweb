@@ -12,7 +12,10 @@ module.exports = Backbone.Marionette.LayoutView.extend({
     return template(model);
   },
 
-  onBeforeShow: function() {
+    onBeforeShow: function() {
+        console.log('dddd')
+        console.log(this.limits.searchSnapItemLimit)
+      console.log(this.collection.first(this.limits.searchSnapItemLimit))
     this.showChildView('resultsRegion', new BaskView({
       model: new Backbone.Model({
         title: 'Search results',
@@ -21,7 +24,7 @@ module.exports = Backbone.Marionette.LayoutView.extend({
         isGrid: true,
         isAlpha: true,
         canSort: false,
-        canStyle: false
+        canStyle: true
       }),
       collection: this.collection
     }));

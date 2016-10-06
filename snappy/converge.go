@@ -82,8 +82,8 @@ func (h *Handler) getSnap(name string) (*client.Snap, error) {
 	return snap, nil
 }
 
-func (h *Handler) packagePayload(resource string) (snapPkg, error) {
-	snap, err := h.getSnap(resource)
+func (h *Handler) packagePayload(name string) (snapPkg, error) {
+	snap, err := h.getSnap(name)
 	if err != nil {
 		return snapPkg{}, err
 	}

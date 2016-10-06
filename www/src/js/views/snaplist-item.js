@@ -8,6 +8,7 @@ var Handlebars = require('hbsfy/runtime');
 var InstallBehavior = require('../behaviors/install.js');
 var template = require('../templates/snaplist-item.hbs');
 var snapChannel = Radio.channel('snap');
+var ComparisonHBSHelpers = require('handlebars-helpers').comparison();
 
 Handlebars.registerPartial('installer', require('../templates/_installer.hbs'));
 

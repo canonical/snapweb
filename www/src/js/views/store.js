@@ -15,14 +15,14 @@ module.exports = Backbone.Marionette.LayoutView.extend({
   onBeforeShow: function() {
     this.showChildView('store', new StorelistView({
       model: new Backbone.Model({
-        title: 'Available snaps',
+        title: 'Featured snaps',
         isHomeActive: false,
         isGrid: true,
         isAlpha: true,
         canSort: false,
-        canStyle: false
+        canStyle: true
       }),
-      collection: this.collection
+      collection: this.collection.all()
     }));
   },
 
