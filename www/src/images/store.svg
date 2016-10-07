@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="25px" height="25px" viewBox="0 0 25 25" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 40.1 (33804) - http://www.bohemiancoding.com/sketch -->
+    <title>store</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="store">
+            <g id="download" transform="translate(0.000000, -2.000000)">
+                <g id="layer1" transform="translate(0.214287, 0.123740)">
+                    <g id="g4845" transform="translate(12.626265, 14.126260) rotate(-90.000000) translate(-12.626265, -14.126260) translate(-0.873735, 1.626260)">
+                        <g id="g4778" transform="translate(13.499286, 12.499998) scale(-1, 1) translate(-13.499286, -12.499998) translate(0.499286, -0.000002)">
+                            <g id="g4780" transform="translate(12.990308, 12.500000) scale(-1, 1) translate(-12.990308, -12.500000) translate(0.490308, -0.000000)">
+                                <rect id="rect4782" transform="translate(12.241018, 12.090553) scale(-1, 1) translate(-12.241018, -12.090553) " x="0.24101789" y="0.0905525" width="24.000001" height="24"></rect>
+                                <path d="M3.90239053,4.74515691 L3.90239053,5.74506414 L6.45362712,5.74506414 L7.95303387,19.2504061 L21.8952715,19.2504061 L21.8952715,18.2500104 L8.84769939,18.2500104 L8.68126149,16.7494168 L23.5088908,16.7494168 L26.0791632,8.74625124 L7.79245291,8.74625124 L7.34829264,4.74515691 L3.90239053,4.74515691 L3.90239053,4.74515691 Z M7.90373713,9.74664694 L24.7076353,9.74664694 L22.7801754,15.7490211 L8.56997727,15.7490211 L7.90373713,9.74664694 L7.90373713,9.74664694 Z" id="path4267" fill="#333333" transform="translate(14.990777, 11.997782) rotate(-270.000000) translate(-14.990777, -11.997782) "></path>
+                                <ellipse id="path4271" fill="#333333" transform="translate(4.241020, 17.090553) rotate(-90.000000) translate(-4.241020, -17.090553) " cx="4.24101951" cy="17.0905525" rx="1.99918149" ry="2.0007639"></ellipse>
+                                <ellipse id="ellipse4273" fill="#333333" transform="translate(4.241020, 7.090553) rotate(-90.000000) translate(-4.241020, -7.090553) " cx="4.24101951" cy="7.0905525" rx="1.99918149" ry="2.0007639"></ellipse>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

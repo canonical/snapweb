@@ -24,29 +24,29 @@
 .b-button__group .b-search-button-grid-selected {
   background-image:url("../images/grid-view-selected.svg");
   background-repeat:no-repeat;
-  background-size:42px;
-  background-size: 100%;
+  width:100%;
+  background-size: contain;
 }
 
 .b-button__group .b-search-button-grid-unselected {
   background-image:url("../images/grid-view-unselected.svg");
   background-repeat:no-repeat;
-  background-size:42px;
-  background-size: 100%;
+  width:100%;
+  background-size: contain;
 }
 
 .b-button__group .b-search-button-list-selected {
   background-image:url("../images/list-view-selected.svg");
   background-repeat:no-repeat;
-  background-size:42px;
-  background-size: 100%;
+  width:100%;
+  background-size: contain;
 }
 
 .b-button__group .b-search-button-list-unselected {
   background-image:url("../images/list-view-unselected.svg");
   background-repeat:no-repeat;
-  background-size:42px;
-  background-size: 100%;
+  width:100%;
+  background-size: contain;
 }
 
 .b-button__group .b-button_active {

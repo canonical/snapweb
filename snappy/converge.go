@@ -31,6 +31,7 @@ import (
 const (
 	installedSnaps = iota
 	availableSnaps
+	featuredSnaps
 )
 
 type snapPkg struct {
@@ -98,7 +99,10 @@ func (h *Handler) allPackages(snapCondition int, query string) ([]snapPkg, error
 	if snapCondition == installedSnaps {
 		snaps, err = h.snapdClient.List(nil)
 	} else {
-		opts := &client.FindOptions{Query: query}
+		// TODO escape (or trim?) regexp meta chars
+		// regexp.QuoteMeta, check snapd to see what
+		// it does expect
+		opts := &client.FindOptions{Query: query, Prefix: true}
 		snaps, _, err = h.snapdClient.Find(opts)
 	}
 

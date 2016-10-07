@@ -88,7 +88,6 @@ module.exports = Backbone.Model.extend({
   },
 
   onStatusChange: function(model) {
-      console.log(model.get('name') + ' status changed ' + model.get('status'))
     this.setInstallActionString(model);
     this.setInstallHTMLClass(model);
     this.setInstallButtonClass(model);
@@ -115,9 +114,7 @@ module.exports = Backbone.Model.extend({
       installHTMLClass = 'b-installer_do_remove b-installer_thinking';
     }
 
-      console.log(model.get('name') + ' ' + installHTMLClass + ' ' + state)
     return model.set('installHTMLClass', installHTMLClass);
-
   },
 
   setInstallActionString: function(model) {
@@ -169,7 +166,7 @@ module.exports = Backbone.Model.extend({
     var status = response.status;
     var type = response.type;
     var id  = response.id;
-//      console.log(JSON.stringify(response))
+
     if (
       status === CONF.INSTALL_STATE.INSTALLED ||
       status === CONF.INSTALL_STATE.REMOVING

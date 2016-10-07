@@ -75,6 +75,10 @@ func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
 	snapCondition := availableSnaps
 	if r.FormValue("installed_only") == "true" {
 		snapCondition = installedSnaps
+	} else if r.FormValue("featured_only") == "true" {
+		// TODO complete when upstream's impl is complete
+		// snapCondition = featuredSnaps
+		snapCondition = availableSnaps
 	}
 	query := r.FormValue("q")
 	// This is a workaround until there is a way to get the list of snaps:

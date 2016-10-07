@@ -30,8 +30,9 @@
 .b-snaplist_grid .b-snaplist__item {
   background-color:#fff;
   margin-top:20px;
-  border-radius:10px;
-  box-shadow:0 1px 2px 0 rgba(0, 0, 0, 0.3);
+/*  border-radius:10px; */
+/*  box-shadow:0 1px 2px 0 rgba(0, 0, 0, 0.3); */
+  border: 1px dotted #cdcdcd;
   overflow:hidden;
 }
 
@@ -46,8 +47,8 @@
 }
 
 .b-snaplist_grid .b-snaplist__meta {
-  border-top:1px dotted #cdcdcd;
-  padding:10px 0 15px 0;
+/*  border-top:1px dotted #cdcdcd; */
+  padding:10px 0 55px 0;
   height:50px;
   box-sizing:content-box;
   position:absolute;
@@ -68,6 +69,10 @@
   text-overflow:ellipsis;
 }
 
+.b-snaplist_grid .b-snaplist__name:last-child {
+  white-space:normal;
+}
+
 .b-snaplist_grid .b-snaplist__developer {
   color:#888;
 }
@@ -77,6 +82,11 @@
 .b-snaplist_grid .b-snaplist__size,
 .b-snaplist_grid .b-snaplist__actions {
   display:none;
+}
+
+.b-snaplist_grid .b-snaplist__item:last-child {
+  border-color: green;
+  white-space: normal !important;
 }
 
 .b-store .b-snaplist_grid .b-snaplist__actions {
@@ -89,7 +99,7 @@
   top:0;
   width:100%;
   height:100%;
-  padding:25px 20px 100px 20px;
+  padding:0px 20px 100px 20px;
 }
 
 .b-store .b-snaplist__icon-wrapper {

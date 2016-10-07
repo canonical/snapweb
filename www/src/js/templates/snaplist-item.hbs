@@ -1,16 +1,44 @@
-<div class="b-snaplist__icon-wrapper">
-  <img class="b-snaplist__icon" src="{{ icon }}">
-</div>
+{{#if addSnapItem}}
+<a href="/store">
+{{/if}}
+
+  <div class="b-snaplist__icon-wrapper">
+    <img class="b-snaplist__icon" src="{{ icon }}">
+  </div>
+
+{{#if addSnapItem}}
+</a>
+{{/if}}
+
 <div class="b-snaplist__meta">
-  <div class="b-snaplist__id">
-    <h3 class="b-snaplist__name">{{ name }}</h3>
-    <p class="b-snaplist__version">{{ version }}</p>
-  </div>
-  <div class="b-snaplist__src">
-    <div class="b-snaplist__developer">{{ developer }}</div>
-  </div>
+
+<div class="b-snaplist__id">
+  <h4 class="b-snaplist__name" {{#if addSnapItem}}style="text-overflow: clip"{{/if}}>
+    {{ name }}
+  </h4>
+{{#unless addSnapItem}}
+  <p class="b-snaplist__version">{{ version }}</p>
+{{/unless}}
+</div>
+
+{{#unless addSnapItem}}
+<div class="b-snaplist__src">
+  <div class="b-snaplist__developer">By {{ developer }}</div>
+</div>
+{{/unless}}
+
+{{#unless addSnapItem}}
   <div class="b-snaplist__size" title="Installed file size">{{ prettyInstalledSize }}</div>
-  <div class="b-snaplist__actions">
+
+  <div class="b-snaplist__actions" style="margin-top: 20px;color: black">
     {{> installer installerClass="b-installer_small"}}
   </div>
+{{/unless}}
+
+{{#if addSnapItem}}
+<div class="b-snaplist__src">
+  <div class="b-snaplist__developer">By {{ developer }}</div>
+</div>
+{{/if}}
+
 </div>
