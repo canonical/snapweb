@@ -88,6 +88,8 @@ func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
 		// TODO complete when upstream's impl is complete
 		// snapCondition = featuredSnaps
 		snapCondition = availableSnaps
+	} else if r.FormValue("updatable_only") == "true" {
+		snapCondition = updatableSnaps
 	}
 	query := r.FormValue("q")
 	// This is a workaround until there is a way to get the list of snaps:
@@ -97,6 +99,17 @@ func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
 	}
 
 	payload, err := h.allPackages(snapCondition, query)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "Error: %s", err)
+		return
+	}
+
+	h.jsonResponseOrError(payload, w)
+}
+
+func (h *Handler) getUpdates(w http.ResponseWriter, r *http.Request) {
+	payload, err := h.allPackages(updatableSnaps, ".")
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(w, "Error: %s", err)
@@ -147,9 +160,9 @@ func (h *Handler) remove(w http.ResponseWriter, r *http.Request) {
 	h.snapOperationResponse(name, err, w)
 }
 
-// MakeMuxer sets up the handlers multiplexing to handle requests against snappy's
+// MakePackageRouter sets up the handlers multiplexing to handle requests against snappy's
 // packages api
-func (h *Handler) MakeMuxer(prefix string) http.Handler {
+func (h *Handler) MakePackageRouter(prefix string) http.Handler {
 	var m *mux.Router
 
 	if prefix == "" {
@@ -202,4 +215,53 @@ func SimpleCookieCheckOrRedirect(w http.ResponseWriter, r *http.Request) error {
 	http.Redirect(w, r, "/access-control", 401)
 
 	return errors.New("Unauthorized")
+}
+
+// MakeSnapRouter
+func (h *Handler) MakeSnapRouter(prefix string) http.Handler {
+	m := mux.NewRouter().PathPrefix(prefix).Subrouter()
+
+	m.HandleFunc("/", h.getUpdates).Methods("GET").Queries("updatable_only", "true")
+
+	m.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		payload, err := h.allPackages(installedSnaps, ".")
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			fmt.Fprintf(w, "Error: %s", err)
+			return
+		}
+		h.jsonResponseOrError(payload, w)
+	}).Methods("GET")
+
+	m.HandleFunc("/{id}", h.get).Methods("GET")
+
+	m.HandleFunc("/{id}", func(w http.ResponseWriter, r *http.Request) {
+		data, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		var snapPatch map[string]interface{}
+		err = json.Unmarshal(data, &snapPatch)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		if _, exists := snapPatch["version"]; exists {
+			// Could handle downgrades etc, but for now assume update
+			h.refreshPackage(mux.Vars(r)["id"])
+		} else {
+			w.WriteHeader(422) // http.StatusUnprocessableEntity
+			return
+		}
+
+		w.WriteHeader(http.StatusNoContent)
+	}).Methods("PATCH")
+
+	// Remove a package
+	m.HandleFunc("/{id}", h.remove).Methods("DELETE")
+
+	return m
 }

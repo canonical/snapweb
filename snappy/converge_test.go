@@ -194,3 +194,24 @@ func (s *AllPackagesSuite) TestHasSnaps(c *C) {
 	c.Assert(snaps[0].Name, Equals, "app1")
 	c.Assert(snaps[1].Name, Equals, "app2")
 }
+
+func (s *AllPackagesSuite) TestNoUpdatableSnaps(c *C) {
+	s.c.StoreErr = errors.New("No updates available")
+
+	snaps, err := s.h.allPackages(updatableSnaps, "")
+	c.Assert(snaps, IsNil)
+	c.Assert(err, NotNil)
+}
+
+func (s *AllPackagesSuite) TestUpdatableSnaps(c *C) {
+	s.c.UpdatableSnaps = []*client.Snap{
+		newSnap("app2"),
+		newSnap("app1"),
+	}
+
+	snaps, err := s.h.allPackages(updatableSnaps, "")
+	c.Assert(err, IsNil)
+	c.Assert(snaps, HasLen, 2)
+	c.Assert(snaps[0].Name, Equals, "app1")
+	c.Assert(snaps[1].Name, Equals, "app2")
+}

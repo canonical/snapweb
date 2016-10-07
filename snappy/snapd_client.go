@@ -38,6 +38,7 @@ type SnapdClient interface {
 	GetSections() ([]string, error)
 	Find(opts *client.FindOptions) ([]*client.Snap, *client.ResultInfo, error)
 	Install(name string, options *client.SnapOptions) (string, error)
+	Refresh(name string, options *client.SnapOptions) (string, error)
 	Remove(name string, options *client.SnapOptions) (string, error)
 	ServerVersion() (*client.ServerVersion, error)
 	CreateUser(request *client.CreateUserOptions) (*client.CreateUserResult, error)
@@ -84,6 +85,12 @@ func (a *ClientAdapter) Find(opts *client.FindOptions) ([]*client.Snap, *client.
 // the system default channel if not).
 func (a *ClientAdapter) Install(name string, options *client.SnapOptions) (string, error) {
 	return a.snapdClient.Install(name, options)
+}
+
+// Refresh refreshes the snap with the given name (switching it to track
+// the given channel if given).
+func (a *ClientAdapter) Refresh(name string, options *client.SnapOptions) (string, error) {
+	return a.snapdClient.Refresh(name, options)
 }
 
 // Remove removes the snap with the given name.

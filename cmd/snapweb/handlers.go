@@ -224,12 +224,14 @@ func handleDeviceAction(w http.ResponseWriter, r *http.Request) {
 
 func initURLHandlers(log *log.Logger) {
 	log.Println("Initializing HTTP handlers...")
+
 	snappyHandler := snappy.NewHandler()
 	// passThru := makePassthroughHandler(dirs.SnapdSocket, "/api")
 
 	http.HandleFunc("/api/v2/validate-token", validateToken)
 
-	http.Handle("/api/v2/packages/", snappyHandler.MakeMuxer("/api/v2/packages"))
+	http.Handle("/api/v2/packages/", snappyHandler.MakePackageRouter("/api/v2/packages"))
+	http.Handle("/api/v2/snaps/", snappyHandler.MakeSnapRouter("/api/v2/snaps"))
 
 	http.HandleFunc("/api/v2/sections", handleSections)
 
