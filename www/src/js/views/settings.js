@@ -14,6 +14,7 @@ module.exports = Backbone.Marionette.LayoutView.extend({
   initialize: function(options) {
     this.timeInfo = options.timeInfo;
     this.deviceInfo = options.deviceInfo;
+    this.profileModel = options.profileModel;
   },
 
   template: function(model) {
@@ -36,6 +37,10 @@ module.exports = Backbone.Marionette.LayoutView.extend({
     var view;
     switch (id) {
       case 'profile':
+        view = new SettingsProfileView({
+          // model: new Backbone.Model({fullName: "David Barth", email: "david.barth@canonical.com"})
+          model: this.profileModel
+        });
         view = new SettingsProfileView();
         break;
       case 'users':

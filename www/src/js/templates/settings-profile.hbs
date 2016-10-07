@@ -1,1 +1,36 @@
 <h2>Profile</h2>
+{{#if isLogggedIn}}
+<div style="overflow: hidden;"> 
+  <div class="one-col">
+    <img src="https://gravatar.com/avatar/78421400e0708d5fbe79ef7eac7beb21?s=100"
+         width="100" height="100" alt="Profile picture for {{ fullName }}">
+  </div> 
+  <div class="four-col last-col">
+    <div style="font-size: large; margin-bottom: 0.5em;">{{ fullName }}</div>
+    <div>{{ email }}</div>
+  </div>
+</div>
+  <span>
+    <a class="button--secondary" href="/settings">
+      <span class="external">Edit Ubuntu SSO account</span>
+    </a>
+  </span>
+  <span>
+    <button class="button--secondary btn-logout">Logout</button>
+  </span>
+</div>
+{{else}}
+<div style="overflow: hidden;"> 
+  <div class="four-col last-col">
+    <p>You are currently not logged in.<br>
+       Please login to edit your profile information.</p>
+  </div>
+</div>
+<!--
+<div>
+  <a class="button--secondary btn-login">
+    <span class="external">Login with Ubuntu SSO</span>
+  </a>
+</div>
+-->
+{{/if}}
