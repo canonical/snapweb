@@ -18,6 +18,7 @@
 package snappy
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"io/ioutil"
@@ -69,7 +70,7 @@ func (s *HandlersSuite) TestGetAllError(c *C) {
 	c.Assert(err, IsNil)
 	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
 
-	s.h.MakeMuxer("").ServeHTTP(rec, req)
+	s.h.MakePackageRouter("").ServeHTTP(rec, req)
 	c.Assert(rec.Code, Equals, http.StatusInternalServerError)
 }
 
@@ -108,7 +109,7 @@ func (s *HandlersSuite) TestGetError(c *C) {
 	c.Assert(err, IsNil)
 	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
 
-	s.h.MakeMuxer("").ServeHTTP(rec, req)
+	s.h.MakePackageRouter("").ServeHTTP(rec, req)
 	c.Assert(rec.Code, Equals, http.StatusNotFound)
 }
 
@@ -120,7 +121,7 @@ func (s *HandlersSuite) TestGet(c *C) {
 	c.Assert(err, IsNil)
 	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
 
-	s.h.MakeMuxer("").ServeHTTP(rec, req)
+	s.h.MakePackageRouter("").ServeHTTP(rec, req)
 	c.Assert(rec.Code, Equals, http.StatusOK)
 
 	var sp snapPkg
@@ -137,7 +138,7 @@ func (s *HandlersSuite) TestAdd(c *C) {
 	c.Assert(err, IsNil)
 	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
 
-	s.h.MakeMuxer("").ServeHTTP(rec, req)
+	s.h.MakePackageRouter("").ServeHTTP(rec, req)
 	c.Assert(rec.Code, Equals, http.StatusAccepted)
 	c.Assert(s.c.Installed, Equals, "chatroom")
 }
@@ -150,7 +151,7 @@ func (s *HandlersSuite) TestRemove(c *C) {
 	c.Assert(err, IsNil)
 	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
 
-	s.h.MakeMuxer("").ServeHTTP(rec, req)
+	s.h.MakePackageRouter("").ServeHTTP(rec, req)
 	c.Assert(rec.Code, Equals, http.StatusAccepted)
 	c.Assert(s.c.Removed, Equals, "chatroom")
 }
@@ -208,4 +209,122 @@ func (s *HandlersSuite) TestSnapOperationResponse(c *C) {
 	err := json.Unmarshal(rec.Body.Bytes(), &r)
 	c.Assert(err, IsNil)
 	c.Assert(r, DeepEquals, response{Message: "Accepted", Package: "foo"})
+}
+
+// SnapRouter tests
+func (s *HandlersSuite) SnapRouterTestUpdates(c *C) {
+	s.c.UpdatableSnaps = []*client.Snap{newDefaultSnap()}
+
+	rec := httptest.NewRecorder()
+	req, err := http.NewRequest("GET", "/?updatable_only=true", nil)
+	c.Assert(err, IsNil)
+
+	s.h.MakeSnapRouter("").ServeHTTP(rec, req)
+	c.Assert(rec.Code, Equals, http.StatusOK)
+
+	var sp []snapPkg
+	err = json.Unmarshal(rec.Body.Bytes(), &sp)
+	c.Assert(err, IsNil)
+	c.Assert(len(sp), Equals, 1)
+	c.Assert(sp[0].Name, Equals, "chatroom")
+}
+
+func (s *HandlersSuite) SnapRouterTestGetAll(c *C) {
+	s.c.Snaps = []*client.Snap{newDefaultSnap()}
+
+	rec := httptest.NewRecorder()
+	req, err := http.NewRequest("GET", "/", nil)
+	c.Assert(err, IsNil)
+
+	s.h.MakeSnapRouter("").ServeHTTP(rec, req)
+	c.Assert(rec.Code, Equals, http.StatusOK)
+
+	var sp []snapPkg
+	err = json.Unmarshal(rec.Body.Bytes(), &sp)
+	c.Assert(err, IsNil)
+	c.Assert(len(sp), Equals, 1)
+	c.Assert(sp[0].Name, Equals, "chatroom")
+}
+
+func (s *HandlersSuite) SnapRouterTestGet(c *C) {
+	s.c.Snaps = []*client.Snap{newDefaultSnap()}
+
+	rec := httptest.NewRecorder()
+	req, err := http.NewRequest("GET", "/chatroom", nil)
+	c.Assert(err, IsNil)
+
+	s.h.MakePackageRouter("").ServeHTTP(rec, req)
+	c.Assert(rec.Code, Equals, http.StatusOK)
+
+	var sp snapPkg
+	err = json.Unmarshal(rec.Body.Bytes(), &sp)
+	c.Assert(err, IsNil)
+	c.Assert(sp.Name, Equals, "chatroom")
+}
+
+func (s *HandlersSuite) SnapRouterTestPatch(c *C) {
+	s.c.UpdatableSnaps = []*client.Snap{newDefaultSnap()}
+
+	rec := httptest.NewRecorder()
+	var patchJSON = []byte("{\"version\":\"0.1-9\"}")
+	req, err := http.NewRequest("PATCH", "/chatroom", bytes.NewBuffer(patchJSON))
+	c.Assert(err, IsNil)
+
+	req.Header.Set("Content-Type", "application/json")
+
+	s.h.MakePackageRouter("").ServeHTTP(rec, req)
+	c.Assert(rec.Code, Equals, http.StatusNoContent)
+}
+
+func (s *HandlersSuite) SnapRouterTestPatchNoVersion(c *C) {
+	s.c.UpdatableSnaps = []*client.Snap{newDefaultSnap()}
+
+	rec := httptest.NewRecorder()
+	var patchJSON = []byte("{}")
+	req, err := http.NewRequest("PATCH", "/chatroom", bytes.NewBuffer(patchJSON))
+	c.Assert(err, IsNil)
+
+	req.Header.Set("Content-Type", "application/json")
+
+	s.h.MakePackageRouter("").ServeHTTP(rec, req)
+	c.Assert(rec.Code, Equals, 422) // http.StatusUnprocessableEntity
+}
+
+func (s *HandlersSuite) SnapRouterTestPatchBadRequest(c *C) {
+	s.c.UpdatableSnaps = []*client.Snap{newDefaultSnap()}
+
+	rec := httptest.NewRecorder()
+	req, err := http.NewRequest("PATCH", "/chatroom", nil)
+	c.Assert(err, IsNil)
+
+	req.Header.Set("Content-Type", "application/json")
+
+	s.h.MakePackageRouter("").ServeHTTP(rec, req)
+	c.Assert(rec.Code, Equals, http.StatusBadRequest)
+}
+
+func (s *HandlersSuite) SnapRouterTestPatchBadJSON(c *C) {
+	s.c.UpdatableSnaps = []*client.Snap{newDefaultSnap()}
+
+	rec := httptest.NewRecorder()
+	var patchJSON = []byte("{]")
+	req, err := http.NewRequest("PATCH", "/chatroom", bytes.NewBuffer(patchJSON))
+	c.Assert(err, IsNil)
+
+	req.Header.Set("Content-Type", "application/json")
+
+	s.h.MakePackageRouter("").ServeHTTP(rec, req)
+	c.Assert(rec.Code, Equals, http.StatusBadRequest)
+}
+
+func (s *HandlersSuite) SnapRouterTestDelete(c *C) {
+	s.c.Snaps = []*client.Snap{newDefaultSnap()}
+
+	rec := httptest.NewRecorder()
+	req, err := http.NewRequest("DELETE", "/chatroom", nil)
+	c.Assert(err, IsNil)
+
+	s.h.MakePackageRouter("").ServeHTTP(rec, req)
+	c.Assert(rec.Code, Equals, http.StatusAccepted)
+	c.Assert(s.c.Removed, Equals, "chatroom")
 }
