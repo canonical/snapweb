@@ -1,0 +1,14 @@
+
+.b-notifications {
+  top: 0px;
+  width: 100%;
+  margin: 0 auto;
+  background-color: #f79a2b;
+  border: 4px solid #DADADA;
+  padding: 1em 2em;
+  color: #fff;
+  font-weight:400;
+  border-radius:6px;
+  text-align: center;
+}
+

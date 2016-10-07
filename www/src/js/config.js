@@ -6,6 +6,7 @@ module.exports = {
   SECTIONS: '/api/v2/sections',
   DEVICE_INFO: '/api/v2/device-info',
   DEVICE_ACTION: '/api/v2/device-action',
+  NOTIFICATION_INFO: '/api/v2/snaps/?updatable_only=true',
   FILTERED_SNAPS: [
     'snapweb',
     'ubuntu-core'

@@ -102,11 +102,6 @@ func (f *FakeSnapdClient) SetCoreConfig(patch map[string]interface{}) (string, e
 	return "", nil
 }
 
-// GetCoreConfig gets some aspect of core configuration
-func (f *FakeSnapdClient) GetCoreConfig(keys []string) (map[string]interface{}, error) {
-	return nil, nil
-}
-
 // CreateUser creates a local user on the system
 func (f *FakeSnapdClient) CreateUser(request *client.CreateUserOptions) (*client.CreateUserResult, error) {
 	return &f.CrUser, f.Err
