@@ -190,6 +190,7 @@ func (h *Handler) MakePackageRouter(prefix string) http.Handler {
 func (h *Handler) MakeSnapRouter(prefix string) http.Handler {
 	m := mux.NewRouter().PathPrefix(prefix).Subrouter()
 
+
 	m.HandleFunc("/", h.getUpdates).Methods("GET").Queries("updatable_only", "true")
 
 	m.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
