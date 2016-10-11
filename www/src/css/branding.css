@@ -1,21 +1,13 @@
 /** @define b-branding-header; weak */
 
 .b-branding-header {
-  margin:0 10px;
+  margin:20px 10px;
   cursor: pointer;
   position:relative;
   width:100%;
   display:flex;
   align-items:center;
-  padding:8px 10px;
-  font-size:13px;
   border-bottom:1px solid #ccc;
-}
-
-.b-branding-header img {
-  display:block;
-  width: 60px;
-  height: 60px;
 }
 
 .b-branding-header__name,

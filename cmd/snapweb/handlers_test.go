@@ -143,7 +143,7 @@ func (s *HandlersSuite) TestMakeMainPageHandler(c *C) {
 	http.DefaultServeMux.ServeHTTP(rec, req)
 	body := rec.Body.String()
 
-//	c.Check(strings.Contains(body, "'Ubuntu'"), Equals, true)
+	//	c.Check(strings.Contains(body, "'Ubuntu'"), Equals, true)
 	c.Check(strings.Contains(body, "'snapd 1000 (series 16)'"), Equals, true)
 }
 
