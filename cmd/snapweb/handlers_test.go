@@ -19,9 +19,12 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"log"
+	"net"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -187,4 +190,65 @@ func (s *HandlersSuite) TestRenderLayout(c *C) {
 	renderLayout("foo.html", &templateData{}, rec)
 	c.Assert(rec.Body.String(), Equals, "<title>foo</title>")
 	c.Assert(rec.Code, Equals, http.StatusOK)
+}
+
+func (s *HandlersSuite) TestPassthroughHandler(c *C) {
+	socketPath := "/tmp/snapd-test.socket"
+	c.Assert(os.MkdirAll(filepath.Dir(socketPath), 0755), IsNil)
+	l, err := net.Listen("unix", socketPath)
+	if err != nil {
+		c.Fatalf("unable to listen on %q: %v", socketPath, err)
+	}
+
+	f := func(w http.ResponseWriter, r *http.Request) {
+		c.Check(r.URL.Path, Equals, "/v2/system-info")
+		c.Check(r.URL.RawQuery, Equals, "")
+
+		fmt.Fprintln(w, `{"type":"sync", "result":{"series":"42"}}`)
+	}
+
+	srv := &httptest.Server{
+		Listener: l,
+		Config:   &http.Server{Handler: http.HandlerFunc(f)},
+	}
+	srv.Start()
+	defer srv.Close()
+
+	handler := http.HandlerFunc(makePassthroughHandler(socketPath, "/api"))
+
+	rec := httptest.NewRecorder()
+	req, err := http.NewRequest("GET", "/api/v2/system-info", nil)
+	c.Assert(err, IsNil)
+
+	handler(rec, req)
+	body := rec.Body.String()
+	c.Assert(rec.Code, Equals, http.StatusOK)
+	c.Check(strings.Contains(body, "42"), Equals, true)
+}
+
+func (s *HandlersSuite) TestModelInfoHandler(c *C) {
+	cwd, err := os.Getwd()
+
+	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
+
+	initURLHandlers(log.New(os.Stdout, "", 0))
+	defer func() {
+		http.DefaultServeMux = http.NewServeMux()
+	}()
+
+	rec := httptest.NewRecorder()
+	req, err := http.NewRequest("GET", "/api/v2/device-info", nil)
+	c.Assert(err, IsNil)
+
+	http.DefaultServeMux.ServeHTTP(rec, req)
+	body := rec.Body.String()
+
+	var deviceInfos map[string]interface{}
+	err = json.Unmarshal([]byte(body), &deviceInfos)
+	c.Assert(err, IsNil)
+
+	c.Assert(deviceInfos["deviceName"], Equals, "Device Name")
+	c.Assert(deviceInfos["brand"], Equals, "Brand")
+	c.Assert(deviceInfos["model"], Equals, "Model")
+	c.Assert(deviceInfos["serial"], Equals, "Serial Number")
 }

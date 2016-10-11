@@ -180,15 +180,17 @@ describe('Snap', function() {
 
   describe('sync methods', function() {
 
-    beforeEach(function() {
+    beforeAll(function() {
       jasmine.Ajax.install();
+    });
+
+    beforeEach(function() {
       this.model = new Snap({id: 'foo'});
       spyOn(this.model, 'save').and.callThrough();
       spyOn(this.model, 'fetch');
     });
 
     afterEach(function() {
-      jasmine.Ajax.uninstall();
       delete this.model;
       this.model = null;
     });

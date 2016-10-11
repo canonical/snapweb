@@ -20,12 +20,19 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
+	"net"
 	"net/http"
+	// "net/url"
 	"os"
 	"path/filepath"
+	"strings"
 	"text/template"
 
+	"github.com/snapcore/snapd/dirs"
+
+	// most other handlers use the ClientAdapter for now
 	"github.com/snapcore/snapweb/snappy"
 )
 
@@ -40,6 +47,17 @@ type templateData struct {
 }
 
 var newSnapdClient = newSnapdClientImpl
+
+func unixDialer(socketPath string) func(string, string) (net.Conn, error) {
+	file, err := os.OpenFile(socketPath, os.O_RDWR, 0666)
+	if err == nil {
+		file.Close()
+	}
+
+	return func(_, _ string) (net.Conn, error) {
+		return net.Dial("unix", socketPath)
+	}
+}
 
 func newSnapdClientImpl() snappy.SnapdClient {
 	return snappy.NewClientAdapter()
@@ -104,12 +122,52 @@ func handleBranding(h *snappy.Handler, w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+type deviceInfoResponse struct {
+	DeviceName string   `json:"deviceName"`
+	Brand      string   `json:"brand"`
+	Model      string   `json:"model"`
+	Serial     string   `json:"serial"`
+	OS         string   `json:"operatingSystem"`
+	Interfaces []string `json:"interfaces"`
+	Uptime     string   `json:"uptime"`
+}
+
+func handleDeviceInfo(w http.ResponseWriter, r *http.Request) {
+	c := newSnapdClient()
+
+	modelInfo, err := snappy.GetModelInfo(c)
+	if err != nil {
+		log.Println(fmt.Sprintf("handleDeviceInfo: error retrieving model info: %s", err))
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	var info deviceInfoResponse
+	info.DeviceName = modelInfo["DeviceName"].(string)
+	info.Brand = modelInfo["Brand"].(string)
+	info.Model = modelInfo["Model"].(string)
+	info.Serial = modelInfo["Serial"].(string)
+	info.OS = modelInfo["OS"].(string)
+	info.Interfaces = modelInfo["Interfaces"].([]string)
+	info.Uptime = modelInfo["Uptime"].(string)
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(info); err != nil {
+		log.Println(fmt.Sprintf("handleDeviceInfo: error serializing json: %s", err))
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+}
+
 func initURLHandlers(log *log.Logger) {
 	log.Println("Initializing HTTP handlers...")
 	snappyHandler := snappy.NewHandler()
+	passThru := makePassthroughHandler(dirs.SnapdSocket, "/api")
+
 	http.Handle("/api/v2/packages/", snappyHandler.MakeMuxer("/api/v2/packages"))
+	http.HandleFunc("/api/v2/create-user", passThru)
 
 	http.HandleFunc("/api/v2/time-info", handleTimeInfo)
+	http.HandleFunc("/api/v2/device-info", handleDeviceInfo)
 
 	http.HandleFunc("/api/v2/branding-data", func(w http.ResponseWriter, r *http.Request) {
 		handleBranding(snappyHandler, w, r)
@@ -124,6 +182,35 @@ func initURLHandlers(log *log.Logger) {
 	}
 
 	http.HandleFunc("/", makeMainPageHandler())
+}
+
+func makePassthroughHandler(socketPath string, prefix string) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		c := &http.Client{
+			Transport: &http.Transport{Dial: unixDialer(socketPath)},
+		}
+
+		// need to remove the RequestURI field
+		// and remove the /api prefix from snapweb URLs
+		r.URL.Scheme = "http"
+		r.URL.Host = "localhost"
+		r.URL.Path = strings.TrimPrefix(r.URL.Path, prefix)
+
+		outreq, err := http.NewRequest(r.Method, r.URL.String(), r.Body)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		resp, err := c.Do(outreq)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		w.WriteHeader(resp.StatusCode)
+		io.Copy(w, resp.Body)
+	})
 }
 
 func loggingHandler(h http.Handler) http.Handler {
