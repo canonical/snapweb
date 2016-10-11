@@ -19,6 +19,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -221,4 +222,31 @@ func (s *HandlersSuite) TestPassthroughHandler(c *C) {
 	body := rec.Body.String()
 	c.Assert(rec.Code, Equals, http.StatusOK)
 	c.Check(strings.Contains(body, "42"), Equals, true)
+}
+
+func (s *HandlersSuite) TestModelInfoHandler(c *C) {
+	cwd, err := os.Getwd()
+
+	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
+
+	initURLHandlers(log.New(os.Stdout, "", 0))
+	defer func() {
+		http.DefaultServeMux = http.NewServeMux()
+	}()
+
+	rec := httptest.NewRecorder()
+	req, err := http.NewRequest("GET", "/api/v2/device-info", nil)
+	c.Assert(err, IsNil)
+
+	http.DefaultServeMux.ServeHTTP(rec, req)
+	body := rec.Body.String()
+
+	var deviceInfos map[string]interface{}
+	err = json.Unmarshal([]byte(body), &deviceInfos)
+	c.Assert(err, IsNil)
+
+	c.Assert(deviceInfos["deviceName"], Equals, "Device Name")
+	c.Assert(deviceInfos["brand"], Equals, "Brand")
+	c.Assert(deviceInfos["model"], Equals, "Model")
+	c.Assert(deviceInfos["serial"], Equals, "Serial Number")
 }

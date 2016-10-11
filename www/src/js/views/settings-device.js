@@ -5,7 +5,7 @@ var template = require('../templates/settings-device.hbs');
 module.exports = Backbone.Marionette.ItemView.extend({
   className: 'b-settings__device',
 
-  template: function() {
-    return template();
+  template: function(model) {
+    return template(model);
   }
 });

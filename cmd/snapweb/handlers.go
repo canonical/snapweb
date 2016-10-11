@@ -107,6 +107,42 @@ func handleTimeInfo(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+type deviceInfoResponse struct {
+	DeviceName string   `json:"deviceName"`
+	Brand      string   `json:"brand"`
+	Model      string   `json:"model"`
+	Serial     string   `json:"serial"`
+	OS         string   `json:"operatingSystem"`
+	Interfaces []string `json:"interfaces"`
+	Uptime     string   `json:"uptime"`
+}
+
+func handleDeviceInfo(w http.ResponseWriter, r *http.Request) {
+	c := newSnapdClient()
+
+	modelInfo, err := snappy.GetModelInfo(c)
+	if err != nil {
+		log.Println(fmt.Sprintf("handleDeviceInfo: error retrieving model info: %s", err))
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	var info deviceInfoResponse
+	info.DeviceName = modelInfo["DeviceName"].(string)
+	info.Brand = modelInfo["Brand"].(string)
+	info.Model = modelInfo["Model"].(string)
+	info.Serial = modelInfo["Serial"].(string)
+	info.OS = modelInfo["OS"].(string)
+	info.Interfaces = modelInfo["Interfaces"].([]string)
+	info.Uptime = modelInfo["Uptime"].(string)
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(info); err != nil {
+		log.Println(fmt.Sprintf("handleDeviceInfo: error serializing json: %s", err))
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+}
+
 func initURLHandlers(log *log.Logger) {
 	log.Println("Initializing HTTP handlers...")
 	snappyHandler := snappy.NewHandler()
@@ -116,6 +152,7 @@ func initURLHandlers(log *log.Logger) {
 	http.HandleFunc("/api/v2/create-user", passThru)
 
 	http.HandleFunc("/api/v2/time-info", handleTimeInfo)
+	http.HandleFunc("/api/v2/device-info", handleDeviceInfo)
 
 	http.Handle("/public/", loggingHandler(http.FileServer(http.Dir(filepath.Join(os.Getenv("SNAP"), "www")))))
 
