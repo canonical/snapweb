@@ -47,6 +47,47 @@ gobuild() {
     cd - > /dev/null
 }
 
+if [ "$container" != "lxc" ]; then
+    echo "Please use ./cleanbuild"
+    exit 1
+fi
+
+# ensure multiarch
+if [ ! apt-config dump | grep i386 ]; then
+    dpkg --add-architecture i386
+    apt update
+fi
+
+
+echo "Ensure we have the right dependencies"
+sudo apt install -y nodejs-legacy npm golang-go bzr git snapcraft
+
+echo "Install crossbuilding stuff"
+apt install -y gcc-arm-linux-gnueabihf
+apt install -y gcc-aarch64-linux-gnu
+apt install -y libc6-dev:i386
+
+
+echo "Ensure go is working"
+export GOPATH=$HOME/go
+export PATH=$GOPATH/bin:$PATH
+
+echo "Doing the npm install"
+if [ ! -e ~/.npmrc ]; then
+    cat > ~/.npmrc <<-EOF
+root = $HOME/node/lib/node_modules
+prefix = $HOME/node
+binroot = $HOME/node/bin
+manroot = $HOME/node/man
+EOF
+fi
+
+mkdir -p ~/node
+export PATH=$PATH:$HOME/node/bin
+export NODE_PATH=$HOME/node/lib/node_modules
+npm install -g --prefix=$(npm config get prefix) gulp
+npm install
+
 echo "Building web assets with gulp..."
 gulp
 
@@ -58,6 +99,11 @@ trap 'rm -rf "$top_builddir"' EXIT
 echo Obtaining go dependencies
 go get launchpad.net/godeps
 godeps -u dependencies.tsv
+
+echo "Copy project into gopath"
+rm -rf $GOPATH/src/github.com/snapcore/snapweb
+cp -ar . $GOPATH/src/github.com/snapcore/snapweb
+
 
 # build one snap per arch
 for ARCH in amd64 arm64 armhf i386; do

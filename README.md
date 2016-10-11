@@ -3,6 +3,12 @@
 
 # Building
 
+Ensure you have "lxc" installed. Then run:
+
+    ./cleanbuild.sh
+
+This will build it inside the lxc container.
+
 ## Prerequisites
 
 This assumes you have a working go environment with a GOPATH env var setup,
