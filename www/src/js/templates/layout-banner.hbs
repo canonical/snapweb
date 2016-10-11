@@ -15,5 +15,23 @@
         </li>
       </ul>
     </div>
+    <div class="b-banner__right-nav nav">
+      <ul>
+        <li class="b-banner__nav-item">
+          {{#if isLoggedIn }}
+          <a class="b-banner__nav-item-link b-banner__profile">
+            <img src="{{ avatarUrl }}?s=25"
+                 width="25" height="25" alt="Profile picture for {{ fullName }}"
+                 class="b-banner__nav-item-icon">
+            <span class="b-banner__nav-item-label">{{ fullName }}</span>
+          </a>
+          {{else}}
+          <a class="b-banner__nav-item-link b-banner__profile">
+            <span class="b-banner__nav-item-label">Login</span>
+          </a>
+          {{/if}}
+        </li>
+      </ul>
+    </div>
   </nav>
 </header>

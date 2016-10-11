@@ -6,7 +6,7 @@ var Radio = require('backbone.radio');
 var SettingsLayoutView = require('../views/settings.js');
 var TimeInfo = require('../models/time-info.js');
 var DeviceInfo = require('../models/device-info.js');
-var ProfileModel = require('../models/profile.js');
+var sharedProfileModel = require('../models/profile.js');
 
 module.exports = {
   index: function() {
@@ -24,19 +24,21 @@ module.exports = {
                 });
           chan.command('set:content', view);
         });
+
+    var timeInfo = new TimeInfo();
     
     $.when(
-      timeInfo.fetch(),
-      profileModel.fetch()
+      timeInfo.fetch()
     ).then(function() {
       var view = new SettingsLayoutView({
-        timeInfo: timeInfo,
-        profileModel: profileModel,
+          timeInfo: timeInfo,
+          profileModel: sharedProfileModel
       });
       chan.command('set:content', view);
     });
 
     var profileModel = new ProfileModel;
-  }
+  },
+
 };
 

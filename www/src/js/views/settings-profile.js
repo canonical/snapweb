@@ -1,6 +1,8 @@
 var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
 var template = require('../templates/settings-profile.hbs');
+var Radio = require('backbone.radio');
+var chan = Radio.channel('root');
 
 module.exports = Backbone.Marionette.ItemView.extend({
   className: 'b-settings__profile',
@@ -10,34 +12,25 @@ module.exports = Backbone.Marionette.ItemView.extend({
     'click @ui.logout': 'handleLogout',
   },
 
+  modelEvents: {
+    'change': function() {
+      this.render();
+    }
+  },
+  
   ui: {
     login: '.btn-login',
     logout: '.btn-logout',
   },
 
   handleLogin: function() {
-    console.log("login pressed");
-    // event.preventDefault();
-    this.model.get('secret', {
-      success: function() {
-        console.log("macaroon success");
-      },
-      error: function() {
-        console.log("macaroon error");
-      }
-    });
+    console.log("login");
   },
 
   handleLogout: function() {
-    console.log("logout pressed");
+    this.model.logout();
   },
 
-  templateContext: function() {
-    return {
-      isLogggedIn: this.model.email ? true : false
-    }
-  },
-  
   template: function(model) {
     return template(model);
   },

@@ -38,10 +38,8 @@ module.exports = Backbone.Marionette.LayoutView.extend({
     switch (id) {
       case 'profile':
         view = new SettingsProfileView({
-          // model: new Backbone.Model({fullName: "David Barth", email: "david.barth@canonical.com"})
           model: this.profileModel
         });
-        view = new SettingsProfileView();
         break;
       case 'users':
         view = new SettingsUsersView();
@@ -61,14 +59,15 @@ module.exports = Backbone.Marionette.LayoutView.extend({
           });
     }
 
+    this.$('.b-settings__row').removeClass('b-settings__row_active');
+    this.$('#' + id).addClass('b-settings__row_active');
+
     this.showChildView('contentRegion', view);
   },
 
   setActive: function(e) {
     var id = e.target.getAttribute('id');
     this.showContent(id);
-    this.$('.b-settings__row').removeClass('b-settings__row_active');
-    this.$('#' + id).addClass('b-settings__row_active');
   },
 
   onBeforeShow: function() {

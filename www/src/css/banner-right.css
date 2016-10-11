@@ -1,0 +1,16 @@
+/** @define b-banner; weak */
+
+.b-banner {
+}
+
+.b-banner__right-nav {
+  float:right;
+}
+
+.b-banner__nav-item-icon img {
+  width:25px;
+  height:25px;
+  position:relative;
+  margin: 5px;
+  float: left;
+}
