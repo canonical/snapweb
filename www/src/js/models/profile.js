@@ -6,8 +6,8 @@ var chan = Radio.channel('root');
 var ProfileModelSingleton = Backbone.Model.extend({
   initialize: function() {
     // add to the snapweb global object
-    var snapweb = window.SNAPWEB;
-    snapweb.sharedProfile = this;
+    // var snapweb = window.SNAPWEB;
+    // snapweb.sharedProfile = this;
   },
 
   defaults: {

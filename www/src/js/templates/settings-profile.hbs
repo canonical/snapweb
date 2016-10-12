@@ -2,12 +2,12 @@
 {{#if isLoggedIn}}
 <div style="overflow: hidden;"> 
   <div class="one-col">
-    <img src="{{ avatarUrl }}?s=100"
-         width="100" height="100" alt="Profile picture for {{ fullName }}">
+    <img src="{{ avatarUrl }}?s=100" width="100" height="100"
+         id="profile-avatar" alt="Profile picture for {{ fullName }}">
   </div> 
   <div class="four-col last-col">
-    <div style="font-size: large; margin-bottom: 0.5em;">{{ fullName }}</div>
-    <div>{{ email }}</div>
+    <div style="font-size: large; margin-bottom: 0.5em;" id="profile-fullname">{{ fullName }}</div>
+    <div id="profile-email">{{ email }}</div>
   </div>
 </div>
   <span>
