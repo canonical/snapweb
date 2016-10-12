@@ -1,3 +1,8 @@
 *.snap
 node_modules
 public
+.converage-go
+.coverages-js
+*~
+\#*\#
+
