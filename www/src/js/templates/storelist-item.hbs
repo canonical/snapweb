@@ -1,16 +1,18 @@
-<div class="b-snaplist__icon-wrapper">
-  <img class="b-snaplist__icon" src="{{ icon }}">
-</div>
-<div class="b-snaplist__meta">
-  <div class="b-snaplist__id">
-    <h3 class="b-snaplist__name">{{ name }}</h3>
-    <p class="b-snaplist__version">{{ version }}</p>
+<a href="{{ targetSnapUri }}">
+  <div class="b-snaplist__icon-wrapper">
+    <img class="b-snaplist__icon" src="{{ icon }}">
   </div>
-  <div class="b-snaplist__src">
-    <div class="b-snaplist__developer">{{ developer }}</div>
+  <div class="b-snaplist__meta">
+    <div class="b-snaplist__id">
+      <h3 class="b-snaplist__name">{{ name }}</h3>
+      <p class="b-snaplist__version">{{ version }}</p>
+    </div>
+    <div class="b-snaplist__src">
+      <div class="b-snaplist__developer">{{ developer }}</div>
+    </div>
+    <div class="b-snaplist__actions">
+      <div class="b-snaplist__price">{{ price }}</div>
+      {{> installer installerClass="b-installer_small"}}
+    </div>
   </div>
-  <div class="b-snaplist__actions">
-    <div class="b-snaplist__price">{{ price }}</div>
-    {{> installer installerClass="b-installer_small"}}
-  </div>
-</div>
+</a>
