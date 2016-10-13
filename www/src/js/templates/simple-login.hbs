@@ -1,0 +1,60 @@
+<div class="region-login">
+  <div class="inner-wrapper">
+    <div class="b-headline seven-col last-col">
+      <div class="row" id="login-form">
+        <h2>Login</h2>
+        <div class="p-card--highlighted" style="display:block">
+          <p>
+            You are currently not logged in.
+          </p>
+          <form>
+            <fieldset>
+            <p>
+              Please login with an Ubuntu SSO account registered on this all-snap  Ubuntu Core system to perform privileged operations.
+            </p>
+            <p>
+              <label for="emailSSO">Email</label>
+              <input type="text" id="emailSSO" placeholder="Enter an email address from your account in the store...">
+            </p>
+            <p>
+              <label for="password">Password</label>
+              <input type="password" id="password">
+            </p>
+            <p style="display: none" class="otpfield">
+              <label for="otp">OTP</label>
+              <input type="text" id="otp" placeholder="Enter your One-Time-Password...">
+            </p>
+            <p>
+              <button class="p-button--positive" id="btn-login" style="margin-bottom: 1em;">
+                Login
+              </button>
+              <label class="statusmessage" style="display: inline-block; margin-left: 1em">
+              </label>
+            </p>
+          </fieldset>
+        </form>
+      </div>
+      </div>
+      <div class="row" style="display:none" id="firstboot-step-2">
+        <h2>Configuration Complete</h2>
+        <p>
+          This device is registered to {{email}}.
+        <p>
+          Remote access was enabled via authentification with SSO user {{username}}.
+          Public SSH keys were added to the device for remote access.
+        </p>
+        <p>
+          {{email}} can connect remotely to this device via SSH:
+        </p>
+        <p>
+          <pre>
+            ssh {{username}}@{{ipaddress}}
+          </pre>
+        </p>
+        <a class="button--primary" id="btn-manage" href="/">
+          Manage your device
+        </a>
+        <p></p>
+      </div>
+    </div>
+</div>
