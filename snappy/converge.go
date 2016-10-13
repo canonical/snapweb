@@ -21,11 +21,18 @@ import (
 	"errors"
 	"sort"
 	"strings"
+	"time"
 
 	"log"
 
 	"github.com/snapcore/snapd/client"
 	"github.com/snapcore/snapd/snap"
+
+	"io/ioutil"
+	"os"
+	"path/filepath"
+
+	"gopkg.in/yaml.v2"
 )
 
 const (
@@ -34,6 +41,8 @@ const (
 	featuredSnaps
 	updatableSnaps
 )
+
+const snapRootPath = "/snap/"
 
 type snapPkg struct {
 	ID            string    `json:"id"`
@@ -55,6 +64,19 @@ type snapPkg struct {
 type response struct {
 	Package string `json:"package"`
 	Message string `json:"message"`
+}
+
+type metaInfo struct {
+	Apps map[string]struct {
+		Command string   `yaml:"command"`
+		Plugs   []string `yaml:"plugs"`
+	}
+	Architectures []string `yaml:"architectures"`
+	Confinement   string   `yaml:"confinement"`
+	Description   string   `yaml:"description"`
+	Name          string   `yaml:"name"`
+	Summary       string   `yaml:"summary"`
+	Version       string   `yaml:"version"`
 }
 
 func (h *Handler) getSnap(name string) (*client.Snap, error) {
@@ -92,6 +114,81 @@ func (h *Handler) packagePayload(name string) (snapPkg, error) {
 	}
 
 	return h.snapToPayload(snap), nil
+}
+
+type snapHistoryInfo struct {
+	Path    string
+	ModTime time.Time
+}
+type snapHistory []snapHistoryInfo
+
+func (p snapHistory) Len() int {
+	return len(p)
+}
+func (p snapHistory) Less(i, j int) bool {
+	return p[i].ModTime.After(p[j].ModTime)
+}
+func (p snapHistory) Swap(i, j int) {
+	p[i], p[j] = p[j], p[i]
+}
+
+func (h *Handler) packageHistory(id string) ([]snapPkg, error) {
+	var snapPath = snapRootPath + id
+
+	var versionPaths snapHistory
+	var history []snapPkg
+
+	snap, err := h.packagePayload(id)
+	if err != nil {
+		return nil, err
+	}
+
+	// XXX: What about the semantics of rollback?
+	filepath.Walk(snapPath, func(path string, info os.FileInfo, err error) error {
+		if path != snapPath {
+			if info.Name() != "current" && info.IsDir() {
+				versionPaths = append(versionPaths, snapHistoryInfo{
+					Path:    path,
+					ModTime: info.ModTime(),
+				})
+				return filepath.SkipDir
+			}
+		}
+		return err
+	})
+
+	sort.Sort(versionPaths)
+
+	for _, versionPath := range versionPaths[1:] {
+		metaFileContents, err := ioutil.ReadFile(versionPath.Path + "/meta/snap.yaml")
+		if err != nil {
+			log.Printf("packageHistory: Failed to read meta data file: %v", err)
+			return nil, err // Abandon
+		}
+		mi := metaInfo{}
+		if err := yaml.Unmarshal(metaFileContents, &mi); err != nil {
+			log.Printf("packageHistory: Failed to unmarshal yaml: %v", err)
+			return nil, err // Abandon
+		}
+
+		// XXX TODO: field variation
+		history = append(history, snapPkg{
+			ID:            mi.Name,
+			Name:          mi.Name,
+			Developer:     snap.Developer,
+			Version:       mi.Version,
+			Description:   mi.Description,
+			Icon:          snap.Icon,
+			Status:        snap.Status,
+			Price:         snap.Price,
+			Progress:      snap.Progress,
+			InstalledSize: snap.InstalledSize,
+			DownloadSize:  snap.DownloadSize,
+			Type:          snap.Type,
+		})
+	}
+
+	return history, nil
 }
 
 func (h *Handler) allPackages(snapCondition int, query string) ([]snapPkg, error) {

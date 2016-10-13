@@ -215,3 +215,31 @@ func (s *AllPackagesSuite) TestUpdatableSnaps(c *C) {
 	c.Assert(snaps[0].Name, Equals, "app1")
 	c.Assert(snaps[1].Name, Equals, "app2")
 }
+
+func (s *AllPackagesSuite) TestHistoryNoSnap(c *C) {
+	s.c.Err = errors.New("fail")
+
+	_, err := s.h.packageHistory("invalid")
+	c.Assert(err, NotNil)
+}
+
+func (s *AllPackagesSuite) TestRefreshNoSnap(c *C) {
+	s.c.Err = errors.New("fail")
+
+	err := s.h.refreshPackage("invalid")
+	c.Assert(err, NotNil)
+}
+
+func (s *AllPackagesSuite) TestRemoveNoSnap(c *C) {
+	s.c.Err = errors.New("fail")
+
+	err := s.h.removePackage("invalid")
+	c.Assert(err, NotNil)
+}
+
+func (s *AllPackagesSuite) TestInstallNoSnap(c *C) {
+	s.c.Err = errors.New("fail")
+
+	err := s.h.removePackage("invalid")
+	c.Assert(err, NotNil)
+}

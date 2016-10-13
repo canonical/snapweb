@@ -26,6 +26,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 
 	"github.com/snapcore/snapweb/statustracker"
 
@@ -136,6 +137,55 @@ func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
 	h.jsonResponseOrError(payload, w)
 }
 
+func (h *Handler) getHistories(w http.ResponseWriter, r *http.Request) {
+	var numDepth = 100 // XXX: find max history
+
+	depth := mux.Vars(r)["depth"]
+	if depth != "all" && depth != "any" {
+		if d, err := strconv.Atoi(depth); err == nil {
+			numDepth = d
+		}
+	}
+
+	allPs, err := h.allPackages(installedSnaps, ".")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "Error: %s", err)
+		return
+	}
+
+	var histories [][]snapPkg
+
+	for _, snap := range allPs {
+		var packs []snapPkg
+		if ph, err := h.packageHistory(snap.Name); err == nil {
+			for i, pack := range ph {
+				if i == numDepth {
+					break
+				}
+				packs = append(packs, pack)
+			}
+		}
+		if len(packs) > 0 {
+			histories = append(histories, packs)
+		}
+	}
+
+	h.jsonResponseOrError(histories, w)
+}
+
+func (h *Handler) getHistory(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+
+	payload, err := h.packageHistory(id)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	h.jsonResponseOrError(payload, w)
+}
+
 func (h *Handler) add(w http.ResponseWriter, r *http.Request) {
 	if e := SimpleCookieCheckOrRedirect(w, r); e != nil {
 		return
@@ -217,11 +267,12 @@ func SimpleCookieCheckOrRedirect(w http.ResponseWriter, r *http.Request) error {
 	return errors.New("Unauthorized")
 }
 
-// MakeSnapRouter
+// MakeSnapRouter sets up endpoints for locally installed snaps
 func (h *Handler) MakeSnapRouter(prefix string) http.Handler {
 	m := mux.NewRouter().PathPrefix(prefix).Subrouter()
 
 	m.HandleFunc("/", h.getUpdates).Methods("GET").Queries("updatable_only", "true")
+	m.HandleFunc("/", h.getHistories).Methods("GET").Queries("history", "{depth}")
 
 	m.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		payload, err := h.allPackages(installedSnaps, ".")
@@ -234,6 +285,8 @@ func (h *Handler) MakeSnapRouter(prefix string) http.Handler {
 	}).Methods("GET")
 
 	m.HandleFunc("/{id}", h.get).Methods("GET")
+
+	m.HandleFunc("/{id}/history", h.getHistory).Methods("GET")
 
 	m.HandleFunc("/{id}", func(w http.ResponseWriter, r *http.Request) {
 		data, err := ioutil.ReadAll(r.Body)
