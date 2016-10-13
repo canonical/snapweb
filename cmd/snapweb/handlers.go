@@ -18,6 +18,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -150,6 +151,7 @@ func initURLHandlers(log *log.Logger) {
 
 	http.Handle("/api/v2/packages/", snappyHandler.MakeMuxer("/api/v2/packages"))
 	http.HandleFunc("/api/v2/create-user", passThru)
+	http.HandleFunc("/api/v2/login", passThru)
 
 	http.HandleFunc("/api/v2/time-info", handleTimeInfo)
 	http.HandleFunc("/api/v2/device-info", handleDeviceInfo)
@@ -165,11 +167,32 @@ func initURLHandlers(log *log.Logger) {
 	http.HandleFunc("/", makeMainPageHandler())
 }
 
+// Name of cookies transporting the macaroon and discharge to authenticate snapd requests
+const (
+	SnapwebMacaroonCookieName  = "SnapwebMacaroon"
+	SnapwebDischargeCookieName = "SnapwebDischarge"
+)
+
+// Writes the 'Authorization' header
+// with macaroon and discharges extracted from mere cookies
+func setAuthorizationHeader(req *http.Request, outreq *http.Request) {
+	mc, _ := req.Cookie(SnapwebMacaroonCookieName)
+	dc, _ := req.Cookie(SnapwebDischargeCookieName)
+	if mc != nil && dc != nil {
+		var buf bytes.Buffer
+		fmt.Fprintf(&buf, `Macaroon root="%s"`, mc.Value)
+		fmt.Fprintf(&buf, `, discharge="%s"`, dc.Value)
+		outreq.Header.Set("Authorization", buf.String())
+	}
+}
+
 func makePassthroughHandler(socketPath string, prefix string) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		c := &http.Client{
 			Transport: &http.Transport{Dial: unixDialer(socketPath)},
 		}
+
+		log.Println(r.Method, r.URL.Path)
 
 		// need to remove the RequestURI field
 		// and remove the /api prefix from snapweb URLs
@@ -183,14 +206,22 @@ func makePassthroughHandler(socketPath string, prefix string) http.HandlerFunc {
 			return
 		}
 
+		setAuthorizationHeader(r, outreq)
+
 		resp, err := c.Do(outreq)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
+		// Note: the client.Do method above only returns JSON responses
+		//       even if it doesn't say so
+		hdr := w.Header()
+		hdr.Set("Content-Type", "application/json")
 		w.WriteHeader(resp.StatusCode)
+
 		io.Copy(w, resp.Body)
+
 	})
 }
 
