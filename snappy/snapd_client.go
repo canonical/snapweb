@@ -18,6 +18,7 @@
 package snappy
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"syscall"
@@ -25,10 +26,24 @@ import (
 
 	"github.com/snapcore/snapd/asserts"
 	"github.com/snapcore/snapd/client"
+	"github.com/snapcore/snapd/snap"
 	"gopkg.in/ini.v1"
 )
 
 var timesyncdConfigurationFilePath = "/etc/systemd/timesyncd.conf"
+
+// DeviceBranding contains the branding options for the current device.
+type DeviceBranding struct {
+	Name        string `json:"name"`
+	Developer   string `json:"developer"`
+	Description string `json:"description"`
+	Icon        string `json:"icon"`
+	IconSvg     string `json:"iconsvg"`
+	Link        string `json:"link"`
+	LinkSrc     string `json:"linksrc"`
+	TextColor   string `json:"textcolor"`
+	LinkColor   string `json:"linkcolor"`
+}
 
 // SnapdClient is a client of the snapd REST API
 type SnapdClient interface {
@@ -135,6 +150,45 @@ func GetCoreConfig(keys []string) (map[string]interface{}, error) {
 		"Time":      dt.Format("15:04"),      // Format for picker
 		"Timezone":  float64(offset) / 60 / 60,
 		"NTPServer": readNTPServer(),
+	}, nil
+}
+
+func getDefaultBranding() DeviceBranding {
+	return DeviceBranding{
+		Name:        "Ubuntu",
+		Developer:   "Ubuntu",
+		Description: "",
+		Link:        "https://ubuntu.com",
+		LinkSrc:     "https://ubuntu.com",
+		TextColor:   "",
+		LinkColor:   "",
+		Icon:        "",
+	}
+}
+
+// GetBrandingData returns information about the device branding configuration.
+func GetBrandingData(h *Handler) (DeviceBranding, error) {
+	if h == nil {
+		return getDefaultBranding(), errors.New("Invalid handler")
+
+	}
+	snap, err := h.getSnapByType(snap.TypeGadget)
+	if err != nil {
+		return getDefaultBranding(), err
+	}
+	if snap == nil || len(snap) != 1 {
+		return getDefaultBranding(), nil
+	}
+	// TODO get snapd conf
+	return DeviceBranding{
+		Name:        snap[0].Name,
+		Developer:   snap[0].Developer,
+		Description: snap[0].Description,
+		Icon:        snap[0].Icon,
+		Link:        "https://ubuntu.com",
+		LinkSrc:     "https://ubuntu.com",
+		TextColor:   "",
+		LinkColor:   "",
 	}, nil
 }
 

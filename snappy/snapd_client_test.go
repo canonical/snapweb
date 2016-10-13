@@ -71,3 +71,18 @@ func (s *ReadNtpSuite) TestReadValidNTP(c *C) {
 		formatNTPContent([]string{ntpServer}))
 	c.Check(readNTPServer(), Equals, ntpServer)
 }
+
+type SnapdClientSuite struct {
+}
+
+var _ = Suite(&SnapdClientSuite{})
+
+func (s *SnapdClientSuite) SetUpTest(c *C) {
+}
+
+func (s *SnapdClientSuite) TestBrandingData(c *C) {
+	result, err := GetBrandingData(nil)
+	c.Assert(err, NotNil)
+	c.Assert(result, NotNil)
+	c.Check(result.Name, Equals, "Ubuntu")
+}

@@ -1,0 +1,30 @@
+<div class="eight-col last-col">
+
+  <div style="margin: 0 10px" class="three-col">
+  {{#if iconsvg}}
+    {{{ iconsvg }}}
+  {{else}}
+    <img class="b-branding-header__icon" src="{{ icon }}">
+  {{/if}}
+  </div>
+
+  <div class="five-col last-col" style="margin-top: 40px;">
+    <div class="row no-border eight-col last-col">
+      <h3 class="b-snap__title">{{ name }}</h3>
+    </div>
+
+    <div class="row no-border eight-col last-col">
+      <div class="b-snaplist__src">
+        <span class="b-snaplist__developer">{{ developer }}</span>
+      </div>
+    </div>
+
+    <div class="row no-border eight-col last-col">
+      <div class="b-branding-header__link three-col">
+          <a href="{{ linksrc }}">{{ link }}</a>
+      </div>
+    </div>
+
+  </div>
+
+</div>
