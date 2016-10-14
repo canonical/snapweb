@@ -1,5 +1,7 @@
-var LoginModel = require('../src/js/models/simple-login.js');
+var _ = require('lodash');
+var CONF = require('../src/js/config.js');
 var Backbone = require('backbone');
+var LoginModel = require('../src/js/models/simple-login.js');
 var LoginView = require('../src/js/views/simple-login.js');
 
 describe('Login', function() {
@@ -33,7 +35,7 @@ describe('Login', function() {
       this.model.save();
       expect(this.model.validate).toHaveBeenCalled();
     });
-
+    
   });
 
   describe('LoginView', function() {
@@ -46,6 +48,7 @@ describe('Login', function() {
       this.view.render();
       
       this.emailSSO = this.view.$el.find('#emailSSO'); 
+      this.password = this.view.$el.find('#password'); 
       this.btnLogin = this.view.$el.find('#btn-login');
     });
     
@@ -69,7 +72,50 @@ describe('Login', function() {
     });
     
     xit('should display error feedback', function() {
+    });
+    
+    it('should set the macaroon cookies', function() {
+      spyOn(this.model, 'save').and.callThrough();
+      spyOn(this.model, 'setMacaroonCookiesFromResponse').and.callThrough();
 
+      jasmine.Ajax.stubRequest('/api/v2/login').andReturn({
+        status: 200,
+        statusText: "OK",
+        contentType: "application/json",
+        responseText: '{"type":"sync","status-code":200,"status":"OK","result":{"macaroon":"protect the innoncent","discharges":["serve the public trust"]}}',
+      });
+      
+      this.emailSSO.val('valid@email.com');
+      this.password.val('not empty');
+      var stubbedEvent = {
+        preventDefault: function() {},
+        stopPropagation: function() {}
+      };
+      this.view.handleLogin(stubbedEvent);
+      
+      expect(this.model.save).toHaveBeenCalled();
+      expect(this.model.setMacaroonCookiesFromResponse).toHaveBeenCalled();
+    });
+    
+    it('should send the macaroon cookie in new requests', function() {
+      this.model.setMacaroonCookiesFromResponse({"macaroon":"protect the innoncent",
+                                                 "discharges":["serve the public trust"]});
+
+      var doneFn = jasmine.createSpy("success");
+      var xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = function(args) {
+        if (this.readyState == this.DONE) {
+          doneFn(this.responseText);
+        }
+      };
+
+      xhr.open("GET", "/some/api/call");
+      xhr.send();
+      
+      request = jasmine.Ajax.requests.mostRecent();
+      expect(request.url).toBe('/some/api/call');
+      expect(request.method).toBe('GET');
+      // TODO: check that cookies are sent properly; no time to finish that now :/
     });
     
   });
