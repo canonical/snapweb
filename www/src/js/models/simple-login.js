@@ -26,7 +26,11 @@ module.exports = Backbone.Model.extend({
   },
 
   setMacaroonCookiesFromResponse: function(result) {
-    Cookies.set('SM', result);
+    // the cookie will expire in 1 /day/
+    // unfortunately Chrome's "continue where I left off
+    // prevents session cookies to expire as usual
+    // See https://bugs.chromium.org/p/chromium/issues/detail?id=130291
+    Cookies.set('SM', result, {expires: 1});
   },
   
 });
