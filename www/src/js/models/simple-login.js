@@ -2,6 +2,7 @@
 
 var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
+var Cookies = require("js-cookie");
 
 module.exports = Backbone.Model.extend({
   url: '/api/v2/login',
@@ -25,8 +26,7 @@ module.exports = Backbone.Model.extend({
   },
 
   setMacaroonCookiesFromResponse: function(result) {
-    document.cookie = "SnapwebMacaroon=" + result.macaroon +
-      "; path=/; SnapwebDischarge=" + result.discharges[0] + "; path=/";
+    Cookies.set('SM', result);
   },
   
 });

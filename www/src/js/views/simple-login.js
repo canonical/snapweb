@@ -1,4 +1,5 @@
 // simple-login view
+var _ = require('lodash');
 var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
 var template = require('../templates/simple-login.hbs');
@@ -36,7 +37,6 @@ module.exports = Backbone.Marionette.LayoutView.extend({
     },
     'success': function() {
       this.setStatus('OK');
-      // TODO: wait, then redirect
     },
   },
 
@@ -74,7 +74,13 @@ module.exports = Backbone.Marionette.LayoutView.extend({
       this.setStatus('Authentication...'); // via snapd...
       this.model.save({}, {
         success: function(model, response) {
+          model.setMacaroonCookiesFromResponse(response.result);
           model.trigger('success');
+          // wait a bit to let the user read the confirmation message
+          _.delay(function() {
+            // redirect to home for now
+            window.location = '/';
+          }, 200)
         },
         error: function(model, response) {
           if (response.status == 401) {
