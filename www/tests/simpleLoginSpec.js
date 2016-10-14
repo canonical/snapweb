@@ -8,10 +8,15 @@ describe('Login', function() {
 
     beforeEach(function() {
       this.model = new LoginModel({});
+      // NOTE: it seems we don't need to do jasmine.Ajax.install() anymore
+      //       before installing the spies; not sure why
+      spyOn(this.model, 'save').and.callThrough();
+      spyOn(this.model, 'validate').and.callThrough();
     });
 
     afterEach(function() {
       delete this.model;
+      this.model = null;
     });
 
     it('should be an instance of Backbone.Model', function() {
@@ -24,14 +29,9 @@ describe('Login', function() {
       expect(this.model.validate({email: 'bad-email'})).toBeDefined();
     });
 
-    // FIXME: jasmine.Ajax makes karma go crazy and fail to parse a JSON string in snap.js !?
-    xit('should validate on save', function() {
-      jasmine.Ajax.install();
-      spyOn(this.model, 'save').and.callThrough();
-      spyOn(this.model, 'validate').and.callThrough();
+    it('should validate on save', function() {
       this.model.save();
       expect(this.model.validate).toHaveBeenCalled();
-      jasmine.Ajax.uninstall();
     });
 
   });
