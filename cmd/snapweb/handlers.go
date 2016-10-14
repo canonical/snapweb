@@ -25,7 +25,7 @@ import (
 	"log"
 	"net"
 	"net/http"
-	// "net/url"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -167,21 +167,38 @@ func initURLHandlers(log *log.Logger) {
 	http.HandleFunc("/", makeMainPageHandler())
 }
 
-// Name of cookies transporting the macaroon and discharge to authenticate snapd requests
+// Name of the cookie transporting the macaroon and discharge to authenticate snapd requests
 const (
-	SnapwebMacaroonCookieName  = "SnapwebMacaroon"
-	SnapwebDischargeCookieName = "SnapwebDischarge"
+	SnapwebCookieName  = "SM"
 )
+
+type MacaroonCookie struct {
+	Macaroon   string   `json:"macaroon,omitempty"`
+	Discharges []string `json:"discharges,omitempty"`
+}
 
 // Writes the 'Authorization' header
 // with macaroon and discharges extracted from mere cookies
 func setAuthorizationHeader(req *http.Request, outreq *http.Request) {
-	mc, _ := req.Cookie(SnapwebMacaroonCookieName)
-	dc, _ := req.Cookie(SnapwebDischargeCookieName)
-	if mc != nil && dc != nil {
+	cookie, _ := req.Cookie(SnapwebCookieName); if cookie != nil {
+		var mc MacaroonCookie
+		unescaped, err := url.QueryUnescape(cookie.Value)
+		if err != nil {
+			log.Println("Error trying to unescape cookie string", err)
+			return
+		}
+		dec := json.NewDecoder(strings.NewReader(unescaped))
+		if err := dec.Decode(&mc); err != nil {
+			// TODO: reset a broken cookie? just ignoring for now
+			log.Println("Error trying to decode cookie: ", err)
+			return
+		}
+
 		var buf bytes.Buffer
-		fmt.Fprintf(&buf, `Macaroon root="%s"`, mc.Value)
-		fmt.Fprintf(&buf, `, discharge="%s"`, dc.Value)
+		fmt.Fprintf(&buf, `Macaroon root="%s"`, mc.Macaroon)
+		for _, discharge := range mc.Discharges {
+			fmt.Fprintf(&buf, `, discharge="%s"`, discharge)
+		}
 		outreq.Header.Set("Authorization", buf.String())
 	}
 }

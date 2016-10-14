@@ -27,11 +27,12 @@ import (
 	"net"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
-
+	
 	. "gopkg.in/check.v1"
 
 	"github.com/snapcore/snapweb/snappy"
@@ -256,13 +257,16 @@ func (s *HandlersSuite) TestSetAuthorization(c *C) {
 	r, err := http.NewRequest("GET", "/api/dummy", nil)
 	c.Assert(err, IsNil)
 
-	r.AddCookie(&http.Cookie{Name: SnapwebMacaroonCookieName, Value: "expected"})
-	r.AddCookie(&http.Cookie{Name: SnapwebDischargeCookieName, Value: "expected"})
+	example := `{ "macaroon": "expected", "discharges": ["expected-as-well"] }`
+	encodedValue := (&url.URL{Path: example}).EscapedPath()
+	fmt.Println("encodedValue:", encodedValue)
+	r.AddCookie(&http.Cookie{	Name: SnapwebCookieName, Value: encodedValue })
 
 	outreq, err := http.NewRequest(r.Method, r.URL.String(), r.Body)
 	c.Assert(err, IsNil)
 
 	setAuthorizationHeader(r, outreq)
+	c.Assert(outreq.Header["Authorization"], NotNil)
 	c.Check(outreq.Header["Authorization"][0], Equals,
-		"Macaroon root=\"expected\", discharge=\"expected\"")
+		"Macaroon root=\"expected\", discharge=\"expected-as-well\"")
 }
