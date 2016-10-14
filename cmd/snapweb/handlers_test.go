@@ -32,7 +32,7 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
-	
+
 	. "gopkg.in/check.v1"
 
 	"github.com/snapcore/snapweb/snappy"
@@ -139,6 +139,8 @@ func (s *HandlersSuite) TestMakeMainPageHandler(c *C) {
 	req, err := http.NewRequest("GET", "/", nil)
 	c.Assert(err, IsNil)
 
+	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "auth"})
+
 	http.DefaultServeMux.ServeHTTP(rec, req)
 	body := rec.Body.String()
 
@@ -219,6 +221,8 @@ func (s *HandlersSuite) TestPassthroughHandler(c *C) {
 	req, err := http.NewRequest("GET", "/api/v2/system-info", nil)
 	c.Assert(err, IsNil)
 
+	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "auth"})
+
 	handler(rec, req)
 	body := rec.Body.String()
 	c.Assert(rec.Code, Equals, http.StatusOK)
@@ -240,6 +244,8 @@ func (s *HandlersSuite) TestModelInfoHandler(c *C) {
 	req, err := http.NewRequest("GET", "/api/v2/device-info", nil)
 	c.Assert(err, IsNil)
 
+	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "auth"})
+
 	http.DefaultServeMux.ServeHTTP(rec, req)
 	body := rec.Body.String()
 
@@ -260,7 +266,7 @@ func (s *HandlersSuite) TestSetAuthorization(c *C) {
 	example := `{ "macaroon": "expected", "discharges": ["expected-as-well"] }`
 	encodedValue := (&url.URL{Path: example}).EscapedPath()
 	fmt.Println("encodedValue:", encodedValue)
-	r.AddCookie(&http.Cookie{	Name: SnapwebCookieName, Value: encodedValue })
+	r.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: encodedValue})
 
 	outreq, err := http.NewRequest(r.Method, r.URL.String(), r.Body)
 	c.Assert(err, IsNil)

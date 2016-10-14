@@ -83,6 +83,9 @@ type timeInfoResponse struct {
 }
 
 func handleTimeInfo(w http.ResponseWriter, r *http.Request) {
+
+	SimpleCookieCheckOrRedirect(w, r)
+
 	if r.Method == "GET" {
 		values, err := snappy.GetCoreConfig(
 			[]string{"Date", "Time", "Timezone", "NTPServer"})
@@ -119,6 +122,9 @@ type deviceInfoResponse struct {
 }
 
 func handleDeviceInfo(w http.ResponseWriter, r *http.Request) {
+
+	SimpleCookieCheckOrRedirect(w, r)
+
 	c := newSnapdClient()
 
 	modelInfo, err := snappy.GetModelInfo(c)
@@ -150,11 +156,14 @@ func initURLHandlers(log *log.Logger) {
 	passThru := makePassthroughHandler(dirs.SnapdSocket, "/api")
 
 	http.Handle("/api/v2/packages/", snappyHandler.MakeMuxer("/api/v2/packages"))
-	http.HandleFunc("/api/v2/create-user", passThru)
-	http.HandleFunc("/api/v2/login", passThru)
 
 	http.HandleFunc("/api/v2/time-info", handleTimeInfo)
 	http.HandleFunc("/api/v2/device-info", handleDeviceInfo)
+
+	// the URLs below shouldn't be using SimpleCookieCheckOrRedirect
+
+	http.HandleFunc("/api/v2/create-user", passThru)
+	http.HandleFunc("/api/v2/login", passThru)
 
 	http.Handle("/public/", loggingHandler(http.FileServer(http.Dir(filepath.Join(os.Getenv("SNAP"), "www")))))
 
@@ -169,9 +178,10 @@ func initURLHandlers(log *log.Logger) {
 
 // Name of the cookie transporting the macaroon and discharge to authenticate snapd requests
 const (
-	SnapwebCookieName  = "SM"
+	SnapwebCookieName = "SM"
 )
 
+// The MacaroonCookie structure mirrors the User structure in snapd/client/login.go
 type MacaroonCookie struct {
 	Macaroon   string   `json:"macaroon,omitempty"`
 	Discharges []string `json:"discharges,omitempty"`
@@ -180,7 +190,8 @@ type MacaroonCookie struct {
 // Writes the 'Authorization' header
 // with macaroon and discharges extracted from mere cookies
 func setAuthorizationHeader(req *http.Request, outreq *http.Request) {
-	cookie, _ := req.Cookie(SnapwebCookieName); if cookie != nil {
+	cookie, _ := req.Cookie(SnapwebCookieName)
+	if cookie != nil {
 		var mc MacaroonCookie
 		unescaped, err := url.QueryUnescape(cookie.Value)
 		if err != nil {
@@ -200,6 +211,15 @@ func setAuthorizationHeader(req *http.Request, outreq *http.Request) {
 			fmt.Fprintf(&buf, `, discharge="%s"`, discharge)
 		}
 		outreq.Header.Set("Authorization", buf.String())
+	}
+}
+
+// SimpleCookieCheckOrRedirect is a simplistic authorization mechanism
+func SimpleCookieCheckOrRedirect(w http.ResponseWriter, r *http.Request) {
+	// simply verifies the existence of a cookie for now
+	cookie, _ := r.Cookie(SnapwebCookieName)
+	if cookie == nil {
+		http.Redirect(w, r, "/login", 401)
 	}
 }
 
