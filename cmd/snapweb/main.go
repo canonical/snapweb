@@ -21,6 +21,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/snapcore/snapweb/avahi"
@@ -44,6 +45,8 @@ func redir(w http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
+	GenerateCertificate()
+
 	initURLHandlers(logger)
 
 	go avahi.InitMDNS(logger)
@@ -52,14 +55,16 @@ func main() {
 
 	// run the main service over HTTPS
 	go func() {
-		if err := http.ListenAndServeTLS(httpsAddr, "server.crt", "server.key", nil); err != nil {
+		certFile := filepath.Join(os.Getenv("SNAP_DATA"), "cert.pem")
+		keyFile := filepath.Join(os.Getenv("SNAP_DATA"), "key.pem")
+		if err := http.ListenAndServeTLS(httpsAddr, certFile, keyFile, nil); err != nil {
 			logger.Fatalf("http.ListendAndServerTLS() failed with %v", err)
 		}
 	}()
 
 	// open a plain HTTP end-point on the "usual" 4200 port, and redirect to HTTPS
 	if err := http.ListenAndServe(httpAddr, http.HandlerFunc(redir)); err != nil {
-		log.Fatalf("ListenAndServe failed with: %v", err)
+		logger.Fatalf("ListenAndServe failed with: %v", err)
 	}
 
 }

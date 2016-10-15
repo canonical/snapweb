@@ -265,7 +265,6 @@ func (s *HandlersSuite) TestSetAuthorization(c *C) {
 
 	example := `{ "macaroon": "expected", "discharges": ["expected-as-well"] }`
 	encodedValue := (&url.URL{Path: example}).EscapedPath()
-	fmt.Println("encodedValue:", encodedValue)
 	r.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: encodedValue})
 
 	outreq, err := http.NewRequest(r.Method, r.URL.String(), r.Body)
