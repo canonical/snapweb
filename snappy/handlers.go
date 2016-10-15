@@ -57,6 +57,20 @@ func (h *Handler) jsonResponseOrError(v interface{}, w http.ResponseWriter) {
 	}
 }
 
+// Name of the cookie transporting the macaroon and discharge to authenticate snapd requests
+const (
+	SnapwebCookieName = "SM"
+)
+
+// FIXME: the whole thing is ugly, but a stop gap measure; i'll clean up
+func simpleCookieCheckOrRedirect(w http.ResponseWriter, r *http.Request) {
+	// simply verifies the existence of a cookie for now
+	cookie, _ := r.Cookie(SnapwebCookieName)
+	if cookie == nil {
+		http.Redirect(w, r, "/login", 401)
+	}
+}
+
 func (h *Handler) snapOperationResponse(name string, err error, w http.ResponseWriter) {
 	msg := "Accepted"
 	status := http.StatusAccepted
@@ -72,6 +86,9 @@ func (h *Handler) snapOperationResponse(name string, err error, w http.ResponseW
 }
 
 func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
+	// stop gap measure
+	simpleCookieCheckOrRedirect(w, r)
+
 	snapCondition := availableSnaps
 	if r.FormValue("installed_only") == "true" {
 		snapCondition = installedSnaps
@@ -94,6 +111,8 @@ func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
+	simpleCookieCheckOrRedirect(w, r)
+
 	name := mux.Vars(r)["name"]
 
 	payload, err := h.packagePayload(name)
@@ -107,6 +126,8 @@ func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) add(w http.ResponseWriter, r *http.Request) {
+	simpleCookieCheckOrRedirect(w, r)
+
 	name := mux.Vars(r)["name"]
 
 	err := h.installPackage(name)
@@ -115,6 +136,8 @@ func (h *Handler) add(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) remove(w http.ResponseWriter, r *http.Request) {
+	simpleCookieCheckOrRedirect(w, r)
+
 	name := mux.Vars(r)["name"]
 
 	err := h.removePackage(name)

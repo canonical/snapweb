@@ -27,6 +27,7 @@ import (
 	"net"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -138,6 +139,8 @@ func (s *HandlersSuite) TestMakeMainPageHandler(c *C) {
 	req, err := http.NewRequest("GET", "/", nil)
 	c.Assert(err, IsNil)
 
+	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "auth"})
+
 	http.DefaultServeMux.ServeHTTP(rec, req)
 	body := rec.Body.String()
 
@@ -218,10 +221,13 @@ func (s *HandlersSuite) TestPassthroughHandler(c *C) {
 	req, err := http.NewRequest("GET", "/api/v2/system-info", nil)
 	c.Assert(err, IsNil)
 
+	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "auth"})
+
 	handler(rec, req)
 	body := rec.Body.String()
 	c.Assert(rec.Code, Equals, http.StatusOK)
 	c.Check(strings.Contains(body, "42"), Equals, true)
+	// TODO: check that we receive Content-Type: json/application
 }
 
 func (s *HandlersSuite) TestModelInfoHandler(c *C) {
@@ -238,6 +244,8 @@ func (s *HandlersSuite) TestModelInfoHandler(c *C) {
 	req, err := http.NewRequest("GET", "/api/v2/device-info", nil)
 	c.Assert(err, IsNil)
 
+	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "auth"})
+
 	http.DefaultServeMux.ServeHTTP(rec, req)
 	body := rec.Body.String()
 
@@ -249,4 +257,21 @@ func (s *HandlersSuite) TestModelInfoHandler(c *C) {
 	c.Assert(deviceInfos["brand"], Equals, "Brand")
 	c.Assert(deviceInfos["model"], Equals, "Model")
 	c.Assert(deviceInfos["serial"], Equals, "Serial Number")
+}
+
+func (s *HandlersSuite) TestSetAuthorization(c *C) {
+	r, err := http.NewRequest("GET", "/api/dummy", nil)
+	c.Assert(err, IsNil)
+
+	example := `{ "macaroon": "expected", "discharges": ["expected-as-well"] }`
+	encodedValue := (&url.URL{Path: example}).EscapedPath()
+	r.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: encodedValue})
+
+	outreq, err := http.NewRequest(r.Method, r.URL.String(), r.Body)
+	c.Assert(err, IsNil)
+
+	setAuthorizationHeader(r, outreq)
+	c.Assert(outreq.Header["Authorization"], NotNil)
+	c.Check(outreq.Header["Authorization"][0], Equals,
+		"Macaroon root=\"expected\", discharge=\"expected-as-well\"")
 }

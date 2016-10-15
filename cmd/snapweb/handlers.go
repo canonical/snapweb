@@ -18,13 +18,14 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
 	"log"
 	"net"
 	"net/http"
-	// "net/url"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -82,6 +83,9 @@ type timeInfoResponse struct {
 }
 
 func handleTimeInfo(w http.ResponseWriter, r *http.Request) {
+
+	SimpleCookieCheckOrRedirect(w, r)
+
 	if r.Method == "GET" {
 		values, err := snappy.GetCoreConfig(
 			[]string{"Date", "Time", "Timezone", "NTPServer"})
@@ -118,6 +122,9 @@ type deviceInfoResponse struct {
 }
 
 func handleDeviceInfo(w http.ResponseWriter, r *http.Request) {
+
+	SimpleCookieCheckOrRedirect(w, r)
+
 	c := newSnapdClient()
 
 	modelInfo, err := snappy.GetModelInfo(c)
@@ -149,10 +156,14 @@ func initURLHandlers(log *log.Logger) {
 	passThru := makePassthroughHandler(dirs.SnapdSocket, "/api")
 
 	http.Handle("/api/v2/packages/", snappyHandler.MakeMuxer("/api/v2/packages"))
-	http.HandleFunc("/api/v2/create-user", passThru)
 
 	http.HandleFunc("/api/v2/time-info", handleTimeInfo)
 	http.HandleFunc("/api/v2/device-info", handleDeviceInfo)
+
+	// the URLs below shouldn't be using SimpleCookieCheckOrRedirect
+
+	http.HandleFunc("/api/v2/create-user", passThru)
+	http.HandleFunc("/api/v2/login", passThru)
 
 	http.Handle("/public/", loggingHandler(http.FileServer(http.Dir(filepath.Join(os.Getenv("SNAP"), "www")))))
 
@@ -165,11 +176,60 @@ func initURLHandlers(log *log.Logger) {
 	http.HandleFunc("/", makeMainPageHandler())
 }
 
+// Name of the cookie transporting the macaroon and discharge to authenticate snapd requests
+const (
+	SnapwebCookieName = "SM"
+)
+
+// The MacaroonCookie structure mirrors the User structure in snapd/client/login.go
+type MacaroonCookie struct {
+	Macaroon   string   `json:"macaroon,omitempty"`
+	Discharges []string `json:"discharges,omitempty"`
+}
+
+// Writes the 'Authorization' header
+// with macaroon and discharges extracted from mere cookies
+func setAuthorizationHeader(req *http.Request, outreq *http.Request) {
+	cookie, _ := req.Cookie(SnapwebCookieName)
+	if cookie != nil {
+		var mc MacaroonCookie
+		unescaped, err := url.QueryUnescape(cookie.Value)
+		if err != nil {
+			log.Println("Error trying to unescape cookie string", err)
+			return
+		}
+		dec := json.NewDecoder(strings.NewReader(unescaped))
+		if err := dec.Decode(&mc); err != nil {
+			// TODO: reset a broken cookie? just ignoring for now
+			log.Println("Error trying to decode cookie: ", err)
+			return
+		}
+
+		var buf bytes.Buffer
+		fmt.Fprintf(&buf, `Macaroon root="%s"`, mc.Macaroon)
+		for _, discharge := range mc.Discharges {
+			fmt.Fprintf(&buf, `, discharge="%s"`, discharge)
+		}
+		outreq.Header.Set("Authorization", buf.String())
+	}
+}
+
+// SimpleCookieCheckOrRedirect is a simplistic authorization mechanism
+func SimpleCookieCheckOrRedirect(w http.ResponseWriter, r *http.Request) {
+	// simply verifies the existence of a cookie for now
+	cookie, _ := r.Cookie(SnapwebCookieName)
+	if cookie == nil {
+		http.Redirect(w, r, "/login", 401)
+	}
+}
+
 func makePassthroughHandler(socketPath string, prefix string) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		c := &http.Client{
 			Transport: &http.Transport{Dial: unixDialer(socketPath)},
 		}
+
+		log.Println(r.Method, r.URL.Path)
 
 		// need to remove the RequestURI field
 		// and remove the /api prefix from snapweb URLs
@@ -183,14 +243,22 @@ func makePassthroughHandler(socketPath string, prefix string) http.HandlerFunc {
 			return
 		}
 
+		setAuthorizationHeader(r, outreq)
+
 		resp, err := c.Do(outreq)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
+		// Note: the client.Do method above only returns JSON responses
+		//       even if it doesn't say so
+		hdr := w.Header()
+		hdr.Set("Content-Type", "application/json")
 		w.WriteHeader(resp.StatusCode)
+
 		io.Copy(w, resp.Body)
+
 	})
 }
 
