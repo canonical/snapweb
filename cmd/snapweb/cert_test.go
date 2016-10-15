@@ -34,7 +34,7 @@ func (s *CertSuite) TestGenerate(c *C) {
 	os.Setenv("SNAP_DATA", tmp)
 	certFile := filepath.Join(os.Getenv("SNAP_DATA"), "cert.pem")
 	keyFile := filepath.Join(os.Getenv("SNAP_DATA"), "key.pem")
-	
+
 	c.Assert(ioutil.WriteFile(certFile, []byte{}, os.ModePerm), IsNil)
 	c.Assert(ioutil.WriteFile(keyFile, []byte{}, os.ModePerm), IsNil)
 
@@ -44,4 +44,3 @@ func (s *CertSuite) TestGenerate(c *C) {
 	_, err = ioutil.ReadFile(keyFile)
 	c.Assert(err, IsNil)
 }
-

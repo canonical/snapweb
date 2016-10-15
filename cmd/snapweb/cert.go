@@ -31,7 +31,6 @@ import (
 	"time"
 )
 
-
 func publicKey(priv interface{}) interface{} {
 	switch k := priv.(type) {
 	case *rsa.PrivateKey:
