@@ -47,7 +47,7 @@ Install:
 Once you have a snap you can transfer it onto a running snappy system and from
 there install it by running:
 
-     sudo snap install [snap]
+     sudo snap install --force-dangerous [snap]
 
 # Using
 
