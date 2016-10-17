@@ -1,3 +1,6 @@
 *.snap
 node_modules
 public
+.coverage-go
+.coverage-js
+snapweb

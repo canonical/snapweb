@@ -8,16 +8,16 @@
 This assumes you have a working go environment with a GOPATH env var setup,
 and nodejs and npm installed:
 
-    sudo apt install nodejs-legacy npm
+    sudo apt install nodejs-legacy npm snapcraft git bzr
 
 Install global npm modules without sudo:
 
     cat > ~/.npmrc <<-EOF
-	root = $HOME/node/lib/node_modules
-	prefix = $HOME/node
-	binroot = $HOME/node/bin
-	manroot = $HOME/node/man
-	EOF
+      root = $HOME/node/lib/node_modules
+      prefix = $HOME/node
+      binroot = $HOME/node/bin
+      manroot = $HOME/node/man
+    EOF
 
 Setup the environment:
 
@@ -31,7 +31,7 @@ Branch:
     cd $GOPATH/src/github.com/snapcore
     git clone git@github.com:snapcore/snapweb.git
     cd snapweb
-    
+
 Install:
 
     npm install -g --prefix=$(npm config get prefix) gulp
@@ -57,6 +57,26 @@ Given that the snappy system where it was installed on was created with
 
 Then pointing the browser to [http://localhost:4200] will take you to the
 portal.
+
+## Local development
+
+# Building the go binary
+
+To build the go binary locally:
+
+    go build -o snapweb cmd/snapweb/\*.go  # This will create ./snapweb
+
+# Processing JavaScript and Sass
+
+To prepare JavaScript and compile Sass files into CSS:
+
+    gulp
+
+# Running
+
+    ./snapweb  # Run the local server
+
+Now browse to <http://localhost:4200>.
 
 ## API
 
