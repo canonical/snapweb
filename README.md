@@ -60,6 +60,10 @@ portal.
 
 ## Local development
 
+After installing the snap, as explained above, deactivate it:
+
+    sudo snap deactivate snapweb
+
 # Building the go binary
 
 To build the go binary locally:
