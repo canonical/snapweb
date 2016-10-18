@@ -71,7 +71,44 @@ describe('Login', function() {
     xit('should submit valid forms', function() {
     });
     
-    xit('should display error feedback', function() {
+    it('should display error feedback (400)', function() {
+      spyOn(this.model, 'save').and.callThrough();
+
+      jasmine.Ajax.stubRequest('/api/v2/login').andReturn({
+        status: 400,
+        statusText: "Bad Request",
+        contentType: "application/json",
+        responseText: '{"type":"error","status-code":400,"status":"Bad Request","result":{"message":"please use a valid email address.","kind":"invalid-auth-data","value":{"email":["invalid"]}}}'
+      });
+
+      this.emailSSO.val('invalid@email.com');
+      this.password.val('pass');
+
+      this.view.$el.find('#btn-login').trigger('click');
+      
+      expect(this.model.save).toHaveBeenCalled();
+      expect(this.view.$el.find('.statusmessage').text()).toMatch('please use a valid email address.');
+      // TODO: check also that the element is visible
+    });
+    
+    it('should display error feedback (401)', function() {
+      spyOn(this.model, 'save').and.callThrough();
+
+      jasmine.Ajax.stubRequest('/api/v2/login').andReturn({
+        status: 400,
+        statusText: "Bad Request",
+        contentType: "application/json",
+        responseText: '{"type":"error","status-code":401,"status":"Unauthorized","result":{"message":"cannot authenticate to snap store: Provided email/password is not correct.","kind":"login-required"}}'
+      });
+
+      this.emailSSO.val('valid@email.com');
+      this.password.val('wrong');
+
+      this.view.$el.find('#btn-login').trigger('click');
+      
+      expect(this.model.save).toHaveBeenCalled();
+      expect(this.view.$el.find('.statusmessage').text()).toMatch('Provided email/password is not correct.');
+      // TODO: check also that the element is visible
     });
     
     it('should set the macaroon cookies', function() {
@@ -87,11 +124,8 @@ describe('Login', function() {
       
       this.emailSSO.val('valid@email.com');
       this.password.val('not empty');
-      var stubbedEvent = {
-        preventDefault: function() {},
-        stopPropagation: function() {}
-      };
-      this.view.handleLogin(stubbedEvent);
+      
+      this.view.$el.find('#btn-login').trigger('click');
       
       expect(this.model.save).toHaveBeenCalled();
       expect(this.model.setMacaroonCookiesFromResponse).toHaveBeenCalled();
@@ -115,7 +149,9 @@ describe('Login', function() {
       request = jasmine.Ajax.requests.mostRecent();
       expect(request.url).toBe('/some/api/call');
       expect(request.method).toBe('GET');
-      // TODO: check that cookies are sent properly; no time to finish that now :/
+      // FIXIME: check the Authorization header is set
+      // Note: the request headers are empty, jasmine-ajax doesn't really behave like
+      // in a normal browser, where cookies are effectively sent
     });
     
   });

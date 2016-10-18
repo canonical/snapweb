@@ -83,11 +83,11 @@ module.exports = Backbone.Marionette.LayoutView.extend({
           }, 200)
         },
         error: function(model, response) {
-          if (response.status == 401) {
+          if (response.status == 401 || response.status == 400) {
             model.trigger(response.responseJSON.result.kind,
                          response.responseJSON.result.message);
           } else {
-            model.trigger('invalid', model, response);
+            model.trigger('invalid', model, response.responseJSON.result.message);
           }
         }
       });
