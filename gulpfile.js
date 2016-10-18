@@ -110,10 +110,17 @@ gulp.task('images:clean', function(cb) {
   del(['www/public/images'], cb);
 });
 
-gulp.task('watch', ['js:watch', 'styles', 'images'], function() {
-  gulp.watch('www/src/images/**/*.{svg,png,jpg,jpeg}', ['images']);
-  gulp.watch('www/src/css/**/*.css', ['styles']);
+// Watch tasks
+gulp.task('script:watch', ['js:watch'], function() {
   gulp.watch('www/src/js/**/*.js', ['js:lint']);
+});
+
+gulp.task('images:watch', ['images'], function() {
+  gulp.watch('www/src/images/**/*.{svg,png,jpg,jpeg}', ['images']);
+});
+
+gulp.task('styles:watch', ['styles'], function() {
+  gulp.watch('www/src/css/**/*.{css,scss}', ['styles']);
 });
 
 // for the benefit of snapcraft
