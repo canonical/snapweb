@@ -120,7 +120,7 @@ gulp.task('images:watch', ['images'], function() {
 });
 
 gulp.task('styles:watch', ['styles'], function() {
-  gulp.watch('www/src/css/**/*.{css,scss}', ['styles']);
+  gulp.watch('www/src/css/**/**/*.scss', ['styles']);
 });
 
 // for the benefit of snapcraft
