@@ -119,7 +119,13 @@ gulp.task('styles:watch', ['styles'], function() {
   gulp.watch('www/src/css/**/**/*.scss', ['styles']);
 });
 
-gulp.task('watch', ['js:watch', 'images:watch', 'styles:watch']);
+gulp.task('handlebars:watch', function() {
+  gulp.watch('www/src/js/**/*.hbs', ['js:build']);
+});
+
+gulp.task('watch', ['handlebars:watch', 'script:watch', 'styles:watch', 'images:watch']);
+
+gulp.task('develop', ['handlebars:watch', 'js:watch', 'styles:watch']);
 
 // for the benefit of snapcraft
 gulp.task('install', ['default'], function() {
