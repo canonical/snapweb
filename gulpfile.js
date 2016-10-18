@@ -81,7 +81,7 @@ gulp.task('styles', ['styles:clean'], function() {
   ];
 
   return gulp.src([
-    'www/src/css/build.scss'
+    'www/src/css/styles.scss'
   ])
   .pipe(sass({
     includePaths: ['node_modules']
