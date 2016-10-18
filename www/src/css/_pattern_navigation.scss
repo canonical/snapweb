@@ -1,0 +1,23 @@
+@mixin p-navigation {
+
+  .p-navigation {
+    background: $color-x-light;
+    border-bottom: 1px solid $color-mid-dark;
+    color: $color-dark;
+    margin-bottom: 1rem;
+    padding: .5rem 0;
+
+    .p-navigation__link {
+      color: $color-dark;
+      margin: 0;
+
+      &:visited {
+        color: $color-mid-dark;
+      }
+    }
+
+    .p-navigation__logo {
+      color: $color-dark;
+    }
+  }
+}

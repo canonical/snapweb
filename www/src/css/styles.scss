@@ -1,4 +1,11 @@
 // Import the theme
 @import "vanilla-framework/scss/vanilla";
+
+// Theme layer
+@import "pattern_navigation";
+
 // Include Vanilla
 @include vanilla;
+
+// Pattern Overrides
+@include p-navigation;
