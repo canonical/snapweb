@@ -82,10 +82,11 @@ gulp.task('styles', ['styles:clean'], function() {
 
   return gulp.src([
     'node_modules/normalize.css/normalize.css',
-    'www/src/css/lib/vanilla-includes.scss',
-    'www/src/css/**/*.css'
+    'www/src/css/build.scss'
   ])
-  .pipe(sass())
+  .pipe(sass({
+    includePaths: ['node_modules']
+  }))
   .pipe(sourcemaps.init())
   .pipe(postcss(processors))
   .pipe(csso())
