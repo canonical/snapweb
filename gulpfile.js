@@ -107,7 +107,7 @@ gulp.task('images:clean', function(cb) {
 });
 
 // Watch tasks
-gulp.task('script:watch', ['js:lint'], function() {
+gulp.task('js:watch', ['js:lint'], function() {
   createBundler(true);
 });
 
@@ -119,7 +119,7 @@ gulp.task('styles:watch', ['styles'], function() {
   gulp.watch('www/src/css/**/**/*.scss', ['styles']);
 });
 
-gulp.task('watch', ['script:watch', 'images:watch', 'styles:watch']);
+gulp.task('watch', ['js:watch', 'images:watch', 'styles:watch']);
 
 // for the benefit of snapcraft
 gulp.task('install', ['default'], function() {
