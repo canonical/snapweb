@@ -89,7 +89,7 @@ gulp.task('styles', ['styles:clean'], function() {
   .pipe(sourcemaps.init())
   .pipe(postcss(processors))
   .pipe(csso())
-  .pipe(concat('snapweb.css'))
+  .pipe(concat('styles.css'))
   .pipe(sourcemaps.write('./'))
   .pipe(gulp.dest('www/public/css'));
 });
