@@ -5,19 +5,36 @@
     border-bottom: 1px solid $color-mid-dark;
     color: $color-dark;
     margin-bottom: 1rem;
-    padding: .5rem 0;
 
-    .p-navigation__link {
+    &__toggle {
       color: $color-dark;
-      margin: 0;
 
       &:visited {
         color: $color-mid-dark;
       }
     }
 
-    .p-navigation__logo {
-      color: $color-dark;
+    &__links {
+
+      .p-navigation__link {
+        color: $color-dark;
+        border-left-color: $color-dark;
+
+        &:hover {
+          border-bottom: 0;
+          text-decoration: none;
+        }
+
+        &:visited {
+          color: $color-mid-dark;
+        }
+
+        .anchor {
+          position: relative;
+          bottom: .35rem;
+          left: .25rem;
+        }
+      }
     }
   }
 }
