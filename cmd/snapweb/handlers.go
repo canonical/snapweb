@@ -167,7 +167,6 @@ func initURLHandlers(log *log.Logger) {
 	// NOTE: the public URLs below shouldn't be using SimpleCookieCheckOrRedirect
 
 	http.HandleFunc("/api/v2/create-user", passThru)
-	http.HandleFunc("/api/v2/login", passThru)
 
 	http.Handle("/public/", loggingHandler(http.FileServer(http.Dir(filepath.Join(os.Getenv("SNAP"), "www")))))
 
