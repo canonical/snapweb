@@ -38,6 +38,7 @@ func (s *GenerateTokenSuite) SetUpTest(c *C) {
 
 func (s *GenerateTokenSuite) TestCreateDifferentTokens(c *C) {
 	token1 := generateToken(64)
+	c.Assert(len(token1), Equals, 64)
 	for i := 0; i < 100000; i++ {
 		token2 := generateToken(64)
 		c.Assert(token1, Not(Equals), token2)
@@ -45,9 +46,9 @@ func (s *GenerateTokenSuite) TestCreateDifferentTokens(c *C) {
 }
 
 func (s *GenerateTokenSuite) TestSaveToken(c *C) {
-	token := generateToken(64)
-	writeToken(token)
+	token := saveToken()
 	t, err := ioutil.ReadFile(tokenFilename())
 	c.Assert(err, IsNil)
 	c.Assert(string(t), Equals, token)
+	c.Assert(len(string(t)), Equals, 64)
 }

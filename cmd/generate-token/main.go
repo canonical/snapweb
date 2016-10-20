@@ -77,15 +77,20 @@ func generateToken(n int) string {
 	return string(b)
 }
 
+func saveToken() string {
+	token := generateToken(64)
+	writeToken(token)
+
+	return token
+}
+
 func main() {
 	logger = log.New(os.Stderr, "generate-token: ", log.Ldate|log.Ltime|log.Lshortfile)
 
 	checkUser()
 
-	token := generateToken(64)
-
-	writeToken(token)
-
+	token := saveToken()
+	
 	fmt.Printf("Snapweb Access Token:\n\n%s\n\n", token)
 	fmt.Printf("Use the above token in the Snapweb interface to be granted access.\n")
 }
