@@ -44,6 +44,7 @@ gobuild() {
     mkdir -p $output_dir
     cd $output_dir
     GOARCH=$arch GOARM=7 CGO_ENABLED=1 CC=${plat_abi}-gcc go build -ldflags "-extld=${plat_abi}-gcc" github.com/snapcore/snapweb/cmd/snapweb
+    GOARCH=$arch GOARM=7 CGO_ENABLED=1 CC=${plat_abi}-gcc go build -o generate-token -ldflags "-extld=${plat_abi}-gcc" $srcdir/cmd/generate-token/main.go
     cd - > /dev/null
 }
 
@@ -60,10 +61,12 @@ go get launchpad.net/godeps
 godeps -u dependencies.tsv
 
 # build one snap per arch
+# for ARCH in amd64 ; do
 for ARCH in amd64 arm64 armhf i386; do
     builddir="${top_builddir}/${ARCH}"
     mkdir -p "$builddir"
 
+    srcdir=`pwd`
     cp -r pkg/. ${builddir}/
     mkdir $builddir/www
     cp -r www/public www/templates $builddir/www
