@@ -1,0 +1,17 @@
+@mixin p-card {
+
+  .p-card {
+    margin: 0 .5rem .5rem;
+
+    &__icon {
+      margin: .5rem auto 1.5rem;
+      display: block;
+    }
+
+    &__footer {
+      border-top: 1px solid $color-mid-light;
+      margin-top: 1rem;
+      padding-top: 1rem;
+    }
+  }
+}
