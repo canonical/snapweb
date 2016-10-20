@@ -1,29 +1,23 @@
-<div class="b-grey-wrapper">
-  <div class="inner-wrapper">
-    <div class="b-snap__banner twelve-col last-col">
-      <div class="two-col">
-        <div class="b-icon-wrapper">
-          <img class="b-icon" src="{{ icon }}" width="125" height="125">
-        </div>
-      </div>
-      <div class="b-snap__meta six-col">
-        <h1 class="b-snap__title">{{ name }}</h1>
-        <div class="b-snap__developer">{{ developer }}</div>
-      </div>
-      <div class="b-snap__actions four-col last-col">
-        {{> installer}}
-      </div>
+<div class="row">
+  <div class="col-2">
+    <div class="b-icon-wrapper">
+      <img class="b-icon" src="{{ icon }}" width="125" height="125">
     </div>
+  </div>
+  <div class="col-6">
+    <h1 class="b-snap__title">{{ name }}</h1>
+    <div class="b-snap__developer">{{ developer }}</div>
+  </div>
+  <div class="col-4">
+    {{> installer}}
   </div>
 </div>
 
-<div class="inner-wrapper">
-  <div class="eight-col">
-    <div class="b-snap__details">
-	  <h3>About</h3>
+<div class="row">
+  <div class="col-8">
+    <h3>About</h3>
       {{#if description}}
       <p>{{ description }}</p>
       {{/if}}
     </div>
-  </div>
 </div>
