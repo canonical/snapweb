@@ -11,7 +11,7 @@ var CONF = require('../config.js');
 
 module.exports = Marionette.CompositeView.extend({
 
-  childViewContainer: '.b-snaplist',
+  childViewContainer: '#js-snaplist',
 
   template : function(model) {
     return template(model);
@@ -50,7 +50,7 @@ module.exports = Marionette.CompositeView.extend({
   styleGrid: function() {
     this.model.set('isGrid', true);
 
-    this.$('.b-snaplist')
+    this.$('#js-snaplist')
     .removeClass('b-snaplist_row')
     .addClass('b-snaplist_grid');
 
@@ -61,7 +61,7 @@ module.exports = Marionette.CompositeView.extend({
   styleRow: function() {
     this.model.set('isGrid', false);
 
-    this.$('.b-snaplist')
+    this.$('#js-snaplist')
     .removeClass('b-snaplist_grid')
     .addClass('b-snaplist_row');
 
