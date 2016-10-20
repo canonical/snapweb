@@ -31,7 +31,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/snapcore/snapd/dirs"
+	// "github.com/snapcore/snapd/dirs"
 
 	// most other handlers use the ClientAdapter for now
 	"github.com/snapcore/snapweb/snappy"
@@ -155,7 +155,7 @@ func handleDeviceInfo(w http.ResponseWriter, r *http.Request) {
 func initURLHandlers(log *log.Logger) {
 	log.Println("Initializing HTTP handlers...")
 	snappyHandler := snappy.NewHandler()
-	passThru := makePassthroughHandler(dirs.SnapdSocket, "/api")
+	// passThru := makePassthroughHandler(dirs.SnapdSocket, "/api")
 
 	http.HandleFunc("/api/v2/validate-token", validateToken)
 
@@ -165,8 +165,6 @@ func initURLHandlers(log *log.Logger) {
 	http.HandleFunc("/api/v2/device-info", handleDeviceInfo)
 
 	// NOTE: the public URLs below shouldn't be using SimpleCookieCheckOrRedirect
-
-	http.HandleFunc("/api/v2/create-user", passThru)
 
 	http.Handle("/public/", loggingHandler(http.FileServer(http.Dir(filepath.Join(os.Getenv("SNAP"), "www")))))
 
