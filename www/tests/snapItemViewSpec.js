@@ -21,11 +21,11 @@ describe('SnapItemView', function() {
     expect(this.view).toEqual(jasmine.any(Backbone.View));
   });
 
-  it('should have a b-snaplist className with type modifier when present in model', function() {
+  it('should have a p-card className with type modifier when present in model', function() {
     this.view.model.unset('type');
-    expect(this.view.className()).toBe('b-snaplist__item col-3');
+    expect(this.view.className()).toBe('p-card');
     this.view.model.set('type', 'foo');
-    expect(this.view.className()).toBe('b-snaplist__item col-3 b-snaplist__item-foo');
+    expect(this.view.className()).toBe('p-card p-card-foo');
   });
 
 });
