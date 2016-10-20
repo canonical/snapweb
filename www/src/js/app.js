@@ -6,6 +6,7 @@ var Backbone = require('backbone');
 Backbone.$ = $;
 var Marionette = require('backbone.marionette');
 var Radio = require('backbone.radio');
+
 if (window.__agent) {
   window.__agent.start(Backbone, Marionette);
 }
@@ -22,4 +23,10 @@ $(document).ready(function() {
 
 snapweb.on('start', function() {
   Backbone.history.start({pushState: true});
+});
+
+$( document ).ajaxError(function( event, jqxhr, settings, exception ) {
+    if (jqxhr.status === 401 && window.location.pathname != '/access-control') {
+      window.location = '/access-control';
+    }
 });
