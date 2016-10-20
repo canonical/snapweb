@@ -90,7 +90,7 @@ func main() {
 	checkUser()
 
 	token := saveToken()
-	
+
 	fmt.Printf("Snapweb Access Token:\n\n%s\n\n", token)
 	fmt.Printf("Use the above token in the Snapweb interface to be granted access.\n")
 }

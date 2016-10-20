@@ -81,7 +81,7 @@ func GenerateCertificate() {
 	template := x509.Certificate{
 		SerialNumber: serialNumber,
 		Subject: pkix.Name{
-			Organization: []string{"Acme Co"}, // FIXME
+			Organization: []string{"snapweb"},
 		},
 		NotBefore:             notBefore,
 		NotAfter:              notAfter,
