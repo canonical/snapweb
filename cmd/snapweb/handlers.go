@@ -18,14 +18,14 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"net"
 	"net/http"
-	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -123,7 +123,9 @@ type deviceInfoResponse struct {
 
 func handleDeviceInfo(w http.ResponseWriter, r *http.Request) {
 
-	SimpleCookieCheckOrRedirect(w, r)
+	if e := SimpleCookieCheckOrRedirect(w, r); e != nil {
+		return
+	}
 
 	c := newSnapdClient()
 
@@ -155,12 +157,14 @@ func initURLHandlers(log *log.Logger) {
 	snappyHandler := snappy.NewHandler()
 	passThru := makePassthroughHandler(dirs.SnapdSocket, "/api")
 
+	http.HandleFunc("/api/v2/validate-token", validateToken)
+
 	http.Handle("/api/v2/packages/", snappyHandler.MakeMuxer("/api/v2/packages"))
 
 	http.HandleFunc("/api/v2/time-info", handleTimeInfo)
 	http.HandleFunc("/api/v2/device-info", handleDeviceInfo)
 
-	// the URLs below shouldn't be using SimpleCookieCheckOrRedirect
+	// NOTE: the public URLs below shouldn't be using SimpleCookieCheckOrRedirect
 
 	http.HandleFunc("/api/v2/create-user", passThru)
 	http.HandleFunc("/api/v2/login", passThru)
@@ -176,50 +180,47 @@ func initURLHandlers(log *log.Logger) {
 	http.HandleFunc("/", makeMainPageHandler())
 }
 
-// Name of the cookie transporting the macaroon and discharge to authenticate snapd requests
+// Name of the cookie transporting the access token
 const (
 	SnapwebCookieName = "SM"
 )
 
-// The MacaroonCookie structure mirrors the User structure in snapd/client/login.go
-type MacaroonCookie struct {
-	Macaroon   string   `json:"macaroon,omitempty"`
-	Discharges []string `json:"discharges,omitempty"`
+func tokenFilename() string {
+	return filepath.Join(os.Getenv("SNAP_DATA"), "token.txt")
 }
 
-// Writes the 'Authorization' header
-// with macaroon and discharges extracted from mere cookies
-func setAuthorizationHeader(req *http.Request, outreq *http.Request) {
-	cookie, _ := req.Cookie(SnapwebCookieName)
-	if cookie != nil {
-		var mc MacaroonCookie
-		unescaped, err := url.QueryUnescape(cookie.Value)
-		if err != nil {
-			log.Println("Error trying to unescape cookie string", err)
-			return
-		}
-		dec := json.NewDecoder(strings.NewReader(unescaped))
-		if err := dec.Decode(&mc); err != nil {
-			// TODO: reset a broken cookie? just ignoring for now
-			log.Println("Error trying to decode cookie: ", err)
-			return
-		}
-
-		var buf bytes.Buffer
-		fmt.Fprintf(&buf, `Macaroon root="%s"`, mc.Macaroon)
-		for _, discharge := range mc.Discharges {
-			fmt.Fprintf(&buf, `, discharge="%s"`, discharge)
-		}
-		outreq.Header.Set("Authorization", buf.String())
-	}
-}
-
-// SimpleCookieCheckOrRedirect is a simplistic authorization mechanism
-func SimpleCookieCheckOrRedirect(w http.ResponseWriter, r *http.Request) {
-	// simply verifies the existence of a cookie for now
+// SimpleCookieCheckOrRedirect is a simple authorization mechanism
+func SimpleCookieCheckOrRedirect(w http.ResponseWriter, r *http.Request) error {
 	cookie, _ := r.Cookie(SnapwebCookieName)
-	if cookie == nil {
-		http.Redirect(w, r, "/login", 401)
+	if cookie != nil {
+		token, err := ioutil.ReadFile(tokenFilename())
+		if err == nil {
+			if string(token) == cookie.Value {
+				// the auth-token and the cookie do match
+				// we can continue with the request
+				return nil
+			}
+		}
+	}
+
+	// in any other case, refuse the request and redirect
+	http.Redirect(w, r, "/access-control", 401)
+
+	return errors.New("Unauthorized")
+}
+
+func validateToken(w http.ResponseWriter, r *http.Request) {
+	log.Println(r.Method, r.URL.Path)
+	if err := SimpleCookieCheckOrRedirect(w, r); err == nil {
+		hdr := w.Header()
+		hdr.Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintf(w, "{}")
+	} else {
+		hdr := w.Header()
+		hdr.Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusUnauthorized)
+		fmt.Fprintf(w, "{}")
 	}
 }
 
@@ -242,8 +243,6 @@ func makePassthroughHandler(socketPath string, prefix string) http.HandlerFunc {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-
-		setAuthorizationHeader(r, outreq)
 
 		resp, err := c.Do(outreq)
 		if err != nil {

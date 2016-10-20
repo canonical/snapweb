@@ -108,7 +108,7 @@ func GenerateCertificate() {
 
 	keyOut, err := os.OpenFile("key.pem", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
 	if err != nil {
-		log.Fatalf("failed to open key.pem for writing:", err)
+		log.Fatal("failed to open key.pem for writing:", err)
 	}
 
 	pem.Encode(keyOut, pemBlockForKey(priv))

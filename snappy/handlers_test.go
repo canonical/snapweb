@@ -20,9 +20,11 @@ package snappy
 import (
 	"encoding/json"
 	"errors"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"path/filepath"
 
 	"github.com/snapcore/snapd/client"
 	"github.com/snapcore/snapweb/statustracker"
@@ -40,6 +42,8 @@ var _ = Suite(&HandlersSuite{})
 func (s *HandlersSuite) SetUpTest(c *C) {
 	os.Setenv("SNAP_DATA", c.MkDir())
 	s.resetFakeSnapdClient()
+
+	s.createAndSaveTestToken(c)
 }
 
 func (s *HandlersSuite) resetFakeSnapdClient() {
@@ -48,13 +52,22 @@ func (s *HandlersSuite) resetFakeSnapdClient() {
 	s.h.statusTracker = statustracker.New()
 }
 
+func (s *HandlersSuite) createAndSaveTestToken(c *C) string {
+	os.Setenv("SNAP_DATA", c.MkDir())
+	tokenData := "1234"
+	c.Assert(ioutil.WriteFile(filepath.Join(os.Getenv("SNAP_DATA"), "token.txt"),
+		[]byte(tokenData), os.ModePerm), IsNil)
+
+	return tokenData
+}
+
 func (s *HandlersSuite) TestGetAllError(c *C) {
 	s.c.StoreErr = errors.New("fail")
 
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest("GET", "/", nil)
 	c.Assert(err, IsNil)
-	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "auth"})
+	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
 
 	s.h.MakeMuxer("").ServeHTTP(rec, req)
 	c.Assert(rec.Code, Equals, http.StatusInternalServerError)
@@ -78,6 +91,7 @@ func (s *HandlersSuite) TestGetAll(c *C) {
 		rec := httptest.NewRecorder()
 		req, err := http.NewRequest("GET", tt.URL, nil)
 		c.Assert(err, IsNil)
+		req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
 
 		s.h.getAll(rec, req)
 		c.Assert(s.c.CalledListSnaps, Equals, tt.CalledListSnaps)
@@ -92,7 +106,7 @@ func (s *HandlersSuite) TestGetError(c *C) {
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest("GET", "/foo", nil)
 	c.Assert(err, IsNil)
-	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "auth"})
+	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
 
 	s.h.MakeMuxer("").ServeHTTP(rec, req)
 	c.Assert(rec.Code, Equals, http.StatusNotFound)
@@ -104,7 +118,7 @@ func (s *HandlersSuite) TestGet(c *C) {
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest("GET", "/chatroom", nil)
 	c.Assert(err, IsNil)
-	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "auth"})
+	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
 
 	s.h.MakeMuxer("").ServeHTTP(rec, req)
 	c.Assert(rec.Code, Equals, http.StatusOK)
@@ -121,7 +135,7 @@ func (s *HandlersSuite) TestAdd(c *C) {
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest("PUT", "/chatroom", nil)
 	c.Assert(err, IsNil)
-	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "auth"})
+	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
 
 	s.h.MakeMuxer("").ServeHTTP(rec, req)
 	c.Assert(rec.Code, Equals, http.StatusAccepted)
@@ -134,7 +148,7 @@ func (s *HandlersSuite) TestRemove(c *C) {
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest("DELETE", "/chatroom", nil)
 	c.Assert(err, IsNil)
-	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "auth"})
+	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
 
 	s.h.MakeMuxer("").ServeHTTP(rec, req)
 	c.Assert(rec.Code, Equals, http.StatusAccepted)

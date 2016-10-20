@@ -27,7 +27,6 @@ import (
 	"net"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -46,6 +45,15 @@ type HandlersSuite struct {
 
 var _ = Suite(&HandlersSuite{})
 
+func (s *HandlersSuite) createAndSaveTestToken(c *C) string {
+	os.Setenv("SNAP_DATA", c.MkDir())
+	tokenData := "1234"
+	c.Assert(ioutil.WriteFile(filepath.Join(os.Getenv("SNAP_DATA"), "token.txt"),
+		[]byte(tokenData), os.ModePerm), IsNil)
+
+	return tokenData
+}
+
 func (s *HandlersSuite) SetUpTest(c *C) {
 	s.c = &snappy.FakeSnapdClient{}
 
@@ -56,6 +64,8 @@ func (s *HandlersSuite) SetUpTest(c *C) {
 	s.c.Version.Series = "16"
 
 	s.c.Err = nil
+
+	s.createAndSaveTestToken(c)
 }
 
 func (s *HandlersSuite) TearDownTest(c *C) {
@@ -139,7 +149,7 @@ func (s *HandlersSuite) TestMakeMainPageHandler(c *C) {
 	req, err := http.NewRequest("GET", "/", nil)
 	c.Assert(err, IsNil)
 
-	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "auth"})
+	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
 
 	http.DefaultServeMux.ServeHTTP(rec, req)
 	body := rec.Body.String()
@@ -221,7 +231,7 @@ func (s *HandlersSuite) TestPassthroughHandler(c *C) {
 	req, err := http.NewRequest("GET", "/api/v2/system-info", nil)
 	c.Assert(err, IsNil)
 
-	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "auth"})
+	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
 
 	handler(rec, req)
 	body := rec.Body.String()
@@ -244,7 +254,7 @@ func (s *HandlersSuite) TestModelInfoHandler(c *C) {
 	req, err := http.NewRequest("GET", "/api/v2/device-info", nil)
 	c.Assert(err, IsNil)
 
-	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "auth"})
+	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
 
 	http.DefaultServeMux.ServeHTTP(rec, req)
 	body := rec.Body.String()
@@ -259,19 +269,15 @@ func (s *HandlersSuite) TestModelInfoHandler(c *C) {
 	c.Assert(deviceInfos["serial"], Equals, "Serial Number")
 }
 
-func (s *HandlersSuite) TestSetAuthorization(c *C) {
+func (s *HandlersSuite) TestCheckCookieToken(c *C) {
+	rec := httptest.NewRecorder()
+
 	r, err := http.NewRequest("GET", "/api/dummy", nil)
 	c.Assert(err, IsNil)
 
-	example := `{ "macaroon": "expected", "discharges": ["expected-as-well"] }`
-	encodedValue := (&url.URL{Path: example}).EscapedPath()
-	r.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: encodedValue})
+	r.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: s.createAndSaveTestToken(c)})
 
-	outreq, err := http.NewRequest(r.Method, r.URL.String(), r.Body)
-	c.Assert(err, IsNil)
-
-	setAuthorizationHeader(r, outreq)
-	c.Assert(outreq.Header["Authorization"], NotNil)
-	c.Check(outreq.Header["Authorization"][0], Equals,
-		"Macaroon root=\"expected\", discharge=\"expected-as-well\"")
+	handler := http.HandlerFunc(validateToken)
+	handler(rec, r)
+	c.Assert(rec.Code, Not(Equals), 401)
 }
