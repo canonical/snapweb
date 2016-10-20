@@ -18,13 +18,12 @@
 package main
 
 import (
+	"crypto/rand"
 	"fmt"
 	"io/ioutil"
 	"log"
-	"math/rand"
 	"os"
 	"path/filepath"
-	"time"
 )
 
 var logger *log.Logger
@@ -63,12 +62,18 @@ func writeToken(token string) {
 const alphabet = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 func generateToken(n int) string {
-	rand.Seed(time.Now().UnixNano())
+	// rand.Seed(time.Now().UnixNano())
 
 	b := make([]byte, n)
-	for i := range b {
-		b[i] = alphabet[rand.Intn(len(alphabet))]
+	_, err := rand.Read(b)
+	if err != nil {
+		logger.Fatal(err)
 	}
+	for i := range b {
+		index := int(b[i]) % len(alphabet)
+		b[i] = alphabet[index]
+	}
+
 	return string(b)
 }
 

@@ -38,8 +38,10 @@ func (s *GenerateTokenSuite) SetUpTest(c *C) {
 
 func (s *GenerateTokenSuite) TestCreateDifferentTokens(c *C) {
 	token1 := generateToken(64)
-	token2 := generateToken(64)
-	c.Assert(token1, Not(Equals), token2)
+	for i := 0; i < 100000; i++ {
+		token2 := generateToken(64)
+		c.Assert(token1, Not(Equals), token2)
+	}
 }
 
 func (s *GenerateTokenSuite) TestSaveToken(c *C) {
