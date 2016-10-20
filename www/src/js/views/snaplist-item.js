@@ -17,6 +17,10 @@ module.exports = Marionette.ItemView.extend({
     var type = this.model.get('type');
     var className = 'p-card';
 
+    if (type) {
+      className += ' p-card-' + type;
+    }
+
     return className;
   },
 
