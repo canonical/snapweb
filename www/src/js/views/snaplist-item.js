@@ -19,11 +19,6 @@ module.exports = Marionette.ItemView.extend({
     if (type) {
       className += ' b-snaplist__item-' + type;
     }
-    // each snap occupies 3 columns of the 12 column grid, we need to know which
-    // sits in the last column in each row
-    if (this.options.lastCol) {
-      className += ' last-col';
-    }
 
     return className;
   },
