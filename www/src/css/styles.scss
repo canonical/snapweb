@@ -2,7 +2,6 @@
 @import "vanilla-framework/scss/vanilla";
 
 // Import site specific styling
-@import "pattern_footer";
 @import "patterns_card";
 @import "patterns_card-deck";
 @import "patterns_navigation";
@@ -16,7 +15,6 @@ $color-brand: #e95420;
 
 // Include Vanilla Framework pattern overrides
 @include p-card;
-@include p-footer;
 @include p-navigation;
 
 // Site specific patterns
