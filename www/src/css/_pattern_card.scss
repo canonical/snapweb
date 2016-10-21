@@ -2,6 +2,8 @@
 
   .p-card {
     margin: 0 .5rem .5rem;
+    padding-bottom: 5rem;
+    position: relative;
 
     &__icon {
       margin: .5rem auto 1.5rem;
@@ -11,7 +13,12 @@
     &__footer {
       border-top: 1px solid $color-mid-light;
       margin-top: 1rem;
-      padding-top: 1rem;
+      padding: 1rem;
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 100%;
+
     }
   }
 }
