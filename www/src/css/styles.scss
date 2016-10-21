@@ -11,6 +11,9 @@
 // Include Vanilla Framework
 @include vanilla;
 
+// Override default Vanilla variables
+$color-brand: #e95420;
+
 // Include Vanilla Framework pattern overrides
 @include p-card;
 @include p-footer;
