@@ -21,7 +21,7 @@ module.exports = Backbone.Marionette.LayoutView.extend({
   },
 
   ui: {
-    'row': '.b-settings__row'
+    'row': '.js-list-item'
   },
 
   events: {
@@ -62,8 +62,8 @@ module.exports = Backbone.Marionette.LayoutView.extend({
   setActive: function(e) {
     var id = e.target.getAttribute('id');
     this.showContent(id);
-    this.$('.b-settings__row').removeClass('b-settings__row_active');
-    this.$('#' + id).addClass('b-settings__row_active');
+    this.$('.js-list-item').removeClass('is-active');
+    this.$('#' + id).addClass('is-active');
   },
 
   onBeforeShow: function() {

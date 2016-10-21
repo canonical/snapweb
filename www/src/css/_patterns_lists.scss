@@ -6,6 +6,10 @@
       @extend .p-list;
       border: 1px solid $color-mid-light;
 
+      div.row & { // TODO: reduce specificity upstream
+        margin-bottom: 2rem;
+      }
+
       .p-list__item {
         border-bottom: 1px dotted $color-mid-light;
         position: relative;
@@ -24,6 +28,11 @@
 
         &:last-child {
           border-bottom: 0;
+        }
+
+        &.is-active {
+          background-color: $color-light;
+          font-weight: bold;
         }
       }
     }
