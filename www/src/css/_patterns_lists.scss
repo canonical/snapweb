@@ -1,0 +1,31 @@
+@mixin p-list {
+
+  .p-list {
+
+    &--menu {
+      @extend .p-list;
+      border: 1px solid $color-mid-light;
+
+      .p-list__item {
+        border-bottom: 1px dotted $color-mid-light;
+        position: relative;
+        margin-bottom: 0;
+        padding: .5rem .5rem .5rem 2.5rem;
+
+        .p-list__icon {
+          position: absolute;
+          top: .5rem;
+          left: .5rem;
+        }
+
+        &:hover {
+          cursor: pointer;
+        }
+
+        &:last-child {
+          border-bottom: 0;
+        }
+      }
+    }
+  }
+}

@@ -5,6 +5,7 @@
 @import "patterns_card";
 @import "patterns_card-deck";
 @import "patterns_navigation";
+@import "patterns_lists";
 @import "utilities_full-width";
 
 // Include Vanilla Framework
@@ -15,6 +16,7 @@ $color-brand: #e95420;
 
 // Include Vanilla Framework pattern overrides
 @include p-card;
+@include p-list;
 @include p-navigation;
 
 // Site specific patterns
