@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 <h2>Date and Time</h2>
 <div style="margin-top: 1em;">
   <div class="eight-col last-col">
@@ -27,5 +28,34 @@
         <span><input type="text" placeholder="URL" id="ntp-server-name" value="{{ ntpServer }}">
        <div>
     </div>
+=======
+<div class="row">
+    <h2>Date &amp; time</h2>
+</div>
+<div class="row">
+  <div class="col-3"><strong>Date</strong></div>
+  <div class="col-6">
+    <input type="date" id="date-picker" value="{{ date }}">
+  </div>
+</div>
+<div class="row">
+  <div class="col-3"><strong>Time</strong></div>
+  <div class="col-6">
+    <input type="time" id="time-picker" value="{{ time }}">
+  </div>
+</div>
+<div class="row">
+  <div class="col-3"><strong>Timezone</strong></div>
+  <div class="col-6">
+    <select id="time-zone-select">
+    </select>
+  </div>
+</div>
+<div class="row">
+  <div class="col-3"><strong>Custom NTP server</strong></div>
+  <div class="col-6">
+    <span><input type="checkbox" id="ntp-active-checkbox">
+    <span><input type="text" placeholder="URL" id="ntp-server-name" value="{{ ntpServer }}">
+>>>>>>> Stashed changes
   </div>
 </div>
