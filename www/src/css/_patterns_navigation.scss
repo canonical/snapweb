@@ -19,6 +19,7 @@
       .p-navigation__link {
         color: $color-dark;
         border-left-color: $color-dark;
+        padding-bottom: .75rem;
 
         &:hover {
           border-bottom: 0;
