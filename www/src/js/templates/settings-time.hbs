@@ -23,7 +23,10 @@
 <div class="row">
   <div class="col-2"><strong>Custom NTP server</strong></div>
   <div class="col-6">
-    <span><input type="checkbox" id="ntp-active-checkbox">
-    <span><input type="text" placeholder="URL" id="ntp-server-name" value="{{ ntpServer }}">
+    <div class="col-1">
+      <input type="checkbox" id="ntp-active-checkbox">
+    </div>
+    <div class="col-5">
+      <input type="text" placeholder="URL" id="ntp-server-name" value="{{ ntpServer }}">
   </div>
 </div>
