@@ -6,6 +6,7 @@
 @import "patterns_card-deck";
 @import "patterns_navigation";
 @import "patterns_lists";
+@import "patterns_search";
 @import "utilities_full-width";
 
 // Include Vanilla Framework
@@ -18,6 +19,7 @@ $color-brand: #e95420;
 @include p-card;
 @include p-list;
 @include p-navigation;
+@include p-search;
 
 // Site specific patterns
 @include p-card-deck;
