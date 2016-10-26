@@ -69,14 +69,6 @@ module.exports = Marionette.CompositeView.extend({
     this.$('#styleRow').addClass('b-button_active');
   },
 
-  childViewOptions: function(model, index) {
-    var lastCol = (index != 0 && ((index + 1) % 4) == 0);
-
-    return {
-      lastCol: lastCol
-    };
-  },
-
   childView: SnaplistItemView,
 
   emptyView: EmptySnaplistView
