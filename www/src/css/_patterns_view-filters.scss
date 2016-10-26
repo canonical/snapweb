@@ -1,0 +1,18 @@
+@mixin p-view-filters {
+
+  .p-view-filters {
+
+    &__icon {
+      margin-top: .25rem;
+      margin-right: .5rem;
+
+      &:last-child {
+        margin-right: 0;
+      }
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+  }
+}
