@@ -22,5 +22,49 @@
         width: calc(25% - 1rem);
       }
     }
+
+    &--row {
+
+      .p-card {
+        width: 100%;
+        display: flex;
+        flex-wrap: nowrap;
+        border: 0;
+        border-bottom: 1px dotted $color-dark;
+        padding-bottom: 1rem;
+        margin: 0;
+        padding-right: 0;
+        padding-left: 0;
+
+        > * {
+          width: 100%;
+
+          @media (min-width: $breakpoint-medium) {
+            width: 33.333%!important;
+          }
+        }
+
+        &:last-child {
+          border-bottom: 0;
+        }
+
+        &__title {
+          font-size: 1rem;
+          font-weight: bold;
+        }
+
+        &__icon {
+          display: none;
+        }
+
+        &__footer {
+          border-top: 0;
+          position: relative;
+          margin-top: 0;
+          width: auto;
+          padding: 0;
+        }
+      }
+    }
   }
 }
