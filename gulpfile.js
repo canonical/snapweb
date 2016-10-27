@@ -18,7 +18,7 @@ var source = require('vinyl-source-stream');
 var uglify = require('gulp-uglify');
 var watchify = require('watchify');
 
-gulp.task('js:build', ['js:clean', 'js:lint'], function() {
+gulp.task('js:build', ['js:clean'], function() {
   return createBundler();
 });
 
@@ -68,8 +68,6 @@ gulp.task('js:lint', function() {
 });
 
 // Styles
-
-
 gulp.task('styles', ['styles:clean'], function() {
   var processors = [
     autoprefixer({browsers: ['last 1 version']}),
@@ -107,8 +105,8 @@ gulp.task('images:clean', function(cb) {
 });
 
 // Watch tasks
-gulp.task('js:watch', ['js:lint'], function() {
-  createBundler(true);
+gulp.task('js:watch', function() {
+  gulp.watch('www/src/js/**/*.js', createBundler(true));
 });
 
 gulp.task('images:watch', ['images'], function() {
