@@ -15,7 +15,7 @@ module.exports = Backbone.Marionette.LayoutView.extend({
   onBeforeShow: function() {
     this.showChildView('resultsRegion', new BaskView({
       model: new Backbone.Model({
-        title: 'Search results',
+        title: 'Search results for "' + this.model.get('query') + '"',
         query: this.model.get('query'),
         isHomeActive: false,
         isGrid: true,
