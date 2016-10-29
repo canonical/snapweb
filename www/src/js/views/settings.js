@@ -14,6 +14,7 @@ module.exports = Backbone.Marionette.LayoutView.extend({
   initialize: function(options) {
     this.timeInfo = options.timeInfo;
     this.deviceInfo = options.deviceInfo;
+    this.profileModel = options.profileModel;
   },
 
   template: function(model) {
@@ -36,7 +37,9 @@ module.exports = Backbone.Marionette.LayoutView.extend({
     var view;
     switch (id) {
       case 'profile':
-        view = new SettingsProfileView();
+        view = new SettingsProfileView({
+          model: this.profileModel
+        });
         break;
       case 'users':
         view = new SettingsUsersView();
@@ -56,14 +59,15 @@ module.exports = Backbone.Marionette.LayoutView.extend({
           });
     }
 
+    this.$('.b-settings__row').removeClass('b-settings__row_active');
+    this.$('#' + id).addClass('b-settings__row_active');
+
     this.showChildView('contentRegion', view);
   },
 
   setActive: function(e) {
     var id = e.target.getAttribute('id');
     this.showContent(id);
-    this.$('.b-settings__row').removeClass('b-settings__row_active');
-    this.$('#' + id).addClass('b-settings__row_active');
   },
 
   onBeforeShow: function() {

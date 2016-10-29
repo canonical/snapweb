@@ -2,18 +2,30 @@
 var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
 var template = require('../templates/layout-banner.hbs');
+var Radio = require('backbone.radio');
+var SettingsLayoutView = require('../views/settings.js');
+var sharedProfileModel = require('../models/profile.js');
+var chan = Radio.channel('root');
 
 module.exports = Marionette.ItemView.extend({
 
   className: 'b-banner',
 
+  initialize: function() {
+      chan.comply('profile:change', this.profileChange, this);
+  },
+  
   ui: {
     input: '.b-banner__input',
-    submit: '.b-banner__submit'
+    submit: '.b-banner__submit',
+    profile: '.b-banner__profile',
+    login: '.b-banner__login',
   },
 
   events: {
     'click @ui.submit': 'submit',
+    'click @ui.profile': 'profile',
+    'click @ui.login': 'login',
     'click': function(e) {
       var CLASS = 'b-banner__nav-item';
       var ACTIVE_CLASS = 'b-banner__nav-item_active';
@@ -35,7 +47,10 @@ module.exports = Marionette.ItemView.extend({
       'subname': snapweb.SUBNAME,
       'isHomeActive': (path === ''),
       'isStoreActive': (path === 'store' || path === 'search'),
-      'isSettingsActive': (path === 'settings')
+      'isSettingsActive': (path === 'settings'),
+      'isLoggedIn': sharedProfileModel.get('isLoggedIn'),
+      'fullName': sharedProfileModel.get('fullName'),
+      'avatarUrl': sharedProfileModel.get('avatarUrl'),
     };
   },
 
@@ -49,6 +64,18 @@ module.exports = Marionette.ItemView.extend({
     if (!val) {
       e.preventDefault();
     }
-  }
+  },
 
+  profile: function() {
+    Backbone.history.navigate('/settings', true);
+  },
+
+  profileChange: function() {
+    this.render();
+  },
+  
+  login: function() {
+    Backbone.history.navigate('/settings', true);
+  },
+  
 });
