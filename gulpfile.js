@@ -18,7 +18,7 @@ var source = require('vinyl-source-stream');
 var uglify = require('gulp-uglify');
 var watchify = require('watchify');
 
-gulp.task('js:build', ['js:clean'], function() {
+gulp.task('js:build', ['js:clean', 'js:lint'], function() {
   return createBundler();
 });
 
@@ -121,9 +121,7 @@ gulp.task('handlebars:watch', function() {
   gulp.watch('www/src/js/**/*.hbs', ['js:build']);
 });
 
-gulp.task('watch', ['handlebars:watch', 'script:watch', 'styles:watch', 'images:watch']);
-
-gulp.task('develop', ['handlebars:watch', 'js:watch', 'styles:watch']);
+gulp.task('watch', ['handlebars:watch', 'js:watch', 'styles:watch', 'images:watch']);
 
 // for the benefit of snapcraft
 gulp.task('install', ['default'], function() {
