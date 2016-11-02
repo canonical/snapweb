@@ -114,6 +114,7 @@ func initURLHandlers(log *log.Logger) {
 
 	http.Handle("/api/v2/packages/", snappyHandler.MakeMuxer("/api/v2/packages"))
 	http.HandleFunc("/api/v2/create-user", passThru)
+	http.HandleFunc("/api/v2/sections", passThru)
 
 	http.HandleFunc("/api/v2/time-info", handleTimeInfo)
 

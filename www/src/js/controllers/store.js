@@ -4,18 +4,19 @@ Backbone.$ = $;
 var Marionette = require('backbone.marionette');
 var Radio = require('backbone.radio');
 var StoreLayoutView = require('../views/store.js');
+var Sections = require('../collections/sections.js');
 var Bask = require('../collections/snaplist.js');
 
 module.exports = {
   index: function() {
     var chan = Radio.channel('root');
+    var sections = new Sections();
     var storeSnaplist = new Bask();
 
-    storeSnaplist.fetch({
-      data: $.param({
-        'featured_only': true
-      }),
-      success: function(snaplist) {
+    $.when(
+          storeSnaplist.fetch({ data: $.param({ 'featured_only': true }) })
+//          , sections.fetch()
+        ).then(function() {
         var view =  new StoreLayoutView({
           model: new Backbone.Model({
             query: '',
@@ -25,12 +26,12 @@ module.exports = {
             canSort: false,
             canStyle: true,
             isHomeActive: false,
+            sections: sections
           }),
-          collection: snaplist.all()
+          collection: storeSnaplist.all()
         });
 
         chan.command('set:content', view);
-      }
-    });
+      });
   }
 };

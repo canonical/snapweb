@@ -3,6 +3,7 @@ var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
 var SearchBarView = require('./search-bar.js');
 var StorelistView = require('./storelist.js');
+var StoreHeaderView = require('./store-header.js');
 var template = require('../templates/store.hbs');
 
 module.exports = Backbone.Marionette.LayoutView.extend({
@@ -18,6 +19,11 @@ module.exports = Backbone.Marionette.LayoutView.extend({
       model: this.model
     }));
 
+    this.showChildView('storeHeader', new StoreHeaderView({
+      model: this.model,
+      collection: this.model.sections
+    }));
+
     this.showChildView('storeSnapItemsList', new StorelistView({
       model: this.model,
       collection: this.collection.all()
@@ -26,6 +32,7 @@ module.exports = Backbone.Marionette.LayoutView.extend({
 
   regions: {
     searchBar: '.region-search-bar',
+    storeHeader: '.region-store-header',
     storeSnapItemsList: '.region-snaplist',
   }
 });
