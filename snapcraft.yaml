@@ -1,0 +1,37 @@
+name: snapweb
+version: '0.21.2a'
+summary: Beautiful and functional interface for snap management
+description: |
+  This service allows you to manage your Ubuntu Core device from a web interface or REST API.
+
+  Features include:
+
+  - manage updates to the system.
+  - control the state of other snappy packages.
+  - browse the store to install new snappy packages.
+grade: stable # must be 'stable' to release into candidate/stable channels
+confinement: strict
+
+apps:
+  snapweb:
+    command: bin/snapweb
+    daemon: simple
+    plugs:
+      - network
+      - network-bind
+      - snapd-control
+      - timeserver-control
+  generate-token:
+    command: bin/generate-token
+
+parts:
+  snapweb:
+    plugin: go
+    source: https://github.com/snapcore/snapweb
+    source-type: git
+    go-importpath: github.com/snapcore/snapweb
+    build-packages: [gcc]
+  snapweb-ui:
+    plugin: gulp
+    gulp-tasks: ['install']
+    source: .
