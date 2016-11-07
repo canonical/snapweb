@@ -1,44 +1,97 @@
-<div class="b-grey-wrapper">
-  <div class="inner-wrapper">
+{{#if isHomeActive}}
+    <div class="row">
+        <div class="col-4">
+            <img class="u-full-width" src="http://placehold.it/150x100" alt="Placeholder">
+        </div>
+        <div class="col-8">
+            <h1>Lorem ipsum loror diit</h1>
+            <p><strong>Cisco</strong> - C12345 67890</p>
+            <p><a href="#">Cisco developer documentation</a></p>
+        </div>
+    </div>
+{{/if}}
+
+{{#if isHomeActive}}
+<div class="p-strip--light">
+{{/if}}
+
+    {{#unless isHomeActive}}
+        <div class="row">
+            <div class="col-11">
+                <form action="/search" class="p-search">
+                    <input class="p-search__field" placeholder="Search" maxlength="255" name="q" value={{ query }}>
+                    <button type="submit" class="p-search__btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 96 96.000001"><path color="#000" overflow="visible" fill="none" d="M96 0v96H0V0z"/><path style="line-height:125%;-inkscape-font-specification:Ubuntu;text-align:center" d="M72.396 73.883c.017.02.04.035.057.056.02.025.03.056.05.082zM23.56 73.896l-.107.14c.02-.026.03-.058.05-.083.017-.02.04-.035.058-.057z" font-size="15" font-family="Ubuntu" letter-spacing="0" word-spacing="0" text-anchor="middle" fill="gray"/><path style="line-height:normal;font-variant-ligatures:none;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;text-transform:none;block-progression:tb;shape-padding:0;isolation:auto;mix-blend-mode:normal" d="M48 16c-17.65 0-32 14.35-32 32 0 17.648 14.35 31.998 32 31.998s32-14.35 32-32C80 30.35 65.65 16 48 16zm0 3.998c15.488 0 28 12.513 28 28C76 63.49 63.487 76 48 76c-15.486 0-28-12.513-28-28 0-15.49 12.514-28.002 28-28.002z" color="#000" font-family="sans-serif" white-space="normal" overflow="visible" solid-color="#000000" fill="gray"/><path style="line-height:normal;font-variant-ligatures:none;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;text-transform:none;block-progression:tb;shape-padding:0;isolation:auto;mix-blend-mode:normal" d="M88.122 83.88l-4.244 4.24-16.664-16.663 4.244-4.24 16.664 16.662z" color="#000" font-family="sans-serif" white-space="normal" overflow="visible" solid-color="#000000" fill="gray"/></svg>
+                    </button>
+                </form>
+            </div>
+            <div class="col-1 u-hidden--small">
+                <div id="js-view-filters" class="p-view-filters p-view-filters--grid">
+                    <span id="js-style-grid" class="p-view-filters__icon">
+                        <svg class="filter-icon-grid--active" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="21" width="21"><defs><path id="a" d="M0 0h9v9H0z"/><path id="c" d="M0 0h9v9H0z"/><path id="e" d="M0 0h9v9H0z"/><path id="g" d="M0 0h9v9H0z"/></defs><g fill-rule="evenodd" fill="none"><mask id="b" fill="#fff"><use xlink:href="#a"/></mask><path d="M0 0h9v9H0z" stroke="#333" stroke-width="2" mask="url(#b)"/><g transform="translate(12)"><mask id="d" fill="#fff"><use xlink:href="#c"/></mask><path d="M0 0h9v9H0z" stroke="#333" stroke-width="2" mask="url(#d)"/></g><g transform="translate(0 12)"><mask id="f" fill="#fff"><use xlink:href="#e"/></mask><path d="M0 0h9v9H0z" stroke="#333" stroke-width="2" mask="url(#f)"/></g><g transform="translate(12 12)"><mask id="h" fill="#fff"><use xlink:href="#g"/></mask><path d="M0 0h9v9H0z" stroke="#333" stroke-width="2" mask="url(#h)"/></g></g></svg>
+                        <svg class="filter-icon-grid--inactive" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="21px" width="21px" version="1.1" viewBox="0 0 21 21"><defs><rect id="path-1" y="0" x="0" height="9" width="9"/><rect id="path-3" y="0" x="0" height="9" width="9"/><rect id="path-5" y="0" x="0" height="9" width="9"/><rect id="path-7" y="0" x="0" height="9" width="9"/></defs><g id="Page-1" fill-rule="evenodd" fill="none"><g id="grid-view-unselected"><g id="Group-2"><g id="Rectangle-Clipped"><mask id="mask-2" fill="white"><use xlink:href="#path-1"/></mask><g id="Rectangle" stroke="#979797" stroke-width="2" mask="url(#mask-2)"><rect id="path-1" y="0" x="0" height="9" width="9"/></g></g><g id="Rectangle-Copy-Clipped" transform="translate(12)"><mask id="mask-4" fill="white"><use xlink:href="#path-3"/></mask><g id="Rectangle-Copy" stroke="#979797" stroke-width="2" mask="url(#mask-4)"><rect id="path-3" y="0" x="0" height="9" width="9"/></g></g><g id="Rectangle-Copy-3-Clipped" transform="translate(0 12)"><mask id="mask-6" fill="white"><use xlink:href="#path-5"/></mask><g id="Rectangle-Copy-3" stroke="#979797" stroke-width="2" mask="url(#mask-6)"><rect id="path-5" y="0" x="0" height="9" width="9"/></g></g><g id="Rectangle-Copy-2-Clipped" transform="translate(12 12)"><mask id="mask-8" fill="white"><use xlink:href="#path-7"/></mask><g id="Rectangle-Copy-2" stroke="#979797" stroke-width="2" mask="url(#mask-8)"><rect id="path-7" y="0" x="0" height="9" width="9"/></g></g></g></g></g></svg>
+                    </span>
+                    <span id="js-style-row" class="p-view-filters__icon">
+                        <svg class="filter-icon-row--active" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="19px" width="23px" version="1.1" viewBox="0 0 23 19"><defs><rect id="path-1" y="0" x="0" height="5" width="5"/><rect id="path-3" y="0" x="0" height="5" width="5"/><rect id="path-5" y="0" x="0" height="5" width="5"/></defs><g id="Page-1" fill-rule="evenodd" fill="none"><g id="list-view-selected"><g id="Group"><g id="Rectangle-Clipped"><mask id="mask-2" fill="white"><use xlink:href="#path-1"/></mask><g id="Rectangle" stroke="#333" stroke-width="2" mask="url(#mask-2)"><rect id="path-1" y="0" x="0" height="5" width="5"/></g></g><path id="Line" stroke="#333" d="m8 3h15"/><path id="Line-Copy" stroke="#333" d="m8 10h15"/><path id="Line-Copy-2" stroke="#333" d="m8 17h15"/><g id="Rectangle-Copy-Clipped" transform="translate(0 14)"><mask id="mask-4" fill="white"><use xlink:href="#path-3"/></mask><g id="Rectangle-Copy" stroke="#333" stroke-width="2" mask="url(#mask-4)"><rect id="path-3" y="0" x="0" height="5" width="5"/></g></g><g id="Rectangle-Copy-2-Clipped" transform="translate(0 7)"><mask id="mask-6" fill="white"><use xlink:href="#path-5"/></mask><g id="Rectangle-Copy-2" stroke="#333" stroke-width="2" mask="url(#mask-6)"><rect id="path-5" y="0" x="0" height="5" width="5"/></g></g></g></g></g></svg>
+                        <svg class="filter-icon-row--inactive" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="19" width="23"><defs><path id="a" d="M0 0h5v5H0z"/><path id="c" d="M0 0h5v5H0z"/><path id="e" d="M0 0h5v5H0z"/></defs><g fill-rule="evenodd" fill="none"><mask id="b" fill="#fff"><use xlink:href="#a"/></mask><path d="M0 0h5v5H0z" stroke="#888" stroke-width="2" mask="url(#b)"/><path stroke="#888" d="M8 3h15"/><path stroke="#888" d="M8 10h15"/><path stroke="#888" d="M8 17h15"/><g transform="translate(0 14)"><mask id="d" fill="#fff"><use xlink:href="#c"/></mask><path d="M0 0h5v5H0z" stroke="#888" stroke-width="2" mask="url(#d)"/></g><g transform="translate(0 7)"><mask id="f" fill="#fff"><use xlink:href="#e"/></mask><path d="M0 0h5v5H0z" stroke="#888" stroke-width="2" mask="url(#f)"/></g></g></svg>
+                    </span>
+                </div>
+            </div>
+        </div>
+    {{/unless}}
+
+
+
     {{#if title}}
-    <div class="b-headline twelve-col last-col">
-      <h2 class="b-headline__h2 nine-col">{{ title }}</h2>
-      {{#if isHomeActive}}
-      <div class="three-col last-col">
-        <a class="button--primary right" href="/store">Browse store</a>
-      </div>
-      {{else}}
-      <form action="/search" class="three-col last-col">
-        <input type="text" maxlength="255" name="q" placeholder="Search" value="{{ query }}" />
-        <button type="submit" class="b-headline__search-button">
-          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 96 96.000001"><path color="#000" overflow="visible" fill="none" d="M96 0v96H0V0z"/><path style="line-height:125%;-inkscape-font-specification:Ubuntu;text-align:center" d="M72.396 73.883c.017.02.04.035.057.056.02.025.03.056.05.082zM23.56 73.896l-.107.14c.02-.026.03-.058.05-.083.017-.02.04-.035.058-.057z" font-size="15" font-family="Ubuntu" letter-spacing="0" word-spacing="0" text-anchor="middle" fill="gray"/><path style="line-height:normal;font-variant-ligatures:none;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;text-transform:none;block-progression:tb;shape-padding:0;isolation:auto;mix-blend-mode:normal" d="M48 16c-17.65 0-32 14.35-32 32 0 17.648 14.35 31.998 32 31.998s32-14.35 32-32C80 30.35 65.65 16 48 16zm0 3.998c15.488 0 28 12.513 28 28C76 63.49 63.487 76 48 76c-15.486 0-28-12.513-28-28 0-15.49 12.514-28.002 28-28.002z" color="#000" font-family="sans-serif" white-space="normal" overflow="visible" solid-color="#000000" fill="gray"/><path style="line-height:normal;font-variant-ligatures:none;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;text-transform:none;block-progression:tb;shape-padding:0;isolation:auto;mix-blend-mode:normal" d="M88.122 83.88l-4.244 4.24-16.664-16.663 4.244-4.24 16.664 16.662z" color="#000" font-family="sans-serif" white-space="normal" overflow="visible" solid-color="#000000" fill="gray"/></svg>
-        </button>
-      </form>
-      {{/if}}
-      <div class="b-snaplist__actions">
-        {{#if canSort}}
-        <div class="b-button__group">
-          <div id="sortAlpha" class="b-button b-button_small{{#if isAlpha}} b-button_active{{/if}}">A-Z</div>
-          <div id="sortBytes" class="b-button b-button_small{{#unless isAlpha}} b-button_active{{/unless}}">kB</div>
+        <div class="row">
+            <h2 class="col-6">{{ title }}</h2>
+            <div class="row">
+                <div class="b-snaplist__actions col-12">
+                  {{#if canSort}}
+                  <div class="b-button__group">
+                    <div id="sortAlpha" class="b-button b-button_small{{#if isAlpha}} b-button_active{{/if}}">A-Z</div>
+                    <div id="sortBytes" class="b-button b-button_small{{#unless isAlpha}} b-button_active{{/unless}}">kB</div>
+                  </div>
+                  {{/if}}
+                  {{#if canStyle}}
+                  {{!-- <div class="b-button__group">
+                    <div id="styleGrid" class="b-button b-button_small{{#if isGrid}} b-button_active{{/if}}">Grid</div>
+                    <div id="styleRow" class="b-button b-button_small{{#unless isGrid}} b-button_active{{/unless}}">Row</div>
+                  </div> --}}
+                  {{/if}}
+                </div>
+            </div>
+            <div id="js-snaplist" class="p-card-deck">
+
+                <div class="card-deck-row-header">
+                    <div class="card-deck-row-header__item">
+                        Name
+                    </div>
+                    <div class="card-deck-row-header__item">
+                        Publisher
+                    </div>
+                    <div class="card-deck-row-header__item">
+                    </div>
+                </div>
+
+                {{#if isHomeActive}}
+                    <div class="p-card">
+                        <a href="/store">
+                            <svg class="p-card__icon" xmlns="http://www.w3.org/2000/svg" width="125" height="125"><g fill="none" fill-rule="evenodd"><path fill="#fff" stroke="#CDCDCD" d="M57 113c30.928 0 56-25.072 56-56S87.928 1 57 1 1 26.072 1 57s25.072 56 56 56z"/><path fill="#3EB34F" d="M57.293 90.007c18.067 0 32.714-14.647 32.714-32.714S75.36 24.58 57.293 24.58 24.58 39.225 24.58 57.292s14.646 32.714 32.713 32.714z"/><g fill="#fff"><path d="M57 43.246h.982v27.51H57z"/><path d="M71.246 56.508v.982h-27.51v-.982z"/></g></g></svg>
+                        </a>
+                        <h3 class="p-card__title">
+                            <a href="/store">Add more snaps for this device</a>
+                        </h3>
+                        <footer class="p-card__footer">
+                            <div class="u-float--right">
+                                <a class="p-button--neutral button" href="/store">Browser store</a>
+                            </div>
+                        </footer>
+                    </div>
+                {{/if}}
+            </div>
         </div>
-        {{/if}}
-        {{#if canStyle}}
-        <div class="b-button__group">
-          <div id="styleGrid" class="b-button b-button_small{{#if isGrid}} b-button_active{{/if}}">Grid</div>
-          <div id="styleRow" class="b-button b-button_small{{#unless isGrid}} b-button_active{{/unless}}">Row</div>
-        </div>
-        {{/if}}
-      </div>
-    </div>
     {{/if}}
-    <div class="twelve-col last-col">
-      <div class="b-snaplist b-snaplist_{{#if isGrid}}grid{{else}}row{{/if}}">
-      </div>
-    </div>
-    {{#if isHomeActive}}
-    <div class="b-add-more-snaps twelve-col last-col">
-      <a class="button--primary right" href="/store">Add more snaps</a
-    </div>
-    {{/if}}
-  </div>
+{{#if isHomeActive}}
 </div>
+{{/if}}
