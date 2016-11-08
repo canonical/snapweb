@@ -11,7 +11,7 @@ var CONF = require('../config.js');
 
 module.exports = Marionette.CompositeView.extend({
 
-  childViewContainer: '.b-snaplist',
+  childViewContainer: '#js-snaplist',
 
   template : function(model) {
     return template(model);
@@ -20,8 +20,8 @@ module.exports = Marionette.CompositeView.extend({
   ui: {
     'sortAlpha': '#sortAlpha',
     'sortBytes': '#sortBytes',
-    'styleRow': '#styleRow',
-    'styleGrid': '#styleGrid'
+    'styleRow': '#js-style-row',
+    'styleGrid': '#js-style-grid'
   },
 
   events: {
@@ -49,32 +49,24 @@ module.exports = Marionette.CompositeView.extend({
 
   styleGrid: function() {
     this.model.set('isGrid', true);
+    this.$('#js-snaplist')
+      .removeClass('p-card-deck--row');
 
-    this.$('.b-snaplist')
-    .removeClass('b-snaplist_row')
-    .addClass('b-snaplist_grid');
-
-    this.$('#styleRow').removeClass('b-button_active');
-    this.$('#styleGrid').addClass('b-button_active');
+    this.$('#js-view-filters')
+      .removeClass('p-view-filters--row')
+      .addClass('p-view-filters--grid');
   },
 
   styleRow: function() {
     this.model.set('isGrid', false);
+    this.$('#js-snaplist')
+      .addClass('p-card-deck--row');
 
-    this.$('.b-snaplist')
-    .removeClass('b-snaplist_grid')
-    .addClass('b-snaplist_row');
+    this.$('#js-view-filters')
+      .removeClass('p-view-filters--grid')
+      .addClass('p-view-filters--row');
 
-    this.$('#styleGrid').removeClass('b-button_active');
-    this.$('#styleRow').addClass('b-button_active');
-  },
-
-  childViewOptions: function(model, index) {
-    var lastCol = (index != 0 && ((index + 1) % 4) == 0);
-
-    return {
-      lastCol: lastCol
-    };
+    console.log('done1');
   },
 
   childView: SnaplistItemView,

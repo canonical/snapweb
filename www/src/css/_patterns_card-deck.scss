@@ -1,0 +1,94 @@
+@mixin p-card-deck {
+
+  .p-card-deck {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+
+    .p-card {
+      width: 100%;
+      margin-bottom: 1rem;
+
+      @media (min-width: $breakpoint-small) {
+        width: calc(50% - 1rem);
+      }
+
+      @media (min-width: $breakpoint-medium) {
+        width: calc(33.333% - 1rem);
+      }
+
+      @media (min-width: $breakpoint-large) {
+        width: calc(25% - 1rem);
+      }
+    }
+
+    &--row {
+
+      .p-card {
+        width: 100%;
+        display: flex;
+        flex-wrap: nowrap;
+        border: 0;
+        border-bottom: 1px dotted $color-dark;
+        padding-bottom: 1rem;
+        margin: 0;
+        padding-right: 0;
+        padding-left: 0;
+        padding-bottom: .25rem;
+
+        > * {
+          width: 100%;
+
+          @media (min-width: $breakpoint-medium) {
+            width: 33.333%!important;
+          }
+        }
+
+        &:last-child {
+          border-bottom: 0;
+        }
+
+        &__content {
+          padding-top: .5rem;
+          margin-bottom: .75rem;
+        }
+
+        &__title {
+          font-size: 1rem;
+          font-weight: bold;
+          padding-top: .5rem;
+          margin-bottom: .75rem;
+        }
+
+        &__icon {
+          display: none;
+        }
+
+        &__footer {
+          border-top: 0;
+          position: relative;
+          margin-top: 0;
+          width: auto;
+          padding: 0;
+        }
+      }
+    }
+  }
+}
+
+.card-deck-row-header {
+  width: 100%;
+  display: none;
+  border-bottom: 1px solid $color-dark;
+  padding-bottom: .5rem;
+
+  .p-card-deck--row & {
+    display: flex;
+  }
+
+  &__item {
+    width: 33.333%;
+    font-weight: bold;
+  }
+}
