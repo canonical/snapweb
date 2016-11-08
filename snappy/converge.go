@@ -48,6 +48,7 @@ type snapPkg struct {
 	InstalledSize int64     `json:"installed_size,omitempty"`
 	DownloadSize  int64     `json:"download_size,omitempty"`
 	Type          snap.Type `json:"type,omitempty"`
+	Private       bool      `json:"private"`
 }
 
 type response struct {
@@ -154,6 +155,7 @@ func (h *Handler) snapToPayload(snapQ *client.Snap) snapPkg {
 		Type:        snap.Type(snapQ.Type),
 		Status:      h.statusTracker.Status(snapQ),
 		Price:       "", // TODO: get snap price
+		Private:     snapQ.Private,
 	}
 
 	isInstalled := snapQ.Status == client.StatusInstalled || snapQ.Status == client.StatusActive

@@ -14,15 +14,9 @@ module.exports = Backbone.Collection.extend({
               0,
               this.limits.installedSnapListMaxItems))
   },
-  featured: function() {
-      return new this.constructor(
-          this.where({status: 'featured'}).slice(
-              0,
-              this.limits.installedSnapListMaxItems))
-  },
   private: function() {
       return new this.constructor(
-          this.where({status: 'private'}).slice(
+          this.where({private: true}).slice(
               0,
               this.limits.installedSnapListMaxItems))
   },

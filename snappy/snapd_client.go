@@ -35,6 +35,7 @@ type SnapdClient interface {
 	Icon(name string) (*client.Icon, error)
 	Snap(name string) (*client.Snap, *client.ResultInfo, error)
 	List(names []string) ([]*client.Snap, error)
+	GetSections() ([]string, error)
 	Find(opts *client.FindOptions) ([]*client.Snap, *client.ResultInfo, error)
 	Install(name string, options *client.SnapOptions) (string, error)
 	Remove(name string, options *client.SnapOptions) (string, error)
@@ -103,6 +104,12 @@ func (a *ClientAdapter) Interfaces() (client.Interfaces, error) {
 // Known queries assertions with type assertTypeName and matching assertion headers.
 func (a *ClientAdapter) Known(assertTypeName string, headers map[string]string) ([]asserts.Assertion, error) {
 	return a.snapdClient.Known(assertTypeName, headers)
+}
+
+// GetSections returns the list of available sections
+func (a *ClientAdapter) GetSections() ([]string, error) {
+	return make([]string, 0), nil
+//	return a.snapdClient.GetSections()
 }
 
 // internal

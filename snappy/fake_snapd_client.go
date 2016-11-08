@@ -111,4 +111,9 @@ func (f *FakeSnapdClient) Known(assertTypeName string, headers map[string]string
 	return nil, nil
 }
 
+// GetSections returns the list of existing sections in the store.
+func (f *FakeSnapdClient) GetSections() ([]string, error) {
+	return nil, nil
+}
+
 var _ SnapdClient = (*FakeSnapdClient)(nil)
