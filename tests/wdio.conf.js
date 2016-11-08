@@ -42,14 +42,10 @@ exports.config = {
         // maxInstances can get overwritten per capability. So if you have an in-house Selenium
         // grid with only 5 firefox instance available you can make sure that not more than
         // 5 instance gets started at a time.
-        maxInstances: 5,
+        maxInstances: 1,
         //
         browserName: 'chrome'
-    }
-    /*,{
-	browserName: 'firefox',
-	acceptSslCerts: true
-    }*/],
+    }],
     //
     // ===================
     // Test Configurations
@@ -146,8 +142,10 @@ exports.config = {
     //
     // Gets executed before test execution begins. At this point you can access all global
     // variables, such as `browser`. It is the perfect place to define custom commands.
-    // before: function (capabilities, specs) {
-    // },
+     before: function (capabilities, specs) {
+	var sshSnapUtil = require('./utils/ssh-snap-util');
+	snaputil = new sshSnapUtil(process.env.HOST, process.env.USER, process.env.PORT, process.env.SSH_AUTH_SOCK);
+     },
     //
     // Hook that gets executed before the suite starts
     // beforeSuite: function (suite) {

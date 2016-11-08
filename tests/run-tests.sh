@@ -8,6 +8,10 @@ if [ $# -lt 3 ]
     exit 1
 fi
 
+user=$1
+host=$2
+port=$3
+
 #skip the downloading if an extra arg is provided.
 if [ -z "$4" ]
   then
@@ -38,18 +42,13 @@ trap "kill -9 $pid" 2
 
 sleep 3 # wait for selenium server to up and running.
 
-echo 'Get authentication token by running sudo snapweb.generate-token on DUT'
-
-token=$(ssh -p $3 $1@$2 'bash -s' < ./get-token.sh)
-#echo $token
-
 echo 'Run selenium tests for snapweb service on given IP'
 modules_dir="./node_modules"
 if [ ! -d "$modules_dir" ]; then
   modules_dir="../node_modules"
 fi
 
-TOKEN=$token $modules_dir/.bin/wdio -b https://$2:4201
+USER=$user HOST=$host PORT=$port $modules_dir/.bin/wdio -b https://$2:4201
 
 kill -9  $pid
 

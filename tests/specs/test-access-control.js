@@ -1,7 +1,7 @@
 var assert = require('chai').assert;
 var expect = require('chai').expect;
 
-accessControlPage = require("../pageobjects/access-control-page.js");
+accessControlPage = require("../pageobjects/access-control-page");
 
 describe('Access Control Page - Verify that', function() {
    
@@ -12,12 +12,6 @@ describe('Access Control Page - Verify that', function() {
     afterEach(function () {
 	});
 
-    /*function submit_token(token_value)  {
- 
-        accessControlPage.token.setValue(token_value);
-        accessControlPage.submit();
-	
-	};*/
  
     it('loads correctly', function () {
 
@@ -35,27 +29,32 @@ describe('Access Control Page - Verify that', function() {
 
     it('rejects invalid tokens', function () {
 
-	var valid_token = process.env.TOKEN.trim();
-	var tokens = ['','a',"'", '#', Array(1024).join('x'),valid_token+"  ", valid_token+"'", valid_token+'#'];
+	snaputil.getToken(function (token) {
+	var valid_token = token.trim();
+
+	var tokens = ['','a',"'", '#', Array(512).join('x'),valid_token+"  ", valid_token+"'", valid_token+'#'];
 
 	tokens.forEach(function(token){
-	
-	    accessControlPage.submit_token(token);
-	    expect(accessControlPage.login_failed.getText()).to.contain('Invalid');
 
+	     accessControlPage.submit_token(token);
+	     expect(accessControlPage.login_failed.getText()).to.contain('Invalid');
+
+	    });
 	});
-	
+        
     });
 
 
     it('accepts valid token', function () {
 
-	accessControlPage.submit_token(process.env.TOKEN.trim());
-	loginpage = browser.element('h2=Installed snaps');
-	loginpage.waitForVisible();
-	expect(loginpage.getText(), "Login Failed with valid token").to.contain('Installed snaps');
+	snaputil.getToken(function (token) {
+		accessControlPage.submit_token(token.trim());
+		loginpage = browser.element('h2=Installed snaps');
+		loginpage.waitForVisible();
+		expect(loginpage.getText(), "Login Failed with valid token").to.contain('Installed snaps');
 
-    });
+    	   });
+        });
 
    it('until not authenticated, store link will return to access-control page', function() {
 	
