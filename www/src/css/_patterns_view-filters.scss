@@ -1,0 +1,41 @@
+@mixin p-view-filters {
+
+  .p-view-filters {
+    padding-top: .25rem;
+
+    &__icon {
+      margin-top: .25rem;
+      margin-right: .5rem;
+
+      &:last-child {
+        margin-right: 0;
+      }
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+
+    &--grid {
+
+      .filter-icon-grid--inactive,
+      .filter-icon-row--active {
+        display: none;
+      }
+
+    }
+
+    &--row {
+
+      .filter-icon-grid--active,
+      .filter-icon-row--inactive {
+        display: none;
+      }
+
+      .filter-icon-grid--inactive,
+      .filter-icon-row--active {
+        display: inline-block;
+      }
+    }
+  }
+}

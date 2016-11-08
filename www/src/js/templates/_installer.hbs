@@ -1,15 +1,15 @@
 {{#if isInstallable}}
   <div class="b-installer {{ installerClass }} {{ installHTMLClass }}">
     {{#if installActionString}}
-      <button style="color: black" class="b-installer__button {{ buttonClass }} {{ installButtonClass }}">{{ installActionString }}</button>
+      <button class="b-installer__button {{ buttonClass }} {{ installButtonClass }} p-button--neutral">{{ installActionString }}</button>
     {{/if}}
   </div>
 {{else}}
   <div class="b-installer b-installer_disabled {{ installerClass }} {{ installHTMLClass }}">
     {{#if isInstalled}}
-      <button style="color: black" class="b-installer__button button--secondary">Installed</button>
+      <button class="b-installer__button p-button--positive">Installed</button>
     {{else}}
-      <button style="color: black" class="b-installer__button button--secondary">Not installable</button>
+      <button class="b-installer__button p-button--negative" disabled>Not installable</button>
     {{/if}}
   </div>
 {{/if}}

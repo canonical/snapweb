@@ -11,7 +11,7 @@ var CONF = require('../config.js');
 
 module.exports = Marionette.CompositeView.extend({
 
-  childViewContainer: '.b-snaplist',
+  childViewContainer: '#js-snaplist',
 
   template : function(model) {
     return template(model);

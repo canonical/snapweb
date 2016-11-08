@@ -18,6 +18,7 @@
 package snappy
 
 import (
+	"github.com/snapcore/snapd/asserts"
 	"github.com/snapcore/snapd/client"
 )
 
@@ -98,6 +99,16 @@ func (f *FakeSnapdClient) GetCoreConfig(keys []string) (map[string]interface{}, 
 // CreateUser creates a local user on the system
 func (f *FakeSnapdClient) CreateUser(request *client.CreateUserOptions) (*client.CreateUserResult, error) {
 	return &f.CrUser, f.Err
+}
+
+// Interfaces returns the list of supported interfaces on the system
+func (f *FakeSnapdClient) Interfaces() (client.Interfaces, error) {
+	return client.Interfaces{}, nil
+}
+
+// Known queries assertions with type assertTypeName and matching assertion headers.
+func (f *FakeSnapdClient) Known(assertTypeName string, headers map[string]string) ([]asserts.Assertion, error) {
+	return nil, nil
 }
 
 var _ SnapdClient = (*FakeSnapdClient)(nil)

@@ -1,0 +1,33 @@
+<div class="region-token">
+  <div class="inner-wrapper">
+    <div class="b-headline seven-col last-col">
+      <div class="row" id="token-submit-form">
+        <h2>Access Control</h2>
+        <div class="p-card--highlighted" style="display:block">
+          <p>
+            Please confirm that you are authorized to connect to this interface.
+          </p>
+          <form>
+            <fieldset>
+            <p>
+              <label for="token">Snapweb Access Token</label>
+              <input type="text" id="token" placeholder="Enter your token here...">
+            </p>
+            <p>
+              <button class="p-button--positive" id="submit" style="margin-bottom: 1em;">
+                Submit
+              </button>
+              <label class="statusmessage" style="display: inline-block; margin-left: 1em">
+              </label>
+            </p>
+          </fieldset>
+        </form>
+          <p>
+            To generate a new token, use the following command on the system you want to access (either on the console or via ssh) :
+            <pre>sudo snapweb.generate-token</pre>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

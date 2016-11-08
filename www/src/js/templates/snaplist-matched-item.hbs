@@ -1,21 +1,23 @@
 <div class="twelve-col last-col" style="border: 1px solid #d2d2d2; padding: 50px">
 
-  <div class="b-snaplist__icon-wrapper" style="padding: 10px 10px; width: 20%">
-    <img class="b-snaplist__icon" style="margin: 0px" src="{{ icon }}">
-  </div>
+<img class="p-card__icon" src="{{ icon }}" width="125" height="125">
 
-  <div class="b-snaplist__meta" style="float: right; width: 70%;">
-    <div class="b-snaplist__id">
-      <h3 class="b-snaplist__name">{{ name }}</h3>
-      <p class="b-snaplist__version">{{ version }}</p>
+<h3 id="js-snap-title" class="p-card__title js-snap-title">{{ name }}</h3>
+
+{{#if developer}}
+  <p class="p-card__content">By {{ developer }}</p>
+{{/if}}
+
+{{#if description}}
+  <p class="p-card__content">{{ description }}</p>
+{{/if}}
+{{#if prettyInstalledSize}}
+  <p class="p-card__content">{{ prettyInstalledSize }}</p>
+{{/if}}
+<footer class="p-card__footer">
+    <div class="u-float--right">
+      {{> installer installerClass="button--positive"}}
     </div>
-    <div class="b-snaplist__src">
-      <div class="b-snaplist__developer">By {{ developer }}</div>
-    </div>
-    <div class="b-snaplist__size" title="Installed file size">{{ prettyInstalledSize }}</div>
-    <div class="b-snaplist__actions">
-      {{> installer installerClass="b-installer_small"}}
-    </div>
-  </div>
+</footer>
 
 </div>

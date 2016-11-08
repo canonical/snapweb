@@ -15,8 +15,8 @@ module.exports = Backbone.Marionette.ItemView.extend({
   ui: {
     'sortAlpha': '#sortAlpha',
     'sortBytes': '#sortBytes',
-    'styleRow': '#styleRow',
-    'styleGrid': '#styleGrid'
+    'styleRow': '#js-style-row',
+    'styleGrid': '#js-style-grid'
   },
 
   events: {
@@ -44,19 +44,21 @@ module.exports = Backbone.Marionette.ItemView.extend({
 
   styleGrid: function() {
     this.model.set('isGrid', true);
+    this.$('#js-snaplist')
+      .removeClass('p-card-deck--row');
 
-    $('.b-snaplist').removeClass('b-snaplist_row').addClass('b-snaplist_grid');
-
-    $('#styleRow').removeClass('b-button_active');
-    $('#styleGrid').addClass('b-button_active');
+    this.$('#js-view-filters')
+      .removeClass('p-view-filters--row')
+      .addClass('p-view-filters--grid');
   },
 
   styleRow: function() {
     this.model.set('isGrid', false);
+    this.$('#js-snaplist')
+      .addClass('p-card-deck--row');
 
-    $('.b-snaplist').removeClass('b-snaplist_grid').addClass('b-snaplist_row');
-
-    $('#styleGrid').removeClass('b-button_active');
-    $('#styleRow').addClass('b-button_active');
+    this.$('#js-view-filters')
+      .removeClass('p-view-filters--grid')
+          .addClass('p-view-filters--row');
   },
 });

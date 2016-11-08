@@ -2,43 +2,28 @@
 <a href="/store">
 {{/if}}
 
-  <div class="b-snaplist__icon-wrapper">
-    <img class="b-snaplist__icon" src="{{ icon }}">
-  </div>
+<img class="p-card__icon" src="{{ icon }}" width="125" height="125">
 
 {{#if addSnapItem}}
 </a>
 {{/if}}
 
-<div class="b-snaplist__meta">
-
-<div class="b-snaplist__id">
-  <h4 class="b-snaplist__name" {{#if addSnapItem}}style="text-overflow: clip"{{/if}}>
-    {{ name }}
-  </h4>
-{{#unless addSnapItem}}
-  <p class="b-snaplist__version">{{ version }}</p>
-{{/unless}}
-</div>
+<h3 id="js-snap-title" class="p-card__title js-snap-title">{{ name }}</h3>
 
 {{#unless addSnapItem}}
-<div class="b-snaplist__src">
-  <div class="b-snaplist__developer">By {{ developer }}</div>
-</div>
-{{/unless}}
-
-{{#unless addSnapItem}}
-  <div class="b-snaplist__size" title="Installed file size">{{ prettyInstalledSize }}</div>
-
-  <div class="b-snaplist__actions" style="margin-top: 20px;color: black">
-    {{> installer installerClass="b-installer_small"}}
-  </div>
-{{/unless}}
-
-{{#if addSnapItem}}
-<div class="b-snaplist__src">
-  <div class="b-snaplist__developer">By {{ developer }}</div>
-</div>
+{{#if developer}}
+  <p class="p-card__content">By {{ developer }}</p>
 {{/if}}
+{{/unless}}
 
-</div>
+{{#if description}}
+  <p class="p-card__content">{{ description }}</p>
+{{/if}}
+{{#if prettyInstalledSize}}
+  <p class="p-card__content">{{ prettyInstalledSize }}</p>
+{{/if}}
+<footer class="p-card__footer">
+    <div class="u-float--right">
+      {{> installer installerClass="button--positive"}}
+    </div>
+</footer>

@@ -7,14 +7,14 @@ var template = require('../templates/alerts.hbs');
 
 module.exports = Backbone.Marionette.ItemView.extend({
 
-  className: 'b-alert',
+  className: 'p-notification--negative',
 
   events: {
     'click @ui.close': 'onClose'
   },
 
   ui: {
-    'close': '.b-alert__close'
+    'close': '#js-dismiss'
   },
 
   template: function(model) {
