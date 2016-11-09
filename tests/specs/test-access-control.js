@@ -15,52 +15,80 @@ describe('Access Control Page - Verify that', function() {
  
     it('loads correctly', function () {
 
-	title = browser.getTitle();
-        assert.equal(title, 'Snapweb');
+		title = browser.getTitle();
+		assert.equal(title, 'Snapweb');
 
-	assert.isNotNull(accessControlPage.homepage.value);
-	assert.isNotNull(accessControlPage.store.value);
-        assert.isNotNull(accessControlPage.token.value);
-	assert.isNotNull(accessControlPage.submit_btn.value)
-	assert.isNotNull(accessControlPage.token_cmd.value);
-	assert.isNotNull(accessControlPage.bugreport.value);
+		assert.isNotNull(accessControlPage.homepage.value);
+		assert.isNotNull(accessControlPage.store.value);
+		assert.isNotNull(accessControlPage.token.value);
+		assert.isNotNull(accessControlPage.submit_btn.value)
+		assert.isNotNull(accessControlPage.token_cmd.value);
+		assert.isNotNull(accessControlPage.bugreport.value);
 	
     });
 
     it('rejects invalid tokens', function () {
 
-	snaputil.getToken(function (token) {
-	var valid_token = token.trim();
+		var valid_token = "";
+        browser.call(function () { 
+                return snaputil.getToken().then(function (res){
+                valid_token = res.trim();
+                });
 
-	var tokens = ['','a',"'", '#', Array(512).join('x'),valid_token+"  ", valid_token+"'", valid_token+'#'];
+        });
 
-	tokens.forEach(function(token){
-
-	     accessControlPage.submit_token(token);
-	     expect(accessControlPage.login_failed.getText()).to.contain('Invalid');
-
-	    });
-	});
-        
+		var invalid_tokens = ['','a',"'", '#', Array(512).join('x'),valid_token+"  ", valid_token+"'", valid_token+'#'];
+		invalid_tokens.forEach(function(token){
+		 	accessControlPage.submit_token(token);
+			accessControlPage.login_failed.waitForVisible();
+		 	expect(accessControlPage.login_failed.getText()).to.contain('Invalid');
+		});  
     });
 
 
     it('accepts valid token', function () {
 
-	snaputil.getToken(function (token) {
-		accessControlPage.submit_token(token.trim());
+		var valid_token = "";
+        browser.call(function () { 
+                return snaputil.getToken().then(function (res){
+                valid_token = res.trim();
+                });
+
+        });
+		accessControlPage.submit_token(valid_token);
 		loginpage = browser.element('h2=Installed snaps');
 		loginpage.waitForVisible();
 		expect(loginpage.getText(), "Login Failed with valid token").to.contain('Installed snaps');
 
-    	   });
-        });
+     });
 
    it('until not authenticated, store link will return to access-control page', function() {
 	
-	accessControlPage.store.click();
-	accessControlPage.token.waitForVisible();
-	assert.isNotNull(accessControlPage.token.value);
+		accessControlPage.store.click();
+		accessControlPage.token.waitForVisible();
+		assert.isNotNull(accessControlPage.token.value);
+
+    });
+
+   xit('on subsequent time, token authentication will be skipped', function() {
+
+		var valid_token = "";
+        browser.call(function () { 
+                return snaputil.getToken().then(function (res){
+                valid_token = res.trim();
+                });
+
+        });
+		accessControlPage.submit_token(valid_token);
+		loginpage = browser.element('h2=Installed snaps');
+		loginpage.waitForVisible();
+		expect(loginpage.getText(), "Login Failed with valid token").to.contain('Installed snaps');
+		//reload the page
+		browser.reload();
+		browser.url();
+		loginpage = browser.element('h2=Installed snaps');
+		loginpage.waitForVisible();
+		expect(loginpage.getText(), "Login Failed with valid token").to.contain('Installed snaps');
 
     });
 

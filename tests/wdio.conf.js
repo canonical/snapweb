@@ -71,7 +71,7 @@ exports.config = {
     baseUrl: 'https://localhost:4201',
     //
     // Default timeout for all waitFor* commands.
-    waitforTimeout: 10000,
+    waitforTimeout: 20000,
     //
     // Default timeout in milliseconds for request
     // if Selenium Grid doesn't send response
@@ -125,6 +125,7 @@ exports.config = {
     // Options to be passed to Mocha.
     // See the full list at http://mochajs.org/
     mochaOpts: {
+	timeout: 60000,
         ui: 'bdd'
     },
     //

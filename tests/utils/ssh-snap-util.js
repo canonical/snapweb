@@ -1,75 +1,75 @@
 var Client = require('ssh2').Client;
-var deasync = require('deasync');
-
-var _execDone = false;
 module.exports = sshSnapUtil
 
 function sshSnapUtil(sshHost, sshUser, sshPort, sshAgent) {
-    this.host = sshHost
-    this.user = sshUser
-    this.port = sshPort
-    this.agent = sshAgent
+
+    this.ssh_config = {
+  	host: sshHost,
+  	port: sshPort,
+  	username: sshUser,
+  	agent: sshAgent,
+	agentForward: true
+	};
 }
 
 //synchronus ssh command execution, raw shell output will be passed to callback handleOutput
-sshSnapUtil.prototype.exec = function (cmd, handleOutput) {
+execCommand = function (ssh_config, cmd, handleRawOutput) {
 
     var conn = new Client();
-    var output = "";
+    var _output = "";
     conn.on('ready', function() {
-      conn.exec(cmd, function(err, stream) {
-      if (err) throw err;
-      stream.on('close', function(code, signal) {
-         conn.end();
-         //console.log(output);
-         //output = "";
-         _execDone = true;
-      }).on('data', function(data) {
-         output += data;
+     conn.exec(cmd, function(err, stream) {
+     if (err) handleRawOutput(null, err);
 
-      }).stderr.on('data', function(data) {
-         output += data;
+     stream
+	.on('close', function(code, signal) {
+            conn.end();
+  	    handleRawOutput(_output, null);
+	    _output = "";
+	   })
+	.on('data', function(data) {
+         _output += data;
+
+           })
+        .stderr.on('data', function(data) {
+         _output += data;
+         });
       });
-    });
-   }).on('error', function(err) {
+     }).on('error', function(err) {
     
- 	if (err) throw err;
+     if (err) handleRawOutput (null, err);
 
-   }).connect({
-      host: this.host,
-      username: this.user,
-      port: this.port,
-      agent: this.agent,
-      agentForward: true
-  });
+     }).connect(ssh_config);
 
-  deasync.loopWhile(function(){return !_execDone;});
-
-  handleOutput(output);
-  output = "";
-  _execDone = false;
 }
 
-sshSnapUtil.prototype.listSnaps = function (handleOutput) {
+sshSnapUtil.prototype._promisifyExec = function(cmd) {
 
-
-      this.exec('snap list', handleOutput);
+	config = this.ssh_config;
+	return new Promise(function (resolve, reject) {
+		execCommand(config, cmd, function (res, err){
+			if (err) reject (err);
+			else resolve(res);
+		});
+	});
 }
 
-sshSnapUtil.prototype.getToken = function(handleOutput) {
-
-      this.exec("sudo snapweb.generate-token | awk '{ if(NR==3) print $0 }'", handleOutput);
+sshSnapUtil.prototype.listSnaps = function () {
+	return this._promisifyExec('snap list');
 }
 
-
-sshSnapUtil.prototype.installSnap = function(name, handleOutput) {
-
-  this.exec('snap install '+name, handleOutput);
+sshSnapUtil.prototype.getToken = function() {
+	return this._promisifyExec("sudo snapweb.generate-token | awk '{ if(NR==3) print $0 }'");
 }
 
-
-sshSnapUtil.prototype.removeSnap = function(name, handleOutput) {
-
-  this.exec('snap remove '+name, handleOutput);
+sshSnapUtil.prototype.installSnap = function(name) {
+	return this._promisifyExec('snap install '+name);
 }
 
+sshSnapUtil.prototype.removeSnap = function(name) {
+	return this._promisifyExec('snap remove '+name);
+}
+
+sshSnapUtil.prototype.snapVersion = function() {
+	return this._promisifyExec('snap version ');
+}

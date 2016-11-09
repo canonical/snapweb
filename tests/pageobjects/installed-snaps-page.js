@@ -19,11 +19,15 @@ var installedSnapsPage = Object.create(page, {
     open: { value: function() {
 	browser.deleteCookie();
 	acPage.open();
-	snaputil.getToken(function (token) { 
-	  acPage.submit_token(token.trim());
-	  loginpage = browser.element('h2=Installed snaps');
-	  loginpage.waitForVisible();
-	});
+	var valid_token = "";
+    browser.call(function () { 
+		return snaputil.getToken().then(function (res){
+                valid_token = res.trim();
+                });
+        });
+	acPage.submit_token(valid_token);
+	loginpage = browser.element('h2=Installed snaps');
+	loginpage.waitForVisible();
     } }
 
 });
