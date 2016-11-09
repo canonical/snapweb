@@ -35,3 +35,12 @@ $color-brand: #e95420;
   padding-top: 1rem;
   padding-bottom: 1rem;
 }
+
+// This has been proposed upstream to Vanilla Framework
+// https://github.com/ubuntudesign/vanilla-framework/issues/710
+hr {
+  border: 0;
+  height: 0;
+  border-top: 1px solid $color-mid-light;
+  margin: 2rem 0;
+}
