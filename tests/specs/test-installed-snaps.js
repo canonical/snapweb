@@ -24,8 +24,29 @@ describe('Installed Snaps Page - Verify that', function() {
         assert.isNotNull(snapsPage.browsestore.value);
         assert.isNotNull(snapsPage.addmoresnaps.value);
         assert.isNotNull(snapsPage.snapwebsnap.value);
-        assert.isNotNull(snapsPage.coresnap.value);
 
+    });
+
+    it('installed snaps listed are same as on device', function () {
+
+        title = browser.getTitle();
+        assert.equal(title, 'Snapweb');
+
+	var snapslist_device = "";
+	var snapslist_raw = "";
+    	browser.call(function () { 
+		return snaputil.listSnaps().then(function (res){
+		snapslist_raw = res.trim();
+                });
+        });
+	
+        snapslist_device = snapslist_raw.split('\n'); //expecting each snap entry on a new line
+	snapslist_snapweb = snapsPage.installedsnaps;
+        snapslist_snapweb.value.forEach(function(snap) {
+		expect(snapslist_raw).to.include(snap.getText());
+        });
+	
+	expect(snapslist_snapweb.value).to.have.length(snapslist_device.length-1, "Snaps installed on device didn't match");
     });
 
 });

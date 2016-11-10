@@ -11,8 +11,7 @@ var installedSnapsPage = Object.create(page, {
     browsestore:    { get: function () { return browser.element("a=Browse store"); } },
     addmoresnaps:    { get: function () { return browser.element("a=Add more snaps"); } },
     snapwebsnap:    { get: function () { return browser.element(".b-snaplist_grid").element("h3=snapweb"); } },
-    coresnap:    { get: function () { return browser.element(".b-snaplist_grid").element("h3=core"); } },
-
+    installedsnaps: { get: function () { return browser.elements("div.b-snaplist__item h3.b-snaplist__name"); } },
     /**
      * define or overwrite page methods
      */
