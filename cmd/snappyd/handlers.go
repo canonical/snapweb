@@ -18,7 +18,9 @@
 package main
 
 import (
+	"errors"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -51,6 +53,8 @@ type page struct {
 func initURLHandlers(log *log.Logger) {
 	log.Println("Initializing HTTP handlers...")
 
+	http.HandleFunc("/api/v2/validate-token", validateToken)
+
 	snappyHandler := snappy.NewHandler()
 	http.Handle("/api/v2/packages/", snappyHandler.MakeMuxer("/api/v2/packages"))
 
@@ -68,6 +72,50 @@ func initURLHandlers(log *log.Logger) {
 	}
 
 	http.HandleFunc("/", handleMainPage)
+}
+
+// Name of the cookie transporting the access token
+const (
+	SnapwebCookieName = "SM"
+)
+
+func tokenFilename() string {
+	return filepath.Join(os.Getenv("SNAP_DATA"), "token.txt")
+}
+
+// SimpleCookieCheckOrRedirect is a simple authorization mechanism
+func SimpleCookieCheckOrRedirect(w http.ResponseWriter, r *http.Request) error {
+	cookie, _ := r.Cookie(SnapwebCookieName)
+	if cookie != nil {
+		token, err := ioutil.ReadFile(tokenFilename())
+		if err == nil {
+			if string(token) == cookie.Value {
+				// the auth-token and the cookie do match
+				// we can continue with the request
+				return nil
+			}
+		}
+	}
+
+	// in any other case, refuse the request and redirect
+	http.Redirect(w, r, "/access-control", 401)
+
+	return errors.New("Unauthorized")
+}
+
+func validateToken(w http.ResponseWriter, r *http.Request) {
+	log.Println(r.Method, r.URL.Path)
+	if err := SimpleCookieCheckOrRedirect(w, r); err == nil {
+		hdr := w.Header()
+		hdr.Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintf(w, "{}")
+	} else {
+		hdr := w.Header()
+		hdr.Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusUnauthorized)
+		fmt.Fprintf(w, "{}")
+	}
 }
 
 func loggingHandler(h http.Handler) http.Handler {

@@ -19,9 +19,13 @@ package snappy
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/ubuntu-core/snappy/snappy"
@@ -51,6 +55,10 @@ func types(v string) []string {
 }
 
 func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
+	if e := SimpleCookieCheckOrRedirect(w, r); e != nil {
+		return
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(w)
 
@@ -76,6 +84,10 @@ func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
+	if e := SimpleCookieCheckOrRedirect(w, r); e != nil {
+		return
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	// Get the Key.
 	vars := mux.Vars(r)
@@ -102,6 +114,10 @@ func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) add(w http.ResponseWriter, r *http.Request) {
+	if e := SimpleCookieCheckOrRedirect(w, r); e != nil {
+		return
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	// Get the Key.
 	vars := mux.Vars(r)
@@ -125,6 +141,10 @@ func (h *Handler) add(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) remove(w http.ResponseWriter, r *http.Request) {
+	if e := SimpleCookieCheckOrRedirect(w, r); e != nil {
+		return
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	// Get the Key.
 	vars := mux.Vars(r)
@@ -193,4 +213,35 @@ func (h *Handler) MakeMuxer(prefix string) http.Handler {
 	m.HandleFunc("/{id}", h.remove).Methods("DELETE")
 
 	return m
+}
+
+// TODO: refactor this copy from cmd/snapweb
+
+// Name of the cookie transporting the access token
+const (
+	SnapwebCookieName = "SM"
+)
+
+func tokenFilename() string {
+	return filepath.Join(os.Getenv("SNAP_DATA"), "token.txt")
+}
+
+// SimpleCookieCheckOrRedirect is a simple authorization mechanism
+func SimpleCookieCheckOrRedirect(w http.ResponseWriter, r *http.Request) error {
+	cookie, _ := r.Cookie(SnapwebCookieName)
+	if cookie != nil {
+		token, err := ioutil.ReadFile(tokenFilename())
+		if err == nil {
+			if string(token) == cookie.Value {
+				// the auth-token and the cookie do match
+				// we can continue with the request
+				return nil
+			}
+		}
+	}
+
+	// in any other case, refuse the request and redirect
+	http.Redirect(w, r, "/access-control", 401)
+
+	return errors.New("Unauthorized")
 }
