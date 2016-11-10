@@ -27,8 +27,8 @@ import (
 	"path/filepath"
 	"text/template"
 
-	"launchpad.net/webdm/oem"
-	"launchpad.net/webdm/snappy"
+	"github.com/snapcore/snapweb/oem"
+	"github.com/snapcore/snapweb/snappy"
 )
 
 type slug string
