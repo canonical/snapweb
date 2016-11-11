@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -ex
+
 if [ $# -lt 3 ]
   then
     filename=$(basename -- "$0")
@@ -52,4 +54,3 @@ fi
 USER=$user HOST=$host PORT=$port $modules_dir/.bin/wdio -b https://$2:4201
 
 kill -9  $pid
-

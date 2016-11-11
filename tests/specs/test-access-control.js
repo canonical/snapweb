@@ -49,7 +49,7 @@ describe('Access Control Page - Verify that', function() {
     it('accepts valid token', function () {
 
 		var valid_token = "";
-        browser.call(function () { 
+        	browser.call(function () { 
                 return snaputil.getToken().then(function (res){
                 valid_token = res.trim();
                 });
@@ -70,26 +70,56 @@ describe('Access Control Page - Verify that', function() {
 
     });
 
-   xit('on subsequent time, token authentication will be skipped', function() {
+   it('on subsequent time, token authentication will be skipped', function() {
 
 		var valid_token = "";
-        browser.call(function () { 
-                return snaputil.getToken().then(function (res){
-                valid_token = res.trim();
-                });
-
-        });
+        	browser.call(function () { 
+                	return snaputil.getToken().then(function (res){
+                	valid_token = res.trim();
+                	});
+        	});
 		accessControlPage.submit_token(valid_token);
 		loginpage = browser.element('h2=Installed snaps');
 		loginpage.waitForVisible();
 		expect(loginpage.getText(), "Login Failed with valid token").to.contain('Installed snaps');
-		//reload the page
+		cookie = browser.getCookie('SM');
 		browser.reload();
-		browser.url();
+		browser.url('/');
+		title = browser.getTitle();
+                assert.equal(title, 'Snapweb');
+		browser.setCookie(cookie);
+		browser.url('/');
 		loginpage = browser.element('h2=Installed snaps');
 		loginpage.waitForVisible();
 		expect(loginpage.getText(), "Login Failed with valid token").to.contain('Installed snaps');
 
     });
 
+   it('generating new token invalidates the old token', function() {
+
+		var valid_token = "";
+        	browser.call(function () { 
+                	return snaputil.getToken().then(function (res){
+                	valid_token = res.trim();
+                	});
+        	});
+		accessControlPage.submit_token(valid_token);
+		loginpage = browser.element('h2=Installed snaps');
+		loginpage.waitForVisible();
+		expect(loginpage.getText(), "Login Failed with valid token").to.contain('Installed snaps');
+		cookie = browser.getCookie('SM');
+		browser.call(function () { 
+                        return snaputil.getToken().then(function (res){
+                        valid_token = res.trim();
+                        });
+                });
+		browser.reload();
+		browser.url('/');
+		title = browser.getTitle();
+                assert.equal(title, 'Snapweb');
+		browser.setCookie(cookie);
+		browser.url('/');
+		accessControlPage.token.waitForVisible();
+		assert.isNotNull(accessControlPage.token.value);
+    });
 });
