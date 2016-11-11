@@ -38,6 +38,7 @@ func newDefaultSnap() *client.Snap {
 		Status:        client.StatusActive,
 		Type:          client.TypeApp,
 		Version:       "0.1-8",
+		Private:       false,
 	}
 	return snap
 }

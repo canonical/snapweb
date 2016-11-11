@@ -96,13 +96,16 @@ module.exports = Backbone.Model.extend({
   // XXX move to install behaviour
   setInstallHTMLClass: function(model) {
     var state = model.get('status');
+    var type = model.get('type');
     var installHTMLClass = '';
 
     if (state === CONF.INSTALL_STATE.REMOVED) {
       installHTMLClass = 'b-installer_do_install';
     }
 
-    if (state === CONF.INSTALL_STATE.INSTALLED) {
+    if (  (state === CONF.INSTALL_STATE.INSTALLED
+           && !CONF.NON_REMOVABLE_SNAP_TYPES.includes(type))
+          || state === CONF.INSTALL_STATE.ACTIVE) {
       installHTMLClass = 'b-installer_do_remove';
     }
 
@@ -122,6 +125,7 @@ module.exports = Backbone.Model.extend({
     var action;
 
     switch (state) {
+      case CONF.INSTALL_STATE.ACTIVE:
       case CONF.INSTALL_STATE.INSTALLED:
         action = 'Remove';
         break;
@@ -149,6 +153,7 @@ module.exports = Backbone.Model.extend({
     var installButtonClass;
 
     switch (state) {
+      case CONF.INSTALL_STATE.ACTIVE:
       case CONF.INSTALL_STATE.INSTALLED:
       case CONF.INSTALL_STATE.INSTALLING:
         installButtonClass = 'button--secondary';
@@ -169,6 +174,7 @@ module.exports = Backbone.Model.extend({
 
     if (
       status === CONF.INSTALL_STATE.INSTALLED ||
+      status === CONF.INSTALL_STATE.ACTIVE ||
       status === CONF.INSTALL_STATE.REMOVING
     ) {
       response.isInstalled = true;

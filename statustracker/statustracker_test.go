@@ -44,7 +44,7 @@ func (s *StatusTrackerSuite) TestTranslateStatus(c *C) {
 		status     string
 	}{
 		{client.StatusInstalled, StatusInstalled},
-		{client.StatusActive, StatusInstalled},
+		{client.StatusActive, StatusActive},
 		{client.StatusAvailable, StatusUninstalled},
 		{client.StatusRemoved, StatusUninstalled},
 	}
@@ -90,7 +90,7 @@ func (s *StatusTrackerSuite) TestTrackInstall(c *C) {
 	c.Assert(s.t.Status(snap), Equals, StatusInstalling)
 	// installation completes
 	snap.Status = client.StatusActive
-	c.Assert(s.t.Status(snap), Equals, StatusInstalled)
+	c.Assert(s.t.Status(snap), Equals, StatusActive)
 }
 
 func (s *StatusTrackerSuite) TestTrackInstallExpiry(c *C) {

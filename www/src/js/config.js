@@ -15,11 +15,17 @@ module.exports = {
   NON_INSTALLABLE_TYPES: [
     'gadget'
   ],
+  NON_REMOVABLE_SNAP_TYPES: [
+    'gadget',
+    'os',
+    'kernel'
+  ],
   INSTALL_STATE: {
     INSTALLED: 'installed',
     INSTALLING: 'installing',
     REMOVED: 'uninstalled',
-    REMOVING: 'uninstalling'
+    REMOVING: 'uninstalling',
+    ACTIVE: 'active'
   },
   INSTALL_POLL_WAIT: 16 // milliseconds
 };

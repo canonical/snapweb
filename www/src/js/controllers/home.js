@@ -25,7 +25,7 @@ module.exports = {
           addSnapItem: true,
           icon: '/public/images/add-snap.png',
           developer: 'Browse Store',
-          status: 'installed',
+          status: 'none',
         })]);
 
         var view = new HomeLayoutView({
