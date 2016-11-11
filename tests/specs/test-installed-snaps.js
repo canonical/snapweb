@@ -91,7 +91,7 @@ describe('Installed Snaps Page - Verify that', function() {
     });
 
 
-    it('installing snap over ssh is shown by snapweb', function () {
+    it('snapweb updates the page when snap is installed/removed direclty on the device', function () {
 
 	var snap_name = "hello-world";
 	var re_removed = new RegExp("cannot find snap|"+snap_name+".*removed")
