@@ -96,7 +96,7 @@ fi
 
 if [ ! -z "$STATIC_JS" ]; then
     npm install -g gulp
-    npm install jscs
+    npm install
     gulp js:lint
 fi
 
