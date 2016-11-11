@@ -25,8 +25,8 @@ snapweb.on('start', function() {
   Backbone.history.start({pushState: true});
 });
 
-$( document ).ajaxError(function( event, jqxhr, settings, exception ) {
-    if (jqxhr.status === 401 && window.location.pathname != '/access-control') {
-      window.location = '/access-control';
-    }
+$(document).ajaxError(function(event, jqxhr, settings, exception) {
+  if (jqxhr.status === 401 && window.location.pathname != '/access-control') {
+    window.location = '/access-control';
+  }
 });

@@ -26,15 +26,7 @@ module.exports = {
       'access-control': 'index'
     }
   }),
-  
-/*  init: new Marionette.AppRouter({
-    controller: initController,
-    appRoutes: {
-      'firstboot': 'index'
-    }
-  }),
-*/
-  
+
   store: new Marionette.AppRouter({
     controller: storeController,
     appRoutes: {
