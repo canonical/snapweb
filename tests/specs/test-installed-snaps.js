@@ -89,4 +89,55 @@ describe('Installed Snaps Page - Verify that', function() {
 	aboutpage.waitForVisible();
 
     });
+
+
+    it('installing snap over ssh is shown by snapweb', function () {
+
+	var snap_name = "hello-world";
+	var re_removed = new RegExp("cannot find snap|"+snap_name+".*removed")
+	var re_installed = new RegExp(snap_name+".*installed");
+
+	//Remove the snap in case it is already installed
+        browser.call(function () {
+                return snaputil.removeSnap(snap_name).then(function (res){
+                expect(res).to.match(re_removed, res);
+                });
+        });
+	browser.refresh();
+	//Confirm that snap doesn't exist on page
+	snapslist_snapweb = snapsPage.installedsnaps;
+        snapslist_snapweb.value.forEach(function(snap) {
+                expect(snap.getText()).to.not.equal(snap_name);
+        });
+
+	//Install the snap and refresh page
+        browser.call(function () {
+                return snaputil.installSnap(snap_name).then(function (res){
+		expect(res).to.match(re_installed, res);
+                });
+        });
+	
+	browser.refresh();
+
+	//Check if snap installed is now shown on page
+        var snap = snapsPage.snapElement(snap_name);
+        snap.waitForVisible();
+	expect(snap.getText()).to.equal(snap_name);
+
+	 //Remove the snap and refresh page
+        browser.call(function () {
+                return snaputil.removeSnap(snap_name).then(function (res){
+                expect(res).to.match(re_removed, res);
+                });
+        });
+        browser.refresh();
+
+	//Check if snap removed is disappeared from the page
+        snapslist_snapweb = snapsPage.installedsnaps;
+        snapslist_snapweb.value.forEach(function(snap) {
+                expect(snap.getText()).to.not.equal(snap_name);
+        });
+
+    });
+
 });
