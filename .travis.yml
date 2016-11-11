@@ -6,10 +6,15 @@ go:
 services: docker
 
 env:
-  matrix:
-    - TEST_SUITE="--static"
-    - TEST_SUITE="--unit-go"
-    - TEST_SUITE="--unit-js"
+  - TEST_SUITE="--static"
+  - TEST_SUITE="--unit-go"
+  - TEST_SUITE="--unit-js"
+
+matrix:
+  include:
+    - env: BUILD=1
+      go: 1.5
+      cache: false
 
 cache:
   directories:
@@ -18,7 +23,8 @@ cache:
 install:
   - if [ "$TEST_SUITE" == "--unit-node" ]; then . $HOME/.nvm/nvm.sh && nvm install stable && nvm use stable; fi
 script:
-  - sh -v ./run-checks $TEST_SUITE
+  - if [ -z "$BUILD" ]; then sh -v ./run-checks $TEST_SUITE; fi
+  - if [ ! -z "$BUILD" ]; then docker run -v $GOPATH:/go snapcore/snapcraft sh -c 'cd /go/src/github.com/snapcore/snapweb && dpkg --add-architecture i386 && apt update && apt install -y bzr gcc-5-multilib gcc-5-aarch64-linux-gnu gcc-5-arm-linux-gnueabihf gcc-aarch64-linux-gnu gcc-arm-linux-gnueabihf git golang-go libc6-dev:i386 nodejs-legacy npm && npm install -g gulp && npm install && export GOPATH=/go PATH=/go/bin:$PATH && ./build.sh'; fi
 
 after_success:
   - go get github.com/mattn/goveralls
