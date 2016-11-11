@@ -39,6 +39,7 @@ module.exports = {
     controller: storeController,
     appRoutes: {
       'store': 'index',
+      'store/section/:section': 'section',
       'search?q=': 'index'
     }
   }),

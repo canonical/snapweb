@@ -26,7 +26,16 @@
         
     {{#if title}}
         <div class="row">
-            <h2 class="col-6">{{ title }}</h2>
+
+             <div class="row">
+                          <h2 class="col-6">{{ title }}</h2>
+                          <span style="text-color: grey; float: right">
+                            <span id="sections-view">
+                            </span>
+                            <a href="/store/section/private">Private</a>
+                          </span>
+             </div>
+
             <div class="row">
                 <div class="b-snaplist__actions col-12">
                   {{#if canSort}}
@@ -43,6 +52,7 @@
                   {{/if}}
                 </div>
             </div>
+            
             <div id="js-snaplist" class="p-card-deck">
 
                 <div class="card-deck-row-header">
