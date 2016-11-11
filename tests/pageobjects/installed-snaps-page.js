@@ -19,7 +19,7 @@ var installedSnapsPage = Object.create(page, {
 	browser.deleteCookie();
 	acPage.open();
 	var valid_token = "";
-    browser.call(function () { 
+        browser.call(function () { 
 		return snaputil.getToken().then(function (res){
                 valid_token = res.trim();
                 });
@@ -27,8 +27,15 @@ var installedSnapsPage = Object.create(page, {
 	acPage.submit_token(valid_token);
 	loginpage = browser.element('h2=Installed snaps');
 	loginpage.waitForVisible();
-    } }
+    } },
 
+    
+    snapElement: { value: function (snap_name)  {
+	
+	return browser.element(".b-snaplist_grid").element("h3="+snap_name);
+
+     } }
+	
 });
 
 module.exports = installedSnapsPage

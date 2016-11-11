@@ -49,4 +49,44 @@ describe('Installed Snaps Page - Verify that', function() {
 	expect(snapslist_snapweb.value).to.have.length(snapslist_device.length-1, "Snaps installed on device didn't match");
     });
 
+    it('clicking store link takes the user to store', function () {
+
+	snapsPage.store.click();
+	storepage = browser.element('h2=Available snaps')	
+	storepage.waitForVisible();
+	expect(storepage.getText(), "Failed to load store page").to.contain('Available snaps');
+
+    });
+    	
+    it('Browse store button takes the user to store', function () {
+
+	snapsPage.browsestore.click();
+	storepage = browser.element('h2=Available snaps')	
+	storepage.waitForVisible();
+	expect(storepage.getText(), "Failed to load store page").to.contain('Available snaps');
+
+    });
+
+    it('Add more snaps button takes the user to store', function () {
+
+	snapsPage.addmoresnaps.click();
+	storepage = browser.element('h2=Available snaps')	
+	storepage.waitForVisible();
+	expect(storepage.getText(), "Failed to load store page").to.contain('Available snaps');
+
+    });
+
+    it("Clicking on snap entry opens the about snap's about page", function () {
+
+	var snap_name = 'snapweb';
+	var snap = snapsPage.snapElement(snap_name);
+	snap.waitForVisible();
+	snap.click();
+	snaptitle = browser.element('h1.b-snap__title');
+	snaptitle.waitForVisible();
+	expect(snaptitle.getText(), "Failed to open snap's about page").to.equal(snap_name);
+	aboutpage = browser.element('h3=About');
+	aboutpage.waitForVisible();
+
+    });
 });
