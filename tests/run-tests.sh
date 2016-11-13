@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -ex
+set -x
 
 if [ $# -lt 3 ]
   then
@@ -41,7 +41,6 @@ echo 'Launch Selenium Server ...'
 java -jar ./selenium-server-standalone-3.0.1.jar &
 pid=$!
 echo $pid
-trap "kill -9 $pid" 2
 
 sleep 3 # wait for selenium server to up and running.
 
@@ -53,4 +52,4 @@ fi
 
 USER=$user HOST=$host PORT=$port $modules_dir/.bin/wdio -b https://$2:4201
 
-kill -9  $pid
+trap "kill -9  $pid" 0
