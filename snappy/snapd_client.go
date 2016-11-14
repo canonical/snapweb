@@ -109,7 +109,7 @@ func (a *ClientAdapter) Known(assertTypeName string, headers map[string]string) 
 // GetSections returns the list of available sections
 func (a *ClientAdapter) GetSections() ([]string, error) {
 	return make([]string, 0), nil
-//	return a.snapdClient.GetSections()
+	//	return a.snapdClient.GetSections()
 }
 
 // internal
