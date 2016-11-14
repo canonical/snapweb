@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -e
+set -xe
 
 AVAHI_VERSION="0.6.31-4ubuntu4snap2"
 LIBDAEMON0_VERSION="0.14-6"
@@ -45,6 +45,7 @@ gobuild() {
     cd $output_dir
     GOARCH=$arch GOARM=7 CGO_ENABLED=1 CC=${plat_abi}-gcc go build -ldflags "-extld=${plat_abi}-gcc" github.com/snapcore/snapweb/cmd/snapweb
     GOARCH=$arch GOARM=7 CGO_ENABLED=1 CC=${plat_abi}-gcc go build -o generate-token -ldflags "-extld=${plat_abi}-gcc" $srcdir/cmd/generate-token/main.go
+    cp generate-token ../../
     cd - > /dev/null
 }
 
