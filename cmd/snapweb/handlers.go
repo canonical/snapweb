@@ -182,16 +182,15 @@ func handleDeviceAction(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 	}
 
-	powerCommand := "gdbus call --system --dest org.freedesktop.login1 --object-path /org/freedesktop/login1 --method org.freedesktop.login1.Manager.%s false"
 	// XXX: user valid and user has permission
 	if action.ActionType == "restart" {
-		cmd := exec.Command(fmt.Sprintf(powerCommand, "Reboot"))
+		cmd := exec.Command("reboot")
 		if err := cmd.Run(); err != nil {
 			log.Printf("handleDeviceAction: failed to reboot: %v", err)
 			w.WriteHeader(http.StatusInternalServerError)
 		}
 	} else if action.ActionType == "power-off" {
-		cmd := exec.Command(fmt.Sprintf(powerCommand, "PowerOff"))
+		cmd := exec.Command("poweroff")
 		if err := cmd.Run(); err != nil {
 			log.Printf("handleDeviceAction: failed to reboot: %v", err)
 			w.WriteHeader(http.StatusInternalServerError)
