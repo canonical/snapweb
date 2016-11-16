@@ -67,3 +67,5 @@ USER=$user HOST=$host PORT=$port SUDO=$sudo $modules_dir/.bin/wdio -b https://$2
 exitcode=$?
 
 trap "kill -9  $pid" $exitcode
+
+exit $exitcode
