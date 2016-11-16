@@ -1,0 +1,45 @@
+@mixin p-navigation {
+
+  .p-navigation {
+    background: $color-x-light;
+    border-bottom: 1px solid $color-mid-dark;
+    color: $color-dark;
+    margin-bottom: 1rem;
+
+    &__toggle {
+      color: $color-dark;
+
+      &:visited {
+        color: $color-mid-dark;
+      }
+    }
+
+    &__links {
+
+      .p-navigation__link {
+        color: $color-dark;
+        border-left-color: $color-dark;
+        padding-bottom: .75rem;
+
+        &:hover {
+          border-bottom: 0;
+          text-decoration: none;
+        }
+
+        &:visited {
+          color: $color-mid-dark;
+        }
+
+        .anchor {
+          position: relative;
+          bottom: .35rem;
+          left: .25rem;
+        }
+
+        &.active {
+          border-bottom: 3px solid $color-brand;
+        }
+      }
+    }
+  }
+}

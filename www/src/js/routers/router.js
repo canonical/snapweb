@@ -4,11 +4,12 @@ var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
 
 var homeController = require('../controllers/home.js');
-var initController = require('../controllers/init.js');
+// var initController = require('../controllers/init.js');
 var searchController = require('../controllers/search.js');
 var storeController = require('../controllers/store.js');
 var settingsController = require('../controllers/settings.js');
 var snapController = require('../controllers/snaps.js');
+var tokenController = require('../controllers/token.js');
 
 module.exports = {
 
@@ -19,10 +20,10 @@ module.exports = {
     }
   }),
 
-  init: new Marionette.AppRouter({
-    controller: initController,
+  token: new Marionette.AppRouter({
+    controller: tokenController,
     appRoutes: {
-      'firstboot': 'index'
+      'access-control': 'index'
     }
   }),
 

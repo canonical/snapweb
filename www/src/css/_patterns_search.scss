@@ -1,0 +1,34 @@
+@mixin p-search {
+
+  .p-search {
+
+    width: 100%;
+    position: relative;
+
+    &__field {
+      width: 100%;
+      margin-bottom: 0;
+      padding-left: .5rem;
+    }
+
+    &__btn {
+      background-color: inherit;
+      border-color: transparent;
+      border-left: 0;
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 25%;
+      height: 100%;
+      padding: .2rem;
+      margin: 0;
+      text-align: right;
+
+      &:hover,
+      &:active {
+        background-color: inherit;
+        border-color: transparent;
+      }
+    }
+  }
+}

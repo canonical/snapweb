@@ -6,19 +6,24 @@ go:
 services: docker
 
 env:
-  matrix:
-    - TEST_SUITE="--static"
-    - TEST_SUITE="--unit-go"
-    - TEST_SUITE="--unit-js"
+  - TEST_SUITE="--static-go"
+  - TEST_SUITE="--static-js"
+  - TEST_SUITE="--unit-go"
+  - TEST_SUITE="--unit-js"
+
+matrix:
+  include:
+    - env: BUILD=1
+      go: 1.5
+      cache: false
 
 cache:
   directories:
     - node_modules
 
-install:
-  - if [ "$TEST_SUITE" == "--unit-node" ]; then . $HOME/.nvm/nvm.sh && nvm install stable && nvm use stable; fi
 script:
-  - sh -v ./run-checks $TEST_SUITE
+  - if [ -z "$BUILD" ]; then sh -v ./run-checks $TEST_SUITE; fi
+  - if [ ! -z "$BUILD" ]; then ./scripts/snap-in-docker.sh; fi
 
 after_success:
   - go get github.com/mattn/goveralls

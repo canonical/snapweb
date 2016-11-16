@@ -22,10 +22,6 @@ gulp.task('js:build', ['js:clean', 'js:lint'], function() {
   return createBundler();
 });
 
-gulp.task('js:watch', ['js:lint'], function() {
-  createBundler(true);
-});
-
 gulp.task('js:clean', function(cb) {
   del(['www/public/js'], cb);
 });
@@ -67,13 +63,12 @@ gulp.task('js:lint', function() {
     .on('error', function(err) {
       gutil.log(gutil.colors.green(err));
       this.emit('end');
+      process.exit(1);
     })
     .pipe(jshint());
 });
 
 // Styles
-
-
 gulp.task('styles', ['styles:clean'], function() {
   var processors = [
     autoprefixer({browsers: ['last 1 version']}),
@@ -81,15 +76,15 @@ gulp.task('styles', ['styles:clean'], function() {
   ];
 
   return gulp.src([
-    'node_modules/normalize.css/normalize.css',
-    'www/src/css/lib/vanilla-includes.scss',
-    'www/src/css/**/*.css'
+    'www/src/css/styles.scss'
   ])
-  .pipe(sass())
+  .pipe(sass({
+    includePaths: ['node_modules']
+  }))
   .pipe(sourcemaps.init())
   .pipe(postcss(processors))
   .pipe(csso())
-  .pipe(concat('snapweb.css'))
+  .pipe(concat('styles.css'))
   .pipe(sourcemaps.write('./'))
   .pipe(gulp.dest('www/public/css'));
 });
@@ -110,11 +105,24 @@ gulp.task('images:clean', function(cb) {
   del(['www/public/images'], cb);
 });
 
-gulp.task('watch', ['js:watch', 'styles', 'images'], function() {
-  gulp.watch('www/src/images/**/*.{svg,png,jpg,jpeg}', ['images']);
-  gulp.watch('www/src/css/**/*.css', ['styles']);
-  gulp.watch('www/src/js/**/*.js', ['js:lint']);
+// Watch tasks
+gulp.task('js:watch', function() {
+  gulp.watch('www/src/js/**/*.js', createBundler(true));
 });
+
+gulp.task('images:watch', ['images'], function() {
+  gulp.watch('www/src/images/**/*.{svg,png,jpg,jpeg}', ['images']);
+});
+
+gulp.task('styles:watch', ['styles'], function() {
+  gulp.watch('www/src/css/**/**/*.scss', ['styles']);
+});
+
+gulp.task('handlebars:watch', function() {
+  gulp.watch('www/src/js/**/*.hbs', ['js:build']);
+});
+
+gulp.task('watch', ['handlebars:watch', 'js:watch', 'styles:watch', 'images:watch']);
 
 // for the benefit of snapcraft
 gulp.task('install', ['default'], function() {

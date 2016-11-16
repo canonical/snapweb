@@ -21,26 +21,50 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/snapcore/snapweb/avahi"
 )
 
 var logger *log.Logger
 
-const httpAddr string = ":4200"
+const (
+	httpAddr  string = ":4200"
+	httpsAddr string = ":4201"
+)
 
 func init() {
 	logger = log.New(os.Stderr, "Snapweb: ", log.Ldate|log.Ltime|log.Lshortfile)
 }
 
+func redir(w http.ResponseWriter, req *http.Request) {
+	http.Redirect(w, req,
+		"https://"+strings.Replace(req.Host, httpAddr, httpsAddr, -1),
+		http.StatusMovedPermanently)
+}
+
 func main() {
+	GenerateCertificate()
+
 	initURLHandlers(logger)
 
 	go avahi.InitMDNS(logger)
 
 	logger.Println("Snapweb starting...")
 
-	if err := http.ListenAndServe(httpAddr, nil); err != nil {
-		logger.Printf("http.ListendAndServer() failed with %s\n", err)
+	// run the main service over HTTPS
+	go func() {
+		certFile := filepath.Join(os.Getenv("SNAP_DATA"), "cert.pem")
+		keyFile := filepath.Join(os.Getenv("SNAP_DATA"), "key.pem")
+		if err := http.ListenAndServeTLS(httpsAddr, certFile, keyFile, nil); err != nil {
+			logger.Fatalf("http.ListendAndServerTLS() failed with %v", err)
+		}
+	}()
+
+	// open a plain HTTP end-point on the "usual" 4200 port, and redirect to HTTPS
+	if err := http.ListenAndServe(httpAddr, http.HandlerFunc(redir)); err != nil {
+		logger.Fatalf("ListenAndServe failed with: %v", err)
 	}
+
 }

@@ -1,0 +1,37 @@
+// Import Vanilla Framework
+@import "vanilla-framework/scss/vanilla";
+
+// Import site specific styling
+@import "patterns_card";
+@import "patterns_card-deck";
+@import "patterns_navigation";
+@import "patterns_lists";
+@import "patterns_search";
+@import "patterns_view-filters";
+@import "utilities_full-width";
+
+// Include Vanilla Framework
+@include vanilla;
+
+// Override default Vanilla variables
+$color-brand: #e95420;
+
+// Include Vanilla Framework pattern overrides
+@include p-card;
+@include p-list;
+@include p-navigation;
+@include p-search;
+
+// Site specific patterns
+@include p-card-deck;
+@include p-view-filters;
+
+// Site specific utilities
+@include u-full-width;
+
+// WIP - not quite decided where best to put these styles yet
+// Raised as Vanilla bug: https://github.com/ubuntudesign/vanilla-framework/issues/701
+.row {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
