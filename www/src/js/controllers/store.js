@@ -38,7 +38,7 @@ module.exports = {
     var chan = Radio.channel('root');
     var sections = new Sections();
     var storeSnaplist = new Snaplist();
-      console.log(s)
+
     // Special case for private section which is not a section
     // per se but a specificity of a snap
     if (s === 'private') {
