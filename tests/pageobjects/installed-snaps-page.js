@@ -10,7 +10,7 @@ var installedSnapsPage = Object.create(page, {
     addsnapicon:     { get: function () { return browser.element("div.region-installed div.p-card a[href*=store] svg.p-card__icon"); } },
     settings:     { get: function () { return browser.element("nav.p-navigation__nav a[href*=settings]"); } },
     bugreport:    { get: function () { return browser.element("div.b-layout__footer a[href*=bugs]"); } },
-    browsestore:    { get: function () { return browser.element("a=Browser store"); } },
+    browsestore:    { get: function () { return browser.element("a=Browse store"); } },
     addmoresnaps:    { get: function () { return browser.element("a=Add more snaps for this device"); } },
     snapwebsnap:    { get: function () { return browser.element(".p-card-deck").element("h3=snapweb"); } },
     installedsnaps: { get: function () { return browser.elements(".p-card h3.js-snap-title"); } },

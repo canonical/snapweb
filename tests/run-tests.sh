@@ -60,5 +60,6 @@ if [ ! -d "$modules_dir" ]; then
 fi
 
 USER=$user HOST=$host PORT=$port SUDO=$sudo $modules_dir/.bin/wdio -b https://$2:4201
+exit $?
 
 trap "kill -9  $pid" 0
