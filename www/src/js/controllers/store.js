@@ -3,6 +3,7 @@ var Marionette = require('backbone.marionette');
 var Radio = require('backbone.radio');
 var StoreLayoutView = require('../views/store.js');
 var Snaplist = require('../collections/snaplist.js');
+var SnaplistTools = require('../common/snaplists.js');
 
 module.exports = {
   index: function() {
@@ -12,7 +13,7 @@ module.exports = {
     storeSnaplist.fetch({
       success: function(snaplist) {
         var view =  new StoreLayoutView({
-          collection: snaplist
+          collection: SnaplistTools.updateInstalledStates(snaplist)
         });
         chan.command('set:content', view);
       }
