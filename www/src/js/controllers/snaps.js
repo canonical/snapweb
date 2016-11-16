@@ -3,6 +3,7 @@ var Marionette = require('backbone.marionette');
 var Radio = require('backbone.radio');
 var SnapLayoutView = require('../views/snap-layout.js');
 var Snap = require('../models/snap.js');
+var SnapTools = require('../common/snaps.js')
 
 var snapChannel = Radio.channel('snap');
 var rootChannel = Radio.channel('root');
@@ -25,13 +26,3 @@ module.exports = {
     });
   }
 };
-
-snapChannel.comply('show', function(model) {
-  var name = model.get('id');
-  var url = 'snap/' + name;
-  var view =  new SnapLayoutView({
-    model: model
-  });
-  rootChannel.command('set:content', view);
-  Backbone.history.navigate(url);
-});

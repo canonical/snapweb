@@ -41,11 +41,4 @@ module.exports = Marionette.ItemView.extend({
       behaviorClass: InstallBehavior
     }
   },
-
-  showSnap: function(e) {
-    e.preventDefault();
-    if (!$(e.target).is('.b-installer__button')) {
-      snapChannel.command('show', this.model);
-    }
-  }
 });

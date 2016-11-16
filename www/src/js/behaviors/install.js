@@ -50,6 +50,7 @@ module.exports = Marionette.Behavior.extend({
   },
 
   onInstallClick: function(e) {
+    e.preventDefault();
     var model = this.view.model;
     var status = model.get('status');
     var isInstallable = model.get('isInstallable');

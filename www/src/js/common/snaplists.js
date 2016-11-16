@@ -5,7 +5,6 @@ var CONF = require('../config.js');
 var Snaplist = require('../collections/snaplist.js');
 
 module.exports = {
-
   updateInstalledStates: function(collection) {
     if (!collection) {
       return;
