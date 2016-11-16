@@ -224,7 +224,6 @@ func handleDeviceAction(w http.ResponseWriter, r *http.Request) {
 
 func initURLHandlers(log *log.Logger) {
 	log.Println("Initializing HTTP handlers...")
-
 	snappyHandler := snappy.NewHandler()
 	// passThru := makePassthroughHandler(dirs.SnapdSocket, "/api")
 

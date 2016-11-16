@@ -110,6 +110,10 @@ func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) getUpdates(w http.ResponseWriter, r *http.Request) {
+	if SimpleCookieCheckOrRedirect(w, r) != nil {
+		return
+	}
+
 	payload, err := h.allPackages(updatableSnaps, ".")
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -138,6 +142,10 @@ func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) getHistories(w http.ResponseWriter, r *http.Request) {
+	if SimpleCookieCheckOrRedirect(w, r) != nil {
+		return
+	}
+
 	var numDepth = 100 // XXX: find max history
 
 	depth := mux.Vars(r)["depth"]
@@ -175,6 +183,10 @@ func (h *Handler) getHistories(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) getHistory(w http.ResponseWriter, r *http.Request) {
+	if SimpleCookieCheckOrRedirect(w, r) != nil {
+		return
+	}
+
 	id := mux.Vars(r)["id"]
 
 	payload, err := h.packageHistory(id)
@@ -236,6 +248,64 @@ func (h *Handler) MakePackageRouter(prefix string) http.Handler {
 	return m
 }
 
+// MakeSnapRouter sets up endpoints for locally installed snaps
+func (h *Handler) MakeSnapRouter(prefix string) http.Handler {
+	m := mux.NewRouter().PathPrefix(prefix).Subrouter()
+
+	m.HandleFunc("/", h.getUpdates).Methods("GET").Queries("updatable_only", "true")
+	m.HandleFunc("/", h.getHistories).Methods("GET").Queries("history", "{depth}")
+
+	m.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		if SimpleCookieCheckOrRedirect(w, r) != nil {
+			return
+		}
+		payload, err := h.allPackages(installedSnaps, ".")
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			fmt.Fprintf(w, "Error: %s", err)
+			return
+		}
+		h.jsonResponseOrError(payload, w)
+	}).Methods("GET")
+
+	m.HandleFunc("/{id}", h.get).Methods("GET")
+
+	m.HandleFunc("/{id}/history", h.getHistory).Methods("GET")
+
+	m.HandleFunc("/{id}", func(w http.ResponseWriter, r *http.Request) {
+		if SimpleCookieCheckOrRedirect(w, r) != nil {
+			return
+		}
+		data, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		var snapPatch map[string]interface{}
+		err = json.Unmarshal(data, &snapPatch)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		if _, exists := snapPatch["version"]; exists {
+			// Could handle downgrades etc, but for now assume update
+			h.refreshPackage(mux.Vars(r)["id"])
+		} else {
+			w.WriteHeader(422) // http.StatusUnprocessableEntity
+			return
+		}
+
+		w.WriteHeader(http.StatusNoContent)
+	}).Methods("PATCH")
+
+	// Remove a package
+	m.HandleFunc("/{id}", h.remove).Methods("DELETE")
+
+	return m
+}
+
 // TODO: refactor this copy from cmd/snapweb
 
 // Name of the cookie transporting the access token
@@ -265,56 +335,4 @@ func SimpleCookieCheckOrRedirect(w http.ResponseWriter, r *http.Request) error {
 	http.Redirect(w, r, "/access-control", 401)
 
 	return errors.New("Unauthorized")
-}
-
-// MakeSnapRouter sets up endpoints for locally installed snaps
-func (h *Handler) MakeSnapRouter(prefix string) http.Handler {
-	m := mux.NewRouter().PathPrefix(prefix).Subrouter()
-
-	m.HandleFunc("/", h.getUpdates).Methods("GET").Queries("updatable_only", "true")
-	m.HandleFunc("/", h.getHistories).Methods("GET").Queries("history", "{depth}")
-
-	m.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		payload, err := h.allPackages(installedSnaps, ".")
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			fmt.Fprintf(w, "Error: %s", err)
-			return
-		}
-		h.jsonResponseOrError(payload, w)
-	}).Methods("GET")
-
-	m.HandleFunc("/{id}", h.get).Methods("GET")
-
-	m.HandleFunc("/{id}/history", h.getHistory).Methods("GET")
-
-	m.HandleFunc("/{id}", func(w http.ResponseWriter, r *http.Request) {
-		data, err := ioutil.ReadAll(r.Body)
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
-
-		var snapPatch map[string]interface{}
-		err = json.Unmarshal(data, &snapPatch)
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
-
-		if _, exists := snapPatch["version"]; exists {
-			// Could handle downgrades etc, but for now assume update
-			h.refreshPackage(mux.Vars(r)["id"])
-		} else {
-			w.WriteHeader(422) // http.StatusUnprocessableEntity
-			return
-		}
-
-		w.WriteHeader(http.StatusNoContent)
-	}).Methods("PATCH")
-
-	// Remove a package
-	m.HandleFunc("/{id}", h.remove).Methods("DELETE")
-
-	return m
 }

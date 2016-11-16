@@ -219,6 +219,7 @@ func (s *HandlersSuite) TestSnapRouterGetUpdates(c *C) {
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest("GET", "/?updatable_only=true", nil)
 	c.Assert(err, IsNil)
+	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
 
 	s.h.MakeSnapRouter("").ServeHTTP(rec, req)
 	c.Assert(rec.Code, Equals, http.StatusOK)
@@ -236,6 +237,7 @@ func (s *HandlersSuite) TestGetUpdatesError(c *C) {
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest("GET", "/?updatable_only=true", nil)
 	c.Assert(err, IsNil)
+	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
 
 	s.h.MakePackageRouter("").ServeHTTP(rec, req)
 	c.Assert(rec.Code, Equals, http.StatusInternalServerError)
@@ -247,6 +249,7 @@ func (s *HandlersSuite) TestSnapRouterGetAll(c *C) {
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest("GET", "/", nil)
 	c.Assert(err, IsNil)
+	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
 
 	s.h.MakeSnapRouter("").ServeHTTP(rec, req)
 	c.Assert(rec.Code, Equals, http.StatusOK)
@@ -264,6 +267,7 @@ func (s *HandlersSuite) TestSnapRouterGet(c *C) {
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest("GET", "/chatroom", nil)
 	c.Assert(err, IsNil)
+	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
 
 	s.h.MakeSnapRouter("").ServeHTTP(rec, req)
 	c.Assert(rec.Code, Equals, http.StatusOK)
@@ -282,6 +286,7 @@ func (s *HandlersSuite) TestSnapRouterPatch(c *C) {
 	var patchJSON = []byte("{\"version\":\"0.1-9\"}")
 	req, err := http.NewRequest("PATCH", "/chatroom", bytes.NewBuffer(patchJSON))
 	c.Assert(err, IsNil)
+	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
 
 	req.Header.Set("Content-Type", "application/json")
 
@@ -296,6 +301,7 @@ func (s *HandlersSuite) TestSnapRouterPatchNoVersion(c *C) {
 	var patchJSON = []byte("{}")
 	req, err := http.NewRequest("PATCH", "/chatroom", bytes.NewBuffer(patchJSON))
 	c.Assert(err, IsNil)
+	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
 
 	req.Header.Set("Content-Type", "application/json")
 
@@ -309,6 +315,7 @@ func (s *HandlersSuite) TestSnapRouterPatchBadRequest(c *C) {
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest("PATCH", "/chatroom", bytes.NewBuffer([]byte("")))
 	c.Assert(err, IsNil)
+	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
 
 	req.Header.Set("Content-Type", "application/json")
 
@@ -323,6 +330,7 @@ func (s *HandlersSuite) TestSnapRouterPatchBadJSON(c *C) {
 	var patchJSON = []byte("{]")
 	req, err := http.NewRequest("PATCH", "/chatroom", bytes.NewBuffer(patchJSON))
 	c.Assert(err, IsNil)
+	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
 
 	req.Header.Set("Content-Type", "application/json")
 
@@ -336,6 +344,7 @@ func (s *HandlersSuite) TestSnapRouterDelete(c *C) {
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest("DELETE", "/chatroom", nil)
 	c.Assert(err, IsNil)
+	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
 
 	s.h.MakeSnapRouter("").ServeHTTP(rec, req)
 	c.Assert(rec.Code, Equals, http.StatusAccepted)
@@ -347,6 +356,7 @@ func (s *HandlersSuite) TestSnapRouterHistoryNoSnap(c *C) {
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest("GET", "/chatroom/history", nil)
 	c.Assert(err, IsNil)
+	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
 
 	s.h.MakeSnapRouter("").ServeHTTP(rec, req)
 	c.Assert(rec.Code, Equals, http.StatusNotFound)

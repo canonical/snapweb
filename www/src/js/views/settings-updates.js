@@ -67,14 +67,17 @@ module.exports = Backbone.Marionette.LayoutView.extend({
   onRender: function() {
     if (this.collection.length == 0) {
       this.$('#updates-update-all').attr('disabled', true);
-      this.$('#available-table-container').append('<div id="updates-message">No updates available</div>');
+      this.$('#available-table-container').
+        append('<div id="updates-message">No updates available</div>');
     } else {
       this.showChildView('updates-table', new UpdatesCollectionView({
             collection: this.collection
           }));
     }
     if (this.history.length == 0) {
-      this.$('#history-table-container').append('<div id="history-message">No history information available</div>');
+      this.$('#history-table-container').
+        append('<div id="history-message">' +
+               'No history information available</div>');
     } else {
       this.showChildView('history-table', new HistoryCollectionView({
               collection: this.history
