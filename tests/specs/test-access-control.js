@@ -13,15 +13,16 @@ describe('Access Control Page - Verify that', function() {
 	});
 
  
-    it('loads correctly', function () {
+    it('page loads correctly', function () {
 
 		title = browser.getTitle();
 		assert.equal(title, 'Snapweb');
 
 		assert.isNotNull(accessControlPage.homepage.value);
+		assert.isNotNull(accessControlPage.settings.value);
 		assert.isNotNull(accessControlPage.store.value);
 		assert.isNotNull(accessControlPage.token.value);
-		assert.isNotNull(accessControlPage.submit_btn.value)
+		assert.isNotNull(accessControlPage.submit_btn.value);
 		assert.isNotNull(accessControlPage.token_cmd.value);
 		assert.isNotNull(accessControlPage.bugreport.value);
 	

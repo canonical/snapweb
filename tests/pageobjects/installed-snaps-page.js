@@ -5,13 +5,15 @@ var installedSnapsPage = Object.create(page, {
     /**
      * define elements
      */
-    homepage: { get: function () { return browser.element("header.banner div.logo a[href*='/']"); } },
-    store:     { get: function () { return browser.element("header.banner a[href*=store]"); } },
+    homepage: { get: function () { return browser.element("header.p-navigation div.p-navigation__logo a[href*='/']"); } },
+    store:     { get: function () { return browser.element("nav.p-navigation__nav a[href*=store]"); } },
+    addsnapicon:     { get: function () { return browser.element("div.region-installed div.p-card a[href*=store] svg.p-card__icon"); } },
+    settings:     { get: function () { return browser.element("nav.p-navigation__nav a[href*=settings]"); } },
     bugreport:    { get: function () { return browser.element("div.b-layout__footer a[href*=bugs]"); } },
-    browsestore:    { get: function () { return browser.element("a=Browse store"); } },
-    addmoresnaps:    { get: function () { return browser.element("a=Add more snaps"); } },
-    snapwebsnap:    { get: function () { return browser.element(".b-snaplist_grid").element("h3=snapweb"); } },
-    installedsnaps: { get: function () { return browser.elements("div.b-snaplist__item h3.b-snaplist__name"); } },
+    browsestore:    { get: function () { return browser.element("a=Browser store"); } },
+    addmoresnaps:    { get: function () { return browser.element("a=Add more snaps for this device"); } },
+    snapwebsnap:    { get: function () { return browser.element(".p-card-deck").element("h3=snapweb"); } },
+    installedsnaps: { get: function () { return browser.elements(".p-card h3.js-snap-title"); } },
     /**
      * define or overwrite page methods
      */
@@ -32,7 +34,7 @@ var installedSnapsPage = Object.create(page, {
     
     snapElement: { value: function (snap_name)  {
 	
-	return browser.element(".b-snaplist_grid").element("h3="+snap_name);
+	return browser.element(".p-card-deck").element("h3="+snap_name);
 
      } }
 	

@@ -19,6 +19,7 @@ describe('Installed Snaps Page - Verify that', function() {
         assert.equal(title, 'Snapweb');
 
         assert.isNotNull(snapsPage.homepage.value);
+        assert.isNotNull(snapsPage.settings.value);
         assert.isNotNull(snapsPage.store.value);
         assert.isNotNull(snapsPage.bugreport.value);
         assert.isNotNull(snapsPage.browsestore.value);

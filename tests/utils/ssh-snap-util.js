@@ -1,8 +1,9 @@
 var Client = require('ssh2').Client;
 module.exports = sshSnapUtil
 
-function sshSnapUtil(sshHost, sshUser, sshPort, sshAgent) {
+function sshSnapUtil(sshHost, sshUser, sshPort, sshAgent, isSudoRequired) {
 
+    this.isSudoRequired = (isSudoRequired === 'true');
     this.ssh_config = {
   	host: sshHost,
   	port: sshPort,
@@ -43,8 +44,9 @@ execCommand = function (ssh_config, cmd, handleRawOutput) {
 
 }
 
-sshSnapUtil.prototype._promisifyExec = function(cmd) {
-
+sshSnapUtil.prototype._promisifyExec = function(cmd, sudo) {
+	
+	cmd = sudo?"sudo "+cmd:cmd;
 	config = this.ssh_config;
 	return new Promise(function (resolve, reject) {
 		execCommand(config, cmd, function (res, err){
@@ -59,17 +61,17 @@ sshSnapUtil.prototype.listSnaps = function () {
 }
 
 sshSnapUtil.prototype.getToken = function() {
-	return this._promisifyExec("sudo snapweb.generate-token | awk '{ if(NR==3) print $0 }'");
+	return this._promisifyExec("snapweb.generate-token | awk '{ if(NR==3) print $0 }'", true);
 }
 
 sshSnapUtil.prototype.installSnap = function(name) {
-	return this._promisifyExec('snap install '+name);
+	return this._promisifyExec( 'snap install '+name, this.isSudoRequired);
 }
 
 sshSnapUtil.prototype.removeSnap = function(name) {
-	return this._promisifyExec('snap remove '+name);
+	return this._promisifyExec('snap remove '+name, this.isSudoRequired);
 }
 
 sshSnapUtil.prototype.snapVersion = function() {
-	return this._promisifyExec('snap version ');
+	return this._promisifyExec('snap version');
 }

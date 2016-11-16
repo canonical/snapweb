@@ -145,7 +145,7 @@ exports.config = {
     // variables, such as `browser`. It is the perfect place to define custom commands.
      before: function (capabilities, specs) {
 	var sshSnapUtil = require('./utils/ssh-snap-util');
-	snaputil = new sshSnapUtil(process.env.HOST, process.env.USER, process.env.PORT, process.env.SSH_AUTH_SOCK);
+	snaputil = new sshSnapUtil(process.env.HOST, process.env.USER, process.env.PORT, process.env.SSH_AUTH_SOCK, process.env.SUDO);
      },
     //
     // Hook that gets executed before the suite starts

@@ -6,16 +6,24 @@ if [ $# -lt 3 ]
   then
     filename=$(basename -- "$0")
     echo "Not enough arguments supplied, please provide arguments in following order for DUT"
-    echo "$ ./$filename <user> <IP> <ssh port>"
+    echo "$ ./$filename <user> <IP> <ssh port> <sudo>"
+    echo "If sudo is required, then specify 4th arugment as sudo"
     exit 1
 fi
 
 user=$1
 host=$2
 port=$3
+sudo=false
+
+if [ $4 = "sudo" ]; then
+	sudo=true
+fi
+
+echo $sudo
 
 #skip the downloading if an extra arg is provided.
-if [ -z "$4" ]
+if [ -z "$5" ]
   then
     echo 'Setup the environment before running snapweb selenium test'
     echo '----------------------------------------------------------'
@@ -51,6 +59,6 @@ if [ ! -d "$modules_dir" ]; then
   modules_dir="../node_modules"
 fi
 
-USER=$user HOST=$host PORT=$port $modules_dir/.bin/wdio -b https://$2:4201
+USER=$user HOST=$host PORT=$port SUDO=$sudo $modules_dir/.bin/wdio -b https://$2:4201
 
 trap "kill -9  $pid" 0
