@@ -34,6 +34,7 @@ if [ -z "$4" ]
     npm install chai --save-dev
     npm install wdio-mocha-framework --save-dev
     npm install wdio-junit-reporter --save-dev
+    npm install ssh2 --save-dev
     npm install node-ssh --save-dev
 fi
 
