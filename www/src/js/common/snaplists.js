@@ -5,9 +5,9 @@ var CONF = require('../config.js');
 var Snaplist = require('../collections/snaplist.js');
 
 module.exports = {
-  // 
+
   updateInstalledStates: function(collection) {
-    if (! collection) {
+    if (!collection) {
       return;
     }
     var installedBask = new Snaplist();
@@ -17,12 +17,12 @@ module.exports = {
       }),
       success: function(snaplist) {
         var installedById = {}
-        snaplist.forEach(function(s){
+        snaplist.forEach(function(s) {
           installedById[s.id] = s
         })
-        collection.forEach(function(s){
+        collection.forEach(function(s) {
           if (installedById[s.id]) {
-              s.set('status', CONF.INSTALL_STATE.INSTALLED)
+            s.set('status', CONF.INSTALL_STATE.INSTALLED)
           }
         });
       },
@@ -32,5 +32,3 @@ module.exports = {
     return collection
   },
 };
-
-
