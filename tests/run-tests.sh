@@ -49,7 +49,7 @@ if [ -z "$5" ]
 fi
 
 echo 'Launch Selenium Server ...'
-java -jar ./selenium-server-standalone-3.0.1.jar &
+java -jar ./selenium-server-standalone-3.0.1.jar > /dev/null 2>&1 &
 pid=$!
 exitcode=$?
 

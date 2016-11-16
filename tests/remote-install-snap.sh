@@ -1,8 +1,17 @@
 set +x
 
-snap_to_install=$1
-ssh snapweb-ci@162.213.35.217 "if [ -d tmpsnaps ]; then rm -rf tmpsnaps; fi; mkdir tmpsnaps;"
-scp $snap_to_install snapweb-ci@162.213.35.217:/home/snapweb-ci/tmpsnaps/
-ssh snapweb-ci@162.213.35.217 "sudo snap remove snapweb >/dev/null"
-snap_name="${snap_to_install##*/}"
-ssh snapweb-ci@162.213.35.217 "sudo snap install /home/snapweb-ci/tmpsnaps/$snap_name --devmode"
+user=$1
+host=$2
+port=$3
+snap=$4
+if [ -z "$4" ]; then
+	echo "No snap file specified to install, exiting"
+	exit 1
+fi
+
+snap_name="${snap##*/}"
+
+ssh -p $port $user@$host "if [ -d tmpsnaps ]; then rm -rf tmpsnaps; fi; mkdir tmpsnaps;"
+scp -P $port $snap  $user@$host:/home/$user/tmpsnaps/
+ssh -p $port $user@$host "sudo snap remove snapweb >/dev/null"
+ssh -p $port $user@$host "sudo snap install /home/$user/tmpsnaps/$snap_name --devmode"
