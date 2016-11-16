@@ -3,6 +3,7 @@ module.exports = {
   TIME_INFO: '/api/v2/time-info',
   CREATE_USER: '/api/v2/create-user',
   DEVICE_INFO: '/api/v2/device-info',
+  DEVICE_ACTION: '/api/v2/device-action',
   FILTERED_SNAPS: [
     'snapweb',
     'ubuntu-core'
