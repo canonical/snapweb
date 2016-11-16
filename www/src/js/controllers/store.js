@@ -5,13 +5,13 @@ var Marionette = require('backbone.marionette');
 var Radio = require('backbone.radio');
 var StoreLayoutView = require('../views/store.js');
 var Sections = require('../collections/sections.js');
-var Bask = require('../collections/snaplist.js');
+var Snaplist = require('../collections/snaplist.js');
 
 module.exports = {
   index: function() {
     var chan = Radio.channel('root');
     var sections = new Sections();
-    var storeSnaplist = new Bask();
+    var storeSnaplist = new Snaplist();
 
     $.when(
           storeSnaplist.fetch({ data: $.param({ 'featured_only': true }) })
@@ -37,7 +37,7 @@ module.exports = {
   section: function(s) {
     var chan = Radio.channel('root');
     var sections = new Sections();
-    var storeSnaplist = new Bask();
+    var storeSnaplist = new Snaplist();
       console.log(s)
     // Special case for private section which is not a section
     // per se but a specificity of a snap

@@ -14,14 +14,27 @@ Handlebars.registerPartial('installer', require('../templates/_installer.hbs'));
 
 module.exports = Marionette.ItemView.extend({
 
-  className: 'b-snaplist__item',
+  className: function() {
+    var type = this.model.get('type');
+    var className = 'p-card';
+
+    if (type) {
+      className += ' p-card-' + type;
+    }
+
+    return className;
+  },
 
   template: function(model) {
     return template(model);
   },
 
+  ui: {
+    'snapTitle': '#js-snap-title'
+  },
+
   events: {
-    'click': 'showSnap'
+    'click @ui.snapTitle':  'showSnap'
   },
 
   behaviors: {
