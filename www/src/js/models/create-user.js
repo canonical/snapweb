@@ -21,5 +21,5 @@ module.exports = Backbone.Model.extend({
       return 'Invalid email';
     }
   },
-  
+
 });

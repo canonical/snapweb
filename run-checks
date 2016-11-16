@@ -8,18 +8,27 @@ else
     goctest="go test"
 fi
 
-STATIC=""
+STATIC_GO=""
+STATIC_JS=""
 UNIT_GO=""
 UNIT_JS=""
 
 case "${1:-all}" in
     all)
-        STATIC="yes"
+        STATIC_GO="yes"
+        STATIC_JS="yes"
         UNIT_GO="yes"
         UNIT_JS="yes"
         ;;
     --static)
-        STATIC="yes"
+        STATIC_GO="yes"
+        STATIC_JS="yes"
+        ;;
+    --static-go)
+        STATIC_GO="yes"
+        ;;
+    --static-js)
+        STATIC_JS="yes"
         ;;
     --unit)
         UNIT_GO="yes"
@@ -32,7 +41,7 @@ case "${1:-all}" in
         UNIT_JS="yes"
         ;;
     *)
-        echo "Wrong flag ${1}. To run a single suite use --static, --unit, --unit-go or --unit-js."
+        echo "Wrong flag ${1}. To run a single suite use --static, --static-go, --static-js, --unit, --unit-go or --unit-js."
         exit 1
 esac
 
@@ -45,12 +54,12 @@ append_go_coverage() {
     fi
 }
 
-if [ ! -z "$STATIC" ] || [ ! -z "$UNIT_GO" ]; then
+if [ ! -z "$STATIC_GO" ] || [ ! -z "$UNIT_GO" ]; then
     sh ./get-go-deps.sh
 fi
 
-if [ ! -z "$STATIC" ]; then
-    # Run static tests.
+if [ ! -z "$STATIC_GO" ]; then
+    # Run go static tests.
 
     echo Checking formatting
     fmt=$(gofmt -l .)
@@ -83,6 +92,12 @@ if [ ! -z "$STATIC" ]; then
         exit 1
     fi
 
+fi
+
+if [ ! -z "$STATIC_JS" ]; then
+    npm install -g gulp
+    npm install
+    gulp js:lint
 fi
 
 if [ ! -z "$UNIT_GO" ]; then

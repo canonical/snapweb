@@ -1,6 +1,18 @@
-#!/bin/sh
+#!/bin/bash
+#
+# Build the snapweb snaps.
+#
+# Arguments:
+#   [arch ...]: The architectures to build for. By default it will build for
+#               amd64, arm64, armhf and i386.
 
 set -xe
+
+if [ "$#" -eq 0 ]; then
+    architectures=( amd64 arm64 armhf i386 )
+else
+    architectures=( "$@" )
+fi
 
 AVAHI_VERSION="0.6.31-4ubuntu4snap2"
 LIBDAEMON0_VERSION="0.14-6"
@@ -62,8 +74,8 @@ go get launchpad.net/godeps
 godeps -u dependencies.tsv
 
 # build one snap per arch
-# for ARCH in amd64 ; do
-for ARCH in amd64 arm64 armhf i386; do
+for ARCH in "${architectures[@]}"; do
+    echo "Building for ${ARCH}..."
     builddir="${top_builddir}/${ARCH}"
     mkdir -p "$builddir"
 
