@@ -2,41 +2,51 @@ sudo: required
 dist: trusty
 language: go
 go:
-- 1.5
+  - 1.5
 services: docker
+
 env:
-- TEST_SUITE="--static"
-- TEST_SUITE="--unit-go"
-- TEST_SUITE="--unit-js"
+  - TEST_SUITE="--static-go"
+  - TEST_SUITE="--static-js"
+  - TEST_SUITE="--unit-go"
+  - TEST_SUITE="--unit-js"
+
 matrix:
   include:
-  - env: BUILD=1
-    go: 1.5
-    cache: false
+    - env: BUILD=1
+      go: 1.5
+      cache: false
+
 cache:
   directories:
-  - node_modules
+    - node_modules
+
 addons:
   ssh_known_hosts: 162.213.35.217
+
 before_install:
-- openssl aes-256-cbc -K $encrypted_527ca8567c65_key -iv $encrypted_527ca8567c65_iv -in id_rsa_snapwebci.enc -out id_rsa_snapwebci -d
-- rm id_rsa_snapwebci.enc
-- chmod 600 id_rsa_snapwebci; mv id_rsa_snapwebci ~/.ssh/id_rsa
-- eval "$(ssh-agent)"; ssh-add ~/.ssh/id_rsa
+  - openssl aes-256-cbc -K $encrypted_527ca8567c65_key -iv $encrypted_527ca8567c65_iv -in id_rsa_snapwebci.enc -out id_rsa_snapwebci -d
+  - rm id_rsa_snapwebci.enc
+  - chmod 600 id_rsa_snapwebci; mv id_rsa_snapwebci ~/.ssh/id_rsa
+  - eval "$(ssh-agent)"; ssh-add ~/.ssh/id_rsa
+
 install:
-- sudo apt remove -y chromium-browser
-- sudo apt-get install -y  google-chrome-stable
-- if [ "$TEST_SUITE" == "--unit-node" ]; then . $HOME/.nvm/nvm.sh && nvm install stable && nvm use stable; fi
+  - sudo apt remove -y chromium-browser
+  - sudo apt-get install -y  google-chrome-stable
+  - if [ "$TEST_SUITE" == "--unit-node" ]; then . $HOME/.nvm/nvm.sh && nvm install stable && nvm use stable; fi
+
 before_script:
-- export DISPLAY=:99.0
-- sh -e /etc/init.d/xvfb start
-- sleep 3
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
+  - sleep 3
+
 script:
-- if [ -z "$BUILD" ]; then sh -v ./run-checks $TEST_SUITE; fi
-- if [ ! -z "$BUILD" ]; then ./scripts/snap-in-docker.sh; fi
-- if [ ! -z "$BUILD" ]; ./remote-install-snap.sh; './tests/run-tests.sh snapweb-ci 162.213.35.217 22'; fi
+  - if [ -z "$BUILD" ]; then sh -v ./run-checks $TEST_SUITE; fi
+  - if [ ! -z "$BUILD" ]; then ./scripts/snap-in-docker.sh; fi
+  - if [ ! -z "$BUILD" ]; ./remote-install-snap.sh; './tests/run-tests.sh snapweb-ci 162.213.35.217 22'; fi
+
 after_success:
-- go get github.com/mattn/goveralls
-- goveralls -coverprofile=.coverage-go/coverage.out -service=travis-ci
-- npm install coveralls
-- cat .coverage-js/report-lcov/lcov.info | ./node_modules/coveralls/bin/coveralls.js
+  - go get github.com/mattn/goveralls
+  - goveralls -coverprofile=.coverage-go/coverage.out -service=travis-ci
+  - npm install coveralls
+  - cat .coverage-js/report-lcov/lcov.info | ./node_modules/coveralls/bin/coveralls.js
