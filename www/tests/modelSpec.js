@@ -47,6 +47,9 @@ describe('Snap', function() {
       response = this.model.parse({status: CONF.INSTALL_STATE.REMOVED});
       expect(response.isInstalled).toBeFalsy();
 
+      response = this.model.parse({status: CONF.INSTALL_STATE.ACTIVE});
+      expect(response.isInstalled).toBeTruthy();
+
       response = this.model.parse({status: CONF.INSTALL_STATE.REMOVING});
       expect(response.isInstalled).toBeTruthy();
 
@@ -83,6 +86,39 @@ describe('Snap', function() {
     });
   });
 
+  describe('setInstallHTMLClass', function() {
+
+    beforeEach(function() {
+      this.model = new Snap({id: 'foo'});
+    });
+
+    afterEach(function() {
+      delete this.model;
+    });
+
+    it('should set installHTMLClass from model status', function() {
+      this.model.set('status', CONF.INSTALL_STATE.REMOVED);
+      expect(this.model.get('installHTMLClass')).toContain('install');
+
+      this.model.set('status', CONF.INSTALL_STATE.INSTALLING);
+      expect(this.model.get('installHTMLClass')).toContain('thinking');
+      expect(this.model.get('installHTMLClass')).toContain('install');
+
+      this.model.set('status', CONF.INSTALL_STATE.REMOVING);
+      expect(this.model.get('installHTMLClass')).toContain('remove');
+      expect(this.model.get('installHTMLClass')).toContain('thinking');
+
+      this.model.set('status', CONF.INSTALL_STATE.ACTIVE);
+      expect(this.model.get('installHTMLClass')).toContain('remove');
+
+      for (var i in CONF.NON_REMOVABLE_SNAP_TYPES) {
+        this.model.set('status', CONF.INSTALL_STATE.INSTALLED);
+        this.model.set('type', CONF.NON_REMOVABLE_SNAP_TYPES[i]);
+        expect(this.model.get('installHTMLClass')).not.toContain('remove');
+      }
+    });
+  });
+
   describe('setInstallActionString', function() {
 
     beforeEach(function() {
@@ -95,6 +131,9 @@ describe('Snap', function() {
 
     it('should set installActionString from model state', function() {
       this.model.set('status', CONF.INSTALL_STATE.INSTALLED);
+      expect(this.model.get('installActionString')).toBe('Remove');
+
+      this.model.set('status', CONF.INSTALL_STATE.ACTIVE);
       expect(this.model.get('installActionString')).toBe('Remove');
 
       this.model.set('status', CONF.INSTALL_STATE.REMOVED);
@@ -165,6 +204,9 @@ describe('Snap', function() {
 
     it('sets installButtonClass from the model state', function() {
       this.model.set('status', CONF.INSTALL_STATE.INSTALLED);
+      expect(this.model.get('installButtonClass')).toBe('button--secondary');
+
+      this.model.set('status', CONF.INSTALL_STATE.ACTIVE);
       expect(this.model.get('installButtonClass')).toBe('button--secondary');
 
       this.model.set('status', CONF.INSTALL_STATE.REMOVED);
