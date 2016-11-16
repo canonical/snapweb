@@ -43,7 +43,7 @@ before_script:
 script:
   - if [ -z "$BUILD" ]; then sh -v ./run-checks $TEST_SUITE; fi
   - if [ ! -z "$BUILD" ]; then ./scripts/snap-in-docker.sh; fi
-  - if [ ! -z "$BUILD" ]; ./remote-install-snap.sh; './tests/run-tests.sh snapweb-ci 162.213.35.217 22'; fi
+  - if [ ! -z "$BUILD" ]; then  snap_to_install=$(find "$(pwd)" -name snapweb\*_amd64.snap); ./remote-install-snap.sh $snap_to_install; cd tests; ./run-tests.sh snapweb-ci 162.213.35.217 22; fi
 
 after_success:
   - go get github.com/mattn/goveralls
