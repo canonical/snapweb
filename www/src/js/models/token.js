@@ -1,5 +1,5 @@
 var Backbone = require('backbone');
-var Cookies = require("js-cookie");
+var Cookies = require('js-cookie');
 
 module.exports = Backbone.Model.extend({
 
@@ -11,8 +11,7 @@ module.exports = Backbone.Model.extend({
   },
 
   setCookie: function(token) {
-    Cookies.set('SM', token);    
+    Cookies.set('SM', token);
   },
-  
-});
 
+});

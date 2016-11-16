@@ -63,6 +63,7 @@ gulp.task('js:lint', function() {
     .on('error', function(err) {
       gutil.log(gutil.colors.green(err));
       this.emit('end');
+      process.exit(1);
     })
     .pipe(jshint());
 });

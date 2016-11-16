@@ -4,6 +4,7 @@ var Marionette = require('backbone.marionette');
 var Radio = require('backbone.radio');
 var SearchLayoutView = require('../views/search.js');
 var Bask = require('../collections/snaplist.js');
+var SnaplistTools = require('../common/snaplists.js');
 
 module.exports = {
   query: function(q) {
@@ -19,6 +20,7 @@ module.exports = {
       success: function(snaplist) {
         var match = snaplist.where({'name': q})
 
+        snaplist = SnaplistTools.updateInstalledStates(snaplist)
         var view =  new SearchLayoutView({
           model: new Backbone.Model({
             query: q,

@@ -27,6 +27,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"text/template"
@@ -173,6 +174,54 @@ func handleSections(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+type deviceAction struct {
+	ActionType string `json:"actionType"`
+}
+
+func handleDeviceAction(w http.ResponseWriter, r *http.Request) {
+	if SimpleCookieCheckOrRedirect(w, r) != nil {
+		return
+	}
+
+	if r.Method != "POST" {
+		log.Printf("handleDeviceAction: invalid method")
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+
+	contentType := r.Header.Get("Content-Type")
+	if contentType != "application/json" {
+		log.Printf("handleDeviceAction: invalid content")
+		w.WriteHeader(http.StatusUnsupportedMediaType)
+		return
+	}
+
+	var action deviceAction
+	dec := json.NewDecoder(r.Body)
+	if err := dec.Decode(&action); err != nil {
+		log.Printf("handleDeviceAction: failed to decode json: %v", err)
+		w.WriteHeader(http.StatusBadRequest)
+	}
+
+	// XXX: user valid and user has permission
+	if action.ActionType == "restart" {
+		cmd := exec.Command("reboot")
+		if err := cmd.Run(); err != nil {
+			log.Printf("handleDeviceAction: failed to reboot: %v", err)
+			w.WriteHeader(http.StatusInternalServerError)
+		}
+	} else if action.ActionType == "power-off" {
+		cmd := exec.Command("poweroff")
+		if err := cmd.Run(); err != nil {
+			log.Printf("handleDeviceAction: failed to reboot: %v", err)
+			w.WriteHeader(http.StatusInternalServerError)
+		}
+	} else {
+		log.Printf("handleDeviceAction: invalid device action type: %s", action.ActionType)
+		w.WriteHeader(http.StatusBadRequest)
+	}
+}
+
 func initURLHandlers(log *log.Logger) {
 	log.Println("Initializing HTTP handlers...")
 	snappyHandler := snappy.NewHandler()
@@ -186,6 +235,7 @@ func initURLHandlers(log *log.Logger) {
 
 	http.HandleFunc("/api/v2/time-info", handleTimeInfo)
 	http.HandleFunc("/api/v2/device-info", handleDeviceInfo)
+	http.HandleFunc("/api/v2/device-action", handleDeviceAction)
 
 	// NOTE: the public URLs below shouldn't be using SimpleCookieCheckOrRedirect
 

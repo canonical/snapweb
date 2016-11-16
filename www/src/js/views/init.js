@@ -9,8 +9,8 @@ module.exports = Backbone.Marionette.LayoutView.extend({
   className: 'b-layout__container',
 
   ui: {
-    statusmessage: ".statusmessage",
-    btncreate: ".btn-create",
+    statusmessage: '.statusmessage',
+    btncreate: '.btn-create',
   },
 
   events: {
@@ -30,8 +30,8 @@ module.exports = Backbone.Marionette.LayoutView.extend({
       this.ui.statusmessage.show();
     },
     'success': function(model, response) {
-      this.model.set({ ipaddress: location.hostname });
-      this.model.set({ username: response.result.username });
+      this.model.set({ipaddress: location.hostname});
+      this.model.set({username: response.result.username});
       this.$('#firstboot-step-1').hide();
       this.$('#firstboot-step-2').show();
     },

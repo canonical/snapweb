@@ -6,6 +6,7 @@ var Radio = require('backbone.radio');
 var StoreLayoutView = require('../views/store.js');
 var Sections = require('../collections/sections.js');
 var Snaplist = require('../collections/snaplist.js');
+var SnaplistTools = require('../common/snaplists.js');
 
 module.exports = {
   index: function() {
@@ -14,8 +15,8 @@ module.exports = {
     var storeSnaplist = new Snaplist();
 
     $.when(
-          storeSnaplist.fetch({ data: $.param({ 'featured_only': true }) })
-          , sections.fetch()
+          storeSnaplist.fetch({data: $.param({'featured_only': true})}),
+          sections.fetch()
         ).then(function() {
         var view =  new StoreLayoutView({
           model: new Backbone.Model({
@@ -28,7 +29,7 @@ module.exports = {
             isHomeActive: false,
             sections: sections
           }),
-          collection: storeSnaplist.all()
+          collection: SnaplistTools.updateInstalledStates(storeSnaplist)
         });
 
         chan.command('set:content', view);
@@ -64,7 +65,7 @@ module.exports = {
     }
     else {
       $.when(
-        storeSnaplist.fetch({ data: $.param({ 'section': s }) })
+        storeSnaplist.fetch({data: $.param({'section': s})})
       ).then(function() {
         var view =  new StoreLayoutView({
           model: new Backbone.Model({

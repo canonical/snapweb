@@ -4,6 +4,7 @@ module.exports = {
   CREATE_USER: '/api/v2/create-user',
   SECTIONS: '/api/v2/sections',
   DEVICE_INFO: '/api/v2/device-info',
+  DEVICE_ACTION: '/api/v2/device-action',
   FILTERED_SNAPS: [
     'snapweb',
     'ubuntu-core'

@@ -54,7 +54,7 @@ module.exports = Backbone.Marionette.ItemView.extend({
   },
 
   onRender: function() {
-    var haveServer = this.model.get('ntpServer') !== "";
+    var haveServer = this.model.get('ntpServer') !== '';
 
     this.$('#ntp-active-checkbox').prop('checked', haveServer);
     this.$('#ntp-server-name').prop('disabled', !haveServer)
@@ -63,6 +63,7 @@ module.exports = Backbone.Marionette.ItemView.extend({
 
     var dropDown = this.$('#time-zone-select');
     dropDown.append([
+          // jscs:disable maximumLineLength
           '<option value="-12">(UTC-12:00) International Date Line West</option>',
           '<option value="-11">(UTC-11:00) Midway Island, Samoa</option>',
           '<option value="-10">(UTC-10:00) Hawaii</option>',
