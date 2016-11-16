@@ -2,6 +2,8 @@
 
 set -x
 
+exitcode=0
+
 if [ $# -lt 3 ]
   then
     filename=$(basename -- "$0")
@@ -49,6 +51,8 @@ fi
 echo 'Launch Selenium Server ...'
 java -jar ./selenium-server-standalone-3.0.1.jar &
 pid=$!
+exitcode=$?
+
 echo $pid
 
 sleep 3 # wait for selenium server to up and running.
@@ -60,6 +64,6 @@ if [ ! -d "$modules_dir" ]; then
 fi
 
 USER=$user HOST=$host PORT=$port SUDO=$sudo $modules_dir/.bin/wdio -b https://$2:4201
-exit $?
+exitcode=$?
 
-trap "kill -9  $pid" 0
+trap "kill -9  $pid" $exitcode
