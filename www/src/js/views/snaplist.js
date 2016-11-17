@@ -8,10 +8,18 @@ var SnaplistItemView = require('../views/snaplist-item.js');
 var EmptySnaplistView = require('./empty-snaplist.js');
 var template = require('../templates/snaplist.hbs');
 var CONF = require('../config.js');
+var SnapTools = require('../common/snaps.js')
 
 module.exports = Marionette.CompositeView.extend({
 
   childViewContainer: '#js-snaplist',
+
+  initialize : function() {
+    // "patch" the model with the snap details browse URI
+    this.collection.each(function(snap) {
+      snap.set('targetSnapUri', SnapTools.getShowSnapUrlFor(snap))
+    });
+  },
 
   template : function(model) {
     return template(model);

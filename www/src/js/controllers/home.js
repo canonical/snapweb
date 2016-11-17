@@ -19,15 +19,6 @@ module.exports = {
       success: function(snaplist) {
         var c = snaplist.all()
 
-        // TODO
-        c.push([new Snap({
-          name: 'Add more snaps for this device',
-          addSnapItem: true,
-          icon: '/public/images/add-snap.png',
-          developer: 'Browse Store',
-          status: 'none',
-        })]);
-
         var view = new HomeLayoutView({
           model: new Backbone.Model({
             title: 'Installed snaps',

@@ -1,5 +1,8 @@
+
 {{#if addSnapItem}}
 <a href="/store">
+{{else}}
+<a href="{{ targetSnapUri }}">
 {{/if}}
 
 <img class="p-card__icon" src="{{ icon }}" width="125" height="125">
@@ -27,3 +30,6 @@
       {{> installer installerClass="button--positive"}}
     </div>
 </footer>
+
+</a>
+
