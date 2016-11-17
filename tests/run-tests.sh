@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -x
-
 exitcode=0
 
 if [ $# -lt 3 ]
@@ -9,7 +7,8 @@ if [ $# -lt 3 ]
     filename=$(basename -- "$0")
     echo "Not enough arguments supplied, please provide arguments in following order for DUT"
     echo "$ ./$filename <user> <IP> <ssh port> <sudo>"
-    echo "If sudo is required, then specify 4th arugment as sudo"
+    echo "If sudo is required, then specify 4th arg as sudo"
+    echo "If want to skip dowloading and installing part, provide 5th arg non empty"
     exit 1
 fi
 
@@ -22,9 +21,7 @@ if [ $4 = "sudo" ]; then
 	sudo=true
 fi
 
-echo $sudo
-
-#skip the downloading if an extra arg is provided.
+#skip the downloading if an extra arg is provided, for quick subsequent run locally.
 if [ -z "$5" ]
   then
     echo 'Setup the environment before running snapweb selenium test'
@@ -37,9 +34,10 @@ if [ -z "$5" ]
 
     export PATH=$PATH:$PWD
 
-    echo 'Download Standalone Selenium Server...'
+    echo 'Downloading Standalone Selenium Server...'
     wget -nc https://selenium-release.storage.googleapis.com/3.0/selenium-server-standalone-3.0.1.jar
 
+#install npm deps
     npm install webdriverio --save-dev
     npm install chai --save-dev
     npm install wdio-mocha-framework --save-dev
@@ -48,21 +46,19 @@ if [ -z "$5" ]
     npm install node-ssh --save-dev
 fi
 
-echo 'Launch Selenium Server ...'
+echo 'Launching Selenium Server ...'
 java -jar ./selenium-server-standalone-3.0.1.jar > /dev/null 2>&1 &
 pid=$!
 exitcode=$?
 
-echo $pid
-
 sleep 3 # wait for selenium server to up and running.
 
-echo 'Run selenium tests for snapweb service on given IP'
 modules_dir="./node_modules"
 if [ ! -d "$modules_dir" ]; then
   modules_dir="../node_modules"
 fi
 
+echo 'Run selenium tests for snapweb service on given IP'
 USER=$user HOST=$host PORT=$port SUDO=$sudo $modules_dir/.bin/wdio -b https://$2:4201
 exitcode=$?
 

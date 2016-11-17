@@ -34,7 +34,9 @@ var installedSnapsPage = Object.create(page, {
     
     snapElement: { value: function (snap_name)  {
 	
-	return browser.element(".p-card-deck").element("h3="+snap_name);
+	var pcarddeck = browser.element(".p-card-deck");
+	pcarddeck.waitForVisible();
+	return pcarddeck.element("h3="+snap_name);
 
      } }
 	
