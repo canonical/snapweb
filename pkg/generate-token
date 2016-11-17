@@ -1,0 +1,24 @@
+#!/bin/sh
+set -e
+
+platform=$(uname -i)
+
+case $platform in
+    x86_64)
+        plat_abi=x86_64-linux-gnu
+        ;;
+    armv7l)
+        plat_abi=arm-linux-gnueabihf
+        ;;
+    *)
+        echo "unknown platform for snappy-magic: $platform. remember to file a bug or better yet: fix it :)"
+        ;;
+esac
+
+SNAP_APP_PATH=$(dirname $0)
+cd $SNAP_APP_PATH
+
+exec $SNAP_APP_PATH/bin/$plat_abi/generate-token
+
+# never reach this
+exit 1
