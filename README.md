@@ -47,6 +47,7 @@ github.com/ubuntu-core/snappy/release/release.go
 -       rel = Release{Flavor: "core", Series: "rolling", Channel: "edge"}
 +       rel = Release{Flavor: "core", Series: "15.04", Channel: "edge"}
 
+snapcraft (1.1.0) has been tested to work for building webdm release 0.11
 
 # Installing
 
