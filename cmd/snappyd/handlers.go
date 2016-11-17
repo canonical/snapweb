@@ -80,7 +80,7 @@ const (
 )
 
 func tokenFilename() string {
-	return filepath.Join(os.Getenv("SNAP_DATA"), "token.txt")
+	return filepath.Join(os.Getenv("SNAP_APP_PATH"), "token.txt")
 }
 
 // SimpleCookieCheckOrRedirect is a simple authorization mechanism

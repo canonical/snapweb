@@ -53,8 +53,8 @@ func main() {
 
 	// run the main service over HTTPS
 	go func() {
-		certFile := filepath.Join(os.Getenv("SNAP_DATA"), "cert.pem")
-		keyFile := filepath.Join(os.Getenv("SNAP_DATA"), "key.pem")
+		certFile := filepath.Join(os.Getenv("SNAP_APP_PATH"), "cert.pem")
+		keyFile := filepath.Join(os.Getenv("SNAP_APP_PATH"), "key.pem")
 		if err := http.ListenAndServeTLS(httpsAddr, certFile, keyFile, nil); err != nil {
 			logger.Fatalf("http.ListendAndServerTLS() failed with %v", err)
 		}

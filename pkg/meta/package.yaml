@@ -3,7 +3,7 @@ vendor: Sergio Schvezov <sergio.schvezov@canonical.com>
 icon: meta/webdm-icon.png
 source: lp:webdm
 type: framework
-version: 0.9
+version: 0.11.1
 architecture: UNKNOWN_ARCH
 services:
     - name: snappyd

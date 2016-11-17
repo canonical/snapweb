@@ -59,6 +59,8 @@ func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Println(r.Method, r.URL.Path)
+
 	w.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(w)
 
@@ -223,7 +225,7 @@ const (
 )
 
 func tokenFilename() string {
-	return filepath.Join(os.Getenv("SNAP_DATA"), "token.txt")
+	return filepath.Join(os.Getenv("SNAP_APP_PATH"), "token.txt")
 }
 
 // SimpleCookieCheckOrRedirect is a simple authorization mechanism

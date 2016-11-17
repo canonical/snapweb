@@ -33,7 +33,7 @@ type GenerateTokenSuite struct {
 var _ = Suite(&GenerateTokenSuite{})
 
 func (s *GenerateTokenSuite) SetUpTest(c *C) {
-	os.Setenv("SNAP_DATA", c.MkDir())
+	os.Setenv("SNAP_APP_PATH", c.MkDir())
 }
 
 func (s *GenerateTokenSuite) TestCreateDifferentTokens(c *C) {

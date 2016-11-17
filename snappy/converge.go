@@ -23,6 +23,7 @@ import (
 	"strconv"
 	"strings"
 
+	"fmt"
 	"log"
 
 	"github.com/ubuntu-core/snappy/pkg"
@@ -90,10 +91,14 @@ func (h *Handler) packagePayload(resource string) (snapPkg, error) {
 func (h *Handler) allPackages(filter *listFilter) ([]snapPkg, error) {
 	mLocal := snappy.NewMetaLocalRepository()
 
+	log.Println(fmt.Sprintf("filger: %+v", filter))
+
 	installedSnaps, err := mLocal.Installed()
 	if err != nil {
 		return nil, err
 	}
+
+	log.Println(fmt.Sprintf("installedSnaps: %+v", installedSnaps))
 
 	typeFilter := func(string) bool { return true }
 
@@ -133,6 +138,8 @@ func (h *Handler) allPackages(filter *listFilter) ([]snapPkg, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	log.Println(fmt.Sprintf("remoteSnaps: %+v", remoteSnaps))
 
 	remoteSnapQs := make([]snapPkg, 0, len(remoteSnaps))
 

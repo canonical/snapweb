@@ -8,6 +8,7 @@ var searchController = require('../controllers/search.js');
 var storeController = require('../controllers/store.js');
 var systemController = require('../controllers/system.js');
 var snapController = require('../controllers/snaps.js');
+var tokenController = require('../controllers/token.js');
 
 module.exports = {
 
@@ -18,6 +19,13 @@ module.exports = {
     }
   }),
 
+  token: new Marionette.AppRouter({
+    controller: tokenController,
+    appRoutes: {
+      'access-control': 'index'
+    }
+  }),
+  
   store: new Marionette.AppRouter({
     controller: storeController,
     appRoutes: {

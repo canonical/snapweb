@@ -39,7 +39,7 @@ If the token expired or became invalid, you can use the command again to generat
 `
 
 func tokenFilename() string {
-	return filepath.Join(os.Getenv("SNAP_DATA"), "token.txt")
+	return filepath.Join(os.Getenv("SNAP_APP_PATH"), "token.txt")
 }
 
 // checkUser verifies that the user running the command is administrator
