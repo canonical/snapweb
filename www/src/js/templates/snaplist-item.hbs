@@ -13,18 +13,22 @@
 
 <h3 id="js-snap-title" class="p-card__title js-snap-title">{{ name }}</h3>
 
-{{#unless addSnapItem}}
-{{#if developer}}
-  <p class="p-card__content">By {{ developer }}</p>
-{{/if}}
-{{/unless}}
+<ul class="p-list">
+    {{#unless addSnapItem}}
+        {{#if developer}}
+          <li class="p-list__item">By {{ developer }}</li>
+        {{/if}}
+    {{/unless}}
 
-{{#if description}}
-  <p class="p-card__content">{{ description }}</p>
-{{/if}}
-{{#if prettyInstalledSize}}
-  <p class="p-card__content">{{ prettyInstalledSize }}</p>
-{{/if}}
+    {{#if description}}
+      <li class="p-list__item">{{ description }}</li>
+    {{/if}}
+
+    {{#if prettyInstalledSize}}
+      <li class="p-list__item">{{ prettyInstalledSize }}</li>
+    {{/if}}
+</ul>
+
 <footer class="p-card__footer">
     <div class="u-float--right">
       {{> installer installerClass="button--positive"}}
@@ -32,4 +36,3 @@
 </footer>
 
 </a>
-
