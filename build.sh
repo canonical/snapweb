@@ -6,7 +6,7 @@
 #   [arch ...]: The architectures to build for. By default it will build for
 #               amd64, arm64, armhf and i386.
 
-set -xe
+set -e
 
 if [ "$#" -eq 0 ]; then
     architectures=( amd64 arm64 armhf i386 )

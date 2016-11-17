@@ -1,6 +1,6 @@
-var page = require('./page')
+var basepage = require('./basepage')
 
-var accessControlPage = Object.create(page, {
+var accessControlPage = Object.create(basepage, {
     /**
      * define elements
      */
@@ -18,7 +18,7 @@ var accessControlPage = Object.create(page, {
      */
     open: { value: function () {
 	browser.deleteCookie();
-        page.open.call(this, 'access-control');
+        basepage.open.call(this, 'access-control');
     } },
 
     submit_token: { value: function (token_value)  {

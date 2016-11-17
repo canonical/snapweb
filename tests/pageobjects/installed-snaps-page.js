@@ -1,7 +1,7 @@
-var page = require('./page')
+var basepage = require('./basepage')
 var acPage = require('./access-control-page')
  
-var installedSnapsPage = Object.create(page, {
+var installedSnapsPage = Object.create(basepage, {
     /**
      * define elements
      */
@@ -12,7 +12,6 @@ var installedSnapsPage = Object.create(page, {
     bugreport:    { get: function () { return browser.element("div.b-layout__footer a[href*=bugs]"); } },
     browsestore:    { get: function () { return browser.element("a=Browse store"); } },
     addmoresnaps:    { get: function () { return browser.element("a=Add more snaps for this device"); } },
-    snapwebsnap:    { get: function () { return browser.element(".p-card-deck").element("h3=snapweb"); } },
     installedsnaps: { get: function () { return browser.elements(".p-card h3.js-snap-title"); } },
     /**
      * define or overwrite page methods
@@ -38,8 +37,9 @@ var installedSnapsPage = Object.create(page, {
 	pcarddeck.waitForVisible();
 	return pcarddeck.element("h3="+snap_name);
 
-     } }
+     } },
 	
+    snapwebsnap:    { get: function () { return this.snapElement("snapweb"); } }
 });
 
 module.exports = installedSnapsPage

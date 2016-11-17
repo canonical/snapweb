@@ -10,7 +10,7 @@ Before running the snapweb automated tests, following should be ready
 
 ```shell
 cd tests/
-./run-tests.sh <USER> <IP> <PORT>
+./run-tests.sh <USER> <IP> <PORT> [sudo]
 ```
 
 Where 
@@ -20,6 +20,8 @@ USER = User on DUT with ssh keys configured
 IP = IP address of DUT
 
 PORT = SSH port of DUT
+
+sudo = specify sudo if sudo permissions are needed to install/remove snaps
 
 After test run finishes, xunit report will be generated under ./results/ directory
 
