@@ -8,19 +8,18 @@ var chan = Radio.channel('root');
 
 module.exports = Backbone.Marionette.ItemView.extend({
 
-  className: 'b-notifications',
-
   events: {
     'click @ui.close': 'onClose'
   },
 
   ui: {
-    'close': '.b-alert__close'
+    'close': '.u-notifications-close'
   },
 
   template: function(model) {
     if (!model.message) {
-      model.message = '' + model.updatesAvailable + ' updates ready to install.';
+      model.message = '' + model.updatesAvailable +
+          ' updates ready to install.';
     }
     return template(model);
   },

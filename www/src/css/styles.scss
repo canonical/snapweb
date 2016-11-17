@@ -12,6 +12,7 @@
 @import "patterns_search";
 @import "patterns_view-filters";
 @import "utilities_full-width";
+@import "notifications";
 
 // Override default Vanilla variables
 $color-brand: #e95420;
@@ -28,6 +29,7 @@ $color-brand: #e95420;
 
 // Site specific utilities
 @include u-full-width;
+@include u-notifications;
 
 // WIP - not quite decided where best to put these styles yet
 // Raised as Vanilla bug: https://github.com/ubuntudesign/vanilla-framework/issues/701

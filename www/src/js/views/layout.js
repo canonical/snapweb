@@ -52,14 +52,16 @@ module.exports = Marionette.LayoutView.extend({
   },
 
   pollNotifications: function() {
-    if (this.pollingIntervalId)
+    if (this.pollingIntervalId) {
       return;
+    }
     this.notificationsModel = new NotificationsModel;
     this.pollingIntervalId = setInterval(function() {
         this.notificationsModel.fetch({
           success: function(model) {
             var updatesAvailable = model.get('updatesAvailable') || 0;
-            if (updatesAvailable > 0 && this.lastNotificationCount < updatesAvailable) {
+            if (updatesAvailable > 0 &&
+                this.lastNotificationCount < updatesAvailable) {
               clearInterval(this.pollingIntervalId);
               this.lastNotificationCount = updatesAvailable;
               this.pollingIntervalId = null;
@@ -76,6 +78,6 @@ module.exports = Marionette.LayoutView.extend({
     mainRegion:     '.b-layout__main',
     footerRegion:   '.b-layout__footer',
     alertsRegion:   '.b-layout__alerts',
-    notificationsRegion: '.b-layout__notifications'
+    notificationsRegion: '.u-notifications-layout'
   }
 });

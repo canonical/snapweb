@@ -15,12 +15,10 @@ module.exports = Backbone.Model.extend({
   },
 
   parse: function(response) {
-    var notification = { 'updatesAvailable': 0 };
+    var notification = {'updatesAvailable': 0};
     if (response !== undefined && Array.isArray(response)) {
       notification.updatesAvailable = response.length;
     }
     return notification;
   }
 });
-
-

@@ -1,0 +1,35 @@
+@mixin u-notifications {
+  .u-notifications-layout {
+    position: absolute;
+    top: 0px;
+    width: 100%;
+    z-index: 10000;
+  }
+
+  .u-notifications-container {
+    margin: 0 auto;
+    background-color: #f79a2b;
+    border: 4px solid #DADADA;
+    border-radius: 6px;
+    padding: 1em 2em;
+    font-weight: 400;
+    text-align: center;
+  }
+
+  .u-notifications-message {
+    color: #fff;
+  }
+
+  .u-notifications-close {
+    position: absolute;
+    top: 0.5em;
+    right: 10px;
+    line-height: 1;
+    font-size: 2em;
+  }
+
+  .u-notifications-link {
+    text-decoration: none;
+    color: #fff;
+  }
+}
