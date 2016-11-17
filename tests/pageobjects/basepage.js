@@ -1,7 +1,6 @@
-function BasePage () {
-}
+function BasePage() {}
 
-BasePage.prototype.open = function (path) {
+BasePage.prototype.open = function(path) {
     browser.url('/' + path)
 }
 

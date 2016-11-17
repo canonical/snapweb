@@ -5,73 +5,73 @@ function sshSnapUtil(sshHost, sshUser, sshPort, sshAgent, isSudoRequired) {
 
     this.isSudoRequired = (isSudoRequired === 'true');
     this.ssh_config = {
-  	host: sshHost,
-  	port: sshPort,
-  	username: sshUser,
-  	agent: sshAgent,
-	agentForward: true
-	};
+        host: sshHost,
+        port: sshPort,
+        username: sshUser,
+        agent: sshAgent,
+        agentForward: true
+    };
 }
 
 //synchronus ssh command execution, raw shell output will be passed to callback handleOutput
-execCommand = function (ssh_config, cmd, handleRawOutput) {
+execCommand = function(ssh_config, cmd, handleRawOutput) {
 
     var conn = new Client();
     var _output = "";
     conn.on('ready', function() {
-     conn.exec(cmd, function(err, stream) {
-     if (err) handleRawOutput(null, err);
+        conn.exec(cmd, function(err, stream) {
+            if (err) handleRawOutput(null, err);
 
-     stream
-	.on('close', function(code, signal) {
-            conn.end();
-  	    handleRawOutput(_output, null);
-	    _output = "";
-	   })
-	.on('data', function(data) {
-         _output += data;
+            stream
+                .on('close', function(code, signal) {
+                    conn.end();
+                    handleRawOutput(_output, null);
+                    _output = "";
+                })
+                .on('data', function(data) {
+                    _output += data;
 
-           })
-        .stderr.on('data', function(data) {
-         _output += data;
-         });
-      });
-     }).on('error', function(err) {
-    
-     if (err) handleRawOutput (null, err);
+                })
+                .stderr.on('data', function(data) {
+                    _output += data;
+                });
+        });
+    }).on('error', function(err) {
 
-     }).connect(ssh_config);
+        if (err) handleRawOutput(null, err);
+
+    }).connect(ssh_config);
 
 }
 
 sshSnapUtil.prototype._promisifyExec = function(cmd, sudo) {
-	
-	cmd = sudo?"sudo "+cmd:cmd;
-	config = this.ssh_config;
-	return new Promise(function (resolve, reject) {
-		execCommand(config, cmd, function (res, err){
-			if (err) reject (err);
-			else resolve(res);
-		});
-	});
+
+    cmd = sudo ? "sudo " + cmd : cmd;
+    config = this.ssh_config;
+    return new Promise(function(resolve, reject) {
+        execCommand(config, cmd, function(res, err) {
+            if (err) reject(err);
+            else resolve(res);
+        });
+    });
 }
 
-sshSnapUtil.prototype.listSnaps = function () {
-	return this._promisifyExec('snap list');
+sshSnapUtil.prototype.listSnaps = function() {
+    return this._promisifyExec('snap list');
 }
 
 sshSnapUtil.prototype.getToken = function() {
-	return this._promisifyExec("snapweb.generate-token | awk '{ if(NR==3) print $0 }'", true);
+    return this._promisifyExec("snapweb.generate-token | awk '{ if(NR==3) print $0 }'", true);
 }
 
 sshSnapUtil.prototype.installSnap = function(name) {
-	return this._promisifyExec( 'snap install '+name, this.isSudoRequired);
+    return this._promisifyExec('snap install ' + name, this.isSudoRequired);
 }
 
 sshSnapUtil.prototype.removeSnap = function(name) {
-	return this._promisifyExec('snap remove '+name, this.isSudoRequired);
+    return this._promisifyExec('snap remove ' + name, this.isSudoRequired);
 }
 
 sshSnapUtil.prototype.snapVersion = function() {
-	return this._promisifyExec('snap version');
+    return this._promisifyExec('snap version');
 }

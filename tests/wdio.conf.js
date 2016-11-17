@@ -1,5 +1,5 @@
 exports.config = {
-    
+
     //
     // ==================
     // Specify Test Files
@@ -118,14 +118,14 @@ exports.config = {
     reporterOptions: {
         junit: {
             outputDir: './results/'
-           }
-	},
-    
+        }
+    },
+
     //
     // Options to be passed to Mocha.
     // See the full list at http://mochajs.org/
     mochaOpts: {
-	timeout: 60000,
+        timeout: 60000,
         ui: 'bdd'
     },
     //
@@ -143,11 +143,11 @@ exports.config = {
     //
     // Gets executed before test execution begins. At this point you can access all global
     // variables, such as `browser`. It is the perfect place to define custom commands.
-     before: function (capabilities, specs) {
-	var sshSnapUtil = require('./utils/ssh-snap-util');
+    before: function(capabilities, specs) {
+        var sshSnapUtil = require('./utils/ssh-snap-util');
         var env = process.env;
-	snaputil = new sshSnapUtil(env.HOST, env.USER, env.PORT, env.SSH_AUTH_SOCK, env.SUDO);
-     },
+        snaputil = new sshSnapUtil(env.HOST, env.USER, env.PORT, env.SSH_AUTH_SOCK, env.SUDO);
+    },
     //
     // Hook that gets executed before the suite starts
     // beforeSuite: function (suite) {
