@@ -21,14 +21,12 @@ cache:
   directories:
     - node_modules
 
-addons:
-  ssh_known_hosts: $host
-
 before_install:
   - openssl aes-256-cbc -K $encrypted_c8eb65763c19_key -iv $encrypted_c8eb65763c19_iv -in id_rsa_snapwebci.enc -out id_rsa_snapwebci -d
   - rm id_rsa_snapwebci.enc
   - chmod 600 id_rsa_snapwebci; mv id_rsa_snapwebci ~/.ssh/id_rsa
   - eval "$(ssh-agent)"; ssh-add ~/.ssh/id_rsa
+  - ssh-keyscan -t ecdsa $host 2>&1 | tee -a $HOME/.ssh/known_hosts
 
 install:
   - sudo apt remove -y chromium-browser
