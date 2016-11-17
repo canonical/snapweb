@@ -1,6 +1,9 @@
 // Import Vanilla Framework
 @import "vanilla-framework/scss/vanilla";
 
+// Include Vanilla Framework
+@include vanilla;
+
 // Import site specific styling
 @import "patterns_card";
 @import "patterns_card-deck";
@@ -9,9 +12,6 @@
 @import "patterns_search";
 @import "patterns_view-filters";
 @import "utilities_full-width";
-
-// Include Vanilla Framework
-@include vanilla;
 
 // Override default Vanilla variables
 $color-brand: #e95420;

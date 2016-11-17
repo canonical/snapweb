@@ -119,9 +119,10 @@ func (s *PackagePayloadSuite) TestPackage(c *C) {
 		InstalledSize: 18976651,
 		Name:          "chatroom",
 		Developer:     "ogra",
-		Status:        "installed",
+		Status:        "active",
 		Type:          "app",
 		Version:       "0.1-8",
+		Private:       false,
 	})
 }
 
@@ -144,7 +145,7 @@ func (s *PayloadSuite) TestPayload(c *C) {
 
 	c.Check(q.Name, Equals, fakeSnap.Name)
 	c.Check(q.Version, Equals, fakeSnap.Version)
-	c.Check(q.Status, Equals, statustracker.StatusInstalled)
+	c.Check(q.Status, Equals, statustracker.StatusActive)
 	c.Check(q.Type, Equals, snap.Type(fakeSnap.Type))
 	c.Check(q.Icon, Equals, "/icons/chatroom_icon.png")
 	c.Check(q.Description, Equals, fakeSnap.Description)

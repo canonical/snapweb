@@ -34,6 +34,8 @@ import (
 const (
 	// StatusInstalled indicates the package is in an installed state.
 	StatusInstalled = "installed"
+	// StatusActive indicates the package is in an installed but disabled state.
+	StatusActive = "active"
 	// StatusUninstalled indicates the package is in an uninstalled state.
 	StatusUninstalled = "uninstalled"
 	// StatusInstalling indicates the package is in an installing state.
@@ -113,8 +115,11 @@ func isInstalled(s *client.Snap) bool {
 
 // translate a status from the snappy world into one webdm understands
 func translateStatus(s *client.Snap) string {
-	if isInstalled(s) {
+	switch s.Status {
+	case client.StatusInstalled:
 		return StatusInstalled
+	case client.StatusActive:
+		return StatusActive
 	}
 
 	return StatusUninstalled

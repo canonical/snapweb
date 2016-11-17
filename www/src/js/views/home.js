@@ -8,15 +8,14 @@ module.exports = Backbone.Marionette.LayoutView.extend({
 
   className: 'b-layout__container',
 
-  template : function() {
-    return template();
+  template : function(model) {
+    return template(model);
   },
 
   onBeforeShow: function() {
     // TODO if collection empty use emptyView
     this.showChildView('installedRegion', new SnapListView({
       model: new Backbone.Model({
-        title: 'Installed snaps',
         isHomeActive: true,
         isGrid: true,
         isAlpha: true,

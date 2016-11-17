@@ -3,6 +3,7 @@ var Backbone = require('backbone');
 Backbone.$ = $;
 var Marionette = require('backbone.marionette');
 var Radio = require('backbone.radio');
+var Snap = require('../models/snap.js');
 var HomeLayoutView = require('../views/home.js');
 var Bask = require('../collections/snaplist.js');
 
@@ -16,11 +17,18 @@ module.exports = {
         'installed_only': true
       }),
       success: function(snaplist) {
+        var c = snaplist.all()
+
         var view = new HomeLayoutView({
-          collection: snaplist.installed()
+          model: new Backbone.Model({
+            title: 'Installed snaps',
+            isHomeActive: true,
+          }),
+          collection: c
         });
+
         chan.command('set:content', view);
       }
     });
-  }
+  },
 };

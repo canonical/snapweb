@@ -11,16 +11,28 @@ module.exports = {
     var chan = Radio.channel('root');
     var searchBask = new Bask();
 
+    // TODO impose the limit before the query
+    // not at display time
     searchBask.fetch({
       data: $.param({
         'q': q
       }),
       success: function(snaplist) {
+        var match = snaplist.where({'name': q})
+
+        snaplist = SnaplistTools.updateInstalledStates(snaplist)
         var view =  new SearchLayoutView({
           model: new Backbone.Model({
-            query: q
+            query: q,
+            title: 'Search results for "' + q  + '"',
+            isGrid: true,
+            isAlpha: true,
+            canSort: false,
+            canStyle: true,
+            isHomeActive: false,
           }),
-          collection: SnaplistTools.updateInstalledStates(snaplist)
+          collection: snaplist.length === 1 ? null : snaplist,
+          matchedSnap: match.length === 1 ? match[0] : null,
         });
         chan.command('set:content', view);
       }

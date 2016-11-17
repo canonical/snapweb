@@ -153,6 +153,27 @@ func handleDeviceInfo(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func handleSections(w http.ResponseWriter, r *http.Request) {
+	// Quick auth validation
+	if e := SimpleCookieCheckOrRedirect(w, r); e != nil {
+		return
+	}
+	c := newSnapdClient()
+
+	sections, err := c.GetSections()
+	if err != nil {
+		log.Println(fmt.Sprintf("handleSections: error retrieving sections info: %s", err))
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(sections); err != nil {
+		log.Println(fmt.Sprintf("handleSections: error serializing json: %s", err))
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+}
+
 type deviceAction struct {
 	ActionType string `json:"actionType"`
 }
@@ -209,6 +230,8 @@ func initURLHandlers(log *log.Logger) {
 	http.HandleFunc("/api/v2/validate-token", validateToken)
 
 	http.Handle("/api/v2/packages/", snappyHandler.MakeMuxer("/api/v2/packages"))
+
+	http.HandleFunc("/api/v2/sections", handleSections)
 
 	http.HandleFunc("/api/v2/time-info", handleTimeInfo)
 	http.HandleFunc("/api/v2/device-info", handleDeviceInfo)

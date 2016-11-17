@@ -36,6 +36,10 @@ var (
 	ErrIconNotExist = errors.New("the icon does not exist")
 )
 
+// TODO there is a lot of dup work there since
+// we do snapd requests everytime even for icons
+// that we got already (just to get the name, we should
+// locally cache it)
 func localIconPath(c SnapdClient, name string) (relativePath string, err error) {
 	dataPath, relativePath, err := IconDir()
 	if err != nil {
@@ -44,9 +48,10 @@ func localIconPath(c SnapdClient, name string) (relativePath string, err error) 
 
 	icon, err := c.Icon(name)
 	if err != nil {
-		return "", ErrIconNotExist
+		return err.Error(), ErrIconNotExist
 	}
 
+	// TODO escape names?
 	baseIcon := fmt.Sprintf("%s_%s", name, icon.Filename)
 
 	relativePath = filepath.Join(relativePath, baseIcon)
