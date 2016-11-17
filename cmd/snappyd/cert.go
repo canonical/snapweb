@@ -28,6 +28,7 @@ import (
 	"math/big"
 	"net"
 	"os"
+	"path/filepath"
 	"time"
 )
 
@@ -59,6 +60,16 @@ func pemBlockForKey(priv interface{}) *pem.Block {
 
 // GenerateCertificate will generate a new self-signed certifiate at startup
 func GenerateCertificate() {
+	certFilename := filepath.Join(os.Getenv("SNAP_DATA"), "cert.pem")
+	keyFilename := filepath.Join(os.Getenv("SNAP_DATA"), "key.pem")
+	_, err1 := os.Stat(certFilename)
+	_, err2 := os.Stat(keyFilename)
+
+	// skip if both cert and key exist
+	if err1 == nil && err2 == nil {
+		return
+	}
+
 	/* With help from https://golang.org/src/crypto/tls/generate_cert.go */
 
 	var priv interface{}
@@ -99,14 +110,14 @@ func GenerateCertificate() {
 		log.Fatalf("Failed to create certificate: %s", err)
 	}
 
-	certOut, err := os.Create("cert.pem")
+	certOut, err := os.Create(certFilename)
 	if err != nil {
 		log.Fatalf("failed to open cert.pem for writing: %s", err)
 	}
 	pem.Encode(certOut, &pem.Block{Type: "CERTIFICATE", Bytes: derBytes})
 	certOut.Close()
 
-	keyOut, err := os.OpenFile("key.pem", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
+	keyOut, err := os.OpenFile(keyFilename, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
 	if err != nil {
 		log.Fatal("failed to open key.pem for writing:", err)
 	}

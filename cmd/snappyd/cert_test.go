@@ -39,8 +39,18 @@ func (s *CertSuite) TestGenerate(c *C) {
 	c.Assert(ioutil.WriteFile(keyFile, nil, 0600), IsNil)
 
 	GenerateCertificate()
-	_, err := ioutil.ReadFile(certFile)
+	certData, err := ioutil.ReadFile(certFile)
 	c.Assert(err, IsNil)
-	_, err = ioutil.ReadFile(keyFile)
+	keyData, err := ioutil.ReadFile(keyFile)
 	c.Assert(err, IsNil)
+
+	GenerateCertificate()
+	certData2, err := ioutil.ReadFile(certFile)
+	c.Assert(err, IsNil)
+	keyData2, err := ioutil.ReadFile(keyFile)
+	c.Assert(err, IsNil)
+
+	// ensure the certificate is not re-generated if one already exists
+	c.Assert(certData, DeepEquals, certData2)
+	c.Assert(keyData, DeepEquals, keyData2)
 }
