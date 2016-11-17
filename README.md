@@ -40,6 +40,14 @@ Install:
     cd $GOPATH/src/launchpad.net/webdm
     ./build.sh
 
+Important Note: to have a functional store front-end, you need to patch
+github.com/ubuntu-core/snappy/release/release.go
+ // Setup is used to initialiaze the release information for the system
+ func Setup(rootDir string) error {
+-       rel = Release{Flavor: "core", Series: "rolling", Channel: "edge"}
++       rel = Release{Flavor: "core", Series: "15.04", Channel: "edge"}
+
+
 # Installing
 
 Once you have a click package you can install it onto a remote snappy system
