@@ -44,3 +44,13 @@ hr {
   border-top: 1px solid $color-mid-light;
   margin: 2rem 0;
 }
+
+// Snaplist
+.region-snaplist {
+
+    h2 {
+        border-bottom: 1px solid $color-mid-light;
+        padding-bottom: 1rem;
+        width: 100%;
+    }
+}
