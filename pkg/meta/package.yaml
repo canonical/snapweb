@@ -2,9 +2,8 @@ name: webdm
 vendor: Sergio Schvezov <sergio.schvezov@canonical.com>
 icon: meta/webdm-icon.png
 source: lp:webdm
-type: framework
 version: 0.11.1
-architecture: UNKNOWN_ARCH
+architectures: [amd64,armhf]
 services:
     - name: snappyd
       start: snappyd
