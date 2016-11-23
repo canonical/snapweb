@@ -15,13 +15,7 @@ module.exports = Backbone.Marionette.LayoutView.extend({
   onBeforeShow: function() {
     // TODO if collection empty use emptyView
     this.showChildView('installedRegion', new SnapListView({
-      model: new Backbone.Model({
-        isHomeActive: true,
-        isGrid: true,
-        isAlpha: true,
-        canSort: false,
-        canStyle: false
-      }),
+      model: this.model,
       collection: this.collection
     }));
   },
