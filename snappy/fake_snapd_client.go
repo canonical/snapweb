@@ -116,4 +116,8 @@ func (f *FakeSnapdClient) GetSections() ([]string, error) {
 	return nil, nil
 }
 
+func (f *FakeSnapdClient) FindOne(name string) (*client.Snap, *client.ResultInfo, error) {
+	return nil, nil, nil
+}
+
 var _ SnapdClient = (*FakeSnapdClient)(nil)
