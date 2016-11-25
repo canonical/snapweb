@@ -34,8 +34,8 @@ var timesyncdConfigurationFilePath = "/etc/systemd/timesyncd.conf"
 type SnapdClient interface {
 	Icon(name string) (*client.Icon, error)
 	Snap(name string) (*client.Snap, *client.ResultInfo, error)
-	List(names []string) ([]*client.Snap, error)
-	GetSections() ([]string, error)
+	List(names []string, opts *client.ListOptions) ([]*client.Snap, error)
+	Sections() ([]string, error)
 	Find(opts *client.FindOptions) ([]*client.Snap, *client.ResultInfo, error)
 	Install(name string, options *client.SnapOptions) (string, error)
 	Remove(name string, options *client.SnapOptions) (string, error)
@@ -70,8 +70,8 @@ func (a *ClientAdapter) Snap(name string) (*client.Snap, *client.ResultInfo, err
 
 // List returns the list of all snaps installed on the system
 // with names in the given list; if the list is empty, all snaps.
-func (a *ClientAdapter) List(names []string) ([]*client.Snap, error) {
-	return a.snapdClient.List(names)
+func (a *ClientAdapter) List(names []string, opts *client.ListOptions) ([]*client.Snap, error) {
+	return a.snapdClient.List(names, opts)
 }
 
 // Find returns a list of snaps available for install from the
@@ -106,10 +106,9 @@ func (a *ClientAdapter) Known(assertTypeName string, headers map[string]string) 
 	return a.snapdClient.Known(assertTypeName, headers)
 }
 
-// GetSections returns the list of available sections
-func (a *ClientAdapter) GetSections() ([]string, error) {
-	return make([]string, 0), nil
-	//	return a.snapdClient.GetSections()
+// Sections returns the list of available sections
+func (a *ClientAdapter) Sections() ([]string, error) {
+	return a.snapdClient.Sections()
 }
 
 // internal
