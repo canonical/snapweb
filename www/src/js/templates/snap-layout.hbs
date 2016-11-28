@@ -6,11 +6,48 @@
   </div>
   <div class="col-6">
     <h1 class="b-snap__title">{{ name }}</h1>
-    <div class="b-snap__developer">{{ developer }}</div>
+    <div class="b-snap__developer">By {{ developer }}</div>
   </div>
-  <div class="col-4">
+</div>
+
+<div class="row">
+  <div class="col-2" style="float: right: width">
     {{> installer}}
   </div>
+</div>
+
+
+<div class="row">
+
+  <div class="row">
+    <div class="col-2">
+      Category
+    </div>
+    <div class="col-6">
+      <div class="b-snap__category">{{ category }}</div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-2">
+      Size
+    </div>
+    <div class="col-6">
+      <div class="b-snap__size">{{ size }}</div>
+    </div>
+  </div>
+
+  <div class="col-9">
+    Interfaces
+    <div>
+      <ul>
+        <li>
+          API
+        </li>
+      </ul>
+    </div>
+  </div>
+
 </div>
 
 <div class="row">
