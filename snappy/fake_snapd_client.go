@@ -34,6 +34,7 @@ type FakeSnapdClient struct {
 	Installed       string
 	Removed         string
 	CrUser          client.CreateUserResult
+	Name            string
 }
 
 // Icon returns the icon of an installed snap
@@ -116,8 +117,17 @@ func (f *FakeSnapdClient) GetSections() ([]string, error) {
 	return nil, nil
 }
 
+// FindOne returns a list of snaps available for install from the
+// store for this system and that match the query
 func (f *FakeSnapdClient) FindOne(name string) (*client.Snap, *client.ResultInfo, error) {
-	return nil, nil, nil
+	f.Name = name
+
+	for _, v := range f.StoreSnaps {
+		if v.Name == name {
+			return v, nil, nil
+		}
+	}
+	return nil, nil, f.StoreErr
 }
 
 var _ SnapdClient = (*FakeSnapdClient)(nil)
