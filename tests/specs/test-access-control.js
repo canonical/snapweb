@@ -2,6 +2,7 @@ var assert = require('chai').assert;
 var expect = require('chai').expect;
 
 accessControlPage = require("../pageobjects/access-control-page");
+homePage = require("../pageobjects/installed-snaps-page");
 
 describe('Access Control Page - Verify that', function() {
 
@@ -56,9 +57,9 @@ describe('Access Control Page - Verify that', function() {
 
         });
         accessControlPage.submit_token(valid_token);
-        loginpage = browser.element('h2=Installed snaps');
-        loginpage.waitForVisible();
-        expect(loginpage.getText(), "Login Failed with valid token").to.contain('Installed snaps');
+        var snaplist = homePage.installedsnaps;
+        snaplist.waitForVisible();
+        assert.isNotNull(snaplist);
 
     });
 
@@ -79,9 +80,9 @@ describe('Access Control Page - Verify that', function() {
             });
         });
         accessControlPage.submit_token(valid_token);
-        loginpage = browser.element('h2=Installed snaps');
-        loginpage.waitForVisible();
-        expect(loginpage.getText(), "Login Failed with valid token").to.contain('Installed snaps');
+        var snaplist = homePage.installedsnaps;
+        snaplist.waitForVisible();
+        assert.isNotNull(snaplist);
         cookie = browser.getCookie('SM');
         browser.reload();
         browser.url('/');
@@ -89,9 +90,9 @@ describe('Access Control Page - Verify that', function() {
         assert.equal(title, 'Snapweb');
         browser.setCookie(cookie);
         browser.url('/');
-        loginpage = browser.element('h2=Installed snaps');
-        loginpage.waitForVisible();
-        expect(loginpage.getText(), "Login Failed with valid token").to.contain('Installed snaps');
+        var snaplist = homePage.installedsnaps;
+        snaplist.waitForVisible();
+        assert.isNotNull(snaplist);
 
     });
 
@@ -104,9 +105,9 @@ describe('Access Control Page - Verify that', function() {
             });
         });
         accessControlPage.submit_token(valid_token);
-        loginpage = browser.element('h2=Installed snaps');
-        loginpage.waitForVisible();
-        expect(loginpage.getText(), "Login Failed with valid token").to.contain('Installed snaps');
+        var snaplist = homePage.installedsnaps;
+        snaplist.waitForVisible();
+        assert.isNotNull(snaplist);
         cookie = browser.getCookie('SM');
         browser.call(function() {
             return snaputil.getToken().then(function(res) {

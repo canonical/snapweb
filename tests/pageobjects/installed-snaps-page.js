@@ -59,7 +59,7 @@ var installedSnapsPage = Object.create(basepage, {
                 });
             });
             acPage.submit_token(valid_token);
-            loginpage = browser.element('h2=Installed snaps');
+            loginpage = browser.element(".p-card h3.js-snap-title");
             loginpage.waitForVisible();
         }
     },
