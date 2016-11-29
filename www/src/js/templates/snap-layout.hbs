@@ -11,33 +11,34 @@
 </div>
 
 <div class="row">
-  <div class="col-2" style="float: right: width">
+  <div class="col-2" style="float: right">
     {{> installer}}
   </div>
 </div>
 
-
 <div class="row">
 
-  <div class="row">
-    <div class="col-2">
-      Category
+  <div class="col-7">
+    <div class="row">
+      <div class="col-7">
+        Size
+      </div>
+      <div class="col-5">
+        <div class="b-snap__size">{{ size }}</div>
+      </div>
     </div>
-    <div class="col-6">
-      <div class="b-snap__category">{{ category }}</div>
+    
+    <div class="row">
+      <div class="col-7">
+        Version
+      </div>
+      <div class="col-5">
+        <div class="b-snap__version">{{ version }}</div>
+      </div>
     </div>
   </div>
 
-  <div class="row">
-    <div class="col-2">
-      Size
-    </div>
-    <div class="col-6">
-      <div class="b-snap__size">{{ size }}</div>
-    </div>
-  </div>
-
-  <div class="col-9">
+  <div class="col-5">
     Interfaces
     <div>
       <ul>
@@ -47,7 +48,7 @@
       </ul>
     </div>
   </div>
-
+  
 </div>
 
 <div class="row">
