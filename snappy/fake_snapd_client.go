@@ -30,6 +30,7 @@ type FakeSnapdClient struct {
 	StoreErr        error
 	CalledListSnaps bool
 	Query           string
+	FindOptions     *client.FindOptions
 	Version         client.ServerVersion
 	Installed       string
 	Removed         string
@@ -63,6 +64,7 @@ func (f *FakeSnapdClient) List(names []string) ([]*client.Snap, error) {
 // Find returns the results of searching for snaps with the given options
 func (f *FakeSnapdClient) Find(opts *client.FindOptions) ([]*client.Snap, *client.ResultInfo, error) {
 	f.Query = opts.Query
+	f.FindOptions = opts
 
 	return f.StoreSnaps, nil, f.StoreErr
 }

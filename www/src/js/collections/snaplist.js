@@ -13,11 +13,6 @@ module.exports = Backbone.Collection.extend({
       this.where({status: 'installed'})
           .slice(0, this.limits.installedSnapListMaxItems))
   },
-  private: function() {
-    return new this.constructor(
-      this.where({private: true})
-          .slice(0, this.limits.installedSnapListMaxItems))
-  },
   all: function() {
     return new this.constructor(
       this.slice(0, this.limits.installedSnapListMaxItems));

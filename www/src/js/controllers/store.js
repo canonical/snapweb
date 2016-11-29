@@ -44,7 +44,7 @@ module.exports = {
     // per se but a specificity of a snap
     if (s === 'private') {
       $.when(
-        storeSnaplist.fetch()
+        storeSnaplist.fetch({data: $.param({'private_snaps': true})})
       ).then(function() {
         var view =  new StoreLayoutView({
           model: new Backbone.Model({
@@ -57,7 +57,7 @@ module.exports = {
             isHomeActive: false,
             sections: sections
           }),
-          collection: storeSnaplist.private()
+          collection: storeSnaplist.all()
         });
 
         chan.command('set:content', view);
