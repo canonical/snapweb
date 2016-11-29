@@ -52,27 +52,27 @@ describe('Installed Snaps Page - Verify that', function() {
     it('clicking store link takes the user to store', function() {
 
         snapsPage.store.click();
-        storepage = browser.element('h2=Available snaps')
+        storepage = browser.element('h2=Featured snaps')
         storepage.waitForVisible();
-        expect(storepage.getText(), "Failed to load store page").to.contain('Available snaps');
+        expect(storepage.getText(), "Failed to load store page").to.contain('Featured snaps');
 
     });
 
     it('Browse store button takes the user to store', function() {
 
         snapsPage.browsestore.click();
-        storepage = browser.element('h2=Available snaps')
+        storepage = browser.element('h2=Featured snaps')
         storepage.waitForVisible();
-        expect(storepage.getText(), "Failed to load store page").to.contain('Available snaps');
+        expect(storepage.getText(), "Failed to load store page").to.contain('Featured snaps');
 
     });
 
     it('Add more snaps button takes the user to store', function() {
 
         snapsPage.addmoresnaps.click();
-        storepage = browser.element('h2=Available snaps')
+        storepage = browser.element('h2=Featured snaps')
         storepage.waitForVisible();
-        expect(storepage.getText(), "Failed to load store page").to.contain('Available snaps');
+        expect(storepage.getText(), "Failed to load store page").to.contain('Featured snaps');
 
     });
 
