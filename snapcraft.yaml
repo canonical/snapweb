@@ -26,12 +26,11 @@ apps:
 
 parts:
   snapweb:
-    plugin: go
-    source: https://github.com/snapcore/snapweb
-    source-type: git
+    plugin: godeps
+    source: .
     go-importpath: github.com/snapcore/snapweb
     build-packages: [gcc]
   snapweb-ui:
     plugin: gulp
     gulp-tasks: ['install']
-    source: .
+    source: www/src
