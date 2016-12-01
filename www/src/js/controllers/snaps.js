@@ -11,25 +11,27 @@ var SnapTools = require('../common/snaps.js')
 var snapChannel = Radio.channel('snap');
 var rootChannel = Radio.channel('root');
 
+var collectionFromInterfaces = function(interfaces) {
+  return new Backbone.Collection(
+      _.map(interfaces ? interfaces : [], function(v) { return {id: val} })
+  )
+};
+
 module.exports = {
   snap: function(id) {
     var snap = new Snap({id: id});
     var deviceInfo = new DeviceInfo();
 
-   $.when(
-         snap.fetch(),
-         deviceInfo.fetch()
-       ).then(function() {
-         var view =  new SnapLayoutView({
-           model: snap,
-           collection: new Backbone.Collection(
-               _.map(deviceInfo.interfaces
-                     , function(v) { return {id: val})
-                    )
-           )
-         });
-         rootChannel.command('set:content', view);
-       });
+    $.when(
+      snap.fetch(),
+      deviceInfo.fetch()
+    ).then(function() {
+      var view =  new SnapLayoutView({
+        model: snap,
+        collection: collectionFromInterfaces(deviceInfo.interfaces)
+      });
+      rootChannel.command('set:content', view);
+    });
   }
 };
 
@@ -43,7 +45,8 @@ snapChannel.comply('show', function(model) {
     }
     var url = 'snap/' + name;
     var view =  new SnapLayoutView({
-      model: snapModel
+      model: snapModel,
+      collection: collectionFromInterfaces(interfaces)
     });
     rootChannel.command('set:content', view);
     Backbone.history.navigate(url);
@@ -51,10 +54,11 @@ snapChannel.comply('show', function(model) {
 
   deviceInfo.fetch({
     success: function(di) {
-        c(di)
+      c(di);
     },
     error: function() {
-      console.log('Could not retrieve interfaces for snap details')
+      console.log('Could not retrieve interfaces for snap details');
+      c([]);
     }
   });
 });

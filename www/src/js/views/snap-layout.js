@@ -9,20 +9,12 @@ var CONF = require('../config.js');
 
 Handlebars.registerPartial('installer', require('../templates/_installer.hbs'));
 
+var SnapInterfacesView = Marionette.View.extend({
+  tagName: 'li',
+  template: '#interface-list'
+});
+
 module.exports = Marionette.LayoutView.extend({
-  initialize: function() {
-  },
-
-  behaviors: {
-    InstallBehavior: {
-      behaviorClass: InstallBehavior
-    }
-  },
-
-  onShow: function() {
-    window.scrollTo(0, 0);
-  },
-
   className: 'b-snap',
 
   template: function(model) {
@@ -33,5 +25,25 @@ module.exports = Marionette.LayoutView.extend({
      * mode.size_human = prettyBytes(model.size)
     **/
     return template(model);
-  }
+  },
+
+  behaviors: {
+    InstallBehavior: {
+      behaviorClass: InstallBehavior
+    }
+  },
+
+  onBeforeShow: function() {
+    this.showChildView('interfacesRegion', new SnapInterfacesView({
+      collection: this.collection
+    }));
+  },
+
+  onShow: function() {
+    window.scrollTo(0, 0);
+  },
+
+  regions: {
+    interfacesRegion: '.interfaces',
+  },
 });
