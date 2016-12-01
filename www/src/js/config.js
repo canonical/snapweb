@@ -1,10 +1,12 @@
 module.exports = {
   PACKAGES: '/api/v2/packages/',
+  LOCAL_SNAPS: '/api/v2/snaps/',
   TIME_INFO: '/api/v2/time-info',
   CREATE_USER: '/api/v2/create-user',
   SECTIONS: '/api/v2/sections',
   DEVICE_INFO: '/api/v2/device-info',
   DEVICE_ACTION: '/api/v2/device-action',
+  NOTIFICATION_INFO: '/api/v2/snaps/?updatable_only=true',
   FILTERED_SNAPS: [
     'snapweb',
     'ubuntu-core'

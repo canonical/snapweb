@@ -26,6 +26,7 @@ import (
 type FakeSnapdClient struct {
 	Snaps           []*client.Snap
 	StoreSnaps      []*client.Snap
+	UpdatableSnaps  []*client.Snap
 	Err             error
 	StoreErr        error
 	CalledListSnaps bool
@@ -64,6 +65,10 @@ func (f *FakeSnapdClient) List(names []string) ([]*client.Snap, error) {
 func (f *FakeSnapdClient) Find(opts *client.FindOptions) ([]*client.Snap, *client.ResultInfo, error) {
 	f.Query = opts.Query
 
+	if opts.Refresh {
+		return f.UpdatableSnaps, nil, f.StoreErr
+	}
+
 	return f.StoreSnaps, nil, f.StoreErr
 }
 
@@ -71,6 +76,12 @@ func (f *FakeSnapdClient) Find(opts *client.FindOptions) ([]*client.Snap, *clien
 func (f *FakeSnapdClient) Install(name string, options *client.SnapOptions) (string, error) {
 	f.Installed = name
 
+	return "", nil
+}
+
+// Refresh refreshes the snap with the given name (switching it to track
+// the given channel if given).
+func (f *FakeSnapdClient) Refresh(name string, options *client.SnapOptions) (string, error) {
 	return "", nil
 }
 
@@ -89,11 +100,6 @@ func (f *FakeSnapdClient) ServerVersion() (*client.ServerVersion, error) {
 // SetCoreConfig sets some aspect of core configuration
 func (f *FakeSnapdClient) SetCoreConfig(patch map[string]interface{}) (string, error) {
 	return "", nil
-}
-
-// GetCoreConfig gets some aspect of core configuration
-func (f *FakeSnapdClient) GetCoreConfig(keys []string) (map[string]interface{}, error) {
-	return nil, nil
 }
 
 // CreateUser creates a local user on the system
