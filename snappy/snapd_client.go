@@ -37,6 +37,7 @@ type SnapdClient interface {
 	List(names []string, opts *client.ListOptions) ([]*client.Snap, error)
 	Sections() ([]string, error)
 	Find(opts *client.FindOptions) ([]*client.Snap, *client.ResultInfo, error)
+	FindOne(name string) (*client.Snap, *client.ResultInfo, error)
 	Install(name string, options *client.SnapOptions) (string, error)
 	Remove(name string, options *client.SnapOptions) (string, error)
 	ServerVersion() (*client.ServerVersion, error)
@@ -104,6 +105,12 @@ func (a *ClientAdapter) Interfaces() (client.Interfaces, error) {
 // Known queries assertions with type assertTypeName and matching assertion headers.
 func (a *ClientAdapter) Known(assertTypeName string, headers map[string]string) ([]asserts.Assertion, error) {
 	return a.snapdClient.Known(assertTypeName, headers)
+}
+
+// FindOne returns a list of snaps available for install from the
+// store for this system and that match the query
+func (a *ClientAdapter) FindOne(name string) (*client.Snap, *client.ResultInfo, error) {
+	return a.snapdClient.FindOne(name)
 }
 
 // Sections returns the list of available sections
