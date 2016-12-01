@@ -10,6 +10,8 @@ var CONF = require('../config.js');
 Handlebars.registerPartial('installer', require('../templates/_installer.hbs'));
 
 module.exports = Marionette.LayoutView.extend({
+  initialize: function() {
+  },
 
   behaviors: {
     InstallBehavior: {

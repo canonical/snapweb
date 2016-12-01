@@ -31,7 +31,6 @@ import (
 const (
 	installedSnaps = iota
 	availableSnaps
-	featuredSnaps
 )
 
 type snapPkg struct {
@@ -49,6 +48,7 @@ type snapPkg struct {
 	DownloadSize  int64     `json:"download_size,omitempty"`
 	Type          snap.Type `json:"type,omitempty"`
 	Private       bool      `json:"private"`
+	Channel       string    `json:"private"`
 }
 
 type response struct {
@@ -156,6 +156,8 @@ func (h *Handler) snapToPayload(snapQ *client.Snap) snapPkg {
 		Status:      h.statusTracker.Status(snapQ),
 		Price:       "", // TODO: get snap price
 		Private:     snapQ.Private,
+		Channel:     snapQ.Channel,
+		InstallDate: snapQ.InstallDate,
 	}
 
 	isInstalled := snapQ.Status == client.StatusInstalled || snapQ.Status == client.StatusActive
