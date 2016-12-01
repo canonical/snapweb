@@ -55,7 +55,7 @@ func (f *FakeSnapdClient) Snap(name string) (*client.Snap, *client.ResultInfo, e
 }
 
 // List lists the installed snaps
-func (f *FakeSnapdClient) List(names []string) ([]*client.Snap, error) {
+func (f *FakeSnapdClient) List(names []string, opts *client.ListOptions) ([]*client.Snap, error) {
 	f.CalledListSnaps = true
 
 	return f.Snaps, f.Err
@@ -112,8 +112,8 @@ func (f *FakeSnapdClient) Known(assertTypeName string, headers map[string]string
 	return nil, nil
 }
 
-// GetSections returns the list of existing sections in the store.
-func (f *FakeSnapdClient) GetSections() ([]string, error) {
+// Sections returns the list of existing sections in the store.
+func (f *FakeSnapdClient) Sections() ([]string, error) {
 	return nil, nil
 }
 

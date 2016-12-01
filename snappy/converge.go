@@ -88,7 +88,7 @@ func (h *Handler) allPackages(snapCondition int, query string) ([]snapPkg, error
 	var err error
 
 	if snapCondition == installedSnaps {
-		snaps, err = h.snapdClient.List(nil)
+		snaps, err = h.snapdClient.List(nil, nil)
 	} else {
 		// TODO escape (or trim?) regexp meta chars
 		// regexp.QuoteMeta, check snapd to see what
