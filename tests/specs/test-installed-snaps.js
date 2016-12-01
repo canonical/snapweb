@@ -53,7 +53,7 @@ describe('Installed Snaps Page - Verify that', function() {
 
         snapsPage.store.click();
         storepage = browser.element('h2=Featured snaps')
-        storepage.waitForVisible();
+        storepage.waitForVisible(20000);
         expect(storepage.getText(), "Failed to load store page").to.contain('Featured snaps');
 
     });
@@ -62,7 +62,7 @@ describe('Installed Snaps Page - Verify that', function() {
 
         snapsPage.browsestore.click();
         storepage = browser.element('h2=Featured snaps')
-        storepage.waitForVisible();
+        storepage.waitForVisible(20000);
         expect(storepage.getText(), "Failed to load store page").to.contain('Featured snaps');
 
     });
@@ -71,7 +71,7 @@ describe('Installed Snaps Page - Verify that', function() {
 
         snapsPage.addmoresnaps.click();
         storepage = browser.element('h2=Featured snaps')
-        storepage.waitForVisible();
+        storepage.waitForVisible(20000);
         expect(storepage.getText(), "Failed to load store page").to.contain('Featured snaps');
 
     });
