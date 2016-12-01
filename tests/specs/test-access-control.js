@@ -57,10 +57,10 @@ describe('Access Control Page - Verify that', function() {
 
         });
         accessControlPage.submit_token(valid_token);
-        var snaplist = homePage.installedsnaps;
+        var snaplist = homePage.snaplistElement;
         snaplist.waitForVisible();
         assert.isNotNull(snaplist);
-
+        expect(snaplist, "Could not reach the home page").not.to.be.empty;
     });
 
     it('until not authenticated, store link will return to access-control page', function() {
@@ -80,9 +80,9 @@ describe('Access Control Page - Verify that', function() {
             });
         });
         accessControlPage.submit_token(valid_token);
-        var snaplist = homePage.installedsnaps;
+        var snaplist = homePage.snaplistElement;
         snaplist.waitForVisible();
-        assert.isNotNull(snaplist);
+        expect(snaplist).to.not.be.empty;
         cookie = browser.getCookie('SM');
         browser.reload();
         browser.url('/');
@@ -90,9 +90,9 @@ describe('Access Control Page - Verify that', function() {
         assert.equal(title, 'Snapweb');
         browser.setCookie(cookie);
         browser.url('/');
-        var snaplist = homePage.installedsnaps;
+        var snaplist = homePage.snaplistElement;
         snaplist.waitForVisible();
-        assert.isNotNull(snaplist);
+        expect(snaplist).to.not.be.empty;
 
     });
 
@@ -105,9 +105,9 @@ describe('Access Control Page - Verify that', function() {
             });
         });
         accessControlPage.submit_token(valid_token);
-        var snaplist = homePage.installedsnaps;
+        var snaplist = homePage.snaplistElement;
         snaplist.waitForVisible();
-        assert.isNotNull(snaplist);
+        expect(snaplist).to.not.be.empty;
         cookie = browser.getCookie('SM');
         browser.call(function() {
             return snaputil.getToken().then(function(res) {

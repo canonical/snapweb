@@ -45,6 +45,11 @@ var installedSnapsPage = Object.create(basepage, {
             return browser.elements(".p-card h3.js-snap-title");
         }
     },
+    snaplistElement: {
+        get: function() {
+            return browser.element("#js-snaplist");
+        }
+    },
     /**
      * define or overwrite page methods
      */
@@ -59,7 +64,7 @@ var installedSnapsPage = Object.create(basepage, {
                 });
             });
             acPage.submit_token(valid_token);
-            loginpage = browser.element(".p-card h3.js-snap-title");
+            loginpage = browser.element(".region-installed");
             loginpage.waitForVisible();
         }
     },
