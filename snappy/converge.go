@@ -83,7 +83,7 @@ func (h *Handler) packagePayload(name string) (snapPkg, error) {
 	return h.snapToPayload(snap), nil
 }
 
-func (h *Handler) allPackages(snapCondition int, query string) ([]snapPkg, error) {
+func (h *Handler) allPackages(snapCondition int, query string, private bool) ([]snapPkg, error) {
 	var snaps []*client.Snap
 	var err error
 
@@ -93,7 +93,7 @@ func (h *Handler) allPackages(snapCondition int, query string) ([]snapPkg, error
 		// TODO escape (or trim?) regexp meta chars
 		// regexp.QuoteMeta, check snapd to see what
 		// it does expect
-		opts := &client.FindOptions{Query: query, Prefix: true}
+		opts := &client.FindOptions{Query: query, Prefix: !private, Private: private}
 		snaps, _, err = h.snapdClient.Find(opts)
 	}
 
