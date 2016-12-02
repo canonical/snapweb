@@ -7,9 +7,13 @@
       </div>
       <div class="col-6">
         <h1 class="b-snap__title">{{ name }}</h1>
-        <div class="b-snap__developer">{{ developer }}</div>
+        <div class="b-snap__developer">By {{ developer }}</div>
       </div>
-      <div class="col-4">
+    </div>
+
+    <div class="row">
+      <div class="col-7"></div>
+      <div class="col-5 u-float--right">
         {{> installer}}
       </div>
     </div>
@@ -18,39 +22,41 @@
 <div class="row">
 
   <div class="col-7">
-    <div class="row">
-      <div class="col-7">
+
+    <ul class="p-list--divided" style="margin-right: 3em">
+
+      <li class="p-list__item">
         Size
-      </div>
-      <div class="col-5">
-        <div class="b-snap__size">{{ size }}</div>
-      </div>
-    </div>
-    
-    <div class="row">
-      <div class="col-7">
-        Version
-      </div>
-      <div class="col-5">
-        <div class="b-snap__version">{{ version }}</div>
-      </div>
+        <span class="b-snap__size u-float--right">{{ size }}</span>
+      </li>
+
+      <li class="p-list__item">
+          Version
+          <span class="b-snap__version u-float--right">{{ version }}</span>
+      </li>
+
+      <li class="p-list__item">
+          Channel
+          <span class="b-snap__version u-float--right">{{ channel }}</span>
+      </li>
+
+      <li class="p-list__item">
+          Updated
+          <span class="b-snap__version u-float--right">{{ install_date }}</span>
+      </li>
+    </ul>
+
+  </div>
+
+  <div class="col-5" style="border: 1px dotted #cdcdcd; padding: 1em 1em; height: 15em; overflow-x: hidden; overflow-y: scroll;">
+    <h3 class="">Interfaces</h3>
+    <div id="interface-list">
     </div>
   </div>
 
-  <div class="col-5">
-    Interfaces
-    <div>
-      <ul>
-        <li>
-          API
-        </li>
-      </ul>
-    </div>
-  </div>
-  
 </div>
 
-<div class="row">
+<div class="row" style="padding-bottom: 3em">
   <div class="col-8">
     <h3>About</h3>
       {{#if description}}

@@ -32,8 +32,6 @@ import (
 	"strings"
 	"text/template"
 
-	// "github.com/snapcore/snapd/dirs"
-
 	// most other handlers use the ClientAdapter for now
 	"github.com/snapcore/snapweb/snappy"
 )

@@ -9,18 +9,17 @@ var CONF = require('../config.js');
 
 Handlebars.registerPartial('installer', require('../templates/_installer.hbs'));
 
+var SnapInterfaceListItemView = Marionette.ItemView.extend({
+  tagName: 'li',
+  template: _.template('<%= name %>'),
+});
+
+var SnapInterfaceCollectionView = Marionette.CollectionView.extend({
+  childView: SnapInterfaceListItemView,
+  tagName: 'ul',
+});
+
 module.exports = Marionette.LayoutView.extend({
-
-  behaviors: {
-    InstallBehavior: {
-      behaviorClass: InstallBehavior
-    }
-  },
-
-  onShow: function() {
-    window.scrollTo(0, 0);
-  },
-
   className: 'b-snap',
 
   template: function(model) {
@@ -31,5 +30,29 @@ module.exports = Marionette.LayoutView.extend({
      * mode.size_human = prettyBytes(model.size)
     **/
     return template(model);
-  }
+  },
+
+  behaviors: {
+    InstallBehavior: {
+      behaviorClass: InstallBehavior
+    }
+  },
+
+  onBeforeShow: function() {
+    this.showChildView(
+        'interfacesRegion',
+        new SnapInterfaceCollectionView({
+          model: this.model,
+          collection: this.collection
+        })
+    );
+  },
+
+  onShow: function() {
+    window.scrollTo(0, 0);
+  },
+
+  regions: {
+    interfacesRegion: '#interface-list',
+  },
 });
