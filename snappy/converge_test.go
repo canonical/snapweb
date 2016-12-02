@@ -178,7 +178,7 @@ func (s *AllPackagesSuite) SetUpTest(c *C) {
 func (s *AllPackagesSuite) TestNoSnaps(c *C) {
 	s.c.StoreErr = errors.New("snaps could not be filtered")
 
-	snaps, err := s.h.allPackages(availableSnaps, "", false)
+	snaps, err := s.h.allPackages(availableSnaps, "", false, "")
 	c.Assert(snaps, IsNil)
 	c.Assert(err, NotNil)
 }
@@ -186,7 +186,7 @@ func (s *AllPackagesSuite) TestNoSnaps(c *C) {
 func (s *AllPackagesSuite) TestPrivateSnaps(c *C) {
 	s.c.StoreSnaps = []*client.Snap{}
 
-	_, err := s.h.allPackages(availableSnaps, "", true)
+	_, err := s.h.allPackages(availableSnaps, "", true, "")
 	c.Assert(err, IsNil)
 	c.Check(s.c.FindOptions.Private, Equals, true)
 }
@@ -197,7 +197,7 @@ func (s *AllPackagesSuite) TestHasSnaps(c *C) {
 		newSnap("app1"),
 	}
 
-	snaps, err := s.h.allPackages(availableSnaps, "", false)
+	snaps, err := s.h.allPackages(availableSnaps, "", false, "")
 	c.Assert(err, IsNil)
 	c.Assert(snaps, HasLen, 2)
 	c.Assert(snaps[0].Name, Equals, "app1")
