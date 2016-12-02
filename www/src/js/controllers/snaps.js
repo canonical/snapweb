@@ -20,6 +20,17 @@ var collectionFromInterfaces = function(interfaces) {
   return new Backbone.Collection(c)
 };
 
+var byteSizeToString = function(s) {
+  var suffixes = ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB'];
+  for (i in suffixes) {
+    if (s < 1000) {
+      return s.toFixed(2) + suffixes[i];
+    }
+    s /= 1000;
+  }
+  return s;
+}
+
 module.exports = {
   snap: function(id) {
     var snap = new Snap({id: id});
@@ -29,6 +40,9 @@ module.exports = {
       snap.fetch(),
       deviceInfo.fetch()
     ).then(function() {
+      // TODO remove size hack (to deal w/ installed vs store snap)
+      var size = snap.get('installed_size') || snap.get('download_size')
+      snap.set('size', byteSizeToString(parseInt(size)))
       var view =  new SnapLayoutView({
         model: snap,
         collection: collectionFromInterfaces(deviceInfo.get('interfaces'))
