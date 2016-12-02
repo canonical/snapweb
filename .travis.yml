@@ -2,7 +2,7 @@ sudo: required
 dist: trusty
 language: go
 go:
-  - 1.5
+  - 1.6
 services: docker
 
 env:
@@ -14,7 +14,7 @@ env:
 matrix:
   include:
     - env: BUILD=1
-      go: 1.5
+      go: 1.6
       cache: false
 
 cache:
