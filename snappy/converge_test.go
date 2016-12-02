@@ -45,7 +45,7 @@ func (s *GetSnapSuite) TestSnapDoesNotExist(c *C) {
 	s.c.StoreErr = errors.New("the snap could not be retrieved from the store")
 
 	_, err := s.h.getSnap("chatroom")
-	c.Assert(s.c.Query, Equals, "chatroom")
+	c.Assert(s.c.Name, Equals, "chatroom")
 	c.Assert(err, NotNil)
 }
 
@@ -55,7 +55,7 @@ func (s *GetSnapSuite) TestSnapDoesNotExistButStoreHasEmptyResults(c *C) {
 
 	_, err := s.h.getSnap("chatroom")
 	c.Assert(err, NotNil)
-	c.Assert(s.c.Query, Equals, "chatroom")
+	c.Assert(s.c.Name, Equals, "chatroom")
 }
 
 func (s *GetSnapSuite) TestSnapDoesNotExistButStoreHasResults(c *C) {
@@ -64,7 +64,7 @@ func (s *GetSnapSuite) TestSnapDoesNotExistButStoreHasResults(c *C) {
 
 	_, err := s.h.getSnap("chatroom")
 	c.Assert(err, NotNil)
-	c.Assert(s.c.Query, Equals, "chatroom")
+	c.Assert(s.c.Name, Equals, "chatroom")
 }
 
 func (s *GetSnapSuite) TestSnapExistsOnStore(c *C) {
@@ -72,7 +72,7 @@ func (s *GetSnapSuite) TestSnapExistsOnStore(c *C) {
 	s.c.StoreSnaps = []*client.Snap{newSnap("snap1"), newDefaultSnap(), newSnap("snap2")}
 
 	snap, err := s.h.getSnap("chatroom")
-	c.Assert(s.c.Query, Equals, "chatroom")
+	c.Assert(s.c.Name, Equals, "chatroom")
 	c.Assert(err, IsNil)
 	c.Assert(snap.Name, Equals, "chatroom")
 }

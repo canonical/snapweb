@@ -2,3 +2,7 @@
 node_modules
 public
 /www/src/css/*.css
+.converage-go
+.coverages-js
+*~
+\#*\#

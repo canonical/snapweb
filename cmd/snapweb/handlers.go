@@ -160,7 +160,7 @@ func handleSections(w http.ResponseWriter, r *http.Request) {
 	}
 	c := newSnapdClient()
 
-	sections, err := c.GetSections()
+	sections, err := c.Sections()
 	if err != nil {
 		log.Println(fmt.Sprintf("handleSections: error retrieving sections info: %s", err))
 		w.WriteHeader(http.StatusInternalServerError)
