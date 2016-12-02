@@ -29,6 +29,8 @@ import (
 	"github.com/snapcore/snapd/client"
 	"github.com/snapcore/snapweb/statustracker"
 
+	"github.com/snapcore/snapd/client"
+
 	. "gopkg.in/check.v1"
 )
 
@@ -71,6 +73,29 @@ func (s *HandlersSuite) TestGetAllError(c *C) {
 
 	s.h.MakeMuxer("").ServeHTTP(rec, req)
 	c.Assert(rec.Code, Equals, http.StatusInternalServerError)
+}
+
+func (s *HandlersSuite) TestStoreAuthError(c *C) {
+	s.c.Err = errors.New("snap not found locally")
+	s.c.StoreErr = &client.Error{StatusCode: http.StatusUnauthorized}
+
+	tests := []struct {
+		Verb string
+		URL  string
+	}{
+		{"GET", "/"},
+		{"GET", "/foo"},
+		{"PUT", "/foo"},
+	}
+
+	for _, tt := range tests {
+		rec := httptest.NewRecorder()
+		req, err := http.NewRequest(tt.Verb, tt.URL, nil)
+		c.Assert(err, IsNil)
+
+		s.h.MakeMuxer("").ServeHTTP(rec, req)
+		c.Assert(rec.Code, Equals, http.StatusUnauthorized, Commentf("Checking: %s %s", tt.Verb, tt.URL))
+	}
 }
 
 func (s *HandlersSuite) TestGetAll(c *C) {
