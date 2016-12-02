@@ -13,6 +13,6 @@ module.exports = {
     var view = new SubmitTokenView({
       model: model,
     });
-    chan.command('set:content', view);
+    chan.command('set:content', {backboneView: view});
   }
 };

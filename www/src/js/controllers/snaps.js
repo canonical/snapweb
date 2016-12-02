@@ -47,7 +47,7 @@ module.exports = {
         model: snap,
         collection: collectionFromInterfaces(deviceInfo.get('interfaces'))
       });
-      rootChannel.command('set:content', view);
+      rootChannel.command('set:content', {backboneView: view});
     });
   }
 };
@@ -65,7 +65,7 @@ snapChannel.comply('show', function(model) {
       model: snapModel,
       collection: collectionFromInterfaces(interfaces)
     });
-    rootChannel.command('set:content', view);
+    rootChannel.command('set:content', {backnoneView: view});
     Backbone.history.navigate(url);
   };
 

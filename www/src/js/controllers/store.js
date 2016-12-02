@@ -2,6 +2,7 @@ var $ = require('jquery');
 var Backbone = require('backbone');
 Backbone.$ = $;
 var Marionette = require('backbone.marionette');
+var React = require('react');
 var Radio = require('backbone.radio');
 var StoreLayoutView = require('../views/store.js');
 var Sections = require('../collections/sections.js');
@@ -16,7 +17,7 @@ var fetchSnapList = function(title, options) {
   // TODO find a more general/elegant way of
   // chaining promises w/ a failsafe backup for some
   var displayStoreView = function(sectionsPromise, storePromise) {
-    var view =  new StoreLayoutView({
+    var element = React.createElement(StoreLayoutView, {
       model: new Backbone.Model({
         query: '',
         title: title,
@@ -31,7 +32,7 @@ var fetchSnapList = function(title, options) {
       storePromise: storePromise,
       collection: SnaplistTools.updateInstalledStates(storeSnaplist)
     });
-    chan.command('set:content', view);
+    chan.command('set:content', {reactElement: element});
   }
 
   var sp = sections.fetch();
