@@ -123,6 +123,7 @@ func (s *PackagePayloadSuite) TestPackage(c *C) {
 		Type:          "app",
 		Version:       "0.1-8",
 		Private:       false,
+		InstallDate:   "Mon Jan  1 00:00:00 UTC 0001",
 	})
 }
 

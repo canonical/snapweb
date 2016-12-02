@@ -20,6 +20,7 @@ package snappy
 import (
 	"errors"
 	"sort"
+	"time"
 
 	"log"
 
@@ -30,7 +31,6 @@ import (
 const (
 	installedSnaps = iota
 	availableSnaps
-	featuredSnaps
 )
 
 type snapPkg struct {
@@ -48,6 +48,8 @@ type snapPkg struct {
 	DownloadSize  int64     `json:"download_size,omitempty"`
 	Type          snap.Type `json:"type,omitempty"`
 	Private       bool      `json:"private"`
+	Channel       string    `json:"channel"`
+	InstallDate   string    `json:"install_date"`
 }
 
 type response struct {
@@ -146,6 +148,8 @@ func (h *Handler) snapToPayload(snapQ *client.Snap) snapPkg {
 		Status:      h.statusTracker.Status(snapQ),
 		Price:       "", // TODO: get snap price
 		Private:     snapQ.Private,
+		Channel:     snapQ.Channel,
+		InstallDate: snapQ.InstallDate.Format(time.UnixDate),
 	}
 
 	isInstalled := snapQ.Status == client.StatusInstalled || snapQ.Status == client.StatusActive
