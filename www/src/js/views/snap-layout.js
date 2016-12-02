@@ -9,9 +9,14 @@ var CONF = require('../config.js');
 
 Handlebars.registerPartial('installer', require('../templates/_installer.hbs'));
 
-var SnapInterfacesView = Marionette.View.extend({
+var SnapInterfaceListItemView = Marionette.ItemView.extend({
   tagName: 'li',
-  template: '#interface-list'
+  template: _.template('<%= name %>'),
+});
+
+var SnapInterfaceCollectionView = Marionette.CollectionView.extend({
+  childView: SnapInterfaceListItemView,
+  tagName: 'ul',
 });
 
 module.exports = Marionette.LayoutView.extend({
@@ -34,9 +39,13 @@ module.exports = Marionette.LayoutView.extend({
   },
 
   onBeforeShow: function() {
-    this.showChildView('interfacesRegion', new SnapInterfacesView({
-      collection: this.collection
-    }));
+    this.showChildView(
+        'interfacesRegion',
+        new SnapInterfaceCollectionView({
+          model: this.model,
+          collection: this.collection
+        })
+    );
   },
 
   onShow: function() {
@@ -44,6 +53,6 @@ module.exports = Marionette.LayoutView.extend({
   },
 
   regions: {
-    interfacesRegion: '.interfaces',
+    interfacesRegion: '#interface-list',
   },
 });

@@ -1,69 +1,58 @@
-<div class="row">
-  <div class="col-2">
-    <div class="b-icon-wrapper">
-      <img class="b-icon" src="{{ icon }}" width="125" height="125">
+<div class="p-strip--light">
+    <div class="row">
+      <div class="col-2">
+        <div class="b-icon-wrapper">
+          <img class="b-icon" src="{{ icon }}" width="125" height="125">
+        </div>
+      </div>
+      <div class="col-6">
+        <h1 class="b-snap__title">{{ name }}</h1>
+        <div class="b-snap__developer">By {{ developer }}</div>
+      </div>
     </div>
-  </div>
-  <div class="col-6">
-    <h1 class="b-snap__title">{{ name }}</h1>
-    <div class="b-snap__developer">By {{ developer }}</div>
-  </div>
-</div>
 
-<div class="row">
-  <div class="col-2" style="float: right">
-    {{> installer}}
-  </div>
+    <div class="row">
+      <div class="col-4 u-float--right">
+        {{> installer}}
+      </div>
+    </div>
 </div>
 
 <div class="row">
 
   <div class="col-7">
-    <div class="row">
-      <div class="col-7">
+
+    <ul class="p-list--divided">
+
+      <li class="p-list__item">
         Size
-      </div>
-      <div class="col-5">
-        <div class="b-snap__size">{{ size }}</div>
-      </div>
-    </div>
-    
-    <div class="row">
-      <div class="col-7">
-        Version
-      </div>
-      <div class="col-5">
-        <div class="b-snap__version">{{ version }}</div>
-      </div>
-    </div>
+        <span class="b-snap__size u-float--right">{{ size }}</span>
+      </li>
 
-    <div class="row">
-      <div class="col-7">
-        Channel
-      </div>
-      <div class="col-5">
-        <div class="b-snap__version">{{ channel }}</div>
-      </div>
-    </div>
+      <li class="p-list__item">
+          Version
+          <span class="b-snap__version u-float--right">{{ version }}</span>
+      </li>
 
-    <div class="row">
-      <div class="col-7">
-        Updated
-      </div>
-      <div class="col-5">
-        <div class="b-snap__version">{{ installedDate }}</div>
-      </div>
-    </div>
+      <li class="p-list__item">
+          Channel
+          <span class="b-snap__version u-float--right">{{ channel }}</span>
+      </li>
+
+      <li class="p-list__item">
+          Updated
+          <span class="b-snap__version u-float--right">{{ installedDate }}</span>
+      </li>
+    </ul>
+
   </div>
 
   <div class="col-5">
-    Interfaces
-    <div>
-      <ul id="interface-list">
-      </ul>
+    <h3 class="">Interfaces</h3>
+    <div id="interface-list">
     </div>
   </div>
-  
+
 </div>
 
 <div class="row">

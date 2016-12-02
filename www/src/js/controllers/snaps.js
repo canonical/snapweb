@@ -1,6 +1,7 @@
 var $ = require('jquery');
 var Backbone = require('backbone');
 Backbone.$ = $;
+var _ = require('lodash');
 var Marionette = require('backbone.marionette');
 var Radio = require('backbone.radio');
 var SnapLayoutView = require('../views/snap-layout.js');
@@ -12,9 +13,11 @@ var snapChannel = Radio.channel('snap');
 var rootChannel = Radio.channel('root');
 
 var collectionFromInterfaces = function(interfaces) {
-  return new Backbone.Collection(
-      _.map(interfaces ? interfaces : [], function(v) { return {id: val} })
-  )
+  interfaces = interfaces || ''
+  var c = _.map(
+      interfaces.split(','),
+      function(v) { return {id: v, name: v} });
+  return new Backbone.Collection(c)
 };
 
 module.exports = {
@@ -28,7 +31,7 @@ module.exports = {
     ).then(function() {
       var view =  new SnapLayoutView({
         model: snap,
-        collection: collectionFromInterfaces(deviceInfo.interfaces)
+        collection: collectionFromInterfaces(deviceInfo.get('interfaces'))
       });
       rootChannel.command('set:content', view);
     });
@@ -54,7 +57,7 @@ snapChannel.comply('show', function(model) {
 
   deviceInfo.fetch({
     success: function(di) {
-      c(di);
+      c(di.get('interfaces'));
     },
     error: function() {
       console.log('Could not retrieve interfaces for snap details');

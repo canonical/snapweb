@@ -20,7 +20,6 @@ package snappy
 import (
 	"errors"
 	"sort"
-	"strings"
 	"time"
 
 	"log"
@@ -65,18 +64,9 @@ func (h *Handler) getSnap(name string) (*client.Snap, error) {
 	}
 
 	// Snap() now only returns installed snaps so search the store as a fallback
-	opts := &client.FindOptions{Query: name}
-	snaps, _, err := h.snapdClient.Find(opts)
+	snap, _, err = h.snapdClient.FindOne(name)
 	if err != nil {
 		return nil, err
-	}
-
-	snap = nil
-	for _, s := range snaps {
-		if strings.EqualFold(s.Name, name) {
-			snap = s
-			break
-		}
 	}
 
 	if snap == nil {
@@ -100,7 +90,7 @@ func (h *Handler) allPackages(snapCondition int, query string) ([]snapPkg, error
 	var err error
 
 	if snapCondition == installedSnaps {
-		snaps, err = h.snapdClient.List(nil)
+		snaps, err = h.snapdClient.List(nil, nil)
 	} else {
 		// TODO escape (or trim?) regexp meta chars
 		// regexp.QuoteMeta, check snapd to see what
