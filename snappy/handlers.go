@@ -89,6 +89,12 @@ func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
 		// snapCondition = featuredSnaps
 		snapCondition = availableSnaps
 	}
+
+	privateSnaps := false
+	if r.FormValue("private_snaps") == "true" {
+		privateSnaps = true
+	}
+
 	query := r.FormValue("q")
 	// This is a workaround until there is a way to get the list of snaps:
 	// https://bugs.launchpad.net/ubuntu/+source/snapd/+bug/1609368
@@ -96,7 +102,7 @@ func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
 		query = "."
 	}
 
-	payload, err := h.allPackages(snapCondition, query)
+	payload, err := h.allPackages(snapCondition, query, privateSnaps)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(w, "Error: %s", err)

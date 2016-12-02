@@ -14,26 +14,32 @@ module.exports = {
     var sections = new Sections();
     var storeSnaplist = new Snaplist();
 
-    $.when(
-          storeSnaplist.fetch({data: $.param({'featured_only': true})}),
-          sections.fetch()
-        ).then(function() {
-        var view =  new StoreLayoutView({
-          model: new Backbone.Model({
-            query: '',
-            title: 'Featured snaps',
-            isGrid: true,
-            isAlpha: true,
-            canSort: false,
-            canStyle: true,
-            isHomeActive: false,
-            sections: sections
-          }),
-          collection: SnaplistTools.updateInstalledStates(storeSnaplist)
-        });
-
-        chan.command('set:content', view);
+    // TODO find a more general/elegant way of
+    // chaining promises w/ a failsafe backup for some
+    var displayStoreView = function() {
+      var view =  new StoreLayoutView({
+        model: new Backbone.Model({
+          query: '',
+          title: 'Featured snaps',
+          isGrid: true,
+          isAlpha: true,
+          canSort: false,
+          canStyle: true,
+          isHomeActive: false,
+          sections: sections
+        }),
+        collection: SnaplistTools.updateInstalledStates(storeSnaplist)
       });
+      chan.command('set:content', view);
+    }
+
+    var sp = sections.fetch();
+    $.when(
+       storeSnaplist.fetch({data: $.param({'featured_only': true})})
+    ).then(function() {
+      sp.done(displayStoreView)
+        .fail(displayStoreView);
+    });
   },
   section: function(s) {
     var chan = Radio.channel('root');
@@ -44,7 +50,7 @@ module.exports = {
     // per se but a specificity of a snap
     if (s === 'private') {
       $.when(
-        storeSnaplist.fetch()
+        storeSnaplist.fetch({data: $.param({'private_snaps': true})})
       ).then(function() {
         var view =  new StoreLayoutView({
           model: new Backbone.Model({
@@ -57,7 +63,7 @@ module.exports = {
             isHomeActive: false,
             sections: sections
           }),
-          collection: storeSnaplist.private()
+          collection: storeSnaplist.all()
         });
 
         chan.command('set:content', view);
