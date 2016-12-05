@@ -191,6 +191,14 @@ func (s *AllPackagesSuite) TestPrivateSnaps(c *C) {
 	c.Check(s.c.FindOptions.Private, Equals, true)
 }
 
+func (s *AllPackagesSuite) TestQueryStringEscaped(c *C) {
+	s.c.StoreSnaps = []*client.Snap{}
+
+	_, err := s.h.allPackages(availableSnaps, "de$%**??", true, "")
+	c.Assert(err, IsNil)
+	c.Check(s.c.FindOptions.Query, Equals, "de%24%25%2A%2A%3F%3F")
+}
+
 func (s *AllPackagesSuite) TestHasSnaps(c *C) {
 	s.c.StoreSnaps = []*client.Snap{
 		newSnap("app2"),
