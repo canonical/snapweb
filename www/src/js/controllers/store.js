@@ -15,7 +15,7 @@ var fetchSnapList = function(title, options) {
 
   // TODO find a more general/elegant way of
   // chaining promises w/ a failsafe backup for some
-  var displayStoreView = function() {
+  var displayStoreView = function(sectionsPromise, storePromise) {
     var view =  new StoreLayoutView({
       model: new Backbone.Model({
         query: '',
@@ -27,17 +27,17 @@ var fetchSnapList = function(title, options) {
         isHomeActive: false,
         sections: sections
       }),
+      sectionsPromise: sectionsPromise,
+      storePromise: storePromise,
       collection: SnaplistTools.updateInstalledStates(storeSnaplist)
     });
     chan.command('set:content', view);
   }
+
   var sp = sections.fetch();
-  $.when(
-     storeSnaplist.fetch(options)
-  ).then(function() {
-    sp.done(displayStoreView)
-      .fail(displayStoreView);
-  });
+  var ssp = storeSnaplist.fetch(options)
+
+  displayStoreView(sp, ssp);
 }
 
 module.exports = {
