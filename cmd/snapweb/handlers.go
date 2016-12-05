@@ -82,9 +82,6 @@ type timeInfoResponse struct {
 }
 
 func handleTimeInfo(w http.ResponseWriter, r *http.Request) {
-
-	SimpleCookieCheckOrRedirect(w, r)
-
 	if r.Method == "GET" {
 		values, err := snappy.GetCoreConfig(
 			[]string{"Date", "Time", "Timezone", "NTPServer"})
@@ -121,11 +118,6 @@ type deviceInfoResponse struct {
 }
 
 func handleDeviceInfo(w http.ResponseWriter, r *http.Request) {
-
-	if e := SimpleCookieCheckOrRedirect(w, r); e != nil {
-		return
-	}
-
 	c := newSnapdClient()
 
 	modelInfo, err := snappy.GetModelInfo(c)
@@ -152,10 +144,6 @@ func handleDeviceInfo(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleSections(w http.ResponseWriter, r *http.Request) {
-	// Quick auth validation
-	if e := SimpleCookieCheckOrRedirect(w, r); e != nil {
-		return
-	}
 	c := newSnapdClient()
 
 	sections, err := c.Sections()
@@ -177,10 +165,6 @@ type deviceAction struct {
 }
 
 func handleDeviceAction(w http.ResponseWriter, r *http.Request) {
-	if SimpleCookieCheckOrRedirect(w, r) != nil {
-		return
-	}
-
 	if r.Method != "POST" {
 		log.Printf("handleDeviceAction: invalid method")
 		w.WriteHeader(http.StatusMethodNotAllowed)
@@ -222,21 +206,11 @@ func handleDeviceAction(w http.ResponseWriter, r *http.Request) {
 
 func initURLHandlers(log *log.Logger) {
 	log.Println("Initializing HTTP handlers...")
-	snappyHandler := snappy.NewHandler()
-	// passThru := makePassthroughHandler(dirs.SnapdSocket, "/api")
 
-	http.HandleFunc("/api/v2/validate-token", validateToken)
+	// API
+	http.Handle("/api/", makeAPIHandler("/api/"))
 
-	http.Handle("/api/v2/packages/", snappyHandler.MakeMuxer("/api/v2/packages"))
-
-	http.HandleFunc("/api/v2/sections", handleSections)
-
-	http.HandleFunc("/api/v2/time-info", handleTimeInfo)
-	http.HandleFunc("/api/v2/device-info", handleDeviceInfo)
-	http.HandleFunc("/api/v2/device-action", handleDeviceAction)
-
-	// NOTE: the public URLs below shouldn't be using SimpleCookieCheckOrRedirect
-
+	// Resources
 	http.Handle("/public/", loggingHandler(http.FileServer(http.Dir(filepath.Join(os.Getenv("SNAP"), "www")))))
 
 	if iconDir, relativePath, err := snappy.IconDir(); err == nil {
@@ -257,8 +231,8 @@ func tokenFilename() string {
 	return filepath.Join(os.Getenv("SNAP_DATA"), "token.txt")
 }
 
-// SimpleCookieCheckOrRedirect is a simple authorization mechanism
-func SimpleCookieCheckOrRedirect(w http.ResponseWriter, r *http.Request) error {
+// SimpleCookieCheck is a simple authorization mechanism
+func SimpleCookieCheck(w http.ResponseWriter, r *http.Request) error {
 	cookie, _ := r.Cookie(SnapwebCookieName)
 	if cookie != nil {
 		token, err := ioutil.ReadFile(tokenFilename())
@@ -270,26 +244,16 @@ func SimpleCookieCheckOrRedirect(w http.ResponseWriter, r *http.Request) error {
 			}
 		}
 	}
-
-	// in any other case, refuse the request and redirect
-	http.Redirect(w, r, "/access-control", 401)
-
 	return errors.New("Unauthorized")
 }
 
 func validateToken(w http.ResponseWriter, r *http.Request) {
-	log.Println(r.Method, r.URL.Path)
-	if err := SimpleCookieCheckOrRedirect(w, r); err == nil {
-		hdr := w.Header()
-		hdr.Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, "{}")
-	} else {
-		hdr := w.Header()
-		hdr.Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusUnauthorized)
-		fmt.Fprintf(w, "{}")
-	}
+	// We only get here when the Cookie is valid, send an empty response
+	// to keep the model happy
+	hdr := w.Header()
+	hdr.Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "{}")
 }
 
 func makePassthroughHandler(socketPath string, prefix string) http.HandlerFunc {

@@ -26,6 +26,8 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/gorilla/mux"
+
 	"github.com/snapcore/snapd/client"
 	"github.com/snapcore/snapweb/statustracker"
 
@@ -67,9 +69,8 @@ func (s *HandlersSuite) TestGetAllError(c *C) {
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest("GET", "/", nil)
 	c.Assert(err, IsNil)
-	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
 
-	s.h.MakeMuxer("").ServeHTTP(rec, req)
+	s.h.MakeMuxer("", mux.NewRouter()).ServeHTTP(rec, req)
 	c.Assert(rec.Code, Equals, http.StatusInternalServerError)
 }
 
@@ -91,7 +92,6 @@ func (s *HandlersSuite) TestGetAll(c *C) {
 		rec := httptest.NewRecorder()
 		req, err := http.NewRequest("GET", tt.URL, nil)
 		c.Assert(err, IsNil)
-		req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
 
 		s.h.getAll(rec, req)
 		c.Assert(s.c.CalledListSnaps, Equals, tt.CalledListSnaps)
@@ -106,9 +106,8 @@ func (s *HandlersSuite) TestGetError(c *C) {
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest("GET", "/foo", nil)
 	c.Assert(err, IsNil)
-	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
 
-	s.h.MakeMuxer("").ServeHTTP(rec, req)
+	s.h.MakeMuxer("", mux.NewRouter()).ServeHTTP(rec, req)
 	c.Assert(rec.Code, Equals, http.StatusNotFound)
 }
 
@@ -118,9 +117,8 @@ func (s *HandlersSuite) TestGet(c *C) {
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest("GET", "/chatroom", nil)
 	c.Assert(err, IsNil)
-	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
 
-	s.h.MakeMuxer("").ServeHTTP(rec, req)
+	s.h.MakeMuxer("", mux.NewRouter()).ServeHTTP(rec, req)
 	c.Assert(rec.Code, Equals, http.StatusOK)
 
 	var sp snapPkg
@@ -135,9 +133,8 @@ func (s *HandlersSuite) TestAdd(c *C) {
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest("PUT", "/chatroom", nil)
 	c.Assert(err, IsNil)
-	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
 
-	s.h.MakeMuxer("").ServeHTTP(rec, req)
+	s.h.MakeMuxer("", mux.NewRouter()).ServeHTTP(rec, req)
 	c.Assert(rec.Code, Equals, http.StatusAccepted)
 	c.Assert(s.c.Installed, Equals, "chatroom")
 }
@@ -148,9 +145,8 @@ func (s *HandlersSuite) TestRemove(c *C) {
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest("DELETE", "/chatroom", nil)
 	c.Assert(err, IsNil)
-	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
 
-	s.h.MakeMuxer("").ServeHTTP(rec, req)
+	s.h.MakeMuxer("", mux.NewRouter()).ServeHTTP(rec, req)
 	c.Assert(rec.Code, Equals, http.StatusAccepted)
 	c.Assert(s.c.Removed, Equals, "chatroom")
 }
