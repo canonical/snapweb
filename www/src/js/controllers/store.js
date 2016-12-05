@@ -16,7 +16,7 @@ module.exports = {
 
     // TODO find a more general/elegant way of
     // chaining promises w/ a failsafe backup for some
-    var displayStoreView = function() {
+    var displayStoreView = function(sectionsPromise, storePromise) {
       var view =  new StoreLayoutView({
         model: new Backbone.Model({
           query: '',
@@ -28,18 +28,17 @@ module.exports = {
           isHomeActive: false,
           sections: sections
         }),
-        collection: SnaplistTools.updateInstalledStates(storeSnaplist)
+        sectionsPromise: sectionsPromise,
+        storePromise: storePromise,
+        collection: storeSnaplist
       });
       chan.command('set:content', view);
     }
 
     var sp = sections.fetch();
-    $.when(
-       storeSnaplist.fetch({data: $.param({'featured_only': true})})
-    ).then(function() {
-      sp.done(displayStoreView)
-        .fail(displayStoreView);
-    });
+    var ssp = storeSnaplist.fetch({data: $.param({'featured_only': true})})
+
+    displayStoreView(sp, ssp);
   },
   section: function(s) {
     var chan = Radio.channel('root');
