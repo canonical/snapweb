@@ -14,16 +14,7 @@ Handlebars.registerPartial('installer', require('../templates/_installer.hbs'));
 
 module.exports = Marionette.ItemView.extend({
 
-  className: function() {
-    var type = this.model.get('type');
-    var className = 'p-card';
-
-    if (type) {
-      className += ' p-card-' + type;
-    }
-
-    return className;
-  },
+  className: 'row p-card--highlighted u-vertically-center',
 
   template: function(model) {
     return template(model);
