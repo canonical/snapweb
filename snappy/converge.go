@@ -19,6 +19,7 @@ package snappy
 
 import (
 	"errors"
+	"net/url"
 	"sort"
 	"time"
 
@@ -92,11 +93,8 @@ func (h *Handler) allPackages(snapCondition int, query string, private bool, sec
 	if snapCondition == installedSnaps {
 		snaps, err = h.snapdClient.List(nil, nil)
 	} else {
-		// TODO escape (or trim?) regexp meta chars
-		// regexp.QuoteMeta, check snapd to see what
-		// it does expect
 		opts := &client.FindOptions{
-			Query:   query,
+			Query:   url.QueryEscape(query),
 			Prefix:  !private,
 			Private: private,
 			Section: section,

@@ -37,7 +37,7 @@ module.exports = {
             sections: sections,
           }),
           sectionsPromise: sp,
-          collection: snaplist.length === 1 ? null : snaplist,
+          collection: match.length === 1 ? null : snaplist,
           matchedSnap: match.length === 1 ? match[0] : null,
         });
         chan.command('set:content', view);

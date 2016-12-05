@@ -20,6 +20,7 @@ module.exports = Backbone.Marionette.LayoutView.extend({
   },
 
   onBeforeShow: function() {
+    // TODO refactor with store.js
     var self = this;
     var showSearchHeaderView = function() {
       self.showChildView('searchBarRegion', new SearchBarView({
@@ -30,12 +31,13 @@ module.exports = Backbone.Marionette.LayoutView.extend({
     this.sectionsPromise
            .done(showSearchHeaderView)
            .fail(showSearchHeaderView);
+
     if (this.matchedSnap) {
       this.showChildView('matchedSnapResultRegion', new MatchedSnapResultView({
         model: this.matchedSnap
       }));
     }
-    if (this.collection && this.collection.length > 1) {
+    if (this.collection && this.collection.length >= 1) {
       this.showChildView('resultsRegion', new BaskView({
         model: this.model,
         collection: this.collection
