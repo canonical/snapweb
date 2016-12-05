@@ -3,13 +3,17 @@ var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
 var Radio = require('backbone.radio');
 var SearchLayoutView = require('../views/search.js');
+var Sections = require('../collections/sections.js');
 var Bask = require('../collections/snaplist.js');
 var SnaplistTools = require('../common/snaplists.js');
 
 module.exports = {
   query: function(q) {
     var chan = Radio.channel('root');
+    var sections = new Sections();
     var searchBask = new Bask();
+
+    var sp = sections.fetch();
 
     // TODO impose the limit before the query
     // not at display time
@@ -30,7 +34,9 @@ module.exports = {
             canSort: false,
             canStyle: true,
             isHomeActive: false,
+            sections: sections,
           }),
+          sectionsPromise: sp,
           collection: snaplist.length === 1 ? null : snaplist,
           matchedSnap: match.length === 1 ? match[0] : null,
         });

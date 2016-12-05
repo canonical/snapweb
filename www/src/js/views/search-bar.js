@@ -41,7 +41,8 @@ module.exports = Backbone.Marionette.LayoutView.extend({
 
   onBeforeShow: function() {
     // TODO adjust sections to collections
-    var sections = _.map(this.model.get('sections').toJSON(), function(s) {
+    var sections = this.model.get('sections') || (new Backbone.Model())
+    sections = _.map(sections.toJSON(), function(s) {
       var section = _.reduce(s, function(r, v, k) {
         return r + v
       }, '');

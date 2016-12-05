@@ -3,7 +3,6 @@ var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
 var SearchBarView = require('./search-bar.js');
 var StorelistView = require('./storelist.js');
-var StoreHeaderView = require('./store-header.js');
 var template = require('../templates/store.hbs');
 
 module.exports = Backbone.Marionette.LayoutView.extend({
@@ -11,28 +10,10 @@ module.exports = Backbone.Marionette.LayoutView.extend({
   className: 'b-store',
 
   initialize: function(options) {
-    var model = options.model;
-    var collection = options.collection;
-    var self = this;
-
-    var showSearchHeaderView = function() {
-      self.showChildView('storeHeader', new StoreHeaderView({
-        model: model,
-        collection: model.sections
-      }));
-    };
-    var showSnapListView = function() {
-      self.showChildView('storeSnapItemsList', new StorelistView({
-        model: model,
-        collection: collection.all()
-      }));
-    };
-    options.sectionsPromise
-           .done(showSearchHeaderView)
-           .fail(showSearchHeaderView);
-    options.storePromise
-           .done(showSnapListView)
-           .fail(showSnapListView);
+    this.model = options.model;
+    this.collection = options.collection;
+    this.sectionsPromise = options.sectionsPromise;
+    this.storePromise = options.storePromise;
   },
 
   template : function(model) {
@@ -40,14 +21,30 @@ module.exports = Backbone.Marionette.LayoutView.extend({
   },
 
   onBeforeShow: function() {
-    this.showChildView('searchBar', new SearchBarView({
-      model: this.model
-    }));
+    var self = this;
+    var showSearchHeaderView = function() {
+      self.showChildView('searchBar', new SearchBarView({
+        model: self.model,
+        collection: self.model.get('sections')
+      }));
+    };
+    var showSnapListView = function() {
+      self.showChildView('storeSnapItemsList', new StorelistView({
+        model: self.model,
+        collection: self.collection.all()
+      }));
+    };
+
+    this.sectionsPromise
+           .done(showSearchHeaderView)
+           .fail(showSearchHeaderView);
+    this.storePromise
+           .done(showSnapListView)
+           .fail(showSnapListView);
   },
 
   regions: {
     searchBar: '.region-search-bar',
-    storeHeader: '.region-store-header',
     storeSnapItemsList: '.region-snaplist',
   }
 });
