@@ -84,9 +84,7 @@ func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
 	snapCondition := availableSnaps
 	if r.FormValue("installed_only") == "true" {
 		snapCondition = installedSnaps
-	} else if r.FormValue("featured_only") == "true" {
-		// TODO complete when upstream's impl is complete
-		// snapCondition = featuredSnaps
+	} else {
 		snapCondition = availableSnaps
 	}
 
@@ -95,6 +93,8 @@ func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
 		privateSnaps = true
 	}
 
+	section := r.FormValue("section")
+
 	query := r.FormValue("q")
 	// This is a workaround until there is a way to get the list of snaps:
 	// https://bugs.launchpad.net/ubuntu/+source/snapd/+bug/1609368
@@ -102,7 +102,7 @@ func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
 		query = "."
 	}
 
-	payload, err := h.allPackages(snapCondition, query, privateSnaps)
+	payload, err := h.allPackages(snapCondition, query, privateSnaps, section)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(w, "Error: %s", err)

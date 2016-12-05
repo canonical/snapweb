@@ -4,6 +4,6 @@ module.exports = {
       return;
     }
     var name = model['id'];
-    return 'snap/' + name;
+    return '/snap/' + name;
   },
 };
