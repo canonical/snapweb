@@ -19,9 +19,9 @@ package snappy
 
 import (
 	"errors"
+	"net/url"
 	"sort"
 	"time"
-	"net/url"
 
 	"log"
 
