@@ -75,8 +75,6 @@ func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
 	snapCondition := availableSnaps
 	if r.FormValue("installed_only") == "true" {
 		snapCondition = installedSnaps
-	} else {
-		snapCondition = availableSnaps
 	} else if r.FormValue("updatable_only") == "true" {
 		snapCondition = updatableSnaps
 	}
@@ -110,7 +108,7 @@ func (h *Handler) getUpdates(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	payload, err := h.allPackages(updatableSnaps, ".")
+	payload, err := h.allPackages(updatableSnaps, ".", false, "")
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(w, "Error: %s", err)
@@ -179,7 +177,7 @@ func (h *Handler) MakeSnapRouter(prefix string) http.Handler {
 		if SimpleCookieCheckOrRedirect(w, r) != nil {
 			return
 		}
-		payload, err := h.allPackages(installedSnaps, ".")
+		payload, err := h.allPackages(installedSnaps, ".", false, "")
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			fmt.Fprintf(w, "Error: %s", err)

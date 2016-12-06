@@ -32,7 +32,6 @@ import (
 const (
 	installedSnaps = iota
 	availableSnaps
-	featuredSnaps
 	updatableSnaps
 )
 
@@ -93,14 +92,10 @@ func (h *Handler) allPackages(snapCondition int, query string, private bool, sec
 	var err error
 
 	if snapCondition == installedSnaps {
-<<<<<<< f4b008c7030b02fdec4fd8b0d5ebb63ae70673d4
 		snaps, err = h.snapdClient.List(nil, nil)
-=======
-		snaps, err = h.snapdClient.List(nil)
 	} else if snapCondition == updatableSnaps {
 		opts := &client.FindOptions{Refresh: true}
 		snaps, _, err = h.snapdClient.Find(opts)
->>>>>>> Create endpoints and model for dealing with local snaps
 	} else {
 		opts := &client.FindOptions{
 			Query:   url.QueryEscape(query),
