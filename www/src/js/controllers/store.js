@@ -2,21 +2,20 @@ var $ = require('jquery');
 var Backbone = require('backbone');
 Backbone.$ = $;
 var Marionette = require('backbone.marionette');
+var React = require('react');
 var Radio = require('backbone.radio');
 var StoreLayoutView = require('../views/store.js');
-var Sections = require('../collections/sections.js');
 var Snaplist = require('../collections/snaplist.js');
+var Sections = require('../common/sections.js');
 var SnaplistTools = require('../common/snaplists.js');
 
 var fetchSnapList = function(title, options) {
   var chan = Radio.channel('root');
-  var sections = new Sections();
   var storeSnaplist = new Snaplist();
+  var sections = [];
 
-  // TODO find a more general/elegant way of
-  // chaining promises w/ a failsafe backup for some
-  var displayStoreView = function(sectionsPromise, storePromise) {
-    var view =  new StoreLayoutView({
+  var displayStoreView = function(sections, storeSnapList) {
+    var element = React.createElement(StoreLayoutView, {
       model: new Backbone.Model({
         query: '',
         title: title,
@@ -27,17 +26,24 @@ var fetchSnapList = function(title, options) {
         isHomeActive: false,
         sections: sections
       }),
-      sectionsPromise: sectionsPromise,
-      storePromise: storePromise,
-      collection: SnaplistTools.updateInstalledStates(storeSnaplist)
+      collection: storeSnaplist
     });
-    chan.command('set:content', view);
+    chan.command('set:content', {reactElement: element});
   }
 
-  var sp = sections.fetch();
-  var ssp = storeSnaplist.fetch(options)
+  var sp = $.Deferred(function(deferred) {
+    Sections.fetch().then(function(response) {
+      sections = response;
+    }).always(deferred.resolve);
+  });
 
-  displayStoreView(sp, ssp);
+  var ssp = $.Deferred(function(deferred) {
+    storeSnaplist.fetch(options).always(deferred.resolve);
+  });
+
+  $.when(sp, ssp).done(function() {
+    displayStoreView(sections, SnaplistTools.updateInstalledStates(storeSnaplist));
+  });
 }
 
 module.exports = {

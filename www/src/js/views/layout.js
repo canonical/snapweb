@@ -4,6 +4,8 @@ var _ = require('lodash');
 var Backbone = require('backbone');
 Backbone.$ = $;
 var Marionette = require('backbone.marionette');
+var React = require('react');
+var ReactDOM = require('react-dom');
 var Radio = require('backbone.radio');
 var BannerView = require('./layout-banner.js');
 var FooterView = require('./layout-footer.js');
@@ -30,7 +32,12 @@ module.exports = Marionette.LayoutView.extend({
   },
 
   setContent: function(content) {
-    this.mainRegion.show(content);
+    var reactElement = content.reactElement || null;
+    if (reactElement !== null) {
+      ReactDOM.render(reactElement, this.$('.b-layout__main').get(0));
+    } else {
+      this.mainRegion.show(content.backboneView);
+    }
   },
 
   alertError: function(model) {

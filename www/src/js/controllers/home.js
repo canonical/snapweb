@@ -27,7 +27,7 @@ module.exports = {
           collection: c
         });
 
-        chan.command('set:content', view);
+        chan.command('set:content', {backboneView: view});
       }
     });
   },

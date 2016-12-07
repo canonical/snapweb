@@ -1,50 +1,62 @@
-// store layout view
+/** @jsx React.DOM */
+
 var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
-var SearchBarView = require('./search-bar.js');
-var StorelistView = require('./storelist.js');
-var template = require('../templates/store.hbs');
+var React = require('react');
+var ReactBacknone = require('react.backbone');
 
-module.exports = Backbone.Marionette.LayoutView.extend({
+var SearchField = require('../components/search-field.js');
+var DeckStyler = require('../components/deck-styler.js');
+var StoreHeaderView = require('../components/store-header.js');
+var StorelistView = require('../components/storelist.js');
 
-  className: 'b-store',
-
-  initialize: function(options) {
-    this.model = options.model;
-    this.collection = options.collection;
-    this.sectionsPromise = options.sectionsPromise;
-    this.storePromise = options.storePromise;
+module.exports = React.createBackboneClass({
+  getInitialState: function() {
+    return {
+      deckStyle: 'grid'
+    }
   },
 
-  template : function(model) {
-    return template(model);
+  deckStyleChanged: function(deckStyle) {
+    this.setState({deckStyle: deckStyle});
   },
 
-  onBeforeShow: function() {
-    var self = this;
-    var showSearchHeaderView = function() {
-      self.showChildView('searchBar', new SearchBarView({
-        model: self.model,
-        collection: self.model.get('sections')
-      }));
-    };
-    var showSnapListView = function() {
-      self.showChildView('storeSnapItemsList', new StorelistView({
-        model: self.model,
-        collection: self.collection.all()
-      }));
-    };
+  render: function() {
+    var model = this.props.model;
+    var collection = this.props.collection;
 
-    this.sectionsPromise
-           .done(showSearchHeaderView)
-           .fail(showSearchHeaderView);
-    this.storePromise
-           .done(showSnapListView)
-           .fail(showSnapListView);
-  },
+    return (
+      <div className="b-grey-wrapper">
+        <div className="inner-wrapper">
+          <div
+            style={{display: "inline-block", width: "100%", marginTop: "20px"}}>
+            <div className="row">
+              <SearchField query={model.get('query')} />
+              <DeckStyler
+                deckStyle={this.state.deckStyle}
+                styleChanged={this.deckStyleChanged}
+              />
+            </div>
+          </div>
 
-  regions: {
-    searchBar: '.region-search-bar',
-    storeSnapItemsList: '.region-snaplist',
+          <div className="row">
+            <StoreHeaderView
+              title={model.get('title')}
+              sections={model.get('sections')}
+            />
+          </div>
+
+          <div className="p-strip--light">
+            <div className="row">
+              <StorelistView
+                deckStyle={this.state.deckStyle}
+                model={model}
+                collection={this.props.collection.all()}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 });
