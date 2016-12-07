@@ -1,3 +1,4 @@
+.vscode
 *.snap
 node_modules
 public

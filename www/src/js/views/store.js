@@ -24,7 +24,6 @@ module.exports = React.createBackboneClass({
   render: function() {
     var model = this.props.model;
     var collection = this.props.collection;
-    var sections = this.props.sections;
 
     return (
       <div className="b-grey-wrapper">
@@ -42,8 +41,8 @@ module.exports = React.createBackboneClass({
 
           <div className="row">
             <StoreHeaderView
-              model={model}
-              collection={this.props.sections}
+              title={model.get('title')}
+              sections={model.get('sections')}
             />
           </div>
 

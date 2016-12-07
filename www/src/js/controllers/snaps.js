@@ -65,7 +65,7 @@ snapChannel.comply('show', function(model) {
       model: snapModel,
       collection: collectionFromInterfaces(interfaces)
     });
-    rootChannel.command('set:content', {backnoneView: view});
+    rootChannel.command('set:content', {backboneView: view});
     Backbone.history.navigate(url);
   };
 

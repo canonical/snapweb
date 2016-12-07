@@ -10,36 +10,31 @@ var SectionView = React.createClass({
     var section = this.props.section;
 
     return (
-      <span style={{margin: "1em"}}>
+      <li className="p-inline-list__item">
         <a href={"/store/section/" + section}>{section}</a>
-      </span>
+      </li>
     );
   }
 })
 
 module.exports = React.createBackboneClass({
   render: function() {
-    var model = this.props.model;
-    var collection = this.props.collection;
-    var sections = null;
+    var sections = this.props.sections || [];
 
-    if (collection && collection.length > 0) {
-      sections =
-          <span className="b-sections-list">
-            {collection.map(function(section) {
+    return (
+      <div>
+        <h2 className="col-4">{this.props.title}</h2>
+        <span className="u-float--right">
+          <ul className="p-inline-list u-float--right">
+            {sections.map(function(section) {
                               return (
                                 <SectionView key={section} section={section} />
                               );
                             })}
-          </span>
-    }
-
-    return (
-      <div>
-        <h2 className="col-6">{model.get('title')}</h2>
-        <span style={{textColor: "grey", float: "right"}}>
-          {sections}
-          <a href="/store/section/private">Private</a>
+            <li className="p-inline-list__item">
+              <a href="/store/section/private">private</a>
+            </li>
+          </ul>
         </span>
       </div>
     );
