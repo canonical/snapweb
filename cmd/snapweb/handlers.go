@@ -209,7 +209,6 @@ func initURLHandlers(log *log.Logger) {
 
 	// API
 	http.Handle("/api/", makeAPIHandler("/api/"))
-	http.Handle("/api/v2/snaps/", snappyHandler.MakeSnapRouter("/api/v2/snaps"))
 
 	// Resources
 	http.Handle("/public/", loggingHandler(http.FileServer(http.Dir(filepath.Join(os.Getenv("SNAP"), "www")))))

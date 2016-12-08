@@ -31,9 +31,11 @@ const apiVersion = "v2"
 // makeAPIHandler create a handler for all API calls that need authorization
 func makeAPIHandler(apiRootPath string) http.Handler {
 	var apiPath = path.Join(apiRootPath, apiVersion)
+	var snappyHandler = snappy.NewHandler()
 
 	router := mux.NewRouter().PathPrefix(apiPath).Subrouter()
-	router.Handle("/packages/", snappy.NewHandler().MakeMuxer("/packages", router))
+	router.Handle("/packages/", snappyHandler.MakePackageRouter("/packages", router))
+	router.Handle("/snaps/", snappyHandler.MakeSnapRouter("/snaps", router))
 	router.HandleFunc("/validate-token", validateToken)
 	router.HandleFunc("/sections", handleSections)
 	router.HandleFunc("/time-info", handleTimeInfo)

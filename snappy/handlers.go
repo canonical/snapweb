@@ -20,6 +20,7 @@ package snappy
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 
@@ -104,10 +105,6 @@ func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) getUpdates(w http.ResponseWriter, r *http.Request) {
-	if SimpleCookieCheckOrRedirect(w, r) != nil {
-		return
-	}
-
 	payload, err := h.allPackages(updatableSnaps, ".", false, "")
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -168,15 +165,12 @@ func (h *Handler) MakePackageRouter(prefix string, parentRouter *mux.Router) htt
 }
 
 // MakeSnapRouter sets up endpoints for locally installed snaps
-func (h *Handler) MakeSnapRouter(prefix string) http.Handler {
-	m := mux.NewRouter().PathPrefix(prefix).Subrouter()
+func (h *Handler) MakeSnapRouter(prefix string, parentRouter *mux.Router) http.Handler {
+	m := parentRouter.PathPrefix(prefix).Subrouter()
 
 	m.HandleFunc("/", h.getUpdates).Methods("GET").Queries("updatable_only", "true")
 
 	m.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		if SimpleCookieCheckOrRedirect(w, r) != nil {
-			return
-		}
 		payload, err := h.allPackages(installedSnaps, ".", false, "")
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
@@ -189,9 +183,6 @@ func (h *Handler) MakeSnapRouter(prefix string) http.Handler {
 	m.HandleFunc("/{id}", h.get).Methods("GET")
 
 	m.HandleFunc("/{id}", func(w http.ResponseWriter, r *http.Request) {
-		if SimpleCookieCheckOrRedirect(w, r) != nil {
-			return
-		}
 		data, err := ioutil.ReadAll(r.Body)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
@@ -221,4 +212,3 @@ func (h *Handler) MakeSnapRouter(prefix string) http.Handler {
 
 	return m
 }
-
