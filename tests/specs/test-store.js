@@ -18,8 +18,9 @@ describe('Store Page - Verify that', function() {
 
     it('a private section exists', function() {
 
+        browser.waitForVisible(storePage.privateSectionElement);
         storePage.private.click();
-        privatepage = browser.element('h2=Featured snaps')
+        privatepage = browser.element('h2=Private snaps')
         privatepage.waitForVisible();
         expect(privatepage.getText(), "Failed to load private section page").to.contain('Private snaps');
 
