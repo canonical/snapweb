@@ -99,9 +99,7 @@ describe('Installed Snaps Page - Verify that', function() {
 
         //Remove the snap in case it is already installed
         browser.call(function() {
-            return snaputil.removeSnap(snap_name).then(function(res) {
-                expect(res).to.match(re_removed, res);
-            });
+            return snaputil.removeSnap(snap_name);
         });
         browser.refresh();
         //Confirm that snap doesn't exist on page
