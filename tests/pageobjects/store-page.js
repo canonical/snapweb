@@ -43,22 +43,34 @@ var storePage = Object.create(basepage, {
 
     search: {
         value: function(query) {
-            var searchfield = browser.element('p-search__field');
-            searchfield.waitForVisible();
-            searchfield.sendKeys(query);
-            searchfield.sendKeys(Keys.RETURN);
+            browser.waitForVisible('.p-search__field');
+            var searchfield = browser.element('.p-search__field');
+            searchfield.setValue(query);
+            browser.element('.p-search__btn').click();
         }
     },
 
     snapListSelector: {
         get: function() {
-            return '#js-snap-list .p-card'
+            return '#js-snaplist .p-card'
         }
     },
 
     snaps: {
-        value: function() {
+        get: function() {
             return browser.elements(this.snapListSelector);
+        }
+    },
+
+    exactSnapMatchSelector: {
+        get: function() {
+            return '.region-matched-snap-result .row';
+        }
+    },
+    
+    exactMatch: {
+        get: function() {
+            return browser.element(this.exactSnapMatchSelector);
         }
     },
 });
