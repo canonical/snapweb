@@ -5,13 +5,9 @@ var storePage = Object.create(basepage, {
     /**
      * define elements
      */
-    privateSectionElement: {
-        value: "a[href*='/store/section/private']"
-    },
-
     private: {
         get: function() {
-            return browser.element(this.privateSectionElement);
+            return browser.element(this.sectionSelector('private'));
         }
     },
     /**
@@ -24,6 +20,7 @@ var storePage = Object.create(basepage, {
             var valid_token = "";
             browser.call(function() {
                 return snaputil.getToken().then(function(res) {
+                    res = res || '';
                     valid_token = res.trim();
                 });
             });
@@ -33,7 +30,37 @@ var storePage = Object.create(basepage, {
             browser.url('/store');
         }
     },
+    sectionSelector: {
+        value: function(name) {
+            return "a[href*='/store/section/" + name + "']"
+        }
+    },
+    section: {
+        value: function(name) {
+            return browser.element(this.sectionSelector(name))
+        }
+    },
 
+    search: {
+        value: function(query) {
+            var searchfield = browser.element('p-search__field');
+            searchfield.waitForVisible();
+            searchfield.sendKeys(query);
+            searchfield.sendKeys(Keys.RETURN);
+        }
+    },
+
+    snapListSelector: {
+        get: function() {
+            return '#js-snap-list .p-card'
+        }
+    },
+
+    snaps: {
+        value: function() {
+            return browser.elements(this.snapListSelector);
+        }
+    },
 });
 
 module.exports = storePage
