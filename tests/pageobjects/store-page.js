@@ -5,6 +5,10 @@ var storePage = Object.create(basepage, {
     /**
      * define elements
      */
+    privateSectionElement: {
+        value: "a[href*='/store/section/private']"
+    },
+
     private: {
         get: function() {
             return browser.element(this.sectionSelector('private'));
