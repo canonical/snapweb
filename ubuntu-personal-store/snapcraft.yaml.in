@@ -1,0 +1,38 @@
+name: ubuntu-personal-store
+version: '0.1'
+summary: Snapweb in a WebView
+description: Snapweb in a WebView
+
+grade: devel
+confinement: strict
+
+apps:
+  ubuntu-personal-store:
+    command: ubuntu-personal-store.launcher
+    plugs:
+      - browser-sandbox
+      - network
+      - network-bind
+      - opengl
+      - unity7
+
+plugs:
+  browser-sandbox:
+    interface: browser-support
+    allow-sandbox: true
+
+parts:
+  ubuntu-personal-store-qml:
+    plugin: dump
+    source: .
+    stage-packages:
+      - qmlscene:UNKNOWN_ARCH
+      - qml-module-qtquick2:UNKNOWN_ARCH
+      - qml-module-ubuntu-web:UNKNOWN_ARCH
+    after: [desktop-qt5]
+
+  launcher:
+    plugin: dump
+    source: .
+    organize:
+      ubuntu-personal-store.launcher: bin/ubuntu-personal-store.launcher

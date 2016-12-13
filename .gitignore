@@ -2,6 +2,10 @@
 *.snap
 node_modules
 public
+ubuntu-personal-store/parts
+ubuntu-personal-store/prime
+ubuntu-personal-store/stage
+ubuntu-personal-store/snapcraft.yaml
 /www/src/css/*.css
 .coverage-go
 .coverage-js
