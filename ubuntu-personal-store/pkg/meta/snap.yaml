@@ -1,0 +1,25 @@
+name: ubuntu-personal-store
+version: "0.1"
+summary: A beautiful and functional interface for snap management.
+description: This application allows you to browse and install snap packages on your Ubuntu Personal device.
+type: app
+architectures: UNKNOWN_ARCH
+apps:
+  snapweb:
+    daemon: simple
+    command: snapweb
+    plugs: [network, network-bind, snapd-control, timeserver-control]
+  generate-token:
+    command: generate-token
+  ubuntu-personal-store:
+    command: command-ubuntu-personal-store.wrapper
+    plugs:
+    - browser-sandbox
+    - network
+    - network-bind
+    - opengl
+    - unity7
+plugs:
+  browser-sandbox:
+    allow-sandbox: true
+    interface: browser-support

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Version=1.0
+Name=Ubuntu Store
+GenericName=Ubuntu Store
+Comment=Snapweb in a WebView
+Type=Application
+Icon=${SNAP}/meta/gui/icon.png
+Exec=ubuntu-personal-store
