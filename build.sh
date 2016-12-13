@@ -101,19 +101,21 @@ for ARCH in "${architectures[@]}"; do
     cd "$orig_pwd"
     snapcraft snap $builddir
 
-    # now build ubuntu-personal-store
-    cd $orig_pwd/ubuntu-personal-store
+    if [[ $* == *--ups* ]]; then
+        # now build ubuntu-personal-store
+        cd $orig_pwd/ubuntu-personal-store
 
-    cp snapcraft.yaml.in snapcraft.yaml
-    sed -i "s/\(:\)UNKNOWN_ARCH/\1$ARCH/" snapcraft.yaml
+        cp snapcraft.yaml.in snapcraft.yaml
+        sed -i "s/\(:\)UNKNOWN_ARCH/\1$ARCH/" snapcraft.yaml
 
-    snapcraft prime
+        snapcraft prime
 
-    cp -r $orig_pwd/ubuntu-personal-store/prime/* $builddir
-    cp -r $orig_pwd/ubuntu-personal-store/pkg/* ${builddir}
-    sed -i "s/\(architectures: \)UNKNOWN_ARCH/\1[$ARCH]/" \
-        $builddir/meta/snap.yaml
+        cp -r $orig_pwd/ubuntu-personal-store/prime/* $builddir
+        cp -r $orig_pwd/ubuntu-personal-store/pkg/* ${builddir}
+        sed -i "s/\(architectures: \)UNKNOWN_ARCH/\1[$ARCH]/" \
+            $builddir/meta/snap.yaml
 
-    cd $orig_pwd
-    snapcraft snap $builddir
+        cd $orig_pwd
+        snapcraft snap $builddir
+    fi
 done
