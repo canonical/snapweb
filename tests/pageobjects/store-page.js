@@ -11,7 +11,7 @@ var storePage = Object.create(basepage, {
 
     private: {
         get: function() {
-            return browser.element(this.privateSectionElement);
+            return browser.element(this.sectionSelector('private'));
         }
     },
     /**
@@ -24,6 +24,7 @@ var storePage = Object.create(basepage, {
             var valid_token = "";
             browser.call(function() {
                 return snaputil.getToken().then(function(res) {
+                    res = res || '';
                     valid_token = res.trim();
                 });
             });
@@ -33,7 +34,49 @@ var storePage = Object.create(basepage, {
             browser.url('/store');
         }
     },
+    sectionSelector: {
+        value: function(name) {
+            return "a[href*='/store/section/" + name + "']"
+        }
+    },
+    section: {
+        value: function(name) {
+            return browser.element(this.sectionSelector(name))
+        }
+    },
 
+    search: {
+        value: function(query) {
+            browser.waitForVisible('.p-search__field');
+            var searchfield = browser.element('.p-search__field');
+            searchfield.setValue(query);
+            browser.element('.p-search__btn').click();
+        }
+    },
+
+    snapListSelector: {
+        get: function() {
+            return '#js-snaplist .p-card'
+        }
+    },
+
+    snaps: {
+        get: function() {
+            return browser.elements(this.snapListSelector);
+        }
+    },
+
+    exactSnapMatchSelector: {
+        get: function() {
+            return '.region-matched-snap-result .row';
+        }
+    },
+    
+    exactMatch: {
+        get: function() {
+            return browser.element(this.exactSnapMatchSelector);
+        }
+    },
 });
 
 module.exports = storePage
