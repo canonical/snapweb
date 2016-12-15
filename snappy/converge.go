@@ -142,9 +142,9 @@ func (h *Handler) installPackage(name string) error {
 	return err
 }
 
-type Price map[string]float64
+type Prices map[string]float64
 
-func priceStringFromSnapPrice(p Price) string {
+func priceStringFromSnapPrice(p Prices) string {
 	// picks up the "first" listed price for now
 	var currencies []string
 	for k := range p {
@@ -153,11 +153,15 @@ func priceStringFromSnapPrice(p Price) string {
 	if len(currencies) == 0 {
 		return ""
 	}
+	// TODO: "USD" might prevail? not sure
+	sort.Strings(currencies)
 	currency := currencies[0]
 	return fmt.Sprintf("%s %s", strconv.FormatFloat(p[currency], 'f', -1, 32), currency)
 }
 
 func (h *Handler) snapToPayload(snapQ *client.Snap) snapPkg {
+	snapQ.Prices = map[string]float64{"EUR": 0.99, "USD": 1.23}
+	snapQ.Status = "priced"
 	snap := snapPkg{
 		ID:          snapQ.Name,
 		Name:        snapQ.Name,

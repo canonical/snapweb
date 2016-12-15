@@ -32,6 +32,8 @@ import (
 )
 
 const (
+	// StatusPriced indicates the package is priced and has not been bought.
+	StatusPriced = "priced"
 	// StatusInstalled indicates the package is in an installed state.
 	StatusInstalled = "installed"
 	// StatusActive indicates the package is in an installed but disabled state.
@@ -120,6 +122,8 @@ func translateStatus(s *client.Snap) string {
 		return StatusInstalled
 	case client.StatusActive:
 		return StatusActive
+	case "priced":
+		return StatusPriced
 	}
 
 	return StatusUninstalled
