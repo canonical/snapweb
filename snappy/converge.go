@@ -19,8 +19,10 @@ package snappy
 
 import (
 	"errors"
+	"fmt"
 	"net/url"
 	"sort"
+	"strconv"
 	"time"
 
 	"log"
@@ -140,6 +142,21 @@ func (h *Handler) installPackage(name string) error {
 	return err
 }
 
+type Price map[string]float64
+
+func priceStringFromSnapPrice(p Price) string {
+	// picks up the "first" listed price for now
+	var currencies []string
+	for k := range p {
+		currencies = append(currencies, k)
+	}
+	if len(currencies) == 0 {
+		return ""
+	}
+	currency := currencies[0]
+	return fmt.Sprintf("%s %s", strconv.FormatFloat(p[currency], 'f', -1, 32), currency)
+}
+
 func (h *Handler) snapToPayload(snapQ *client.Snap) snapPkg {
 	snap := snapPkg{
 		ID:          snapQ.Name,
@@ -149,7 +166,7 @@ func (h *Handler) snapToPayload(snapQ *client.Snap) snapPkg {
 		Description: snapQ.Description,
 		Type:        snap.Type(snapQ.Type),
 		Status:      h.statusTracker.Status(snapQ),
-		Price:       "", // TODO: get snap price
+		Price:       priceStringFromSnapPrice(snapQ.Prices),
 		Private:     snapQ.Private,
 		Channel:     snapQ.Channel,
 		InstallDate: snapQ.InstallDate.Format(time.UnixDate),
