@@ -47,6 +47,12 @@ func redir(w http.ResponseWriter, req *http.Request) {
 func main() {
 	config := readConfig()
 
+	if ! IsManaged() {
+		panic("Start FirstBoot instead")
+	}
+
+	GenerateCertificate()
+
 	// TODO set warning for too hazardous config?
 
 	initURLHandlers(logger, config)
