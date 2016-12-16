@@ -213,11 +213,11 @@ func (s *AllPackagesSuite) TestHasSnaps(c *C) {
 }
 
 func (s *AllPackagesSuite) TestSnapPrices(c *C) {
-	prices := Prices{
+	prices := snapPrices{
 		"USD": 1.2,
 		"EUR": 0.1,
 	}
 
-	c.Assert(priceStringFromSnapPrice(Prices{}), Equals, "")
+	c.Assert(priceStringFromSnapPrice(snapPrices{}), Equals, "")
 	c.Assert(priceStringFromSnapPrice(prices), Equals, "0.1 EUR")
 }

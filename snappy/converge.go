@@ -142,9 +142,9 @@ func (h *Handler) installPackage(name string) error {
 	return err
 }
 
-type Prices map[string]float64
+type snapPrices map[string]float64
 
-func priceStringFromSnapPrice(p Prices) string {
+func priceStringFromSnapPrice(p snapPrices) string {
 	// picks up the "first" listed price for now
 	var currencies []string
 	for k := range p {
