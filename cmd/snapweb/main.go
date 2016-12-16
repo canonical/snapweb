@@ -45,6 +45,10 @@ func redir(w http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
+	if ! IsManaged() {
+		panic("Start FirstBoot instead")
+	}
+
 	GenerateCertificate()
 
 	initURLHandlers(logger)
