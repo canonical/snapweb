@@ -18,7 +18,9 @@
 package netfilter
 
 import (
+	"log"
 	"net"
+	"net/http"
 )
 
 type NetFilter struct {
@@ -133,3 +135,21 @@ func (f *NetFilter) Block(rule string) bool {
 	return f.addRule(rule, false)
 }
 
+// makeAPIHandler create a handler for all API calls that need authorization
+func (f *NetFilter) FilterHandler(handler http.Handler) http.Handler {
+
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		host, _, err := net.SplitHostPort(r.RemoteAddr)
+		if err == nil {
+			ip := net.ParseIP(host)
+			if f.IsAllowed(ip) {
+				handler.ServeHTTP(w, r)
+				return
+			}
+		}
+
+		log.Println("Unauthorized access from", host, err)
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+	})
+	
+}

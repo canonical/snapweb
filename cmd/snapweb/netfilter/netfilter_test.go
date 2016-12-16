@@ -19,6 +19,8 @@ package netfilter
 
 import (
 	"net"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	. "gopkg.in/check.v1"
@@ -74,33 +76,33 @@ func (s *NetFilterSuite) TestNetFilterCheckRules(c *C) {
 	c.Check(s.f.IsAllowed(net.ParseIP("127.0.0.2")), Equals, false)
 	c.Check(s.f.IsAllowed(net.ParseIP("192.168.0.1")), Equals, true)
 	c.Check(s.f.IsAllowed(net.ParseIP("192.0.0.1")), Equals, false)
+
+	// check the cached response
+	c.Check(s.f.acceptCache.Equal(net.ParseIP("127.0.0.1")), Equals, false)
+	c.Check(s.f.IsAllowed(net.ParseIP("127.0.0.1")), Equals, true)
+	c.Check(s.f.acceptCache.Equal(net.ParseIP("127.0.0.1")), Equals, true)
 }
 
-/*
-var privateRanges = []ipRange{
-    ipRange{
-        start: net.ParseIP("10.0.0.0"),
-        end:   net.ParseIP("10.255.255.255"),
-    },
-    ipRange{
-        start: net.ParseIP("100.64.0.0"),
-        end:   net.ParseIP("100.127.255.255"),
-    },
-    ipRange{
-        start: net.ParseIP("172.16.0.0"),
-        end:   net.ParseIP("172.31.255.255"),
-    },
-    ipRange{
-        start: net.ParseIP("192.0.0.0"),
-        end:   net.ParseIP("192.0.0.255"),
-    },
-    ipRange{
-        start: net.ParseIP("192.168.0.0"),
-        end:   net.ParseIP("192.168.255.255"),
-    },
-    ipRange{
-        start: net.ParseIP("198.18.0.0"),
-        end:   net.ParseIP("198.19.255.255"),
-    },
+func (s *NetFilterSuite) TestNetFilterHandler(c *C) {
+	c.Assert(s.f, NotNil)
+
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	})
+	filtered := s.f.FilterHandler(handler)
+	c.Assert(filtered, NotNil)
+
+	rec := httptest.NewRecorder()
+	req, err := http.NewRequest("GET", "/foo", nil)
+	c.Assert(err, IsNil)
+	req.RemoteAddr = "127.0.0.1:4200"
+
+	filtered.ServeHTTP(rec, req)
+	c.Assert(rec.Code, Equals, http.StatusForbidden)
+
+	s.f.Allow("127.0.0.1")
+	rec = httptest.NewRecorder()
+	
+	filtered.ServeHTTP(rec, req)
+	c.Assert(rec.Code, Equals, http.StatusOK)
 }
-*/
