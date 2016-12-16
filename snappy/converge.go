@@ -108,7 +108,9 @@ func (h *Handler) allPackages(snapCondition int, query string, private bool, sec
 
 	snapPkgs := make([]snapPkg, 0, len(snaps))
 	for _, snap := range snaps {
-		snapPkgs = append(snapPkgs, h.snapToPayload(snap))
+		snapPkgs = append(
+			snapPkgs,
+			h.snapToPayload(snap))
 	}
 
 	sort.Sort(snapPkgsByName(snapPkgs))
@@ -140,7 +142,18 @@ func (h *Handler) installPackage(name string) error {
 	return err
 }
 
+func formatInstallData(d time.Time) string {
+	// store snaps dont have install dates
+	// are their install date are time.Time zero values
+	if (d == time.Time{}) {
+		// store snap
+		return ""
+	}
+	return d.Format(time.UnixDate)
+}
+
 func (h *Handler) snapToPayload(snapQ *client.Snap) snapPkg {
+
 	snap := snapPkg{
 		ID:          snapQ.Name,
 		Name:        snapQ.Name,
@@ -152,7 +165,7 @@ func (h *Handler) snapToPayload(snapQ *client.Snap) snapPkg {
 		Price:       "", // TODO: get snap price
 		Private:     snapQ.Private,
 		Channel:     snapQ.Channel,
-		InstallDate: snapQ.InstallDate.Format(time.UnixDate),
+		InstallDate: formatInstallData(snapQ.InstallDate),
 	}
 
 	isInstalled := snapQ.Status == client.StatusInstalled || snapQ.Status == client.StatusActive
