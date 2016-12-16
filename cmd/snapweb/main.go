@@ -44,6 +44,14 @@ func init() {
 }
 
 func main() {
+	config := readConfig()
+
+	if ! IsManaged() {
+		panic("Start FirstBoot instead")
+	}
+
+	GenerateCertificate()
+
 	// TODO set warning for too hazardous config?
 	config, err := snappy.ReadConfig()
 	if err != nil {
