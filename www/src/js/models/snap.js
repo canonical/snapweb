@@ -124,6 +124,9 @@ module.exports = Backbone.Model.extend({
     var action;
 
     switch (state) {
+      case CONF.INSTALL_STATE.PRICED:
+        action = model.get('price');
+        break;
       case CONF.INSTALL_STATE.ACTIVE:
       case CONF.INSTALL_STATE.INSTALLED:
         action = 'Remove';
@@ -184,7 +187,7 @@ module.exports = Backbone.Model.extend({
     }
 
     if (status === CONF.INSTALL_STATE.PRICED) {
-      response.isInstallable = false;
+      response.isInstallable = true;
       response.priced = true
     }
 

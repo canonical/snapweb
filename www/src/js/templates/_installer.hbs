@@ -5,18 +5,12 @@
     {{/if}}
   </div>
 {{else}}
-  {{#if priced}}
-    <div class="b-installer">
-      <button class="b-installer__button p-button--neutral">{{ price }}</button>
-    </div>
-  {{else}}
-    <div class="b-installer b-installer_disabled {{ installerClass }} {{ installHTMLClass }}">
+  <div class="b-installer b-installer_disabled {{ installerClass }} {{ installHTMLClass }}">
     {{#if isInstalled}}
       <button class="b-installer__button p-button--positive">Installed</button>
     {{else}}
       <button class="b-installer__button p-button--negative" disabled>Not installable</button>
     {{/if}}
-    </div>
-  {{/if}}
+  </div>
 {{/if}}
 

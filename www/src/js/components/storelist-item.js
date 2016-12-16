@@ -28,8 +28,6 @@ module.exports = React.createBackboneClass({
               <li className="p-list__item">Version: {version}</li>}
             {developer &&
               <li className="p-list__item">Author: {developer}</li>}
-            {price &&
-              <li className="p-list__item">{price}</li>}
           </ul>
         </a>
         <footer className="p-card__footer">

@@ -24,13 +24,13 @@ module.exports = Marionette.Behavior.extend({
   onHTMLClassChange: function(model) {
     var installer = this.ui.installer;
     installer.removeClass(model.previous('installHTMLClass'))
-    .addClass(model.get('installHTMLClass'));
+             .addClass(model.get('installHTMLClass'));
   },
 
   onButtonClassChange: function(model) {
     var button = this.ui.installerButton;
     button.removeClass(model.previous('installButtonClass'))
-    .addClass(model.get('installButtonClass'));
+          .addClass(model.get('installButtonClass'));
   },
 
   onStatusChange: function(model) {
@@ -54,6 +54,8 @@ module.exports = Marionette.Behavior.extend({
     var model = this.view.model;
     var status = model.get('status');
     var isInstallable = model.get('isInstallable');
+
+    // TODO handle buy
 
     if (!isInstallable) {
       return;

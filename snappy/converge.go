@@ -160,8 +160,6 @@ func priceStringFromSnapPrice(p Prices) string {
 }
 
 func (h *Handler) snapToPayload(snapQ *client.Snap) snapPkg {
-	snapQ.Prices = map[string]float64{"EUR": 0.99, "USD": 1.23}
-	snapQ.Status = "priced"
 	snap := snapPkg{
 		ID:          snapQ.Name,
 		Name:        snapQ.Name,
