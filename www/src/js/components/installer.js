@@ -1,42 +1,13 @@
 /** @jsx React.DOM */
 
 var React = require('react');
+var Snap = require('../common/snaps.js');
 var Config = require('../config.js');
 
 
 module.exports = React.createBackboneClass({
   installClicked: function(event) {
-    event.preventDefault();
-
-    var model = this.props.model;
-    var status = model.get('status');
-    var isInstallable = model.get('isInstallable');
-
-    // TODO handle buy
-
-    if (!isInstallable) {
-      return;
-    }
-
-    if (status === Config.INSTALL_STATE.INSTALLED) {
-      // remove
-      model.set({
-        status: CONF.INSTALL_STATE.REMOVING
-      });
-      model.destroy({
-        dataType : 'json',
-        silent: true
-      });
-    } else if (status === Config.INSTALL_STATE.REMOVED) {
-      // install
-      model.save({
-        status: Config.INSTALL_STATE.INSTALLING
-      }, {
-        dataType : 'json'
-      });
-    }
-
-    return false;
+    return Snap.handleInstallEvent(event, this.props.model);
   },
 
   render: function() {

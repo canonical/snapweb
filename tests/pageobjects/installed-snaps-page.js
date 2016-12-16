@@ -64,7 +64,6 @@ var installedSnapsPage = Object.create(basepage, {
         }
     },
 
-
     snapElement: {
         value: function(snap_name) {
 
@@ -78,6 +77,12 @@ var installedSnapsPage = Object.create(basepage, {
     snapwebsnap: {
         get: function() {
             return this.snapElement("snapweb");
+        }
+    },
+
+    snapInstallButton: {
+        value: function(snap_name) {
+            return browser.element(".p-card-deck a[href='/snap/" + snap_name + "'] .b-installer");
         }
     }
 });
