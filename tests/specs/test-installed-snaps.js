@@ -90,9 +90,7 @@ describe('Installed Snaps Page - Verify that', function() {
 
     });
 
-
     it('snapweb updates the page when snap is installed/removed direclty on the device', function() {
-
         var snap_name = "hello-world";
         var re_removed = new RegExp("cannot find snap|" + snap_name + ".*removed")
         var re_installed = new RegExp(snap_name + ".*installed");
@@ -135,7 +133,37 @@ describe('Installed Snaps Page - Verify that', function() {
         snapslist_snapweb.value.forEach(function(snap) {
             expect(snap.getText()).to.not.equal(snap_name);
         });
-
     });
 
+    it('snapweb updates the page when snap is removed from ui buttons', function() {
+        var snap_name = "hello-world";
+        var re_installed = new RegExp(snap_name + ".*installed");
+
+        //Remove the snap in case it is already installed
+        browser.call(function() {
+            return snaputil.removeSnap(snap_name);
+        });
+        browser.refresh();
+
+        //Install the snap and refresh page
+        browser.call(function() {
+            return snaputil.installSnap(snap_name).then(function(res) {
+                expect(res).to.match(re_installed, res);
+            });
+        });
+        browser.refresh();
+
+        //Check if snap installed is now shown on page
+        var snap = snapsPage.snapElement(snap_name);
+        snap.waitForVisible();
+        var removeButton = snapsPage.snapInstallButton(snap_name);
+        assert.isNotNull(removeButton.element('.b-installer_do_remove'));
+        expect(removeButton.element('.b-installer__button').getText()).to.be.string('Remove');
+
+        removeButton.click();
+
+        var installButton = snapsPage.snapInstallButton(snap_name);
+        installButton.element('.b-installer_do_install').waitForVisible();
+        expect(installButton.element('.b-installer__button').getText()).to.be.string('Install');
+    });
 });

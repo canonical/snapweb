@@ -144,9 +144,21 @@ exports.config = {
     // Gets executed before test execution begins. At this point you can access all global
     // variables, such as `browser`. It is the perfect place to define custom commands.
     before: function(capabilities, specs) {
-        var sshSnapUtil = require('./utils/ssh-snap-util');
         var env = process.env;
-        snaputil = new sshSnapUtil(env.HOST, env.USER, env.PORT, env.SSH_AUTH_SOCK, env.SUDO);
+        var cmdutil = require('./utils/snap-cmd-util');
+        if (env.LOCALRUN === "1") {
+            snaputil = cmdutil.createLocalSnapUtil(
+                env.SUDO,
+                env.TOKEN);
+        } else {
+            snaputil = cmdutil.createSshSnapUtil(
+                env.HOST,
+                env.USER,
+                env.PORT,
+                env.SSH_AUTH_SOCK,
+                env.SUDO,
+                env.TOKEN);
+        }
     },
     //
     // Hook that gets executed before the suite starts
