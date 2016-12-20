@@ -24,6 +24,7 @@ Window {
   height: 500
 
   WebView {
+    anchors.fill: parent
     id: webView
     focus: true
 
