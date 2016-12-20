@@ -12,7 +12,6 @@ apps:
     plugs:
       - browser-support
       - network
-      - network-bind
       - opengl
       - unity7
 
