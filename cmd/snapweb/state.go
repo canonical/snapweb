@@ -21,8 +21,8 @@ import (
 	"github.com/snapcore/snapd/client"
 )
 
-// IsManaged determines if the device is in the 'managed' state
-func IsManaged() bool {
+// IsDeviceManaged determines if the device is in the 'managed' state
+func IsDeviceManaged() bool {
 	client := client.New(nil)
 
 	sysInfo, err := client.SysInfo()
@@ -34,26 +34,5 @@ func IsManaged() bool {
 		return true
 	}
 
-	return false
-}
-
-func IsJustOperational() bool {
-	client := client.New(nil)
-	
-	users, err := client.Users()
-	if err != nil {
-		panic(err)
-	}
-	
-	if len(users) > 0 {
-		return false
-	}
-
-	return true
-}
-
-// IsEmbryonic determines if the devices is in 'embryonic' state
-func IsEmbryonic() bool {
-	// FIXME
 	return false
 }
