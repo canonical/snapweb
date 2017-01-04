@@ -48,7 +48,7 @@ func main() {
 	config := readConfig()
 
 	if ! IsManaged() {
-		panic("Start FirstBoot instead")
+		panic("Snapweb does not run on un-managed devices")
 	}
 
 	GenerateCertificate()
