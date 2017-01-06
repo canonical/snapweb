@@ -13,3 +13,4 @@ if [ -e /home/snapweb/snapweb_*_amd64.snap ] ; then
 fi
 
 echo "Not trying to build snapweb on the test target: provide a pre-built snap"
+test -e /home/snapweb/snapweb_*_amd64.snap
