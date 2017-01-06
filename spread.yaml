@@ -39,6 +39,12 @@ exclude:
   - token.txt
   - cert.pem
   - key.pem
+  - node_modules
+  - snapweb
+  - tests
+  - releases
+  - generate_token
+  - www
 
 prepare: |
   . $TESTSLIB/prepare-all.sh

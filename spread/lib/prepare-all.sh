@@ -12,21 +12,5 @@ if [ -e /home/snapweb/snapweb_*_amd64.snap ] ; then
 	exit 0
 fi
 
-
-# Setup classic snap and build the snapweb snap in there
-snap install --devmode --beta classic
-cat <<-EOF > /home/test/build-snap.sh
-#!/bin/sh
-set -ex
-apt update
-apt install -y --force-yes snapcraft
-cd /home/snapweb
-snapcraft clean
-snapcraft
-EOF
-chmod +x /home/test/build-snap.sh
-sudo classic /home/test/build-snap.sh
-snap remove classic
-
-# Make sure we have a snap binary
+echo "Not trying to build snapweb on the test target: provide a pre-built snap"
 test -e /home/snapweb/snapweb_*_amd64.snap
