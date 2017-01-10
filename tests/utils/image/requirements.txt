@@ -1,0 +1,1 @@
+qemu-kvm socat ubuntu-image kpartx
