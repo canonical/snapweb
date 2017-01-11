@@ -2,7 +2,6 @@
 
 FILE_PID=kvm.pid
 FILE_MONITOR=monitor
-PORT_SNAPWEB=4205
 PORT_SSH=8022
 IMAGE_BOOTABLE=ubuntu-core-16.img
 
@@ -26,7 +25,7 @@ start_vm() {
   kvm \
     -smp 2 \
     -m 1500 \
-    -netdev user,id=mynet0,hostfwd=tcp::$PORT_SSH-:22,hostfwd=tcp::$PORT_SNAPWEB-:4201 \
+    -netdev user,id=mynet0,hostfwd=tcp::$PORT_SSH-:22,hostfwd=tcp::4201-:4201 \
     -device virtio-net-pci,netdev=mynet0 \
     -drive file=$IMAGE_BOOTABLE,format=raw \
     -pidfile $FILE_PID \
