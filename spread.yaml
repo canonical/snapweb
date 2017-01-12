@@ -30,6 +30,9 @@ backends:
             - ubuntu-core-16:
                 username: test
                 password: test
+            - ubuntu-core-16-embryonic:
+                # root user access; not a managed system yet
+                password: test
 
 # Put this somewhere where we have read-write access
 path: /home/snapweb
@@ -58,3 +61,11 @@ suites:
             . $TESTSLIB/prepare.sh
         restore-each: |
             . $TESTSLIB/restore-each.sh
+    spread/firstboot/:
+        summary: Full-system tests for the firstboot variant of snapweb
+        environment:
+            FIRSTBOOT: yes
+        systems:
+            - ubuntu-core-16-embryonic
+        prepare: |
+            . $TESTSLIB/prepare.sh
