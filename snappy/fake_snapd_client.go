@@ -132,4 +132,8 @@ func (f *FakeSnapdClient) FindOne(name string) (*client.Snap, *client.ResultInfo
 	return nil, nil, f.StoreErr
 }
 
+func (f *FakeSnapdClient) Change(id string) (*client.Change, error) {
+	return nil, nil
+}
+
 var _ SnapdClient = (*FakeSnapdClient)(nil)

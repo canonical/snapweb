@@ -44,6 +44,7 @@ type SnapdClient interface {
 	CreateUser(request *client.CreateUserOptions) (*client.CreateUserResult, error)
 	Interfaces() (client.Interfaces, error)
 	Known(assertTypeName string, headers map[string]string) ([]asserts.Assertion, error)
+	Change(id string) (*client.Change, error)
 }
 
 // ClientAdapter adapts our expectations to the snapd client API.
@@ -116,6 +117,11 @@ func (a *ClientAdapter) FindOne(name string) (*client.Snap, *client.ResultInfo, 
 // Sections returns the list of available sections
 func (a *ClientAdapter) Sections() ([]string, error) {
 	return a.snapdClient.Sections()
+}
+
+// Sections returns the list of available sections
+func (a *ClientAdapter) Change(id string) (*client.Change, error) {
+	return a.snapdClient.Change(id)
 }
 
 // internal

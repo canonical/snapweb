@@ -29,7 +29,7 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/snapcore/snapd/client"
-	"github.com/snapcore/snapweb/statustracker"
+	"github.com/snapcore/snapweb/statetracker"
 
 	. "gopkg.in/check.v1"
 )
@@ -51,7 +51,7 @@ func (s *HandlersSuite) SetUpTest(c *C) {
 func (s *HandlersSuite) resetFakeSnapdClient() {
 	s.c = &FakeSnapdClient{}
 	s.h.setClient(s.c)
-	s.h.statusTracker = statustracker.New()
+	s.h.stateTracker = statetracker.New()
 }
 
 func (s *HandlersSuite) createAndSaveTestToken(c *C) string {

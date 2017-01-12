@@ -25,7 +25,7 @@ import (
 	"github.com/snapcore/snapd/snap"
 	. "gopkg.in/check.v1"
 
-	"github.com/snapcore/snapweb/statustracker"
+	"github.com/snapcore/snapweb/statetracker"
 )
 
 type GetSnapSuite struct {
@@ -94,7 +94,7 @@ var _ = Suite(&PackagePayloadSuite{})
 
 func (s *PackagePayloadSuite) SetUpTest(c *C) {
 	os.Setenv("SNAP_DATA", c.MkDir())
-	s.h.statusTracker = statustracker.New()
+	s.h.stateTracker = statetracker.New()
 	s.c = &FakeSnapdClient{}
 	s.h.setClient(s.c)
 }
@@ -135,7 +135,7 @@ var _ = Suite(&PayloadSuite{})
 
 func (s *PayloadSuite) SetUpTest(c *C) {
 	os.Setenv("SNAP_DATA", c.MkDir())
-	s.h.statusTracker = statustracker.New()
+	s.h.stateTracker = statetracker.New()
 	s.h.setClient(&FakeSnapdClient{})
 }
 
@@ -146,7 +146,7 @@ func (s *PayloadSuite) TestPayload(c *C) {
 
 	c.Check(q.Name, Equals, fakeSnap.Name)
 	c.Check(q.Version, Equals, fakeSnap.Version)
-	c.Check(q.Status, Equals, statustracker.StatusActive)
+	c.Check(q.Status, Equals, statetracker.StatusActive)
 	c.Check(q.Type, Equals, snap.Type(fakeSnap.Type))
 	c.Check(q.Icon, Equals, "/icons/chatroom_icon.png")
 	c.Check(q.Description, Equals, fakeSnap.Description)
@@ -155,10 +155,10 @@ func (s *PayloadSuite) TestPayload(c *C) {
 func (s *PayloadSuite) TestPayloadSnapInstalling(c *C) {
 	fakeSnap := newDefaultSnap()
 	fakeSnap.Status = client.StatusAvailable
-	s.h.statusTracker.TrackInstall(fakeSnap)
+	s.h.stateTracker.TrackInstall(fakeSnap)
 
 	payload := s.h.snapToPayload(fakeSnap)
-	c.Assert(payload.Status, Equals, statustracker.StatusInstalling)
+	c.Assert(payload.Status, Equals, statetracker.StatusInstalling)
 }
 
 type AllPackagesSuite struct {
@@ -170,7 +170,7 @@ var _ = Suite(&AllPackagesSuite{})
 
 func (s *AllPackagesSuite) SetUpTest(c *C) {
 	os.Setenv("SNAP_DATA", c.MkDir())
-	s.h.statusTracker = statustracker.New()
+	s.h.stateTracker = statetracker.New()
 	s.c = &FakeSnapdClient{}
 	s.h.setClient(s.c)
 }
