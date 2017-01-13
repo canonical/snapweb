@@ -69,3 +69,5 @@ suites:
             - ubuntu-core-16-embryonic
         prepare: |
             . $TESTSLIB/prepare.sh
+        restore-each: |
+            . $TESTSLIB/restore-each.sh
