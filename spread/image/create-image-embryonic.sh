@@ -43,7 +43,7 @@ fi
 ubuntu-image \
 	--channel $channel \
 	-o $image_name \
-	--image-size 2G \
+	--image-size 4G \
 	$ubuntu_image_extra_args \
 	$model.model
 
