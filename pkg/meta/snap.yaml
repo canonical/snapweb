@@ -16,5 +16,9 @@ apps:
     daemon: simple
     command: snapweb
     plugs: [network, network-bind, snapd-control, timeserver-control, timezone-control]
+  firstboot:
+    daemon: simple
+    command: firtsboot
+    plugs: [network, network-bind, snapd-control, timeserver-control]
   generate-token:
     command: generate-token
