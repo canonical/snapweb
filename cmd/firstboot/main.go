@@ -18,11 +18,18 @@
 package main
 
 import (
+	"io"
 	"log"
+	"net"
 	"net/http"
 	"os"
+	"path/filepath"
+	"strings"
+	"text/template"
 
+	"github.com/snapcore/snapd/dirs"
 	"github.com/snapcore/snapd/client"
+	
 	"github.com/snapcore/snapweb/avahi"
 )
 
@@ -53,9 +60,108 @@ func IsDeviceManaged() bool {
 	return false
 }
 
+func unixDialer(socketPath string) func(string, string) (net.Conn, error) {
+	file, err := os.OpenFile(socketPath, os.O_RDWR, 0666)
+	if err == nil {
+		file.Close()
+	}
+
+	return func(_, _ string) (net.Conn, error) {
+		return net.Dial("unix", socketPath)
+	}
+}
+
+func makePassthroughHandler(socketPath string, prefix string) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		c := &http.Client{
+			Transport: &http.Transport{Dial: unixDialer(socketPath)},
+		}
+
+		log.Println(r.Method, r.URL.Path)
+
+		// need to remove the RequestURI field
+		// and remove the /api prefix from snapweb URLs
+		r.URL.Scheme = "http"
+		r.URL.Host = "localhost"
+		r.URL.Path = strings.TrimPrefix(r.URL.Path, prefix)
+
+		outreq, err := http.NewRequest(r.Method, r.URL.String(), r.Body)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		resp, err := c.Do(outreq)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		// Note: the client.Do method above only returns JSON responses
+		//       even if it doesn't say so
+		hdr := w.Header()
+		hdr.Set("Content-Type", "application/json")
+		w.WriteHeader(resp.StatusCode)
+
+		io.Copy(w, resp.Body)
+
+	})
+}
+
+func loggingHandler(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Println(r.Method, r.URL.Path)
+		h.ServeHTTP(w, r)
+	})
+}
+
+type branding struct {
+	Name    string
+	Subname string
+}
+
+type templateData struct {
+	Branding     branding
+	SnapdVersion string
+}
+
+func makeMainPageHandler() http.HandlerFunc {
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		data := templateData{
+			Branding: branding{
+				Name:    "Ubuntu",
+				Subname: "",
+			},
+			SnapdVersion: "snapd",
+		}
+
+		if err := renderLayout("index.html", &data, w); err != nil {
+			log.Println(err)
+		}
+	}
+}
+
+func renderLayout(html string, data *templateData, w http.ResponseWriter) error {
+	htmlPath := filepath.Join(os.Getenv("SNAP"), "www", "templates", html)
+	if _, err := os.Stat(htmlPath); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return err
+	}
+
+	layoutPath := filepath.Join(os.Getenv("SNAP"), "www", "templates", "base.html")
+	t, err := template.ParseFiles(layoutPath, htmlPath)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return err
+	}
+
+	return t.Execute(w, *data)
+}
+
 func initURLHandlers(log *log.Logger) {
 	// API
-	http.Handle("/api/", makeAPIHandler("/api/"))
+	http.Handle("/api/", makePassthroughHandler(dirs.SnapdSocket, "/api/"))
 
 	// Resources
 	http.Handle("/public/", loggingHandler(http.FileServer(http.Dir(filepath.Join(os.Getenv("SNAP"), "www")))))
