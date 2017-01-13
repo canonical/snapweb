@@ -2,7 +2,7 @@
 set -e
 
 case $SNAP_ARCH in
-    amd64)
+    amd64|x86_64)
         plat_abi=x86_64-linux-gnu
         ;;
     armhf)
