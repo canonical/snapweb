@@ -29,7 +29,7 @@ import (
 
 	"github.com/snapcore/snapd/dirs"
 	"github.com/snapcore/snapd/client"
-	
+
 	"github.com/snapcore/snapweb/avahi"
 )
 
@@ -172,7 +172,8 @@ func initURLHandlers(log *log.Logger) {
 func main() {
 
 	if IsDeviceManaged() {
-		panic("The Snapweb/Firstboot module does not run on managed devices")
+		log.Println("The Snapweb/Firstboot module does not run on managed devices")
+		os.Exit(0)
 	}
 
 	initURLHandlers(logger)
