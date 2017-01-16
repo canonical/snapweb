@@ -166,9 +166,14 @@ module.exports = Backbone.Model.extend({
   },
 
   parse: function(response) {
-    var status = response.status;
+    var state = response.state;
     var type = response.type;
     var id  = response.id;
+
+    var status = state.status;
+
+    response.status = status;
+    response.download_progress = state.local_size || 0;
 
     if (
       status === CONF.INSTALL_STATE.INSTALLED ||

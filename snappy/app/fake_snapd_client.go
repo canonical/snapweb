@@ -20,6 +20,8 @@ package snappy
 import (
 	"github.com/snapcore/snapd/asserts"
 	"github.com/snapcore/snapd/client"
+
+	"github.com/snapcore/snapweb/snappy/snapdclient"
 )
 
 // FakeSnapdClient is a fake SnapdClient for testing purposes
@@ -136,4 +138,4 @@ func (f *FakeSnapdClient) Change(id string) (*client.Change, error) {
 	return nil, nil
 }
 
-var _ SnapdClient = (*FakeSnapdClient)(nil)
+var _ snapdclient.SnapdClient = (*FakeSnapdClient)(nil)

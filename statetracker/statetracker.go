@@ -32,6 +32,9 @@ import (
 	"time"
 
 	"github.com/snapcore/snapd/client"
+	"github.com/snapcore/snapd/overlord/state"
+
+	"github.com/snapcore/snapweb/snappy/snapdclient"
 )
 
 const (
@@ -52,7 +55,7 @@ var trackerDuration = 2 * time.Minute
 
 // SnapState encapsulate the currently tracked snap state
 type SnapState struct {
- 	Status    string
+	Status    string
 	ChangeID  string
 	LocalSize uint64
 }
@@ -73,45 +76,43 @@ func New() *StateTracker {
 }
 
 // State returns the state of the given snap
-func (s *StateTracker) State( *sn.Change, snap *client.Snap) *SnapState {
+func (s *StateTracker) State(c snapdclient.SnapdClient, snap *client.Snap) *SnapState {
 	s.Lock()
 	defer s.Unlock()
 
-	if changing, changeID := h.stateTracker.IsInstalling(snapQ); changing {
-		var err error
-		change, err = snapdClient.Change(changeID)
-
-		for _, task := range change.Tasks {
-			if task.Status != state.DoingStatus {
-				continue
-			}
-			uint64(t.Progress.Done)
-			break
-		}
-	}
-
-	state, ok := s.states[snap.Name]
+	cstate, ok := s.states[snap.Name]
 	if !ok {
-		return &SnapState {
+		return &SnapState{
 			Status: translateStatus(snap),
 		}
 	}
 
-	localSize := 0
-	if change != nil {
-		localSize = change.Change(state.ChangeID)
+	var localSize uint64
+	if changing, changeID := s.IsInstalling(snap); changing && c != nil {
+		change, err := c.Change(changeID)
+
+		if err == nil {
+			for _, task := range change.Tasks {
+				if task.Status != state.DoingStatus.String() {
+					continue
+				}
+				localSize = uint64(task.Progress.Done)
+				break
+			}
+		}
 	}
 
-	state, ok := s.states[snap.Name]
-	if !ok {
-		return translateStatus(snap)
-	}
-
-	if hasCompleted(state.Status, snap) {
+	if hasCompleted(cstate.Status, snap) {
 		delete(s.states, snap.Name)
-		return translateStatus(snap)
+		return &SnapState{
+			Status:    translateStatus(snap),
+			LocalSize: localSize,
+		}
 	}
-	return state
+
+	cstate.LocalSize = localSize
+
+	return &cstate
 }
 
 // TrackInstall tracks the installation of the given snap
@@ -124,22 +125,22 @@ func (s *StateTracker) TrackInstall(changeID string, snap *client.Snap) {
 }
 
 // TrackInstall tracks the installation of the given snap
-func (s *StateTracker) IsInstalling(snap *client.Snap) bool, string {
+func (s *StateTracker) IsInstalling(snap *client.Snap) (bool, string) {
 	state, ok := s.states[snap.Name]
 	if !ok {
 		return false, ""
 	}
 
-	return ! hasCompleted(state.Status, snap), state.ChangeID
+	return !hasCompleted(state.Status, snap), state.ChangeID
 }
 
 func (s *StateTracker) trackOperation(changeID, name, operation string) {
 	s.Lock()
 	defer s.Unlock()
 
-	s.states[name] = SnapState {
-		status: operation,
-		changeID: changeID
+	s.states[name] = SnapState{
+		Status:   operation,
+		ChangeID: changeID,
 	}
 
 	go func() {

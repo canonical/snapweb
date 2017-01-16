@@ -75,47 +75,47 @@ func (s *StateTrackerSuite) TestHasCompleted(c *C) {
 
 func (s *StateTrackerSuite) TestUntrackedSnap(c *C) {
 	snap := &client.Snap{Status: client.StatusInstalled}
-	c.Assert(s.t.Status(snap), Equals, StatusInstalled)
+	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusInstalled})
 }
 
 func (s *StateTrackerSuite) TestTrackInstallAlreadyInstalled(c *C) {
 	snap := &client.Snap{Status: client.StatusInstalled}
-	s.t.TrackInstall(snap)
-	c.Assert(s.t.Status(snap), Equals, StatusInstalled)
+	s.t.TrackInstall("", snap)
+	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusInstalled})
 }
 
 func (s *StateTrackerSuite) TestTrackInstall(c *C) {
 	snap := &client.Snap{Status: client.StatusAvailable}
-	s.t.TrackInstall(snap)
-	c.Assert(s.t.Status(snap), Equals, StatusInstalling)
+	s.t.TrackInstall("", snap)
+	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusInstalling})
 	// installation completes
 	snap.Status = client.StatusActive
-	c.Assert(s.t.Status(snap), Equals, StatusActive)
+	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusActive})
 }
 
 func (s *StateTrackerSuite) TestTrackInstallExpiry(c *C) {
 	trackerDuration = 200 * time.Millisecond
 
 	snap := &client.Snap{Status: client.StatusAvailable}
-	s.t.TrackInstall(snap)
-	c.Assert(s.t.Status(snap), Equals, StatusInstalling)
+	s.t.TrackInstall("", snap)
+	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusInstalling})
 
 	// don't track indefinitely if operation fails
 	time.Sleep(trackerDuration * 2)
-	c.Assert(s.t.Status(snap), Equals, StatusUninstalled)
+	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusUninstalled})
 }
 
 func (s *StateTrackerSuite) TestTrackUninstallNotInstalled(c *C) {
 	snap := &client.Snap{Status: client.StatusAvailable}
 	s.t.TrackUninstall(snap)
-	c.Assert(s.t.Status(snap), Equals, StatusUninstalled)
+	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusUninstalled})
 }
 
 func (s *StateTrackerSuite) TestTrackUninstall(c *C) {
 	snap := &client.Snap{Status: client.StatusInstalled}
 	s.t.TrackUninstall(snap)
-	c.Assert(s.t.Status(snap), Equals, StatusUninstalling)
+	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusUninstalling})
 	// uninstallation completes
 	snap.Status = client.StatusRemoved
-	c.Assert(s.t.Status(snap), Equals, StatusUninstalled)
+	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusUninstalled})
 }

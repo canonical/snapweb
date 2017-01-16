@@ -28,7 +28,6 @@ import (
 	"github.com/snapcore/snapweb/statetracker"
 
 	"github.com/snapcore/snapd/client"
-	"github.com/snapcore/snapd/overlord/state"
 	"github.com/snapcore/snapd/snap"
 )
 
@@ -38,8 +37,8 @@ const (
 )
 
 type SnapState struct {
- 	Status    string    `json:"status"`
-	LocalSize uint64    `json:"local_size,omitempty"`
+	Status    string `json:"status"`
+	LocalSize uint64 `json:"local_size,omitempty"`
 }
 
 type snapPkg struct {
@@ -151,6 +150,13 @@ func (h *Handler) installPackage(name string) error {
 	return err
 }
 
+func stateFromTrackerState(ts *statetracker.SnapState) SnapState {
+	return SnapState{
+		Status:    ts.Status,
+		LocalSize: ts.LocalSize,
+	}
+}
+
 func (h *Handler) snapToPayload(snapQ *client.Snap) snapPkg {
 
 	snap := snapPkg{
@@ -160,7 +166,7 @@ func (h *Handler) snapToPayload(snapQ *client.Snap) snapPkg {
 		Version:     snapQ.Version,
 		Description: snapQ.Description,
 		Type:        snap.Type(snapQ.Type),
-		State:       h.stateTracker.State(change, snapQ),
+		State:       stateFromTrackerState(h.stateTracker.State(h.snapdClient, snapQ)),
 		Price:       "", // TODO: get snap price
 		Private:     snapQ.Private,
 		Channel:     snapQ.Channel,
