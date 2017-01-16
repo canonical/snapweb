@@ -211,3 +211,13 @@ func (s *AllPackagesSuite) TestHasSnaps(c *C) {
 	c.Assert(snaps[0].Name, Equals, "app1")
 	c.Assert(snaps[1].Name, Equals, "app2")
 }
+
+func (s *AllPackagesSuite) TestSnapPrices(c *C) {
+	prices := snapPrices{
+		"USD": 1.2,
+		"EUR": 0.1,
+	}
+
+	c.Assert(priceStringFromSnapPrice(snapPrices{}), Equals, "")
+	c.Assert(priceStringFromSnapPrice(prices), Equals, "0.1 EUR")
+}
