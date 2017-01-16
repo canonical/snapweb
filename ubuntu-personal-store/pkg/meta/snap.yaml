@@ -14,12 +14,7 @@ apps:
   ubuntu-personal-store:
     command: command-ubuntu-personal-store.wrapper
     plugs:
-    - browser-sandbox
+    - browser-support
     - network
-    - network-bind
     - opengl
     - unity7
-plugs:
-  browser-sandbox:
-    allow-sandbox: true
-    interface: browser-support

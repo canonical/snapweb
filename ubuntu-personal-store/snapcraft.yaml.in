@@ -10,16 +10,10 @@ apps:
   ubuntu-personal-store:
     command: ubuntu-personal-store.launcher
     plugs:
-      - browser-sandbox
+      - browser-support
       - network
-      - network-bind
       - opengl
       - unity7
-
-plugs:
-  browser-sandbox:
-    interface: browser-support
-    allow-sandbox: true
 
 parts:
   ubuntu-personal-store-qml:
