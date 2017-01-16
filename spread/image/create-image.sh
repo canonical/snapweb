@@ -133,6 +133,8 @@ fi
 # Enable console-conf again
 rm /writable/system-data/var/lib/console-conf/complete
 
+echo ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDQhliDv2ql/5YW/XE6nKd8Do9lhzeLC6ubUD8qO294FQ3hJdxhXJhJnSTmDbvDtzyviYhRitw03+pnKLv7SMBlvReX1QwsaxJdflW7pP8tll5tbqDCiLv66KewApLUQuPXAtgJCtYlwyOhHQNbw1fs37AsicmcKgpr0ow2GpNqgwCNwf8cizCD4XceafeJ4pwO+LTM1Y4uXqsFPfY21t1PVxKDwhcZ/4P/9zheyrMP+5xNsFBzUWMM9icKJUn3YDXRjaTIOB8+eam5xuqJZC1Ig4ZjBrRcp3vohDvsVccTcLXzbdBFNIxao/ZhrMW/PeKLcvVY+z4gX3Ev3eqx4GOP snapweb.ci@gmail.com > /home/test/.ssh/authorized_keys
+
 # Mark us done
 touch /writable/system-data/var/lib/devmode-firstboot/complete
 

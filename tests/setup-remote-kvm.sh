@@ -7,7 +7,9 @@ snap=$4
 kvm_user=test
 home=~
 
-scp -r utils/image/ $user@$host:~/
+ssh $user@$host "if [ -d image ]; then rm -rf image; fi"
+scp -r ../spread/image/ $user@$host:~/
+scp -r kvm-exec.sh $user@$host:~/image/
 ssh $user@$host "apt update"
 ssh $user@$host "apt -y install qemu-kvm socat ubuntu-image kpartx"
 ssh $user@$host "cd image; ./create-image.sh"
