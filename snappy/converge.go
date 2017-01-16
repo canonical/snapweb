@@ -32,6 +32,7 @@ import (
 const (
 	installedSnaps = iota
 	availableSnaps
+	updatableSnaps
 )
 
 type snapPkg struct {
@@ -92,6 +93,9 @@ func (h *Handler) allPackages(snapCondition int, query string, private bool, sec
 
 	if snapCondition == installedSnaps {
 		snaps, err = h.snapdClient.List(nil, nil)
+	} else if snapCondition == updatableSnaps {
+		opts := &client.FindOptions{Refresh: true}
+		snaps, _, err = h.snapdClient.Find(opts)
 	} else {
 		opts := &client.FindOptions{
 			Query:   url.QueryEscape(query),
@@ -114,6 +118,18 @@ func (h *Handler) allPackages(snapCondition int, query string, private bool, sec
 	sort.Sort(snapPkgsByName(snapPkgs))
 
 	return snapPkgs, nil
+}
+
+func (h *Handler) refreshPackage(name string) error {
+	snap, err := h.getSnap(name)
+	if err != nil {
+		return err
+	}
+
+	h.statusTracker.TrackRefresh(snap)
+
+	_, err = h.snapdClient.Refresh(name, nil)
+	return err
 }
 
 func (h *Handler) removePackage(name string) error {
