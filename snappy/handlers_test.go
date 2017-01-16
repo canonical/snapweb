@@ -151,16 +151,6 @@ func (s *HandlersSuite) TestRemove(c *C) {
 	c.Assert(s.c.Removed, Equals, "chatroom")
 }
 
-func (s *HandlersSuite) TestJsonResponseOrErrorMarshalError(c *C) {
-	unmarshable := map[int]int{1: 1}
-	rec := httptest.NewRecorder()
-
-	s.h.jsonResponseOrError(unmarshable, rec)
-
-	c.Assert(rec.Code, Equals, http.StatusInternalServerError)
-	c.Assert(rec.Body.String(), Matches, "Error: .*")
-}
-
 func (s *HandlersSuite) TestJsonResponseOrError(c *C) {
 	type foo struct {
 		S string

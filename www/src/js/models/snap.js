@@ -124,6 +124,9 @@ module.exports = Backbone.Model.extend({
     var action;
 
     switch (state) {
+      case CONF.INSTALL_STATE.PRICED:
+        action = model.get('price');
+        break;
       case CONF.INSTALL_STATE.ACTIVE:
       case CONF.INSTALL_STATE.INSTALLED:
         action = 'Remove';
@@ -170,21 +173,22 @@ module.exports = Backbone.Model.extend({
     var type = response.type;
     var id  = response.id;
 
+    response.isInstalled = false;
     if (
       status === CONF.INSTALL_STATE.INSTALLED ||
       status === CONF.INSTALL_STATE.ACTIVE ||
       status === CONF.INSTALL_STATE.REMOVING
     ) {
       response.isInstalled = true;
-    } else if (
-      status === CONF.INSTALL_STATE.REMOVED ||
-      status === CONF.INSTALL_STATE.INSTALLING
-    ) {
-      response.isInstalled = false;
     }
 
     if (response.hasOwnProperty('icon') && !response.icon.length) {
       response.icon = this.defaults.icon;
+    }
+
+    if (status === CONF.INSTALL_STATE.PRICED) {
+      response.isInstallable = true;
+      response.priced = true
     }
 
     if (type) {

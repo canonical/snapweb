@@ -15,20 +15,25 @@
  */
 
 import QtQuick 2.0
+import QtQuick.Window 2.1
 import Ubuntu.Web 0.2
 
-WebView {
-  id: webView
-  focus: true
-
-  url: "http://127.0.0.1:4200"
-
+Window {
+  title: "Ubuntu Personal Store"
   width: 500
   height: 500
 
-  onCertificateError: {
-    if (error.overridable) {
-      error.allow()
+  WebView {
+    anchors.fill: parent
+    id: webView
+    focus: true
+
+    url: "http://127.0.0.1:4200"
+
+    onCertificateError: {
+      if (error.overridable) {
+        error.allow()
+      }
     }
   }
 }

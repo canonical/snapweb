@@ -264,9 +264,9 @@ func (s *HandlersSuite) TestModelInfoHandler(c *C) {
 	c.Assert(err, IsNil)
 
 	c.Assert(deviceInfos["deviceName"], Equals, "Device Name")
-	c.Assert(deviceInfos["brand"], Equals, "Brand")
-	c.Assert(deviceInfos["model"], Equals, "Model")
-	c.Assert(deviceInfos["serial"], Equals, "Serial Number")
+	c.Assert(deviceInfos["brand"], Equals, "Unknown")
+	c.Assert(deviceInfos["model"], Equals, "Unknown")
+	c.Assert(deviceInfos["serial"], Equals, "Unknown")
 }
 
 func (s *HandlersSuite) TestCheckCookieToken(c *C) {

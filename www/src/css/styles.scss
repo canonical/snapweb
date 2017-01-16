@@ -11,6 +11,7 @@
 @import "patterns_lists";
 @import "patterns_search";
 @import "patterns_view-filters";
+@import "patterns_confirmation";
 @import "utilities_full-width";
 
 // Override default Vanilla variables
@@ -25,6 +26,7 @@ $color-brand: #e95420;
 // Site specific patterns
 @include p-card-deck;
 @include p-view-filters;
+@include p-confirmation;
 
 // Site specific utilities
 @include u-full-width;

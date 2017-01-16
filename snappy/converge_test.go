@@ -220,3 +220,13 @@ func (s *AllPackagesSuite) TestFormatInstallDate(c *C) {
 		Equals,
 		"Sun Feb  3 00:00:00 UTC 2013")
 }
+
+func (s *AllPackagesSuite) TestSnapPrices(c *C) {
+	prices := snapPrices{
+		"USD": 1.2,
+		"EUR": 0.1,
+	}
+
+	c.Assert(priceStringFromSnapPrice(snapPrices{}), Equals, "")
+	c.Assert(priceStringFromSnapPrice(prices), Equals, "0.1 EUR")
+}
