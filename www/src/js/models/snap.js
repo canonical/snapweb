@@ -181,16 +181,14 @@ module.exports = Backbone.Model.extend({
     var type = response.type;
     var id  = response.id;
 
-    if (! state) {
-      return
-    }
-    var status = state.status;
+    if (state) {
+      var status = state.status;
+      response.status = status;
 
-    response.status = status;
-
-    if (state.local_size) {
-      response.download_progress =
-        Math.floor((Number(state.local_size) / Number(response.download_size)) * 100);
+      if (state.local_size) {
+        response.download_progress =
+          Math.floor((Number(state.local_size) / Number(response.download_size)) * 100);
+      }
     }
 
     response.isInstalled = false;

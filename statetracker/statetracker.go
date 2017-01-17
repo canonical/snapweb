@@ -109,7 +109,7 @@ func (s *StateTracker) State(c snapdclient.SnapdClient, snap *client.Snap) *Snap
 	if hasCompleted(cstate.Status, snap) {
 		delete(s.states, snap.Name)
 		return &SnapState{
-			Status:    translateStatus(snap),
+			Status: translateStatus(snap),
 		}
 	}
 
