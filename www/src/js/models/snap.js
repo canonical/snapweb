@@ -87,6 +87,14 @@ module.exports = Backbone.Model.extend({
   },
 
   onStatusChange: function(model) {
+    var status = model.get('status');
+    if (
+        status !== CONF.INSTALL_STATE.INSTALLING &&
+        status !== CONF.INSTALL_STATE.REMOVING
+    ) {
+      model.set('download_progress', 0);
+    }
+
     this.setInstallActionString(model);
     this.setInstallHTMLClass(model);
     this.setInstallButtonClass(model);
@@ -94,25 +102,26 @@ module.exports = Backbone.Model.extend({
 
   // XXX move to install behaviour
   setInstallHTMLClass: function(model) {
-    var state = model.get('status');
+    var state = model.get('state');
     var type = model.get('type');
     var installHTMLClass = '';
 
-    if (state === CONF.INSTALL_STATE.REMOVED) {
+    var status = state.status;
+    if (status === CONF.INSTALL_STATE.REMOVED) {
       installHTMLClass = 'b-installer_do_install';
     }
-    if ((state === CONF.INSTALL_STATE.INSTALLED &&
+    if ((status === CONF.INSTALL_STATE.INSTALLED &&
          type &&
          CONF.NON_REMOVABLE_SNAP_TYPES.indexOf(type) === -1) ||
         state === CONF.INSTALL_STATE.ACTIVE) {
       installHTMLClass = 'b-installer_do_remove';
     }
 
-    if (state === CONF.INSTALL_STATE.INSTALLING) {
+    if (status === CONF.INSTALL_STATE.INSTALLING) {
       installHTMLClass = 'b-installer_do_install b-installer_thinking';
     }
 
-    if (state === CONF.INSTALL_STATE.REMOVING) {
+    if (status === CONF.INSTALL_STATE.REMOVING) {
       installHTMLClass = 'b-installer_do_remove b-installer_thinking';
     }
 
@@ -120,10 +129,11 @@ module.exports = Backbone.Model.extend({
   },
 
   setInstallActionString: function(model) {
-    var state = model.get('status');
+    var state = model.get('state');
     var action;
 
-    switch (state) {
+    var status = state.status;
+    switch (status) {
       case CONF.INSTALL_STATE.ACTIVE:
       case CONF.INSTALL_STATE.INSTALLED:
         action = 'Remove';
@@ -148,10 +158,11 @@ module.exports = Backbone.Model.extend({
   },
 
   setInstallButtonClass: function(model) {
-    var state = model.get('status');
+    var state = model.get('state');
     var installButtonClass;
 
-    switch (state) {
+    var status = state.status;
+    switch (status) {
       case CONF.INSTALL_STATE.ACTIVE:
       case CONF.INSTALL_STATE.INSTALLED:
       case CONF.INSTALL_STATE.INSTALLING:
@@ -170,10 +181,17 @@ module.exports = Backbone.Model.extend({
     var type = response.type;
     var id  = response.id;
 
+    if (! state) {
+      return
+    }
     var status = state.status;
 
     response.status = status;
-    response.download_progress = state.local_size || 0;
+
+    if (state.local_size) {
+      response.download_progress =
+        Math.floor((Number(state.local_size) / Number(response.download_size)) * 100);
+    }
 
     if (
       status === CONF.INSTALL_STATE.INSTALLED ||

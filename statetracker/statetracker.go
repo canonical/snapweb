@@ -96,7 +96,9 @@ func (s *StateTracker) State(c snapdclient.SnapdClient, snap *client.Snap) *Snap
 				if task.Status != state.DoingStatus.String() {
 					continue
 				}
-				localSize = uint64(task.Progress.Done)
+				if uint64(task.Progress.Done) > 1 {
+					localSize = uint64(task.Progress.Done)
+				}
 				break
 			}
 		}
@@ -106,7 +108,6 @@ func (s *StateTracker) State(c snapdclient.SnapdClient, snap *client.Snap) *Snap
 		delete(s.states, snap.Name)
 		return &SnapState{
 			Status:    translateStatus(snap),
-			LocalSize: localSize,
 		}
 	}
 

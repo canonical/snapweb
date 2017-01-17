@@ -22,6 +22,10 @@ var SnapInterfaceCollectionView = Marionette.CollectionView.extend({
 module.exports = Marionette.LayoutView.extend({
   className: 'b-snap',
 
+  initialize: function() {
+    this.model.on('change:download_progress',this.render)
+  },
+
   template: function(model) {
     /**
      * use pretty-bytes on size, when available
