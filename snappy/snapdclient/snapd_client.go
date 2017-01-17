@@ -119,7 +119,7 @@ func (a *ClientAdapter) Sections() ([]string, error) {
 	return a.snapdClient.Sections()
 }
 
-// Sections returns the list of available sections
+// Change returns the list of ongoing changes for a given snap and changeid
 func (a *ClientAdapter) Change(id string) (*client.Change, error) {
 	return a.snapdClient.Change(id)
 }

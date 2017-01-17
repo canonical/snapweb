@@ -134,6 +134,7 @@ func (f *FakeSnapdClient) FindOne(name string) (*client.Snap, *client.ResultInfo
 	return nil, nil, f.StoreErr
 }
 
+// Change returns the list of ongoing changes for a given snap and changeid
 func (f *FakeSnapdClient) Change(id string) (*client.Change, error) {
 	return nil, nil
 }

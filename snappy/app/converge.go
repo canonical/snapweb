@@ -38,6 +38,7 @@ const (
 	availableSnaps
 )
 
+// SnapState wraps the current state of a snap
 type SnapState struct {
 	Status    string `json:"status"`
 	LocalSize uint64 `json:"local_size,omitempty"`

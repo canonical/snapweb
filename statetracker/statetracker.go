@@ -62,18 +62,18 @@ type SnapState struct {
 	LocalSize uint64
 }
 
-type snapStatePerId map[string]SnapState
+type snapStatePerID map[string]SnapState
 
 // StateTracker tracks snap states
 type StateTracker struct {
 	sync.Mutex
-	states snapStatePerId
+	states snapStatePerID
 }
 
 // New returns a new status tracker
 func New() *StateTracker {
 	return &StateTracker{
-		states: make(snapStatePerId),
+		states: make(snapStatePerID),
 	}
 }
 
@@ -127,7 +127,7 @@ func (s *StateTracker) TrackInstall(changeID string, snap *client.Snap) {
 	s.trackOperation(changeID, snap.Name, StatusInstalling)
 }
 
-// TrackInstall tracks the installation of the given snap
+// IsInstalling checks if a given snap is being installed
 func (s *StateTracker) IsInstalling(snap *client.Snap) (bool, string) {
 	state, ok := s.states[snap.Name]
 	if !ok {

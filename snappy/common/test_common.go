@@ -22,10 +22,12 @@ import (
 
 	"github.com/snapcore/snapd/client"
 
-	. "gopkg.in/check.v1"
+	"gopkg.in/check.v1"
 )
 
-func Test(t *testing.T) { TestingT(t) }
+
+// Test runs all the tests defined in the testsuite
+func Test(t *testing.T) { check.TestingT(t) }
 
 // NewDefaultSnap creates a default snap structure
 func NewDefaultSnap() *client.Snap {
