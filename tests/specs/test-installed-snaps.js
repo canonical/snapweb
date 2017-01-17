@@ -1,6 +1,7 @@
 var assert = require('chai').assert;
 var expect = require('chai').expect;
 
+snapDetailsPage = require("../pageobjects/snap-details-page.js");
 snapsPage = require("../pageobjects/installed-snaps-page.js");
 
 describe('Installed Snaps Page - Verify that', function() {
@@ -82,12 +83,9 @@ describe('Installed Snaps Page - Verify that', function() {
         var snap = snapsPage.snapElement(snap_name);
         snap.waitForVisible();
         snap.click();
-        snaptitle = browser.element('h1.b-snap__title');
-        snaptitle.waitForVisible();
-        expect(snaptitle.getText(), "Failed to open snap's about page").to.equal(snap_name);
-        aboutpage = browser.element('h3=About');
-        aboutpage.waitForVisible();
-
+        browser.waitForVisible(snapDetailsPage.snapTitleElement);
+        expect(snapDetailsPage.snap.getText(), "Failed to open snap's about page").to.equal(snap_name);
+        assert.isNotNull(snapDetailsPage.snapDetail(4).value, "Snap has no update date");
     });
 
     it('snapweb updates the page when snap is installed/removed direclty on the device', function() {

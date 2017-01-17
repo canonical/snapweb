@@ -20,6 +20,7 @@ package snappy
 import (
 	"errors"
 	"os"
+	"time"
 
 	"github.com/snapcore/snapd/client"
 	"github.com/snapcore/snapd/snap"
@@ -124,7 +125,7 @@ func (s *PackagePayloadSuite) TestPackage(c *C) {
 		Type:          "app",
 		Version:       "0.1-8",
 		Private:       false,
-		InstallDate:   "Mon Jan  1 00:00:00 UTC 0001",
+		InstallDate:   "",
 	})
 }
 
@@ -211,4 +212,22 @@ func (s *AllPackagesSuite) TestHasSnaps(c *C) {
 	c.Assert(snaps, HasLen, 2)
 	c.Assert(snaps[0].Name, Equals, "app1")
 	c.Assert(snaps[1].Name, Equals, "app2")
+}
+
+func (s *AllPackagesSuite) TestFormatInstallDate(c *C) {
+	c.Assert(formatInstallData(time.Time{}), Equals, "")
+	t, _ := time.Parse("2006-Jan-02", "2013-Feb-03")
+	c.Assert(formatInstallData(t),
+		Equals,
+		"Sun Feb  3 00:00:00 UTC 2013")
+}
+
+func (s *AllPackagesSuite) TestSnapPrices(c *C) {
+	prices := snapPrices{
+		"USD": 1.2,
+		"EUR": 0.1,
+	}
+
+	c.Assert(priceStringFromSnapPrice(snapPrices{}), Equals, "")
+	c.Assert(priceStringFromSnapPrice(prices), Equals, "0.1 EUR")
 }

@@ -16,11 +16,12 @@ module.exports = React.createBackboneClass({
     var installActionString = model.get('installActionString');
     var isInstalled = model.get('isInstalled');
     var isInstallable = model.get('isInstallable');
+    var isPriced = model.get('priced');
     var installHTMLClass = model.get('installHTMLClass');
 
     var rootDivClass = "b-installer " + installerClass + " " + installHTMLClass;
 
-    if (isInstallable) {
+    if (isInstallable || isPriced) {
       return (
         <div className={rootDivClass}>
           {installActionString &&

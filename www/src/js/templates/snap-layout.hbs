@@ -41,12 +41,13 @@
           Channel
           <span class="b-snap__version u-float--right">{{ channel }}</span>
       </li>
-
+{{#if install_date}}
       <li class="p-list__item">
           Updated
           <span class="b-snap__version u-float--right">{{ install_date }}</span>
       </li>
-    </ul>
+{{/if}}
+</ul>
 
   </div>
 

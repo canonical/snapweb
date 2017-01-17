@@ -58,6 +58,7 @@ describe('Store Page - Verify that', function() {
         s.click();
         browser.waitForVisible(snapDetailsPage.snapTitleElement);
         assert.isNotNull(snapDetailsPage.snap.value, "Snap details not found");
+        assert.isNull(snapDetailsPage.snapDetail(4).value, "Snap has an update date");
     });
 
     it('search non exact match and check snap details', function() {
