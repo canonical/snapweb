@@ -25,7 +25,6 @@ import (
 	"gopkg.in/check.v1"
 )
 
-
 // Test runs all the tests defined in the testsuite
 func Test(t *testing.T) { check.TestingT(t) }
 
