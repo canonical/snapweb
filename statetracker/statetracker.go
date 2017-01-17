@@ -24,7 +24,6 @@
 // on the system. Similarly for removing snaps. Status lifecycle is thus:
 //
 // "uninstalled" -> "installing" -> "installed" -> "uninstalling" and repeat
-
 package statetracker
 
 import (
