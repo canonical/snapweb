@@ -102,18 +102,17 @@ module.exports = Backbone.Model.extend({
 
   // XXX move to install behaviour
   setInstallHTMLClass: function(model) {
-    var state = model.get('state');
+    var status = model.get('status');
     var type = model.get('type');
     var installHTMLClass = '';
 
-    var status = state.status;
     if (status === CONF.INSTALL_STATE.REMOVED) {
       installHTMLClass = 'b-installer_do_install';
     }
     if ((status === CONF.INSTALL_STATE.INSTALLED &&
          type &&
          CONF.NON_REMOVABLE_SNAP_TYPES.indexOf(type) === -1) ||
-        state === CONF.INSTALL_STATE.ACTIVE) {
+        status === CONF.INSTALL_STATE.ACTIVE) {
       installHTMLClass = 'b-installer_do_remove';
     }
 
@@ -129,10 +128,9 @@ module.exports = Backbone.Model.extend({
   },
 
   setInstallActionString: function(model) {
-    var state = model.get('state');
+    var status = model.get('status');
     var action;
 
-    var status = state.status;
     switch (status) {
       case CONF.INSTALL_STATE.PRICED:
         action = model.get('price');
@@ -161,10 +159,9 @@ module.exports = Backbone.Model.extend({
   },
 
   setInstallButtonClass: function(model) {
-    var state = model.get('state');
+    var status = model.get('status');
     var installButtonClass;
 
-    var status = state.status;
     switch (status) {
       case CONF.INSTALL_STATE.ACTIVE:
       case CONF.INSTALL_STATE.INSTALLED:
