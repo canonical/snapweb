@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 set +x
 
 user=$1
@@ -6,6 +7,12 @@ port=$3
 snap=$4
 kvm_user=test
 home=~
+
+if [ $# -lt 4 ]; then
+    echo "Invalid number of arguments provided"
+    echo "Run as ./$0 user host kvm_ssh_port snap_file"
+    exit 1
+fi
 
 ssh $user@$host "if [ -d image ]; then rm -rf image; fi"
 scp -r ../spread/image/ $user@$host:~/
