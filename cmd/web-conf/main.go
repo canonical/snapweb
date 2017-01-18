@@ -41,7 +41,7 @@ const (
 )
 
 func init() {
-	logger = log.New(os.Stderr, "Snapweb/firstboot: ", log.Ldate|log.Ltime|log.Lshortfile)
+	logger = log.New(os.Stderr, "web-conf: ", log.Ldate|log.Ltime|log.Lshortfile)
 }
 
 // IsDeviceManaged determines if the device is in the 'managed' state
@@ -149,7 +149,7 @@ func renderLayout(html string, data *templateData, w http.ResponseWriter) error 
 		return err
 	}
 
-	layoutPath := filepath.Join(os.Getenv("SNAP"), "www", "templates", "fistboot.html")
+	layoutPath := filepath.Join(os.Getenv("SNAP"), "www", "templates", "web-conf.html")
 	t, err := template.ParseFiles(layoutPath, htmlPath)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -164,7 +164,7 @@ func initURLHandlers(log *log.Logger) {
 	http.Handle("/api/", makePassthroughHandler(dirs.SnapdSocket, "/api/"))
 
 	// Resources
-	http.Handle("/firstboot/", loggingHandler(http.FileServer(http.Dir(filepath.Join(os.Getenv("SNAP"), "www")))))
+	http.Handle("/web-conf/", loggingHandler(http.FileServer(http.Dir(filepath.Join(os.Getenv("SNAP"), "www")))))
 
 	http.HandleFunc("/", makeMainPageHandler())
 }
@@ -172,7 +172,7 @@ func initURLHandlers(log *log.Logger) {
 func main() {
 
 	if IsDeviceManaged() {
-		log.Println("The Snapweb/Firstboot module does not run on managed devices")
+		log.Println("web-conf does not run on managed devices")
 		os.Exit(0)
 	}
 
