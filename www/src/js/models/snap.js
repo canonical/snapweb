@@ -191,7 +191,7 @@ module.exports = Backbone.Model.extend({
       response.priced = true;
     }
 
-    this.set('isCoreSnap', false);
+    response.isCoreSnap = false;
     if (type) {
       if (_.contains(CONF.NON_INSTALLABLE_TYPES, type)) {
         response.isInstallable = false;
