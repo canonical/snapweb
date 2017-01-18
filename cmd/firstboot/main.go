@@ -149,7 +149,7 @@ func renderLayout(html string, data *templateData, w http.ResponseWriter) error 
 		return err
 	}
 
-	layoutPath := filepath.Join(os.Getenv("SNAP"), "www", "templates", "base.html")
+	layoutPath := filepath.Join(os.Getenv("SNAP"), "www", "templates", "fistboot.html")
 	t, err := template.ParseFiles(layoutPath, htmlPath)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -164,7 +164,7 @@ func initURLHandlers(log *log.Logger) {
 	http.Handle("/api/", makePassthroughHandler(dirs.SnapdSocket, "/api/"))
 
 	// Resources
-	http.Handle("/public/", loggingHandler(http.FileServer(http.Dir(filepath.Join(os.Getenv("SNAP"), "www")))))
+	http.Handle("/firstboot/", loggingHandler(http.FileServer(http.Dir(filepath.Join(os.Getenv("SNAP"), "www")))))
 
 	http.HandleFunc("/", makeMainPageHandler())
 }
