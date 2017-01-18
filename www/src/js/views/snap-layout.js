@@ -24,6 +24,7 @@ module.exports = Marionette.LayoutView.extend({
 
   initialize: function() {
     this.model.on('change:download_progress',this.render)
+    this.model.on('change:task_summary',this.render)
   },
 
   template: function(model) {

@@ -107,13 +107,13 @@ func (s *StateTrackerSuite) TestTrackInstallExpiry(c *C) {
 
 func (s *StateTrackerSuite) TestTrackUninstallNotInstalled(c *C) {
 	snap := &client.Snap{Status: client.StatusAvailable}
-	s.t.TrackUninstall(snap)
+	s.t.TrackUninstall("", snap)
 	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusUninstalled})
 }
 
 func (s *StateTrackerSuite) TestTrackUninstall(c *C) {
 	snap := &client.Snap{Status: client.StatusInstalled}
-	s.t.TrackUninstall(snap)
+	s.t.TrackUninstall("", snap)
 	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusUninstalling})
 	// uninstallation completes
 	snap.Status = client.StatusRemoved

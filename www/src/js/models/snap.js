@@ -93,6 +93,7 @@ module.exports = Backbone.Model.extend({
         status !== CONF.INSTALL_STATE.REMOVING
     ) {
       model.set('download_progress', 0);
+      model.set('task_summary', '');
     }
 
     this.setInstallActionString(model);
@@ -183,9 +184,12 @@ module.exports = Backbone.Model.extend({
 
     if (state) {
       var status = state.status;
+
       response.status = status;
 
-      if (state.local_size) {
+      response.task_summary = state.task_summary;
+
+      if (state.local_size > 0) {
         response.download_progress =
           Math.floor((Number(state.local_size) / Number(response.download_size)) * 100);
       }

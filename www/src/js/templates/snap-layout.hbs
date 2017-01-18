@@ -16,8 +16,16 @@
       <div class="col-5 u-float--right">
         {{> installer}}
 
+{{#if download_progress}}
         <div style="margin-top: 1em; border: 1px solid green; width: {{ download_progress }}%; height: 2px"></div>
+{{/if}}
+
+        <div style="width: 100%; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">
+          <small>{{ task_summary }}</small>
+        </div>
+
       </div>
+
     </div>
 </div>
 

@@ -40,8 +40,9 @@ const (
 
 // SnapState wraps the current state of a snap
 type SnapState struct {
-	Status    string `json:"status"`
-	LocalSize uint64 `json:"local_size,omitempty"`
+	Status      string `json:"status"`
+	TaskSummary string `json:"task_summary"`
+	LocalSize   uint64 `json:"local_size,omitempty"`
 }
 
 type snapPkg struct {
@@ -134,9 +135,12 @@ func (h *Handler) removePackage(name string) error {
 		return err
 	}
 
-	h.stateTracker.TrackUninstall(snap)
+	var changeID string
 
-	_, err = h.snapdClient.Remove(name, nil)
+	changeID, err = h.snapdClient.Remove(name, nil)
+
+	h.stateTracker.TrackUninstall(changeID, snap)
+
 	return err
 }
 
@@ -184,8 +188,9 @@ func priceStringFromSnapPrice(p snapPrices) string {
 
 func stateFromTrackerState(ts *statetracker.SnapState) SnapState {
 	return SnapState{
-		Status:    ts.Status,
-		LocalSize: ts.LocalSize,
+		Status:      ts.Status,
+		TaskSummary: ts.TaskSummary,
+		LocalSize:   ts.LocalSize,
 	}
 }
 

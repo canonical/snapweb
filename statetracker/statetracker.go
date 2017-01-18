@@ -56,9 +56,10 @@ var trackerDuration = 2 * time.Minute
 
 // SnapState encapsulate the currently tracked snap state
 type SnapState struct {
-	Status    string
-	ChangeID  string
-	LocalSize uint64
+	Status      string
+	ChangeID    string
+	LocalSize   uint64
+	TaskSummary string
 }
 
 type snapStatePerID map[string]SnapState
@@ -88,18 +89,18 @@ func (s *StateTracker) State(c snapdclient.SnapdClient, snap *client.Snap) *Snap
 		}
 	}
 
-	var localSize uint64
 	if changing, changeID := s.IsInstalling(snap); changing && c != nil {
 		change, err := c.Change(changeID)
 
 		if err == nil {
 			for _, task := range change.Tasks {
+				if uint64(task.Progress.Done) > 1 {
+					cstate.LocalSize = uint64(task.Progress.Done)
+				}
 				if task.Status != state.DoingStatus.String() {
 					continue
 				}
-				if uint64(task.Progress.Done) > 1 {
-					localSize = uint64(task.Progress.Done)
-				}
+				cstate.TaskSummary = task.Summary
 				break
 			}
 		}
@@ -111,8 +112,6 @@ func (s *StateTracker) State(c snapdclient.SnapdClient, snap *client.Snap) *Snap
 			Status: translateStatus(snap),
 		}
 	}
-
-	cstate.LocalSize = localSize
 
 	return &cstate
 }
@@ -154,12 +153,12 @@ func (s *StateTracker) trackOperation(changeID, name, operation string) {
 }
 
 // TrackUninstall tracks the removal of the given snap
-func (s *StateTracker) TrackUninstall(snap *client.Snap) {
+func (s *StateTracker) TrackUninstall(changeID string, snap *client.Snap) {
 	if !isInstalled(snap) {
 		return
 	}
 
-	s.trackOperation("", snap.Name, StatusUninstalling)
+	s.trackOperation(changeID, snap.Name, StatusUninstalling)
 }
 
 func isInstalled(s *client.Snap) bool {
