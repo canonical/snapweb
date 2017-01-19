@@ -127,36 +127,30 @@ type templateData struct {
 
 func makeMainPageHandler() http.HandlerFunc {
 
-	return func(w http.ResponseWriter, r *http.Request) {
-		data := templateData{
-			Branding: branding{
-				Name:    "Ubuntu",
-				Subname: "",
-			},
-			SnapdVersion: "snapd",
-		}
-
-		if err := renderLayout("index.html", &data, w); err != nil {
-			log.Println(err)
-		}
-	}
-}
-
-func renderLayout(html string, data *templateData, w http.ResponseWriter) error {
-	htmlPath := filepath.Join(os.Getenv("SNAP"), "www", "templates", html)
-	if _, err := os.Stat(htmlPath); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return err
-	}
-
 	layoutPath := filepath.Join(os.Getenv("SNAP"), "www", "templates", "web-conf.html")
-	t, err := template.ParseFiles(layoutPath, htmlPath)
+	t, err := template.ParseFiles(layoutPath)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return err
+		logger.Fatalf("%v", err)
 	}
 
-	return t.Execute(w, *data)
+	data := templateData{
+		Branding: branding{
+			Name:    "Ubuntu",
+			Subname: "",
+		},
+		SnapdVersion: "snapd",
+	}
+
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		err = t.Execute(w, &data)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			log.Println(err)
+			return;
+		}
+		
+	}
 }
 
 func initURLHandlers(log *log.Logger) {
@@ -173,7 +167,7 @@ func main() {
 
 	if IsDeviceManaged() {
 		log.Println("web-conf does not run on managed devices")
-		os.Exit(0)
+		// os.Exit(0)
 	}
 
 	initURLHandlers(logger)
