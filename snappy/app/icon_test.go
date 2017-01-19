@@ -25,6 +25,8 @@ import (
 
 	"github.com/snapcore/snapd/client"
 
+	"github.com/snapcore/snapweb/snappy/snapdclient"
+
 	. "gopkg.in/check.v1"
 )
 
@@ -61,7 +63,7 @@ func (s *IconSuite) TestIconDirCreateFails(c *C) {
 }
 
 type IconPathSuite struct {
-	SnapdClient
+	snapdclient.SnapdClient
 	dataPath string
 	err      error
 }
