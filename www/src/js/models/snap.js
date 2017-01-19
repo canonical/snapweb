@@ -101,10 +101,10 @@ module.exports = Backbone.Model.extend({
     if (state === CONF.INSTALL_STATE.REMOVED) {
       installHTMLClass = 'b-installer_do_install';
     }
-    if ((state === CONF.INSTALL_STATE.INSTALLED &&
-         type &&
-         CONF.NON_REMOVABLE_SNAP_TYPES.indexOf(type) === -1) ||
-        state === CONF.INSTALL_STATE.ACTIVE) {
+
+    if (CONF.NON_REMOVABLE_SNAP_TYPES.indexOf(type) === -1 &&
+        (state === CONF.INSTALL_STATE.INSTALLED ||
+         state === CONF.INSTALL_STATE.ACTIVE)) {
       installHTMLClass = 'b-installer_do_remove';
     }
 
