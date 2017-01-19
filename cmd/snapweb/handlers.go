@@ -33,7 +33,8 @@ import (
 	"text/template"
 
 	// most other handlers use the ClientAdapter for now
-	"github.com/snapcore/snapweb/snappy"
+	"github.com/snapcore/snapweb/snappy/app"
+	"github.com/snapcore/snapweb/snappy/snapdclient"
 )
 
 type branding struct {
@@ -59,8 +60,8 @@ func unixDialer(socketPath string) func(string, string) (net.Conn, error) {
 	}
 }
 
-func newSnapdClientImpl() snappy.SnapdClient {
-	return snappy.NewClientAdapter()
+func newSnapdClientImpl() snapdclient.SnapdClient {
+	return snapdclient.NewClientAdapter()
 }
 
 func getSnappyVersion() string {
@@ -83,7 +84,7 @@ type timeInfoResponse struct {
 
 func handleTimeInfo(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
-		values, err := snappy.GetCoreConfig(
+		values, err := snapdclient.GetCoreConfig(
 			[]string{"Date", "Time", "Timezone", "NTPServer"})
 		if err != nil {
 			log.Println("Error extracting core config", err)
@@ -120,7 +121,7 @@ type deviceInfoResponse struct {
 func handleDeviceInfo(w http.ResponseWriter, r *http.Request) {
 	c := newSnapdClient()
 
-	modelInfo, err := snappy.GetModelInfo(c)
+	modelInfo, err := snapdclient.GetModelInfo(c)
 	if err != nil {
 		log.Println(fmt.Sprintf("handleDeviceInfo: error retrieving model info: %s", err))
 		w.WriteHeader(http.StatusInternalServerError)

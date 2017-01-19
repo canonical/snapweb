@@ -1,6 +1,8 @@
 // snap layout view
+var $ = require('jquery');
 var _ = require('lodash');
 var Backbone = require('backbone');
+Backbone.$ = $;
 var Marionette = require('backbone.marionette');
 var Handlebars = require('hbsfy/runtime');
 var InstallBehavior = require('../behaviors/install.js');
@@ -21,6 +23,23 @@ var SnapInterfaceCollectionView = Marionette.CollectionView.extend({
 
 module.exports = Marionette.LayoutView.extend({
   className: 'b-snap',
+
+  initialize: function() {
+    var self = this;
+    this.model.on('change:download_progress', function() {
+      $("#progressbarwrapper").css({'background-color': 'LightGray'});
+      $("#progress").css('width', self.model.get("download_progress")+"%");
+    });
+    this.model.on('change:task_summary', function() {
+      $("#tasksummary").text(self.model.get("task_summary"));
+    })
+    this.model.on('change:status', function() {
+      var status = self.model.get('status');
+      if (status !== CONF.INSTALL_STATE.INSTALLING) {
+        $("#progressbarwrapper").css({'background-color': ''});
+      }
+    })
+  },
 
   template: function(model) {
     /**

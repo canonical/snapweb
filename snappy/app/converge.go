@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Canonical Ltd
+ * Copyright (C) 2014-2017 Canonical Ltd
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -27,6 +27,8 @@ import (
 
 	"log"
 
+	"github.com/snapcore/snapweb/statetracker"
+
 	"github.com/snapcore/snapd/client"
 	"github.com/snapcore/snapd/snap"
 )
@@ -36,6 +38,13 @@ const (
 	availableSnaps
 )
 
+// SnapState wraps the current state of a snap
+type SnapState struct {
+	Status      string `json:"status"`
+	TaskSummary string `json:"task_summary"`
+	LocalSize   uint64 `json:"local_size,omitempty"`
+}
+
 type snapPkg struct {
 	ID            string    `json:"id"`
 	Name          string    `json:"name"`
@@ -43,7 +52,7 @@ type snapPkg struct {
 	Version       string    `json:"version"`
 	Description   string    `json:"description"`
 	Icon          string    `json:"icon"`
-	Status        string    `json:"status"`
+	State         SnapState `json:"state"`
 	Price         string    `json:"price,omitempty"`
 	Message       string    `json:"message,omitempty"`
 	Progress      float64   `json:"progress,omitempty"`
@@ -126,9 +135,12 @@ func (h *Handler) removePackage(name string) error {
 		return err
 	}
 
-	h.statusTracker.TrackUninstall(snap)
+	var changeID string
 
-	_, err = h.snapdClient.Remove(name, nil)
+	changeID, err = h.snapdClient.Remove(name, nil)
+
+	h.stateTracker.TrackUninstall(changeID, snap)
+
 	return err
 }
 
@@ -138,9 +150,12 @@ func (h *Handler) installPackage(name string) error {
 		return err
 	}
 
-	h.statusTracker.TrackInstall(snap)
+	var changeID string
 
-	_, err = h.snapdClient.Install(name, nil)
+	changeID, err = h.snapdClient.Install(name, nil)
+
+	h.stateTracker.TrackInstall(changeID, snap)
+
 	return err
 }
 
@@ -171,6 +186,14 @@ func priceStringFromSnapPrice(p snapPrices) string {
 	return fmt.Sprintf("%s %s", strconv.FormatFloat(p[currency], 'f', -1, 32), currency)
 }
 
+func stateFromTrackerState(ts *statetracker.SnapState) SnapState {
+	return SnapState{
+		Status:      ts.Status,
+		TaskSummary: ts.TaskSummary,
+		LocalSize:   ts.LocalSize,
+	}
+}
+
 func (h *Handler) snapToPayload(snapQ *client.Snap) snapPkg {
 
 	snap := snapPkg{
@@ -180,7 +203,7 @@ func (h *Handler) snapToPayload(snapQ *client.Snap) snapPkg {
 		Version:     snapQ.Version,
 		Description: snapQ.Description,
 		Type:        snap.Type(snapQ.Type),
-		Status:      h.statusTracker.Status(snapQ),
+		State:       stateFromTrackerState(h.stateTracker.State(h.snapdClient, snapQ)),
 		Price:       priceStringFromSnapPrice(snapQ.Prices),
 		Private:     snapQ.Private,
 		Channel:     snapQ.Channel,
