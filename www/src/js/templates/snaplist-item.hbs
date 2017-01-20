@@ -12,7 +12,7 @@
 
 <h3 id="js-snap-title" class="p-card__title js-snap-title">{{ name }}</h3>
 
-<ul class="p-list">
+<ul class="p-list--divided">
     {{#unless addSnapItem}}
         {{#if developer}}
           <li class="p-list__item">By {{ developer }}</li>
@@ -20,7 +20,7 @@
     {{/unless}}
 
     {{#if description}}
-      <li class="p-list__item">{{ description }}</li>
+      <li class="p-list__item" style="text-overflow: ellipsis; white-space: nowrap; display: block">{{ description }}</li>
     {{/if}}
 
     {{#if prettyInstalledSize}}

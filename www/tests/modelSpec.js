@@ -44,19 +44,19 @@ describe('Snap', function() {
     it('sets isInstalled', function() {
       var response;
 
-      response = this.model.parse({status: CONF.INSTALL_STATE.REMOVED});
+      response = this.model.parse({state: { status: CONF.INSTALL_STATE.REMOVED} });
       expect(response.isInstalled).toBeFalsy();
 
-      response = this.model.parse({status: CONF.INSTALL_STATE.ACTIVE});
+      response = this.model.parse({state: { status: CONF.INSTALL_STATE.ACTIVE} });
       expect(response.isInstalled).toBeTruthy();
 
-      response = this.model.parse({status: CONF.INSTALL_STATE.REMOVING});
+      response = this.model.parse({state: { status: CONF.INSTALL_STATE.REMOVING} });
       expect(response.isInstalled).toBeTruthy();
 
-      response = this.model.parse({status: CONF.INSTALL_STATE.INSTALLED});
+      response = this.model.parse({state: { status: CONF.INSTALL_STATE.INSTALLED} });
       expect(response.isInstalled).toBeTruthy();
 
-      response = this.model.parse({status: CONF.INSTALL_STATE.INSTALLING});
+      response = this.model.parse({state: { status: CONF.INSTALL_STATE.INSTALLING} });
       expect(response.isInstalled).toBeFalsy();
     });
 

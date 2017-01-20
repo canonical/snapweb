@@ -34,7 +34,8 @@ import (
 
 	. "gopkg.in/check.v1"
 
-	"github.com/snapcore/snapweb/snappy"
+	"github.com/snapcore/snapweb/snappy/app"
+	"github.com/snapcore/snapweb/snappy/snapdclient"
 )
 
 func Test(t *testing.T) { TestingT(t) }
@@ -57,7 +58,7 @@ func (s *HandlersSuite) createAndSaveTestToken(c *C) string {
 func (s *HandlersSuite) SetUpTest(c *C) {
 	s.c = &snappy.FakeSnapdClient{}
 
-	newSnapdClient = func() snappy.SnapdClient {
+	newSnapdClient = func() snapdclient.SnapdClient {
 		return s.c
 	}
 	s.c.Version.Version = "1000"
@@ -264,9 +265,9 @@ func (s *HandlersSuite) TestModelInfoHandler(c *C) {
 	c.Assert(err, IsNil)
 
 	c.Assert(deviceInfos["deviceName"], Equals, "Device Name")
-	c.Assert(deviceInfos["brand"], Equals, "Brand")
-	c.Assert(deviceInfos["model"], Equals, "Model")
-	c.Assert(deviceInfos["serial"], Equals, "Serial Number")
+	c.Assert(deviceInfos["brand"], Equals, "Unknown")
+	c.Assert(deviceInfos["model"], Equals, "Unknown")
+	c.Assert(deviceInfos["serial"], Equals, "Unknown")
 }
 
 func (s *HandlersSuite) TestCheckCookieToken(c *C) {

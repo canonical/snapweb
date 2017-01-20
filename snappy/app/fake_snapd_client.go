@@ -20,6 +20,8 @@ package snappy
 import (
 	"github.com/snapcore/snapd/asserts"
 	"github.com/snapcore/snapd/client"
+
+	"github.com/snapcore/snapweb/snappy/snapdclient"
 )
 
 // FakeSnapdClient is a fake SnapdClient for testing purposes
@@ -132,4 +134,9 @@ func (f *FakeSnapdClient) FindOne(name string) (*client.Snap, *client.ResultInfo
 	return nil, nil, f.StoreErr
 }
 
-var _ SnapdClient = (*FakeSnapdClient)(nil)
+// Change returns the list of ongoing changes for a given snap and changeid
+func (f *FakeSnapdClient) Change(id string) (*client.Change, error) {
+	return nil, nil
+}
+
+var _ snapdclient.SnapdClient = (*FakeSnapdClient)(nil)

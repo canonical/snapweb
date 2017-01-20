@@ -23,6 +23,8 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+
+	"github.com/snapcore/snapweb/snappy/snapdclient"
 )
 
 var (
@@ -40,7 +42,7 @@ var (
 // we do snapd requests everytime even for icons
 // that we got already (just to get the name, we should
 // locally cache it)
-func localIconPath(c SnapdClient, name string) (relativePath string, err error) {
+func localIconPath(c snapdclient.SnapdClient, name string) (relativePath string, err error) {
 	dataPath, relativePath, err := IconDir()
 	if err != nil {
 		return "", err

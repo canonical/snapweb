@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Canonical Ltd
+ * Copyright (C) 2014-2017 Canonical Ltd
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -20,12 +20,14 @@ package snappy
 import (
 	"errors"
 	"os"
+	"time"
 
 	"github.com/snapcore/snapd/client"
 	"github.com/snapcore/snapd/snap"
 	. "gopkg.in/check.v1"
 
-	"github.com/snapcore/snapweb/statustracker"
+	"github.com/snapcore/snapweb/snappy/common"
+	"github.com/snapcore/snapweb/statetracker"
 )
 
 type GetSnapSuite struct {
@@ -60,7 +62,7 @@ func (s *GetSnapSuite) TestSnapDoesNotExistButStoreHasEmptyResults(c *C) {
 
 func (s *GetSnapSuite) TestSnapDoesNotExistButStoreHasResults(c *C) {
 	s.c.Err = errors.New("the snap could not be retrieved locally")
-	s.c.StoreSnaps = []*client.Snap{newSnap("snap1"), newSnap("snap2")}
+	s.c.StoreSnaps = []*client.Snap{common.NewSnap("snap1"), common.NewSnap("snap2")}
 
 	_, err := s.h.getSnap("chatroom")
 	c.Assert(err, NotNil)
@@ -69,7 +71,7 @@ func (s *GetSnapSuite) TestSnapDoesNotExistButStoreHasResults(c *C) {
 
 func (s *GetSnapSuite) TestSnapExistsOnStore(c *C) {
 	s.c.Err = errors.New("the snap could not be retrieved locally")
-	s.c.StoreSnaps = []*client.Snap{newSnap("snap1"), newDefaultSnap(), newSnap("snap2")}
+	s.c.StoreSnaps = []*client.Snap{common.NewSnap("snap1"), common.NewDefaultSnap(), common.NewSnap("snap2")}
 
 	snap, err := s.h.getSnap("chatroom")
 	c.Assert(s.c.Name, Equals, "chatroom")
@@ -78,7 +80,7 @@ func (s *GetSnapSuite) TestSnapExistsOnStore(c *C) {
 }
 
 func (s *GetSnapSuite) TestGetSnap(c *C) {
-	s.c.Snaps = []*client.Snap{newDefaultSnap()}
+	s.c.Snaps = []*client.Snap{common.NewDefaultSnap()}
 
 	snap, err := s.h.getSnap("chatroom")
 	c.Assert(err, IsNil)
@@ -94,7 +96,7 @@ var _ = Suite(&PackagePayloadSuite{})
 
 func (s *PackagePayloadSuite) SetUpTest(c *C) {
 	os.Setenv("SNAP_DATA", c.MkDir())
-	s.h.statusTracker = statustracker.New()
+	s.h.stateTracker = statetracker.New()
 	s.c = &FakeSnapdClient{}
 	s.h.setClient(s.c)
 }
@@ -107,7 +109,7 @@ func (s *PackagePayloadSuite) TestPackageNotFound(c *C) {
 }
 
 func (s *PackagePayloadSuite) TestPackage(c *C) {
-	s.c.Snaps = []*client.Snap{newDefaultSnap()}
+	s.c.Snaps = []*client.Snap{common.NewDefaultSnap()}
 
 	pkg, err := s.h.packagePayload("chatroom")
 	c.Assert(err, IsNil)
@@ -119,11 +121,11 @@ func (s *PackagePayloadSuite) TestPackage(c *C) {
 		InstalledSize: 18976651,
 		Name:          "chatroom",
 		Developer:     "ogra",
-		Status:        "active",
+		State:         SnapState{Status: "active"},
 		Type:          "app",
 		Version:       "0.1-8",
 		Private:       false,
-		InstallDate:   "Mon Jan  1 00:00:00 UTC 0001",
+		InstallDate:   "",
 	})
 }
 
@@ -135,30 +137,30 @@ var _ = Suite(&PayloadSuite{})
 
 func (s *PayloadSuite) SetUpTest(c *C) {
 	os.Setenv("SNAP_DATA", c.MkDir())
-	s.h.statusTracker = statustracker.New()
+	s.h.stateTracker = statetracker.New()
 	s.h.setClient(&FakeSnapdClient{})
 }
 
 func (s *PayloadSuite) TestPayload(c *C) {
-	fakeSnap := newDefaultSnap()
+	fakeSnap := common.NewDefaultSnap()
 
 	q := s.h.snapToPayload(fakeSnap)
 
 	c.Check(q.Name, Equals, fakeSnap.Name)
 	c.Check(q.Version, Equals, fakeSnap.Version)
-	c.Check(q.Status, Equals, statustracker.StatusActive)
+	c.Check(q.State, DeepEquals, SnapState{Status: statetracker.StatusActive})
 	c.Check(q.Type, Equals, snap.Type(fakeSnap.Type))
 	c.Check(q.Icon, Equals, "/icons/chatroom_icon.png")
 	c.Check(q.Description, Equals, fakeSnap.Description)
 }
 
 func (s *PayloadSuite) TestPayloadSnapInstalling(c *C) {
-	fakeSnap := newDefaultSnap()
+	fakeSnap := common.NewDefaultSnap()
 	fakeSnap.Status = client.StatusAvailable
-	s.h.statusTracker.TrackInstall(fakeSnap)
+	s.h.stateTracker.TrackInstall("", fakeSnap)
 
 	payload := s.h.snapToPayload(fakeSnap)
-	c.Assert(payload.Status, Equals, statustracker.StatusInstalling)
+	c.Assert(payload.State, DeepEquals, SnapState{Status: statetracker.StatusInstalling})
 }
 
 type AllPackagesSuite struct {
@@ -170,7 +172,7 @@ var _ = Suite(&AllPackagesSuite{})
 
 func (s *AllPackagesSuite) SetUpTest(c *C) {
 	os.Setenv("SNAP_DATA", c.MkDir())
-	s.h.statusTracker = statustracker.New()
+	s.h.stateTracker = statetracker.New()
 	s.c = &FakeSnapdClient{}
 	s.h.setClient(s.c)
 }
@@ -201,8 +203,8 @@ func (s *AllPackagesSuite) TestQueryStringEscaped(c *C) {
 
 func (s *AllPackagesSuite) TestHasSnaps(c *C) {
 	s.c.StoreSnaps = []*client.Snap{
-		newSnap("app2"),
-		newSnap("app1"),
+		common.NewSnap("app2"),
+		common.NewSnap("app1"),
 	}
 
 	snaps, err := s.h.allPackages(availableSnaps, "", false, "")
@@ -210,4 +212,22 @@ func (s *AllPackagesSuite) TestHasSnaps(c *C) {
 	c.Assert(snaps, HasLen, 2)
 	c.Assert(snaps[0].Name, Equals, "app1")
 	c.Assert(snaps[1].Name, Equals, "app2")
+}
+
+func (s *AllPackagesSuite) TestFormatInstallDate(c *C) {
+	c.Assert(formatInstallData(time.Time{}), Equals, "")
+	t, _ := time.Parse("2006-Jan-02", "2013-Feb-03")
+	c.Assert(formatInstallData(t),
+		Equals,
+		"Sun Feb  3 00:00:00 UTC 2013")
+}
+
+func (s *AllPackagesSuite) TestSnapPrices(c *C) {
+	prices := snapPrices{
+		"USD": 1.2,
+		"EUR": 0.1,
+	}
+
+	c.Assert(priceStringFromSnapPrice(snapPrices{}), Equals, "")
+	c.Assert(priceStringFromSnapPrice(prices), Equals, "0.1 EUR")
 }

@@ -29,7 +29,8 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/snapcore/snapd/client"
-	"github.com/snapcore/snapweb/statustracker"
+	"github.com/snapcore/snapweb/snappy/common"
+	"github.com/snapcore/snapweb/statetracker"
 
 	. "gopkg.in/check.v1"
 )
@@ -51,7 +52,7 @@ func (s *HandlersSuite) SetUpTest(c *C) {
 func (s *HandlersSuite) resetFakeSnapdClient() {
 	s.c = &FakeSnapdClient{}
 	s.h.setClient(s.c)
-	s.h.statusTracker = statustracker.New()
+	s.h.stateTracker = statetracker.New()
 }
 
 func (s *HandlersSuite) createAndSaveTestToken(c *C) string {
@@ -112,7 +113,7 @@ func (s *HandlersSuite) TestGetError(c *C) {
 }
 
 func (s *HandlersSuite) TestGet(c *C) {
-	s.c.Snaps = []*client.Snap{newDefaultSnap()}
+	s.c.Snaps = []*client.Snap{common.NewDefaultSnap()}
 
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest("GET", "/chatroom", nil)
@@ -128,7 +129,7 @@ func (s *HandlersSuite) TestGet(c *C) {
 }
 
 func (s *HandlersSuite) TestAdd(c *C) {
-	s.c.Snaps = []*client.Snap{newDefaultSnap()}
+	s.c.Snaps = []*client.Snap{common.NewDefaultSnap()}
 
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest("PUT", "/chatroom", nil)
@@ -140,7 +141,7 @@ func (s *HandlersSuite) TestAdd(c *C) {
 }
 
 func (s *HandlersSuite) TestRemove(c *C) {
-	s.c.Snaps = []*client.Snap{newDefaultSnap()}
+	s.c.Snaps = []*client.Snap{common.NewDefaultSnap()}
 
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest("DELETE", "/chatroom", nil)
@@ -149,16 +150,6 @@ func (s *HandlersSuite) TestRemove(c *C) {
 	s.h.MakeMuxer("", mux.NewRouter()).ServeHTTP(rec, req)
 	c.Assert(rec.Code, Equals, http.StatusAccepted)
 	c.Assert(s.c.Removed, Equals, "chatroom")
-}
-
-func (s *HandlersSuite) TestJsonResponseOrErrorMarshalError(c *C) {
-	unmarshable := map[int]int{1: 1}
-	rec := httptest.NewRecorder()
-
-	s.h.jsonResponseOrError(unmarshable, rec)
-
-	c.Assert(rec.Code, Equals, http.StatusInternalServerError)
-	c.Assert(rec.Body.String(), Matches, "Error: .*")
 }
 
 func (s *HandlersSuite) TestJsonResponseOrError(c *C) {

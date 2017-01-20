@@ -23,26 +23,27 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/snapcore/snapweb/statustracker"
+	"github.com/snapcore/snapweb/snappy/snapdclient"
+	"github.com/snapcore/snapweb/statetracker"
 
 	"github.com/gorilla/mux"
 )
 
 // Handler implements snappy's packages api.
 type Handler struct {
-	statusTracker *statustracker.StatusTracker
-	snapdClient   SnapdClient
+	stateTracker *statetracker.StateTracker
+	snapdClient  snapdclient.SnapdClient
 }
 
 // NewHandler creates an instance that implements snappy's packages api.
 func NewHandler() *Handler {
 	return &Handler{
-		statusTracker: statustracker.New(),
-		snapdClient:   NewClientAdapter(),
+		stateTracker: statetracker.New(),
+		snapdClient:  snapdclient.NewClientAdapter(),
 	}
 }
 
-func (h *Handler) setClient(c SnapdClient) {
+func (h *Handler) setClient(c snapdclient.SnapdClient) {
 	h.snapdClient = c
 }
 
