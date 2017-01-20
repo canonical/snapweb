@@ -97,6 +97,13 @@ describe('Snap', function() {
     });
 
     it('should set installHTMLClass from model status', function() {
+      for (var i in CONF.NON_REMOVABLE_SNAP_TYPES) {
+        this.model.set('type', CONF.NON_REMOVABLE_SNAP_TYPES[i]);
+        this.model.set('status', CONF.INSTALL_STATE.INSTALLED);
+        expect(this.model.get('installHTMLClass')).not.toContain('remove');
+      }
+      this.model.set('type', 'app');
+
       this.model.set('status', CONF.INSTALL_STATE.REMOVED);
       expect(this.model.get('installHTMLClass')).toContain('install');
 
@@ -111,11 +118,8 @@ describe('Snap', function() {
       this.model.set('status', CONF.INSTALL_STATE.ACTIVE);
       expect(this.model.get('installHTMLClass')).toContain('remove');
 
-      for (var i in CONF.NON_REMOVABLE_SNAP_TYPES) {
-        this.model.set('status', CONF.INSTALL_STATE.INSTALLED);
-        this.model.set('type', CONF.NON_REMOVABLE_SNAP_TYPES[i]);
-        expect(this.model.get('installHTMLClass')).not.toContain('remove');
-      }
+      this.model.set('status', CONF.INSTALL_STATE.INSTALLED);
+      expect(this.model.get('installHTMLClass')).toContain('remove');
     });
   });
 

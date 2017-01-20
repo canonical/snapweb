@@ -31,9 +31,7 @@ describe('PricedSnapView', function() {
   });
 
   it('priced snap should not be installable', function() {
-//    expect(this.view.model.get('installActionString')).toMatch(this.view.model.get('price'));
-      var s = this.view.model.get('status');
-      console.log(s)
+    var s = this.view.model.get('status');
     this.view.$el.find('button').trigger('click');
     expect(s).toMatch(this.view.model.get('status'));
   });

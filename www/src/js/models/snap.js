@@ -110,10 +110,10 @@ module.exports = Backbone.Model.extend({
     if (status === CONF.INSTALL_STATE.REMOVED) {
       installHTMLClass = 'b-installer_do_install';
     }
-    if ((status === CONF.INSTALL_STATE.INSTALLED &&
-         type &&
-         CONF.NON_REMOVABLE_SNAP_TYPES.indexOf(type) === -1) ||
-        status === CONF.INSTALL_STATE.ACTIVE) {
+
+    if (CONF.NON_REMOVABLE_SNAP_TYPES.indexOf(type) === -1 &&
+        (status === CONF.INSTALL_STATE.INSTALLED ||
+         status === CONF.INSTALL_STATE.ACTIVE)) {
       installHTMLClass = 'b-installer_do_remove';
     }
 
@@ -210,18 +210,22 @@ module.exports = Backbone.Model.extend({
 
     if (status === CONF.INSTALL_STATE.PRICED) {
       response.isInstallable = true;
-      response.priced = true
+      response.priced = true;
     }
 
+    response.isCoreSnap = false;
     if (type) {
-      if (_.contains(CONF.NON_INSTALLABLE_TYPES, type)) {
+      if (_.contains(CONF.NON_INSTALLABLE_TYPES, type) ||
+          _.contains(CONF.NON_REMOVABLE_SNAP_TYPES, type)) {
         response.isInstallable = false;
+        response.isCoreSnap = true;
       }
     }
 
     if (id) {
       if (_.contains(CONF.NON_INSTALLABLE_IDS, id)) {
         response.isInstallable = false;
+        response.isCoreSnap = true;
       }
     }
 
