@@ -215,7 +215,8 @@ module.exports = Backbone.Model.extend({
 
     response.isCoreSnap = false;
     if (type) {
-      if (_.contains(CONF.NON_INSTALLABLE_TYPES, type)) {
+      if (_.contains(CONF.NON_INSTALLABLE_TYPES, type) ||
+          _.contains(CONF.NON_REMOVABLE_SNAP_TYPES, type)) {
         response.isInstallable = false;
         response.isCoreSnap = true;
       }
