@@ -1,32 +1,33 @@
 <div class="row">
     <h2>Date and time</h2>
 </div>
-<div class="row">
+<div class="row u-vertically-center">
   <div class="col-2"><strong>Date</strong></div>
   <div class="col-6">
     <input type="date" id="date-picker" value="{{ date }}">
   </div>
 </div>
-<div class="row">
+<div class="row u-vertically-center">
   <div class="col-2"><strong>Time</strong></div>
   <div class="col-6">
     <input type="time" id="time-picker" value="{{ time }}">
   </div>
 </div>
 <div class="row">
+  <div class="col-6 u-float--right">
+    <input type="radio" id="automatic-ntp-radio" name="ntp-server" value="automatic">
+    <label for="automatic-ntp-radio">Automatic NTP Server Configuration</label>
+    <input type="radio" id="manual-ntp-radio" name="ntp-server" value="manual">
+    <label for="manual-ntp-radio">Use a specific NTP Server</label>
+    <div class="col-6" style="margin-top: 1em;">
+      <input type="text" placeholder="NTP server domain" id="ntp-server-name" value="{{ ntpServer }}">
+    </div>
+  </div>
+</div>
+<div class="row u-vertically-center">
   <div class="col-2"><strong>Timezone</strong></div>
   <div class="col-6">
     <select id="time-zone-select">
     </select>
-  </div>
-</div>
-<div class="row">
-  <div class="col-2"><strong>Custom NTP server</strong></div>
-  <div class="col-6">
-    <div class="col-1">
-      <input type="checkbox" id="ntp-active-checkbox">
-    </div>
-    <div class="col-5">
-      <input type="text" placeholder="URL" id="ntp-server-name" value="{{ ntpServer }}">
   </div>
 </div>

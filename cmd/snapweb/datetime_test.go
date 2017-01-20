@@ -15,7 +15,7 @@
  *
  */
 
-package snapdclient
+package main
 
 import (
 	"fmt"
