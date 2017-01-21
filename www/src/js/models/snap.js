@@ -6,6 +6,7 @@ var Radio = require('backbone.radio');
 var prettyBytes = require('pretty-bytes');
 var CONF = require('../config.js');
 var chan = Radio.channel('root');
+var linkify = require('linkifyjs/html');
 
 /** Snap Model
  *
@@ -246,6 +247,7 @@ module.exports = Backbone.Model.extend({
         //jscs:enable requireCamelCaseOrUpperCaseIdentifiers
       );
     }
+    response.description = linkify(response.description);
 
     return response;
   },
