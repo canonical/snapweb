@@ -247,7 +247,9 @@ module.exports = Backbone.Model.extend({
         //jscs:enable requireCamelCaseOrUpperCaseIdentifiers
       );
     }
-    response.description = linkify(response.description);
+    if (response.description) {
+      response.description = linkify(response.description);
+    }
 
     return response;
   },
