@@ -76,35 +76,62 @@ func getSnappyVersion() string {
 }
 
 type timeInfoResponse struct {
-	Date      string  `json:"date,omitempty"`
-	Time      string  `json:"time,omitempty"`
-	Timezone  float64 `json:"timezone,omitempty"`
-	NTPServer string  `json:"ntpServer,omitempty"`
+	Date      string `json:"date,omitempty"`
+	Time      string `json:"time,omitempty"`
+	Timezone  string `json:"timezone,omitempty"`
+	NTPServer string `json:"ntpServer,omitempty"`
 }
 
 func handleTimeInfo(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
-		values, err := snapdclient.GetCoreConfig(
-			[]string{"Date", "Time", "Timezone", "NTPServer"})
+		values, err := getTimeInfo()
 		if err != nil {
-			log.Println("Error extracting core config", err)
+			log.Printf("Error fetching time related information: %v", err)
+			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
 		info := timeInfoResponse{
 			Date:      values["Date"].(string),
 			Time:      values["Time"].(string),
-			Timezone:  values["Timezone"].(float64),
+			Timezone:  values["Timezone"].(string),
 			NTPServer: values["NTPServer"].(string),
 		}
 
 		w.Header().Set("Content-Type", "application/json")
 		if err := json.NewEncoder(w).Encode(info); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			log.Println("Error encoding time response", err)
+			log.Printf("Error encoding time informaiton: %v", err)
 		}
 	} else if r.Method == "PATCH" {
-		w.WriteHeader(http.StatusNotImplemented)
+		contentType := r.Header.Get("Content-Type")
+		if contentType != "application/json" {
+			log.Printf("handleTimeInfo(POST): invalid content")
+			w.WriteHeader(http.StatusUnsupportedMediaType)
+			return
+		}
+
+		data, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			log.Println("Error decoding time patch", err)
+			return
+		}
+
+		var timePatch map[string]interface{}
+		err = json.Unmarshal(data, &timePatch)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			log.Printf("handleTimeInfo(POST): Error decoding time data: %v", err)
+			return
+		}
+
+		err = setTimeInfo(timePatch)
+		if err != nil {
+			log.Printf("handleTimeInfo: failed to set time information; %v", err)
+		}
+	} else {
+		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
 }
 

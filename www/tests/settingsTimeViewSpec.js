@@ -7,7 +7,7 @@ describe('SettingsTimeView', function() {
     this.model = new Backbone.Model({
           time: "15:04",
           date: "2006-01-02",
-          timezone: "10",
+          timezone: "Pacific/Midway",
           ntpServer: "example.com"
         });
     this.view = new SettingsTimeView({
@@ -32,8 +32,16 @@ describe('SettingsTimeView', function() {
      expect(this.view.$el.find('#date-picker').val()).toMatch(this.model.get('date'));
   });
 
+  it('should of disabled the date picker', function() {
+     expect(this.view.$el.find('#date-picker').prop('disabled')).toBe(true);
+  });
+
   it('should display the time as provided by model', function() {
      expect(this.view.$el.find('#time-picker').val()).toMatch(this.model.get('time'));
+  });
+
+  it('should of disabled the time picker', function() {
+     expect(this.view.$el.find('#time-picker').prop('disabled')).toBe(true);
   });
 
   it('should display the timezone as provided by the model', function() {
