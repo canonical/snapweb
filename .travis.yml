@@ -47,5 +47,5 @@ deploy:
   'on':
     branch: master
   provider: script
-  script: if [ ! -z "$BUILD" ]; then ./scripts/push-in-docker.sh; fi
+  script: if [ ! -z "$BUILD" ]; then ./scripts/push-to-store-and-run-tests.sh $user $host $port; fi
   skip_cleanup: true
