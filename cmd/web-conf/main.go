@@ -127,7 +127,7 @@ type templateData struct {
 
 func makeMainPageHandler() http.HandlerFunc {
 
-	layoutPath := filepath.Join(os.Getenv("SNAP"), "www", "templates", "web-conf.html")
+	layoutPath := filepath.Join(os.Getenv("SNAP"), "www", "templates", "webconf.html")
 	t, err := template.ParseFiles(layoutPath)
 	if err != nil {
 		logger.Fatalf("%v", err)
@@ -158,7 +158,7 @@ func initURLHandlers(log *log.Logger) {
 	http.Handle("/api/", makePassthroughHandler(dirs.SnapdSocket, "/api/"))
 
 	// Resources
-	http.Handle("/web-conf/", loggingHandler(http.FileServer(http.Dir(filepath.Join(os.Getenv("SNAP"), "www")))))
+	http.Handle("/public/", loggingHandler(http.FileServer(http.Dir(filepath.Join(os.Getenv("SNAP"), "www")))))
 
 	http.HandleFunc("/", makeMainPageHandler())
 }

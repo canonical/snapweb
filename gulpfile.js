@@ -18,15 +18,23 @@ var uglify = require('gulp-uglify');
 var watchify = require('watchify');
 
 gulp.task('js:build', ['js:clean', 'js:lint'], function() {
-  return createBundler();
+  return createBundler('./www/src/js/app.js', 'snapweb.js', 'www/public/js');
 });
 
 gulp.task('js:clean', function(cb) {
   del(['www/public/js'], cb);
 });
 
-function createBundler(watch) {
-  var bundler = browserify('./www/src/js/app.js', {
+gulp.task('js:build:webconf', ['js:clean:webconf', 'js:lint'], function() {
+  return createBundler('./www/src/js/webconf-app.js', 'webconf.js', 'www/public/js');
+});
+
+gulp.task('js:clean:webconf', function(cb) {
+  del(['www/webconf/js'], cb);
+});
+
+function createBundler(appSrc, appJs, destDir, watch) {
+  var bundler = browserify(appSrc, {
     cache: {},
     packageCache: {}
   });
@@ -43,22 +51,22 @@ function createBundler(watch) {
   } else {
   }
 
-  return bundleShared(bundler);
+  return bundleShared(bundler, appJs, destDir);
 }
 
-function bundleShared(bundler) {
+function bundleShared(bundler, appJs, destDir) {
   return bundler.bundle()
     .on('error', function(err) {
       gutil.log(gutil.colors.green('Browserify Error: ' + err));
       this.emit('end');
       process.exit(1);
     })
-    .pipe(source('snapweb.js'))
+    .pipe(source(appJs))
       .pipe(buffer())
       .pipe(sourcemaps.init({loadMaps: true})) // loads map from browserify file
       .pipe(process.env.NODE_ENV === 'development'? gutil.noop() : uglify())
       .pipe(sourcemaps.write('./')) // writes .map file
-    .pipe(gulp.dest('www/public/js/'));
+    .pipe(gulp.dest(destDir));
 }
 
 gulp.task('js:lint', function() {
