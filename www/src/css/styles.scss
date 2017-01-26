@@ -67,3 +67,19 @@ hr {
     transform: rotate(360deg);
   }
 }
+// webconf
+.region-webconf .inner-wrapper {
+    background-color: $color-light;
+}
+.region-webconf .p-card--highlighted {
+    margin-bottom: 1em;
+}
+
+.p-navigation {
+    margin-bottom: 0em;
+}
+
+label {
+    margin-bottom: 0.5em;
+    display: inline-block;
+}
