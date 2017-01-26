@@ -159,6 +159,34 @@ func (h *Handler) installPackage(name string) error {
 	return err
 }
 
+func (h *Handler) enable(name string) error {
+	snap, err := h.getSnap(name)
+	// TODO check State
+	if err != nil && snap != nil{
+		return err
+	}
+
+	_, err = h.snapdClient.Enable(name, nil)
+
+//	h.stateTracker.TrackEnable(changeID, snap)
+
+	return err
+}
+
+func (h *Handler) disable(name string) error {
+	snap, err := h.getSnap(name)
+	// TODO check snap existence & state
+	if err != nil && snap != nil {
+		return err
+	}
+
+	_, err = h.snapdClient.Disable(name, nil)
+
+//	h.stateTracker.TrackDisable(changeID, snap)
+
+	return err
+}
+
 func formatInstallData(d time.Time) string {
 	// store snaps dont have install dates
 	// are their install date are time.Time zero values
