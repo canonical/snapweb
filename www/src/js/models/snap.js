@@ -1,11 +1,13 @@
 // snap.js
 
 var _ = require('lodash');
+var url = require('url');
 var Backbone = require('backbone');
 var Radio = require('backbone.radio');
 var prettyBytes = require('pretty-bytes');
 var CONF = require('../config.js');
 var chan = Radio.channel('root');
+var linkify = require('linkifyjs/html');
 
 /** Snap Model
  *
@@ -245,6 +247,33 @@ module.exports = Backbone.Model.extend({
         this.prettifyBytes(Number(response.installed_size))
         //jscs:enable requireCamelCaseOrUpperCaseIdentifiers
       );
+    }
+    if (response.description) {
+      var toLocalServiceUri = function(uri) {
+        var u = url.parse(uri);
+        var wl = window.location;
+        return u.protocol + '//'
+          + wl.hostname
+          + ':' + u.port
+          + (u.path ? u.path : '');
+      };
+      response.description =
+        linkify(response.description,
+                {
+                  validate: function (value, type) {
+                    if (type !== 'url') {
+                      return false;
+                    }
+                    var p = url.parse(value).port;
+                    return p && isFinite(p) && parseInt(p) > 0;
+                  },
+                  format: function (value, type) {
+                    return toLocalServiceUri(value)
+                  },
+                  formatHref: function(href, type) {
+                    return toLocalServiceUri(href)
+                  },
+                });
     }
 
     return response;
