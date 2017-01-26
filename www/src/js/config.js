@@ -29,5 +29,7 @@ module.exports = {
     ACTIVE: 'active',
     PRICED: 'priced'
   },
-  INSTALL_POLL_WAIT: 16 // milliseconds
+  INSTALL_POLL_WAIT: 16, // milliseconds
+  SNAPWEB_AUTH_TOKEN_COOKIE_NAME: "SnapwebLocalToken",
+  SNAPWEB_AUTH_MACAROON_COOKIE_NAME: "SnapwebAuthMacaroon",
 };

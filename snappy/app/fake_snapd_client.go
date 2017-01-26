@@ -139,4 +139,9 @@ func (f *FakeSnapdClient) Change(id string) (*client.Change, error) {
 	return nil, nil
 }
 
+// Login logs user in.
+func (a *FakeSnapdClient) Login(email, password, otp string) (*client.User, error) {
+	return nil, nil
+}
+
 var _ snapdclient.SnapdClient = (*FakeSnapdClient)(nil)

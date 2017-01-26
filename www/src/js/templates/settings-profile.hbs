@@ -3,3 +3,26 @@
         <h2>Profile</h2>
     </div>
 </div>
+
+{{#if isloggedin}}
+
+<div class="row">
+  <div class="col-2"><strong>Device name</strong></div>
+  <div class="col-6" id="info-device-name">{{ deviceName }}</div>
+</div>
+
+{{else}}
+
+<div class="row">
+  <div class="col-12">
+    You are currently not logged in. Please login to edit your profile information.
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <a id="/login" type="p-button--neutral" name="">Login</a>
+  </div>
+</div>
+
+{{/if}}

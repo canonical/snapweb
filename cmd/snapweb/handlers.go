@@ -19,10 +19,8 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"net"
 	"net/http"
@@ -223,31 +221,6 @@ func initURLHandlers(log *log.Logger) {
 	http.HandleFunc("/", makeMainPageHandler())
 }
 
-// Name of the cookie transporting the access token
-const (
-	SnapwebCookieName = "SM"
-)
-
-func tokenFilename() string {
-	return filepath.Join(os.Getenv("SNAP_DATA"), "token.txt")
-}
-
-// SimpleCookieCheck is a simple authorization mechanism
-func SimpleCookieCheck(w http.ResponseWriter, r *http.Request) error {
-	cookie, _ := r.Cookie(SnapwebCookieName)
-	if cookie != nil {
-		token, err := ioutil.ReadFile(tokenFilename())
-		if err == nil {
-			if string(token) == cookie.Value {
-				// the auth-token and the cookie do match
-				// we can continue with the request
-				return nil
-			}
-		}
-	}
-	return errors.New("Unauthorized")
-}
-
 func validateToken(w http.ResponseWriter, r *http.Request) {
 	// We only get here when the Cookie is valid, send an empty response
 	// to keep the model happy
@@ -262,8 +235,6 @@ func makePassthroughHandler(socketPath string, prefix string) http.HandlerFunc {
 		c := &http.Client{
 			Transport: &http.Transport{Dial: unixDialer(socketPath)},
 		}
-
-		log.Println(r.Method, r.URL.Path)
 
 		// need to remove the RequestURI field
 		// and remove the /api prefix from snapweb URLs
@@ -292,6 +263,49 @@ func makePassthroughHandler(socketPath string, prefix string) http.HandlerFunc {
 		io.Copy(w, resp.Body)
 
 	})
+}
+
+func handleLogin(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		log.Printf("login: unexpected HTTP request method")
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+
+	contentType := r.Header.Get("Content-Type")
+	if contentType != "application/json" {
+		log.Printf("login: invalid HTTP request content type")
+		w.WriteHeader(http.StatusUnsupportedMediaType)
+		return
+	}
+
+	loginData := struct {
+		Email    string `json:"email"`
+		Password string `json:"password"`
+		Otp      string `json:"otp,omitempty"`
+	}{}
+
+	dec := json.NewDecoder(r.Body)
+	if err := dec.Decode(&loginData); err != nil {
+		log.Printf("login: invalid login data %v", err)
+		w.WriteHeader(http.StatusBadRequest)
+	}
+
+	c := newSnapdClient()
+
+	user, err := c.Login(loginData.Email, loginData.Password, loginData.Otp)
+	if err != nil {
+		// TODO check error (e.g. OTP needed)
+		log.Println(fmt.Sprintf("login: %s", err))
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	session.User = user
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "{}")
 }
 
 func loggingHandler(h http.Handler) http.Handler {

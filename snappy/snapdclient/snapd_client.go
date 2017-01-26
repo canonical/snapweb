@@ -45,6 +45,7 @@ type SnapdClient interface {
 	Interfaces() (client.Interfaces, error)
 	Known(assertTypeName string, headers map[string]string) ([]asserts.Assertion, error)
 	Change(id string) (*client.Change, error)
+	Login(email, password, otp string) (*client.User, error)
 }
 
 // ClientAdapter adapts our expectations to the snapd client API.
@@ -122,6 +123,11 @@ func (a *ClientAdapter) Sections() ([]string, error) {
 // Change returns the list of ongoing changes for a given snap and changeid
 func (a *ClientAdapter) Change(id string) (*client.Change, error) {
 	return a.snapdClient.Change(id)
+}
+
+// Login logs user in.
+func (a *ClientAdapter) Login(email, password, otp string) (*client.User, error) {
+	return a.snapdClient.Login(email, password, otp)
 }
 
 // internal
