@@ -15,6 +15,6 @@ else
     scp -P $port $snap $user@$host:/home/$user/tmpsnaps/
     ssh -p $port $user@$host "sudo snap install /home/$user/tmpsnaps/$snap_name --devmode"
     # need to manually connect interfaces as snapd won't do it anymore in devmode
-	ssh -p $port $user@$host "sudo snap connect snapweb:snapd-control"
-	ssh -p $port $user@$host "sudo snap connect snapweb:timeserver-control"
+    ssh -p $port $user@$host "sudo snap connect snapweb:snapd-control"
+    ssh -p $port $user@$host "sudo snap connect snapweb:timeserver-control"
 fi
