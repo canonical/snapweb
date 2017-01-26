@@ -1,4 +1,4 @@
-summary: Verify that firstboot will start on an un-managed system by default
+summary: Verify that webconf will start on an un-managed system by default
 environment:
     SEED_DIR: /var/lib/snapd/seed
 prepare: |
@@ -15,8 +15,5 @@ execute: |
     test `snap managed` = 'false'
 
     echo "Verifying that snapweb is NOT running as normal"
-    test `ps ax | grep -- -linux-gnu/snapweb | grep -v grep | grep -v firstboot | wc -l` -eq 0
-
-    echo "Verifying that firstboot is running"
-    test `ps ax | grep -- -linux-gnu/firstboot | grep -v grep | wc -l` -eq 1
+    test `ps ax | grep -- -linux-gnu/snapweb | grep -v grep | grep -v web-conf | wc -l` -eq 0
     
