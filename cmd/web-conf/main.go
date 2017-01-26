@@ -167,7 +167,7 @@ func main() {
 
 	if IsDeviceManaged() {
 		log.Println("web-conf does not run on managed devices")
-		// os.Exit(0)
+		os.Exit(0)
 	}
 
 	initURLHandlers(logger)

@@ -44,6 +44,7 @@ exclude:
   - key.pem
   - node_modules
   - snapweb
+  - web-conf
   - tests
   - releases
   - generate_token
@@ -61,8 +62,8 @@ suites:
             . $TESTSLIB/prepare.sh
         restore-each: |
             . $TESTSLIB/restore-each.sh
-    spread/firstboot/:
-        summary: Full-system tests for the firstboot variant of snapweb
+    spread/webconf/:
+        summary: Full-system tests for the webconf variant of snapweb
         environment:
             FIRSTBOOT: yes
         systems:
