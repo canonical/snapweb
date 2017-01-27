@@ -162,13 +162,13 @@ func (h *Handler) installPackage(name string) error {
 func (h *Handler) enable(name string) error {
 	snap, err := h.getSnap(name)
 	// TODO check State
-	if err != nil && snap != nil{
+	if err != nil && snap != nil {
 		return err
 	}
 
 	_, err = h.snapdClient.Enable(name, nil)
 
-//	h.stateTracker.TrackEnable(changeID, snap)
+	//	h.stateTracker.TrackEnable(changeID, snap)
 
 	return err
 }
@@ -182,7 +182,7 @@ func (h *Handler) disable(name string) error {
 
 	_, err = h.snapdClient.Disable(name, nil)
 
-//	h.stateTracker.TrackDisable(changeID, snap)
+	//	h.stateTracker.TrackDisable(changeID, snap)
 
 	return err
 }

@@ -149,7 +149,7 @@ func (h *Handler) internalSnap(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-//	var changeID string
+	//	var changeID string
 
 	switch operation {
 	case "enable":
@@ -157,7 +157,7 @@ func (h *Handler) internalSnap(w http.ResponseWriter, r *http.Request) {
 	case "disable":
 		err = h.disable(snapName)
 	}
-	
+
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
