@@ -34,7 +34,9 @@ module.exports = Backbone.Model.extend({
 
       if (
         status === CONF.INSTALL_STATE.INSTALLING ||
-        status === CONF.INSTALL_STATE.REMOVING
+        status === CONF.INSTALL_STATE.REMOVING ||
+        status === CONF.INSTALL_STATE.DISABLING ||
+        status === CONF.INSTALL_STATE.ENABLING
       ) {
         _.delay(function(model) {
           model.fetch();
@@ -90,8 +92,9 @@ module.exports = Backbone.Model.extend({
     var status = model.get('status');
     if (
         status !== CONF.INSTALL_STATE.INSTALLING &&
-        status !== CONF.INSTALL_STATE.REMOVING
-    ) {
+        status !== CONF.INSTALL_STATE.REMOVING &&
+        status !== CONF.INSTALL_STATE.DISABLING &&
+        status !== CONF.INSTALL_STATE.ENABLING) {
       model.set('download_progress', 0);
       model.set('task_summary', '');
     }
@@ -117,7 +120,9 @@ module.exports = Backbone.Model.extend({
       installHTMLClass = 'b-installer_do_remove';
     }
 
-    if (status === CONF.INSTALL_STATE.INSTALLING) {
+    if (status === CONF.INSTALL_STATE.INSTALLING ||
+        status === CONF.INSTALL_STATE.DISABLIGN ||
+        status === CONF.INSTALL_STATE.ENABLING) {
       installHTMLClass = 'b-installer_do_install b-installer_thinking';
     }
 
@@ -138,6 +143,8 @@ module.exports = Backbone.Model.extend({
         break;
       case CONF.INSTALL_STATE.ACTIVE:
       case CONF.INSTALL_STATE.INSTALLED:
+      case CONF.INSTALL_STATE.ENABLING:
+      case CONF.INSTALL_STATE.DISABLING:
         action = 'Remove';
         break;
       case CONF.INSTALL_STATE.INSTALLING:
@@ -165,6 +172,8 @@ module.exports = Backbone.Model.extend({
 
     switch (status) {
       case CONF.INSTALL_STATE.ACTIVE:
+      case CONF.INSTALL_STATE.ENABLING:
+      case CONF.INSTALL_STATE.DISABLING:
       case CONF.INSTALL_STATE.INSTALLED:
       case CONF.INSTALL_STATE.INSTALLING:
         installButtonClass = 'button--secondary';
@@ -199,13 +208,22 @@ module.exports = Backbone.Model.extend({
     if (
       status === CONF.INSTALL_STATE.INSTALLED ||
       status === CONF.INSTALL_STATE.ACTIVE ||
-      status === CONF.INSTALL_STATE.REMOVING
+      status === CONF.INSTALL_STATE.REMOVING ||
+      status === CONF.INSTALL_STATE.ENABLING ||
+      status === CONF.INSTALL_STATE.DISABLING
     ) {
       response.isInstalled = true;
     }
 
     if (response.hasOwnProperty('icon') && !response.icon.length) {
       response.icon = this.defaults.icon;
+    }
+
+    response.isEnabled = false;
+    if (status === CONF.INSTALL_STATE.INSTALLED) {
+      response.isEnabled = false;
+    } else if (status === CONF.INSTALL_STATE.ACTIVE) {
+      response.isEnabled = true;
     }
 
     if (status === CONF.INSTALL_STATE.PRICED) {

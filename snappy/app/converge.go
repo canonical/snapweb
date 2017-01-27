@@ -238,7 +238,10 @@ func (h *Handler) snapToPayload(snapQ *client.Snap) snapPkg {
 		InstallDate: formatInstallData(snapQ.InstallDate),
 	}
 
-	isInstalled := snapQ.Status == client.StatusInstalled || snapQ.Status == client.StatusActive
+	isInstalled := snapQ.Status == client.StatusInstalled ||
+		snapQ.Status == client.StatusActive ||
+		snapQ.Status == client.StatusEnabling ||
+		snapQ.Status == client.StatusDisabling
 
 	if isInstalled {
 		iconPath, err := localIconPath(h.snapdClient, snap.Name)
