@@ -95,11 +95,8 @@ if [ ! -z "$STATIC_GO" ]; then
 fi
 
 if [ ! -z "$STATIC_JS" ]; then
-    if [ -n "${TRAVIS+set}" ]; then 
-        npm install -g gulp
-    fi
     npm install
-    gulp js:lint
+    npm run js:lint
 fi
 
 if [ ! -z "$UNIT_GO" ]; then
