@@ -20,27 +20,17 @@ package main
 import (
 	"errors"
 	"io/ioutil"
-	"path/filepath"
 	"net/http"
 	"os"
 	"path"
+	"path/filepath"
 
 	"github.com/gorilla/mux"
-
-	"github.com/snapcore/snapd/client"
 
 	"github.com/snapcore/snapweb/snappy/app"
 )
 
 const apiVersion = "v2"
-
-// UserSession represents a given user session
-type UserSession struct {
-	Token string
-	User *client.User
-}
-
-var session UserSession
 
 // Name of the cookie transporting the access token
 const (
@@ -60,7 +50,6 @@ func ValidateRequestToken(w http.ResponseWriter, r *http.Request) error {
 			if string(token) == cookie.Value {
 				// the auth-token and the cookie do match
 				// we can continue with the request
-				session.Token = string(token)
 				return nil
 			}
 		}
@@ -83,7 +72,7 @@ func makeAPIHandler(apiRootPath string) http.Handler {
 	router.HandleFunc("/user-profile", handleUserProfile)
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// TODO 
+		// TODO
 		if ValidateRequestToken(w, r) != nil {
 			http.Redirect(w, r, "/access-control", 403)
 			return

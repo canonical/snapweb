@@ -308,8 +308,8 @@ func handleUserLogin(w http.ResponseWriter, r *http.Request) {
 
 func handleUserProfile(w http.ResponseWriter, r *http.Request) {
 	profileData := struct {
-		Name     string `json:"name"`
-		Email    string `json:"email"`
+		Name  string `json:"name"`
+		Email string `json:"email"`
 	}{}
 
 	c := newSnapdClient()
