@@ -27,7 +27,7 @@ module.exports = Backbone.Marionette.LayoutView.extend({
   },
 
   events: {
-    'click @ui.row': 'setActive'
+    'click @ui.row': 'handleSectionActivation'
   },
 
   regions: {
@@ -63,14 +63,17 @@ module.exports = Backbone.Marionette.LayoutView.extend({
     this.showChildView('contentRegion', view);
   },
 
-  setActive: function(e) {
-    var id = e.target.getAttribute('id');
+  handleSectionActivation: function(e) {
+    this.setSectionAsActive(e.target.getAttribute('id'));
+  },
+
+  setSectionAsActive: function(id) {
     this.showContent(id);
     this.$('.js-list-item').removeClass('is-active');
     this.$('#' + id).addClass('is-active');
   },
 
   onBeforeShow: function() {
-    this.showContent(this.defaultPage);
+    this.setSectionAsActive(this.defaultPage);
   }
 });

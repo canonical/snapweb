@@ -266,6 +266,29 @@ func makePassthroughHandler(socketPath string, prefix string) http.HandlerFunc {
 }
 
 func handleUserLogin(w http.ResponseWriter, r *http.Request) {
+	// overloaded with logout
+	if v, ok := r.URL.Query()["do"]; ok {
+		if v[0] != "logout" {
+			log.Printf("login: unexpected 'do' query")
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		c := newSnapdClient()
+
+		err := c.Logout()
+		if err != nil {
+			log.Println(fmt.Sprintf("Logout: %s", err))
+			w.WriteHeader(http.StatusInternalServerError)
+		} else {
+			http.Redirect(
+				w,
+				r,
+				fmt.Sprintf("https://%s/", r.Host),
+				303)
+		}
+		return
+	}
+
 	if r.Method != "POST" {
 		log.Printf("login: unexpected HTTP request method")
 		w.WriteHeader(http.StatusMethodNotAllowed)

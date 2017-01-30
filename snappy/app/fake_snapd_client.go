@@ -140,12 +140,17 @@ func (f *FakeSnapdClient) Change(id string) (*client.Change, error) {
 }
 
 // Login logs user in.
-func (a *FakeSnapdClient) Login(email, password, otp string) (*client.User, error) {
+func (f *FakeSnapdClient) Login(email, password, otp string) (*client.User, error) {
 	return nil, nil
 }
 
 // LoggedInUser returns the logged in User or nil
-func (a *FakeSnapdClient) LoggedInUser() *client.User {
+func (f *FakeSnapdClient) LoggedInUser() *client.User {
+	return nil
+}
+
+// Logout logs the user out.
+func (f *FakeSnapdClient) Logout() error {
 	return nil
 }
 

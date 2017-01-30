@@ -46,6 +46,7 @@ type SnapdClient interface {
 	Known(assertTypeName string, headers map[string]string) ([]asserts.Assertion, error)
 	Change(id string) (*client.Change, error)
 	Login(email, password, otp string) (*client.User, error)
+	Logout() error
 	LoggedInUser() *client.User
 }
 
@@ -134,6 +135,11 @@ func (a *ClientAdapter) Login(email, password, otp string) (*client.User, error)
 // LoggedInUser returns the logged in User or nil
 func (a *ClientAdapter) LoggedInUser() *client.User {
 	return a.snapdClient.LoggedInUser()
+}
+
+// Logout logs the user out.
+func (a *ClientAdapter) Logout() error {
+	return a.snapdClient.Logout()
 }
 
 // internal

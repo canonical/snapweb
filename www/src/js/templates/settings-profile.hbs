@@ -7,7 +7,7 @@
 {{#if email}}
 
 <div class="row">
-  <div class="col-1 u-vertically-center">
+  <div class="col-1 u-vertically-center" style="height: 5em">
     {{{ avatar }}}
   </div>
 
@@ -27,7 +27,7 @@
     <a href="https://login.ubuntu.com/" class="p-link--external p-button--neutral" target="_blank" name="">Edit account</a>
   </div>
   <div class="col-3">
-    <a href="/logout" class="p-button--neutral" name="">Logout</a>
+    <a href="/api/v2/user-login?do=logout" class="p-button--neutral" name="">Logout</a>
   </div>
 </div>
 
