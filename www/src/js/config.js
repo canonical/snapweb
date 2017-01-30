@@ -1,10 +1,15 @@
+var api = function(endpoint) {
+  return '/api/v2/' + endpoint;
+}
+
 module.exports = {
-  PACKAGES: '/api/v2/packages/',
-  TIME_INFO: '/api/v2/time-info',
-  CREATE_USER: '/api/v2/create-user',
-  SECTIONS: '/api/v2/sections',
-  DEVICE_INFO: '/api/v2/device-info',
-  DEVICE_ACTION: '/api/v2/device-action',
+  PACKAGES: api('packages/'),
+  TIME_INFO: api('time-info'),
+  CREATE_USER: api('create-user'),
+  SECTIONS: api('sections'),
+  DEVICE_INFO: api('device-info'),
+  DEVICE_ACTION: api('device-action'),
+  USER_PROFILE: api('user-profile'),
   FILTERED_SNAPS: [
     'snapweb',
     'ubuntu-core'

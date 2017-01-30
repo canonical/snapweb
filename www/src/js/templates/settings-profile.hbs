@@ -4,11 +4,32 @@
     </div>
 </div>
 
-{{#if isloggedin}}
+{{#if email}}
 
 <div class="row">
-  <div class="col-2"><strong>Device name</strong></div>
-  <div class="col-6" id="info-device-name">{{ deviceName }}</div>
+  <div class="col-2"></div>
+
+  <div class="col-6">
+    <div class="col-3">
+    </div>
+
+    <div class="col-9">
+      <ul class="p-list--divided">
+        <li class="p-list__item">{{ name }}</li>
+        <li class="p-list__item">{{ email }}</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-4">
+    <a href="#" type="p-button--neutral" name="">Edit account</a>
+  </div>
+  <div class="col-8">
+    <a href="/logout" type="p-button--neutral" name="">Logout</a>
+  </div>
 </div>
 
 {{else}}
@@ -21,7 +42,7 @@
 
 <div class="row">
   <div class="col-12">
-    <a id="/login" type="p-button--neutral" name="">Login</a>
+    <a href="/login" type="p-button--neutral" name="">Login</a>
   </div>
 </div>
 

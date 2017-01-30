@@ -144,4 +144,9 @@ func (a *FakeSnapdClient) Login(email, password, otp string) (*client.User, erro
 	return nil, nil
 }
 
+// LoggedInUser returns the logged in User or nil
+func (a *FakeSnapdClient) LoggedInUser() *client.User {
+	return nil
+}
+
 var _ snapdclient.SnapdClient = (*FakeSnapdClient)(nil)

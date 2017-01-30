@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015, 2016 Canonical Ltd
+ * Copyright (C) 2014-2017 Canonical Ltd
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -265,7 +265,7 @@ func makePassthroughHandler(socketPath string, prefix string) http.HandlerFunc {
 	})
 }
 
-func handleLogin(w http.ResponseWriter, r *http.Request) {
+func handleUserLogin(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		log.Printf("login: unexpected HTTP request method")
 		w.WriteHeader(http.StatusMethodNotAllowed)
@@ -301,11 +301,32 @@ func handleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	session.User = user
-
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, "{}")
+}
+
+func handleUserProfile(w http.ResponseWriter, r *http.Request) {
+	profileData := struct {
+		Name     string `json:"name"`
+		Email    string `json:"email"`
+	}{}
+
+	c := newSnapdClient()
+
+	user := c.LoggedInUser()
+	if user != nil {
+		profileData.Name = user.Username
+		profileData.Email = user.Email
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(profileData); err != nil {
+		log.Println(fmt.Sprintf("handleUserProfile: %s", err))
+		w.WriteHeader(http.StatusInternalServerError)
+	} else {
+		w.WriteHeader(http.StatusOK)
+	}
 }
 
 func loggingHandler(h http.Handler) http.Handler {

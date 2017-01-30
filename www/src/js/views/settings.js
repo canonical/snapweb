@@ -14,6 +14,8 @@ module.exports = Backbone.Marionette.LayoutView.extend({
   initialize: function(options) {
     this.timeInfo = options.timeInfo;
     this.deviceInfo = options.deviceInfo;
+    this.userProfile = options.userProfile;
+    this.defaultPage = options.defaultPage;
   },
 
   template: function(model) {
@@ -36,7 +38,9 @@ module.exports = Backbone.Marionette.LayoutView.extend({
     var view;
     switch (id) {
       case 'profile':
-        view = new SettingsProfileView();
+        view = new SettingsProfileView({
+          model: this.userProfile
+        });
         break;
       case 'users':
         view = new SettingsUsersView();
@@ -46,14 +50,14 @@ module.exports = Backbone.Marionette.LayoutView.extend({
         break;
       case 'time':
         view = new SettingsTimeView({
-            model: this.timeInfo
-          });
+          model: this.timeInfo
+        });
         break;
       case 'device':
       default:
         view = new SettingsDeviceView({
-            model: this.deviceInfo
-          });
+          model: this.deviceInfo
+        });
     }
 
     this.showChildView('contentRegion', view);
@@ -67,6 +71,6 @@ module.exports = Backbone.Marionette.LayoutView.extend({
   },
 
   onBeforeShow: function() {
-    this.showContent('device');
+    this.showContent(this.defaultPage);
   }
 });
