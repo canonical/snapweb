@@ -1,0 +1,26 @@
+#!/bin/sh
+set -e
+
+case $SNAP_ARCH in
+    amd64|x86_64)
+        plat_abi=x86_64-linux-gnu
+        ;;
+    armhf)
+        plat_abi=arm-linux-gnueabihf
+        ;;
+    arm64)
+        plat_abi=aarch64-linux-gnu
+        ;;
+    i386)
+        plat_abi=i686-linux-gnu
+        ;;
+    *)
+        echo "unknown platform for snappy-magic: $SNAP_ARCH. remember to file a bug or better yet: fix it :)"
+        exit 1
+        ;;
+esac
+
+exec $SNAP/bin/$plat_abi/web-conf
+
+# never reach this
+exit 1
