@@ -73,7 +73,6 @@ func (h *Handler) snapOperationResponse(name string, err error, w http.ResponseW
 }
 
 func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("dede")
 	snapCondition := availableSnaps
 	if r.FormValue("installed_only") == "true" {
 		snapCondition = installedSnaps

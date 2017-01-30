@@ -7,16 +7,15 @@
 {{#if email}}
 
 <div class="row">
-  <div class="col-2"></div>
+  <div class="col-1 u-vertically-center">
+    {{{ avatar }}}
+  </div>
 
   <div class="col-6">
-    <div class="col-3">
-    </div>
-
     <div class="col-9">
       <ul class="p-list--divided">
         <li class="p-list__item">{{ name }}</li>
-        <li class="p-list__item">{{ email }}</li>
+        <li class="p-list__item"><small>{{ email }}<small></li>
       </ul>
     </div>
 
@@ -24,11 +23,11 @@
 </div>
 
 <div class="row">
-  <div class="col-4">
-    <a href="#" type="p-button--neutral" name="">Edit account</a>
+  <div class="col-3">
+    <a href="https://login.ubuntu.com/" class="p-link--external p-button--neutral" target="_blank" name="">Edit account</a>
   </div>
-  <div class="col-8">
-    <a href="/logout" type="p-button--neutral" name="">Logout</a>
+  <div class="col-3">
+    <a href="/logout" class="p-button--neutral" name="">Logout</a>
   </div>
 </div>
 

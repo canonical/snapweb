@@ -40,8 +40,8 @@ module.exports = {
   settings: new Marionette.AppRouter({
     controller: settingsController,
     appRoutes: {
+      'settings?page=:p': 'page',
       'settings': 'index',
-      'settings?page=:p': 'page'
     }
   }),
 

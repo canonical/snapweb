@@ -293,7 +293,7 @@ func handleUserLogin(w http.ResponseWriter, r *http.Request) {
 
 	c := newSnapdClient()
 
-	user, err := c.Login(loginData.Email, loginData.Password, loginData.Otp)
+	_, err := c.Login(loginData.Email, loginData.Password, loginData.Otp)
 	if err != nil {
 		// TODO check error (e.g. OTP needed)
 		log.Println(fmt.Sprintf("login: %s", err))
