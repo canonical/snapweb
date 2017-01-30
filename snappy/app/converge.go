@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Canonical Ltd
+ * Copyright (C) 2014-2017 Canonical Ltd
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -19,11 +19,15 @@ package snappy
 
 import (
 	"errors"
+	"fmt"
 	"net/url"
 	"sort"
+	"strconv"
 	"time"
 
 	"log"
+
+	"github.com/snapcore/snapweb/statetracker"
 
 	"github.com/snapcore/snapd/client"
 	"github.com/snapcore/snapd/snap"
@@ -34,6 +38,13 @@ const (
 	availableSnaps
 )
 
+// SnapState wraps the current state of a snap
+type SnapState struct {
+	Status      string `json:"status"`
+	TaskSummary string `json:"task_summary"`
+	LocalSize   uint64 `json:"local_size,omitempty"`
+}
+
 type snapPkg struct {
 	ID            string    `json:"id"`
 	Name          string    `json:"name"`
@@ -41,7 +52,7 @@ type snapPkg struct {
 	Version       string    `json:"version"`
 	Description   string    `json:"description"`
 	Icon          string    `json:"icon"`
-	Status        string    `json:"status"`
+	State         SnapState `json:"state"`
 	Price         string    `json:"price,omitempty"`
 	Message       string    `json:"message,omitempty"`
 	Progress      float64   `json:"progress,omitempty"`
@@ -108,7 +119,9 @@ func (h *Handler) allPackages(snapCondition int, query string, private bool, sec
 
 	snapPkgs := make([]snapPkg, 0, len(snaps))
 	for _, snap := range snaps {
-		snapPkgs = append(snapPkgs, h.snapToPayload(snap))
+		snapPkgs = append(
+			snapPkgs,
+			h.snapToPayload(snap))
 	}
 
 	sort.Sort(snapPkgsByName(snapPkgs))
@@ -122,9 +135,12 @@ func (h *Handler) removePackage(name string) error {
 		return err
 	}
 
-	h.statusTracker.TrackUninstall(snap)
+	var changeID string
 
-	_, err = h.snapdClient.Remove(name, nil)
+	changeID, err = h.snapdClient.Remove(name, nil)
+
+	h.stateTracker.TrackUninstall(changeID, snap)
+
 	return err
 }
 
@@ -134,13 +150,52 @@ func (h *Handler) installPackage(name string) error {
 		return err
 	}
 
-	h.statusTracker.TrackInstall(snap)
+	var changeID string
 
-	_, err = h.snapdClient.Install(name, nil)
+	changeID, err = h.snapdClient.Install(name, nil)
+
+	h.stateTracker.TrackInstall(changeID, snap)
+
 	return err
 }
 
+func formatInstallData(d time.Time) string {
+	// store snaps dont have install dates
+	// are their install date are time.Time zero values
+	if (d == time.Time{}) {
+		// store snap
+		return ""
+	}
+	return d.Format(time.UnixDate)
+}
+
+type snapPrices map[string]float64
+
+func priceStringFromSnapPrice(p snapPrices) string {
+	// picks up the "first" listed price for now
+	var currencies []string
+	for k := range p {
+		currencies = append(currencies, k)
+	}
+	if len(currencies) == 0 {
+		return ""
+	}
+	// TODO: "USD" might prevail? not sure
+	sort.Strings(currencies)
+	currency := currencies[0]
+	return fmt.Sprintf("%s %s", strconv.FormatFloat(p[currency], 'f', -1, 32), currency)
+}
+
+func stateFromTrackerState(ts *statetracker.SnapState) SnapState {
+	return SnapState{
+		Status:      ts.Status,
+		TaskSummary: ts.TaskSummary,
+		LocalSize:   ts.LocalSize,
+	}
+}
+
 func (h *Handler) snapToPayload(snapQ *client.Snap) snapPkg {
+
 	snap := snapPkg{
 		ID:          snapQ.Name,
 		Name:        snapQ.Name,
@@ -148,11 +203,11 @@ func (h *Handler) snapToPayload(snapQ *client.Snap) snapPkg {
 		Version:     snapQ.Version,
 		Description: snapQ.Description,
 		Type:        snap.Type(snapQ.Type),
-		Status:      h.statusTracker.Status(snapQ),
-		Price:       "", // TODO: get snap price
+		State:       stateFromTrackerState(h.stateTracker.State(h.snapdClient, snapQ)),
+		Price:       priceStringFromSnapPrice(snapQ.Prices),
 		Private:     snapQ.Private,
 		Channel:     snapQ.Channel,
-		InstallDate: snapQ.InstallDate.Format(time.UnixDate),
+		InstallDate: formatInstallData(snapQ.InstallDate),
 	}
 
 	isInstalled := snapQ.Status == client.StatusInstalled || snapQ.Status == client.StatusActive

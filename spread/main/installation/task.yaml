@@ -1,0 +1,10 @@
+summary: Test snapweb snap installation was successful
+
+execute: |
+    # Service should be up an running
+    systemctl status snap.snapweb.snapweb.service
+
+    # Ensure all necessary plugs/slots are connected
+    snap interfaces | grep -Pzq ":snapd-control +snapweb"
+    snap interfaces | grep -Pzq ":network +snapweb"
+    snap interfaces | grep -Pzq ":network-bind +snapweb"

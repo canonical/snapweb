@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Canonical Ltd
+ * Copyright (C) 2016-2017 Canonical Ltd
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -15,7 +15,7 @@
  *
  */
 
-package statustracker
+package statetracker
 
 import (
 	"testing"
@@ -28,17 +28,17 @@ import (
 
 func Test(t *testing.T) { TestingT(t) }
 
-type StatusTrackerSuite struct {
-	t *StatusTracker
+type StateTrackerSuite struct {
+	t *StateTracker
 }
 
-var _ = Suite(&StatusTrackerSuite{})
+var _ = Suite(&StateTrackerSuite{})
 
-func (s *StatusTrackerSuite) SetUpTest(c *C) {
+func (s *StateTrackerSuite) SetUpTest(c *C) {
 	s.t = New()
 }
 
-func (s *StatusTrackerSuite) TestTranslateStatus(c *C) {
+func (s *StateTrackerSuite) TestTranslateStatus(c *C) {
 	tests := []struct {
 		snapStatus string
 		status     string
@@ -55,7 +55,7 @@ func (s *StatusTrackerSuite) TestTranslateStatus(c *C) {
 	}
 }
 
-func (s *StatusTrackerSuite) TestHasCompleted(c *C) {
+func (s *StateTrackerSuite) TestHasCompleted(c *C) {
 	tests := []struct {
 		status     string
 		snapStatus string
@@ -73,49 +73,49 @@ func (s *StatusTrackerSuite) TestHasCompleted(c *C) {
 	}
 }
 
-func (s *StatusTrackerSuite) TestUntrackedSnap(c *C) {
+func (s *StateTrackerSuite) TestUntrackedSnap(c *C) {
 	snap := &client.Snap{Status: client.StatusInstalled}
-	c.Assert(s.t.Status(snap), Equals, StatusInstalled)
+	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusInstalled})
 }
 
-func (s *StatusTrackerSuite) TestTrackInstallAlreadyInstalled(c *C) {
+func (s *StateTrackerSuite) TestTrackInstallAlreadyInstalled(c *C) {
 	snap := &client.Snap{Status: client.StatusInstalled}
-	s.t.TrackInstall(snap)
-	c.Assert(s.t.Status(snap), Equals, StatusInstalled)
+	s.t.TrackInstall("", snap)
+	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusInstalled})
 }
 
-func (s *StatusTrackerSuite) TestTrackInstall(c *C) {
+func (s *StateTrackerSuite) TestTrackInstall(c *C) {
 	snap := &client.Snap{Status: client.StatusAvailable}
-	s.t.TrackInstall(snap)
-	c.Assert(s.t.Status(snap), Equals, StatusInstalling)
+	s.t.TrackInstall("", snap)
+	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusInstalling})
 	// installation completes
 	snap.Status = client.StatusActive
-	c.Assert(s.t.Status(snap), Equals, StatusActive)
+	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusActive})
 }
 
-func (s *StatusTrackerSuite) TestTrackInstallExpiry(c *C) {
+func (s *StateTrackerSuite) TestTrackInstallExpiry(c *C) {
 	trackerDuration = 200 * time.Millisecond
 
 	snap := &client.Snap{Status: client.StatusAvailable}
-	s.t.TrackInstall(snap)
-	c.Assert(s.t.Status(snap), Equals, StatusInstalling)
+	s.t.TrackInstall("", snap)
+	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusInstalling})
 
 	// don't track indefinitely if operation fails
 	time.Sleep(trackerDuration * 2)
-	c.Assert(s.t.Status(snap), Equals, StatusUninstalled)
+	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusUninstalled})
 }
 
-func (s *StatusTrackerSuite) TestTrackUninstallNotInstalled(c *C) {
+func (s *StateTrackerSuite) TestTrackUninstallNotInstalled(c *C) {
 	snap := &client.Snap{Status: client.StatusAvailable}
-	s.t.TrackUninstall(snap)
-	c.Assert(s.t.Status(snap), Equals, StatusUninstalled)
+	s.t.TrackUninstall("", snap)
+	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusUninstalled})
 }
 
-func (s *StatusTrackerSuite) TestTrackUninstall(c *C) {
+func (s *StateTrackerSuite) TestTrackUninstall(c *C) {
 	snap := &client.Snap{Status: client.StatusInstalled}
-	s.t.TrackUninstall(snap)
-	c.Assert(s.t.Status(snap), Equals, StatusUninstalling)
+	s.t.TrackUninstall("", snap)
+	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusUninstalling})
 	// uninstallation completes
 	snap.Status = client.StatusRemoved
-	c.Assert(s.t.Status(snap), Equals, StatusUninstalled)
+	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusUninstalled})
 }

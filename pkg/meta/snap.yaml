@@ -1,5 +1,5 @@
 name: snapweb
-version: "0.23.9"
+version: "0.24"
 summary: Beautiful and functional interface for snap management
 description: |
   This service allows you to manage your Ubuntu Core device from a web interface or REST API.
@@ -15,6 +15,6 @@ apps:
   snapweb:
     daemon: simple
     command: snapweb
-    plugs: [network, network-bind, snapd-control, timeserver-control]
+    plugs: [network, network-bind, snapd-control, timeserver-control, timezone-control]
   generate-token:
     command: generate-token

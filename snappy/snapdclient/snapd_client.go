@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Canonical Ltd
+ * Copyright (C) 2016-2017 Canonical Ltd
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -15,7 +15,7 @@
  *
  */
 
-package snappy
+package snapdclient
 
 import (
 	"fmt"
@@ -25,7 +25,10 @@ import (
 
 	"github.com/snapcore/snapd/asserts"
 	"github.com/snapcore/snapd/client"
+	"gopkg.in/ini.v1"
 )
+
+var timesyncdConfigurationFilePath = "/etc/systemd/timesyncd.conf"
 
 // SnapdClient is a client of the snapd REST API
 type SnapdClient interface {
@@ -41,6 +44,7 @@ type SnapdClient interface {
 	CreateUser(request *client.CreateUserOptions) (*client.CreateUserResult, error)
 	Interfaces() (client.Interfaces, error)
 	Known(assertTypeName string, headers map[string]string) ([]asserts.Assertion, error)
+	Change(id string) (*client.Change, error)
 }
 
 // ClientAdapter adapts our expectations to the snapd client API.
@@ -113,6 +117,44 @@ func (a *ClientAdapter) FindOne(name string) (*client.Snap, *client.ResultInfo, 
 // Sections returns the list of available sections
 func (a *ClientAdapter) Sections() ([]string, error) {
 	return a.snapdClient.Sections()
+}
+
+// Change returns the list of ongoing changes for a given snap and changeid
+func (a *ClientAdapter) Change(id string) (*client.Change, error) {
+	return a.snapdClient.Change(id)
+}
+
+// internal
+func readNTPServer() string {
+	timesyncd, err := ini.Load(timesyncdConfigurationFilePath)
+	if err != nil {
+		log.Println("readNTPServer: unable to read ",
+			timesyncdConfigurationFilePath)
+		return ""
+	}
+
+	section, err := timesyncd.GetSection("Time")
+	if err != nil || !section.HasKey("NTP") {
+		log.Println("readNTPServer: no NTP servers are set ",
+			timesyncdConfigurationFilePath)
+		return ""
+	}
+
+	return section.Key("NTP").Strings(" ")[0]
+}
+
+// GetCoreConfig gets some aspect of core configuration
+// XXX: current assumption, asking for timezone info
+func GetCoreConfig(keys []string) (map[string]interface{}, error) {
+	var dt = time.Now()
+	_, offset := dt.Zone()
+
+	return map[string]interface{}{
+		"Date":      dt.Format("2006-01-02"), // Format for picker
+		"Time":      dt.Format("15:04"),      // Format for picker
+		"Timezone":  float64(offset) / 60 / 60,
+		"NTPServer": readNTPServer(),
+	}, nil
 }
 
 // GetModelInfo returns information about the device.

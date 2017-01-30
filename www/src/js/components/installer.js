@@ -16,11 +16,13 @@ module.exports = React.createBackboneClass({
     var installActionString = model.get('installActionString');
     var isInstalled = model.get('isInstalled');
     var isInstallable = model.get('isInstallable');
+    var isPriced = model.get('priced');
     var installHTMLClass = model.get('installHTMLClass');
+    var isCoreSnap = model.get('isCoreSnap');
 
     var rootDivClass = "b-installer " + installerClass + " " + installHTMLClass;
 
-    if (isInstallable) {
+    if (isInstallable || isPriced) {
       return (
         <div className={rootDivClass}>
           {installActionString &&
@@ -36,7 +38,9 @@ module.exports = React.createBackboneClass({
       rootDivClass += "b-installer_disabled";
       var installButton = '';
 
-      if (isInstalled) {
+      if (isCoreSnap) {
+        installButton = <button className="b-installer__button p-button--base" disabled></button>
+      } else if (isInstalled) {
         installButton = <button className="b-installer__button p-button--positive">Installed</button>
       } else {
         installButton = <button className="b-installer__button p-button--negative" disabled>Not installable</button>

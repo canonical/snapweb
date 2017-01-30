@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Canonical Ltd
+ * Copyright (C) 2014-2017 Canonical Ltd
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -15,19 +15,21 @@
  *
  */
 
-package snappy
+package common
 
 import (
 	"testing"
 
 	"github.com/snapcore/snapd/client"
 
-	. "gopkg.in/check.v1"
+	"gopkg.in/check.v1"
 )
 
-func Test(t *testing.T) { TestingT(t) }
+// Test runs all the tests defined in the testsuite
+func Test(t *testing.T) { check.TestingT(t) }
 
-func newDefaultSnap() *client.Snap {
+// NewDefaultSnap creates a default snap structure
+func NewDefaultSnap() *client.Snap {
 	snap := &client.Snap{
 		Description:   "WebRTC Video chat server for Snappy",
 		DownloadSize:  6930947,
@@ -43,8 +45,9 @@ func newDefaultSnap() *client.Snap {
 	return snap
 }
 
-func newSnap(name string) *client.Snap {
-	snap := newDefaultSnap()
+// NewSnap creates a snap structure based on a snap name
+func NewSnap(name string) *client.Snap {
+	snap := NewDefaultSnap()
 	snap.Name = name
 	return snap
 }
