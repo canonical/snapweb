@@ -150,7 +150,7 @@ func (s *HandlersSuite) TestMakeMainPageHandler(c *C) {
 	req, err := http.NewRequest("GET", "/", nil)
 	c.Assert(err, IsNil)
 
-	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
+	req.AddCookie(&http.Cookie{Name: SnapwebAuthTokenCookieName, Value: "1234"})
 
 	http.DefaultServeMux.ServeHTTP(rec, req)
 	body := rec.Body.String()
@@ -232,7 +232,7 @@ func (s *HandlersSuite) TestPassthroughHandler(c *C) {
 	req, err := http.NewRequest("GET", "/api/v2/system-info", nil)
 	c.Assert(err, IsNil)
 
-	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
+	req.AddCookie(&http.Cookie{Name: SnapwebAuthTokenCookieName, Value: "1234"})
 
 	handler(rec, req)
 	body := rec.Body.String()
@@ -255,7 +255,7 @@ func (s *HandlersSuite) TestModelInfoHandler(c *C) {
 	req, err := http.NewRequest("GET", "/api/v2/device-info", nil)
 	c.Assert(err, IsNil)
 
-	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
+	req.AddCookie(&http.Cookie{Name: SnapwebAuthTokenCookieName, Value: "1234"})
 
 	http.DefaultServeMux.ServeHTTP(rec, req)
 	body := rec.Body.String()
@@ -276,7 +276,7 @@ func (s *HandlersSuite) TestCheckCookieToken(c *C) {
 	r, err := http.NewRequest("GET", "/api/dummy", nil)
 	c.Assert(err, IsNil)
 
-	r.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: s.createAndSaveTestToken(c)})
+	r.AddCookie(&http.Cookie{Name: SnapwebAuthTokenCookieName, Value: s.createAndSaveTestToken(c)})
 
 	handler := http.HandlerFunc(validateToken)
 	handler(rec, r)
@@ -297,7 +297,7 @@ func (s *HandlersSuite) TestDeviceActionInvalidMethod(c *C) {
 	req, err := http.NewRequest("GET", "/api/v2/device-action", nil)
 	c.Assert(err, IsNil)
 
-	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
+	req.AddCookie(&http.Cookie{Name: SnapwebAuthTokenCookieName, Value: "1234"})
 
 	http.DefaultServeMux.ServeHTTP(rec, req)
 	c.Assert(rec.Code, Equals, http.StatusMethodNotAllowed)
@@ -317,7 +317,7 @@ func (s *HandlersSuite) TestDeviceActionInvalidContentType(c *C) {
 	req, err := http.NewRequest("POST", "/api/v2/device-action", nil)
 	c.Assert(err, IsNil)
 
-	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
+	req.AddCookie(&http.Cookie{Name: SnapwebAuthTokenCookieName, Value: "1234"})
 
 	http.DefaultServeMux.ServeHTTP(rec, req)
 	c.Assert(rec.Code, Equals, http.StatusUnsupportedMediaType)
@@ -338,7 +338,7 @@ func (s *HandlersSuite) TestDeviceActionInvalidJSON(c *C) {
 	req, err := http.NewRequest("POST", "/api/v2/device-action", bytes.NewBuffer(patchJSON))
 	c.Assert(err, IsNil)
 
-	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
+	req.AddCookie(&http.Cookie{Name: SnapwebAuthTokenCookieName, Value: "1234"})
 	req.Header.Set("Content-Type", "application/json")
 
 	http.DefaultServeMux.ServeHTTP(rec, req)
@@ -361,7 +361,7 @@ func (s *HandlersSuite) TestDeviceActionInvalidAction(c *C) {
 	req, err := http.NewRequest("POST", "/api/v2/device-action", bytes.NewBuffer(patchJSON))
 	c.Assert(err, IsNil)
 
-	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
+	req.AddCookie(&http.Cookie{Name: SnapwebAuthTokenCookieName, Value: "1234"})
 	req.Header.Set("Content-Type", "application/json")
 
 	http.DefaultServeMux.ServeHTTP(rec, req)
