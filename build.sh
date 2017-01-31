@@ -62,7 +62,7 @@ gobuild() {
 }
 
 echo "Building web assets with gulp..."
-gulp
+npm run build
 
 orig_pwd="$(pwd)"
 
