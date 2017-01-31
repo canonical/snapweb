@@ -21,7 +21,11 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
 	"path/filepath"
+	"sync"
+	"syscall"
+	"strings"
 
 	"github.com/snapcore/snapweb/avahi"
 	"github.com/snapcore/snapweb/snappy/app"
@@ -43,11 +47,31 @@ func init() {
 	}
 }
 
+func redir(w http.ResponseWriter, req *http.Request) {
+	http.Redirect(w, req,
+		"https://"+strings.Replace(req.Host, httpAddr, httpsAddr, -1),
+		http.StatusSeeOther)
+}
+
+func WaitForWebConfSignal() {
+	var waiter sync.WaitGroup
+	waiter.Add(1)
+	var sigchan chan os.Signal
+	sigchan = make(chan os.Signal, 1)
+	signal.Notify(sigchan, syscall.SIGHUP)
+	go func() {
+		<-sigchan
+		waiter.Done()
+	}()
+	waiter.Wait()	
+}
+
 func main() {
 	config := readConfig()
 
-	if ! IsManaged() {
-		panic("Snapweb does not run on un-managed devices")
+	for ! IsDeviceManaged() {
+		logger.Println("Snapweb cannot run until the device is managed...")
+		WaitForWebConfSignal()
 	}
 
 	GenerateCertificate()
