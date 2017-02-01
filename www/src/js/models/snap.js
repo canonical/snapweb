@@ -99,9 +99,18 @@ module.exports = Backbone.Model.extend({
       model.set('task_summary', '');
     }
 
+    this.updateInstallWidgets(model);
+    this.updateEnableDisableWidgets(model);
+  },
+
+  updateInstallWidgets: function(model) {
     this.setInstallActionString(model);
     this.setInstallHTMLClass(model);
     this.setInstallButtonClass(model);
+  },
+
+  updateEnableDisableWidgets: function(model) {
+    this.setEnableDisableActionString(model);
   },
 
   // XXX move to install behaviour
@@ -120,9 +129,7 @@ module.exports = Backbone.Model.extend({
       installHTMLClass = 'b-installer_do_remove';
     }
 
-    if (status === CONF.INSTALL_STATE.INSTALLING ||
-        status === CONF.INSTALL_STATE.DISABLIGN ||
-        status === CONF.INSTALL_STATE.ENABLING) {
+    if (status === CONF.INSTALL_STATE.INSTALLING) {
       installHTMLClass = 'b-installer_do_install b-installer_thinking';
     }
 
@@ -143,8 +150,6 @@ module.exports = Backbone.Model.extend({
         break;
       case CONF.INSTALL_STATE.ACTIVE:
       case CONF.INSTALL_STATE.INSTALLED:
-      case CONF.INSTALL_STATE.ENABLING:
-      case CONF.INSTALL_STATE.DISABLING:
         action = 'Remove';
         break;
       case CONF.INSTALL_STATE.INSTALLING:
@@ -166,14 +171,29 @@ module.exports = Backbone.Model.extend({
     return model.set('installActionString', action);
   },
 
+  setEnableDisableActionString: function(model) {
+    var status = model.get('status');
+    var action;
+
+    switch (status) {
+      case CONF.INSTALL_STATE.ENABLING:
+        action = 'Enabling…';
+        break;
+      case CONF.INSTALL_STATE.DISABLING:
+        action = 'Disabling…';
+        break;
+      default:
+    }
+
+    return model.set('enableDisableActionString', action);
+  },
+
   setInstallButtonClass: function(model) {
     var status = model.get('status');
     var installButtonClass;
 
     switch (status) {
       case CONF.INSTALL_STATE.ACTIVE:
-      case CONF.INSTALL_STATE.ENABLING:
-      case CONF.INSTALL_STATE.DISABLING:
       case CONF.INSTALL_STATE.INSTALLED:
       case CONF.INSTALL_STATE.INSTALLING:
         installButtonClass = 'button--secondary';

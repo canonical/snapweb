@@ -225,10 +225,10 @@ func hasOperationCompleted(s string, snap *client.Snap) bool {
 		return isInstalled(snap)
 	}
 	if s == StatusEnabling {
-		return s.Status == client.StatusActive
+		return snap.Status == client.StatusActive
 	}
 	if s == StatusInstalling {
-		return s.Status == client.StatusInstalled
+		return snap.Status == client.StatusInstalled
 	}
 
 	return !isInstalled(snap)

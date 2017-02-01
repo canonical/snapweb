@@ -1,4 +1,4 @@
-// install behavior
+// enabler behavior
 var _ = require('lodash');
 var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
@@ -7,34 +7,30 @@ var Snap = require('../common/snaps.js');
 
 module.exports = Marionette.Behavior.extend({
   events: {
-    'click @ui.enableButton': 'onEnableClick'
+    'click @ui.enableButton': 'onEnableClick',
   },
 
   modelEvents: {
-    'change:status': 'onStatusChange'
-  },
+    'change:status': 'onStatusChange', 
+ },
 
   ui: {
-    enableButton: '.b-enable__button'
+    enableButton: '.b-enabler__button',
+    enabler: '.b-enabler',
   },
 
   onStatusChange: function(model) {
-    var oldState = model.previous('status');
     var state = model.get('status');
-    var msg = model.get('installActionString');
-    var installer = this.ui.installer;
-    var installerButton = this.ui.enableButton;
+    var msg = model.get('enableDisableActionString');
+    var enableButton = this.ui.enableButton;
 
-    if (_.contains(CONF.INSTALL_STATE, state)) {
+    if (state === CONF.INSTALL_STATE.REMOVING ||
+        state === CONF.INSTALL_STATE.DISABLING) {
       enableButton.text(msg);
-    } else {
-      // in the rare case that a status isn't one we're expecting,
-      // remove the install button
-//       installer.remove();
     }
   },
 
-  onInstallClick: function(event) {
+  onEnableClick: function(event) {
     return Snap.handleEnableEvent(event, this.view.model);
   },
 });

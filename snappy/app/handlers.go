@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"io/ioutil"
 
 	"github.com/snapcore/snapweb/snappy/snapdclient"
 	"github.com/snapcore/snapweb/statetracker"
@@ -133,28 +134,34 @@ func (h *Handler) remove(w http.ResponseWriter, r *http.Request) {
 	h.snapOperationResponse(name, err, w)
 }
 
-func (h *Handler) internalSnap(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) update(w http.ResponseWriter, r *http.Request) {
 	snapName := mux.Vars(r)["name"]
-
 	if snapName == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	values := r.URL.Query()
-	var err error
-	var operation string
-	if operation = values.Get("operation"); operation == "" {
-		w.WriteHeader(http.StatusBadRequest)
+	body, err := ioutil.ReadAll(r.Body)
+
+	var snap map[string]*json.RawMessage
+	err = json.Unmarshal(body, &snap)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	//	var changeID string
+	// For now only deal with enable/disable updates
 
-	switch operation {
-	case "enable":
+	var status string
+	err = json.Unmarshal(*snap["status"], &status)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	if status == statetracker.StatusEnabling {
 		err = h.enable(snapName)
-	case "disable":
+	} else if status == statetracker.StatusDisabling {
 		err = h.disable(snapName)
 	}
 
@@ -162,6 +169,7 @@ func (h *Handler) internalSnap(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+	h.snapOperationResponse(snapName, err, w)
 }
 
 // MakeMuxer sets up the handlers multiplexing to handle requests against snappy's
@@ -181,8 +189,8 @@ func (h *Handler) MakeMuxer(prefix string, parentRouter *mux.Router) http.Handle
 	// Remove a package
 	m.HandleFunc("/{name}", h.remove).Methods("DELETE")
 
-	// Remove a package
-	m.HandleFunc("/internal/{name}", h.internalSnap).Methods("GET")
+	// Update a snap package
+	m.HandleFunc("/{name}", h.update).Methods("POST")
 
 	return m
 }
