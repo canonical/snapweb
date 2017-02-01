@@ -39,9 +39,9 @@ import (
 const (
 	// StatusPriced indicates the package is priced and has not been bought.
 	StatusPriced = "priced"
-	// StatusInstalled indicates the package is in an installed state.
+	// StatusInstalled indicates the package is in an installed state but disabled.
 	StatusInstalled = "installed"
-	// StatusActive indicates the package is in an installed but disabled state.
+	// StatusActive indicates the package is in an installed and enabled state.
 	StatusActive = "active"
 	// StatusUninstalled indicates the package is in an uninstalled state.
 	StatusUninstalled = "uninstalled"
