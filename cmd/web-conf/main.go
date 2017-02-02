@@ -27,8 +27,8 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/snapcore/snapd/dirs"
 	"github.com/snapcore/snapd/client"
+	"github.com/snapcore/snapd/dirs"
 
 	"github.com/snapcore/snapweb/avahi"
 )
@@ -36,8 +36,7 @@ import (
 var logger *log.Logger
 
 const (
-	httpAddr  string = ":4200"
-	// httpsAddr string = ":4201"
+	httpAddr string = ":4200"
 )
 
 func init() {
@@ -147,9 +146,9 @@ func makeMainPageHandler() http.HandlerFunc {
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			log.Println(err)
-			return;
+			return
 		}
-		
+
 	}
 }
 

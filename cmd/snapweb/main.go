@@ -23,9 +23,9 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"strings"
 	"sync"
 	"syscall"
-	"strings"
 
 	"github.com/snapcore/snapweb/avahi"
 	"github.com/snapcore/snapweb/snappy/app"
@@ -63,7 +63,7 @@ func WaitForWebConfSignal() {
 		<-sigchan
 		waiter.Done()
 	}()
-	waiter.Wait()	
+	waiter.Wait()
 }
 
 func main() {
