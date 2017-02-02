@@ -46,7 +46,10 @@ module.exports = Backbone.Model.extend({
     });
 
     this.on('error', function(model, response, opts) {
-      var json = JSON.parse(response.responseText);
+      var json = {}
+      try {
+        json = JSON.parse(response.responseText);
+      } catch(e) {}
       var previous = model.previousAttributes();
       var message;
       if (json && json.message) {
@@ -181,6 +184,12 @@ module.exports = Backbone.Model.extend({
         break;
       case CONF.INSTALL_STATE.DISABLING:
         action = 'Disabling…';
+        break;
+      case CONF.INSTALL_STATE.INSTALLED:
+        action = 'Enable';
+        break;
+      case CONF.INSTALL_STATE.ACTIVE:
+        action = 'Disable';
         break;
       default:
     }

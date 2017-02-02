@@ -160,7 +160,7 @@ func (s *StateTracker) TrackUninstall(changeID string, snap *client.Snap) {
 
 // TrackEnable tracks the installation of the given snap
 func (s *StateTracker) TrackEnable(changeID string, snap *client.Snap) {
-	if isInstalled(snap) {
+	if !isInstalled(snap) {
 		return
 	}
 
@@ -168,7 +168,7 @@ func (s *StateTracker) TrackEnable(changeID string, snap *client.Snap) {
 		return
 	}
 
-	s.trackOperation(changeID, snap.Name, StatusInstalling)
+	s.trackOperation(changeID, snap.Name, StatusEnabling)
 }
 
 // TrackDisable tracks the disabling of the given snap
@@ -181,7 +181,7 @@ func (s *StateTracker) TrackDisable(changeID string, snap *client.Snap) {
 		return
 	}
 
-	s.trackOperation(changeID, snap.Name, StatusUninstalling)
+	s.trackOperation(changeID, snap.Name, StatusDisabling)
 }
 
 func (s *StateTracker) trackOperation(changeID, name, operation string) {
@@ -227,7 +227,7 @@ func hasOperationCompleted(s string, snap *client.Snap) bool {
 	if s == StatusEnabling {
 		return snap.Status == client.StatusActive
 	}
-	if s == StatusInstalling {
+	if s == StatusDisabling {
 		return snap.Status == client.StatusInstalled
 	}
 

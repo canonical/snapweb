@@ -166,9 +166,11 @@ func (h *Handler) enable(name string) error {
 		return err
 	}
 
-	_, err = h.snapdClient.Enable(name, nil)
+	var changeID string
 
-	//	h.stateTracker.TrackEnable(changeID, snap)
+	changeID, err = h.snapdClient.Enable(name, nil)
+
+	h.stateTracker.TrackEnable(changeID, snap)
 
 	return err
 }
@@ -180,9 +182,11 @@ func (h *Handler) disable(name string) error {
 		return err
 	}
 
-	_, err = h.snapdClient.Disable(name, nil)
+	var changeID string
 
-	//	h.stateTracker.TrackDisable(changeID, snap)
+	changeID, err = h.snapdClient.Disable(name, nil)
+
+	h.stateTracker.TrackDisable(changeID, snap)
 
 	return err
 }

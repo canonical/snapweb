@@ -39,14 +39,12 @@ module.exports = {
     var status = model.get('status');
     var isInstalled = model.get('isInstalled');
 
-    console.log(isInstalled)
     if (!isInstalled) {
       return;
     }
 
     if (status === Config.INSTALL_STATE.INSTALLED) {
       //
-      console.log('enabling')
       model.save({
         status: Config.INSTALL_STATE.ENABLING
       }, {
@@ -54,7 +52,6 @@ module.exports = {
         type: 'post'
       });
     } if (status === Config.INSTALL_STATE.ACTIVE) {
-      console.log('disabling')
       model.save({
         status: Config.INSTALL_STATE.DISABLING
       }, {

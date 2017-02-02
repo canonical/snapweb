@@ -24,8 +24,10 @@ module.exports = Marionette.Behavior.extend({
     var msg = model.get('enableDisableActionString');
     var enableButton = this.ui.enableButton;
 
-    if (state === CONF.INSTALL_STATE.REMOVING ||
-        state === CONF.INSTALL_STATE.DISABLING) {
+    if (state === CONF.INSTALL_STATE.ENABLING ||
+        state === CONF.INSTALL_STATE.DISABLING ||
+        state === CONF.INSTALL_STATE.INSTALLED ||
+        state === CONF.INSTALL_STATE.ACTIVE) {
       enableButton.text(msg);
     }
   },
