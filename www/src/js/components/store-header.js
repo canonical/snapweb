@@ -21,6 +21,10 @@ module.exports = React.createBackboneClass({
   render: function() {
     var sections = this.props.sections || [];
 
+    if (sections.length == 0) {
+      return null;
+    }
+
     return (
       <div>
         <h2 className="col-4">{this.props.title}</h2>
@@ -31,9 +35,6 @@ module.exports = React.createBackboneClass({
                                 <SectionView key={section} section={section} />
                               );
                             })}
-            <li className="p-inline-list__item">
-              <a href="/store/section/private">private</a>
-            </li>
           </ul>
         </span>
       </div>
