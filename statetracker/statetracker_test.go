@@ -69,7 +69,7 @@ func (s *StateTrackerSuite) TestHasCompleted(c *C) {
 
 	for _, tt := range tests {
 		snap := &client.Snap{Status: tt.snapStatus}
-		c.Assert(hasCompleted(tt.status, snap), Equals, tt.completed)
+		c.Assert(hasOperationCompleted(tt.status, snap), Equals, tt.completed)
 	}
 }
 

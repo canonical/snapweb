@@ -19,7 +19,7 @@
 // of snap states during long running snap operations:
 // - installation/removal (current download progress during install, ...)
 // - enabling/disabling of snaps,
-// 
+//
 // Note: Once a snap has been marked as "installing" it will remain in that
 // state until it's status as provided by snapd indicates that it is installed
 // on the system. Similarly for removing snaps. Status lifecycle is thus:
