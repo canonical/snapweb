@@ -18,6 +18,7 @@
 package main
 
 import (
+	"fmt"
 	"io"
 	"log"
 	"net"
@@ -25,6 +26,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"syscall"
 	"text/template"
 
 	"github.com/snapcore/snapd/client"
@@ -152,9 +154,34 @@ func makeMainPageHandler() http.HandlerFunc {
 	}
 }
 
+func sendSignalToSnapweb() {
+	var pid int
+	var err error
+
+	pidFilePath := filepath.Join(os.Getenv("SNAP_DATA"), "snapweb.pid")
+
+	if f, err := os.Open(pidFilePath); err == nil {
+		if _, err = fmt.Fscanf(f, "%d\n", &pid); err == nil {
+			p, _ := os.FindProcess(pid)
+			err = p.Signal(syscall.Signal(syscall.SIGHUP))
+		}
+	}
+	if err != nil {
+		log.Println(err)
+	}
+}
+
+func doneHandler() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		logger.Fatal("webconf done")
+	}
+}
+
 func initURLHandlers(log *log.Logger) {
 	// API
 	http.Handle("/api/", makePassthroughHandler(dirs.SnapdSocket, "/api/"))
+	http.HandleFunc("/done", doneHandler())
 
 	// Resources
 	http.Handle("/public/", loggingHandler(http.FileServer(http.Dir(filepath.Join(os.Getenv("SNAP"), "www")))))

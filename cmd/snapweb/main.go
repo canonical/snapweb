@@ -18,6 +18,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -26,6 +27,7 @@ import (
 	"strings"
 	"sync"
 	"syscall"
+	"time"
 
 	"github.com/snapcore/snapweb/avahi"
 	"github.com/snapcore/snapweb/snappy/app"
@@ -53,7 +55,21 @@ func redir(w http.ResponseWriter, req *http.Request) {
 		http.StatusSeeOther)
 }
 
-func WaitForWebConfSignal() {
+func writePidFile() {
+	var err error
+
+	pidFilePath := filepath.Join(os.Getenv("SNAP_DATA"), "snapweb.pid")
+
+	if f, err := os.OpenFile(pidFilePath, os.O_CREATE|os.O_RDWR, os.ModeTemporary|0640); err == nil {
+		fmt.Fprintf(f, "%d\n", os.Getpid())
+	}
+	if err != nil {
+		log.Println(err)
+	}
+
+}
+
+func waitForSigHup() {
 	var waiter sync.WaitGroup
 	waiter.Add(1)
 	var sigchan chan os.Signal
@@ -71,7 +87,10 @@ func main() {
 
 	for ! IsDeviceManaged() {
 		logger.Println("Snapweb cannot run until the device is managed...")
-		WaitForWebConfSignal()
+		writePidFile()
+		waitForSigHup()
+		// wait futher more, to let webconf release the 4200 port
+		time.Sleep(1000)
 	}
 
 	GenerateCertificate()
