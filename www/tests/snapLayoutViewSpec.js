@@ -6,17 +6,25 @@ var CONF = require('../src/js/config.js');
 describe('SnapLayoutView', function() {
 
   beforeEach(function() {
-    this.model = new Snap({
-      status: CONF.INSTALL_STATE.REMOVED,
-      installActionString: 'Install'
-    });
+    this.mockModelFetchResponse = {
+      status: CONF.INSTALL_STATE.INSTALLED,
+      installActionString: 'Install',
+      type: 'app',
+    };
+
+    this.model = new Snap(this.mockModelFetchResponse);
     this.view = new SnapLayoutView({
       model: this.model
     });
     this.view.render();
 
     this.uiInstaller = this.view.$el.find('.b-installer'); 
-    this.uiEnabler = this.view.$el.find('.b-enabler'); 
+    this.uiEnabler = this.view.$el.find('.b-enabler');
+
+    var self = this;
+    this.model.fetch = function() {
+      return self.mockModelFetchResponse;
+    }
   });
 
   afterEach(function() {
@@ -58,8 +66,12 @@ describe('SnapLayoutView', function() {
 
   it('should not show enable/disable button for non removable snaps', function() {
     for (var i in CONF.NON_REMOVABLE_SNAP_TYPES) {
-      this.model.set('type', CONF.NON_REMOVABLE_SNAP_TYPES[i]);
-      expect(this.uiEnabler).not.toBe();
+      this.mockModelFetchResponse.type =
+        CONF.NON_REMOVABLE_SNAP_TYPES[i];
+      this.model.fetch();
+      this.view.render();
+      var uiEnabler = this.view.$el.find('.b-enabler');
+      expect(uiEnabler.length).toBe(0);
     }
   });
 
