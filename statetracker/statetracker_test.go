@@ -65,6 +65,10 @@ func (s *StateTrackerSuite) TestHasCompleted(c *C) {
 		{StatusInstalling, client.StatusRemoved, false},
 		{StatusUninstalling, client.StatusRemoved, true},
 		{StatusUninstalling, client.StatusActive, false},
+		{StatusDisabling, client.StatusActive, false},
+		{StatusDisabling, client.StatusInstalled, true},
+		{StatusEnabling, client.StatusActive, true},
+		{StatusEnabling, client.StatusInstalled, false},
 	}
 
 	for _, tt := range tests {
@@ -118,4 +122,32 @@ func (s *StateTrackerSuite) TestTrackUninstall(c *C) {
 	// uninstallation completes
 	snap.Status = client.StatusRemoved
 	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusUninstalled})
+}
+
+func (s *StateTrackerSuite) TestTrackEnable(c *C) {
+	snap := &client.Snap{Status: client.StatusInstalled}
+	s.t.TrackEnable("", snap)
+	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusEnabling})
+	snap.Status = client.StatusActive
+	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusActive})
+}
+
+func (s *StateTrackerSuite) TestTrackEnableExpiry(c *C) {
+	trackerDuration = 200 * time.Millisecond
+
+	snap := &client.Snap{Status: client.StatusInstalled}
+	s.t.TrackEnable("", snap)
+	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusEnabling})
+
+	// don't track indefinitely if operation fails
+	time.Sleep(trackerDuration * 2)
+	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusInstalled})
+}
+
+func (s *StateTrackerSuite) TestTrackDisable(c *C) {
+	snap := &client.Snap{Status: client.StatusActive}
+	s.t.TrackDisable("", snap)
+	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusDisabling})
+	snap.Status = client.StatusInstalled
+	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusInstalled})
 }

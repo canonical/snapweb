@@ -231,3 +231,30 @@ func (s *AllPackagesSuite) TestSnapPrices(c *C) {
 	c.Assert(priceStringFromSnapPrice(snapPrices{}), Equals, "")
 	c.Assert(priceStringFromSnapPrice(prices), Equals, "0.1 EUR")
 }
+
+type SnapOperationTrackingSuite struct {
+	h Handler
+	c *FakeSnapdClient
+}
+
+var _ = Suite(&SnapOperationTrackingSuite{})
+
+func (s *SnapOperationTrackingSuite) SetUpTest(c *C) {
+	os.Setenv("SNAP_DATA", c.MkDir())
+	s.c = &FakeSnapdClient{}
+	s.h.stateTracker = statetracker.New()
+	s.h.setClient(s.c)
+}
+
+func (s *SnapOperationTrackingSuite) TestEnableDisableNonLocalSnaps(c *C) {
+	fakeSnap := common.NewDefaultSnap()
+
+	fakeSnap.Status = "available"
+	s.c.Snaps = []*client.Snap{fakeSnap}
+
+	err := s.h.enable(fakeSnap.Name)
+	c.Assert(err, NotNil)
+
+	err = s.h.disable(fakeSnap.Name)
+	c.Assert(err, NotNil)
+}
