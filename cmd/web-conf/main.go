@@ -173,7 +173,7 @@ func sendSignalToSnapweb() {
 
 func doneHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-
+		sendSignalToSnapweb()
 		logger.Fatal("webconf done")
 	}
 }

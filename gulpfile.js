@@ -141,4 +141,4 @@ gulp.task('install', ['default'], function() {
     .pipe(gulp.dest('../install'));
 });
 
-gulp.task('default', ['js:build', 'styles', 'images']);
+gulp.task('default', ['js:build', 'js:build:webconf', 'styles', 'images']);
