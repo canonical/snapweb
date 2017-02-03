@@ -16,6 +16,7 @@ describe('SnapLayoutView', function() {
     this.view.render();
 
     this.uiInstaller = this.view.$el.find('.b-installer'); 
+    this.uiEnabler = this.view.$el.find('.b-enabler'); 
   });
 
   afterEach(function() {
@@ -52,6 +53,14 @@ describe('SnapLayoutView', function() {
   it('should deactivate install button if model has unrecognised status', function() {
     this.model.set('status', '');
     expect(this.uiInstaller).not.toBe();
+    expect(this.uiEnabler).not.toBe();
+  });
+
+  it('should not show enable/disable button for non removable snaps', function() {
+    for (var i in CONF.NON_REMOVABLE_SNAP_TYPES) {
+      this.model.set('type', CONF.NON_REMOVABLE_SNAP_TYPES[i]);
+      expect(this.uiEnabler).not.toBe();
+    }
   });
 
   xit('should inform user when install succeeds', function() {

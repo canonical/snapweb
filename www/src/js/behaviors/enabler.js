@@ -11,8 +11,8 @@ module.exports = Marionette.Behavior.extend({
   },
 
   modelEvents: {
-    'change:status': 'onStatusChange', 
- },
+    'change:status': 'onStatusChange',
+  },
 
   ui: {
     enableButton: '.b-enabler__button',
