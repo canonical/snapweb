@@ -20,7 +20,6 @@ package main
 import (
 	"net/http"
 	"path"
-	"strings"
 
 	"github.com/gorilla/mux"
 
@@ -42,8 +41,7 @@ func makeAPIHandler(apiRootPath string) http.Handler {
 	router.HandleFunc("/device-action", handleDeviceAction)
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if strings.HasPrefix(r.URL.Path, path.Join(apiPath, "packages/internal/")) ||
-			SimpleCookieCheck(w, r) == nil {
+		if SimpleCookieCheck(w, r) == nil {
 			router.ServeHTTP(w, r)
 		} else {
 			// in any other case, refuse the request and redirect
