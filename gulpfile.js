@@ -54,7 +54,7 @@ function bundleShared(bundler) {
     .pipe(source('snapweb.js'))
       .pipe(buffer())
       .pipe(sourcemaps.init({loadMaps: true})) // loads map from browserify file
-      .pipe(uglify())
+      .pipe(process.env.NODE_ENV === 'development'? gutil.noop() : uglify())
       .pipe(sourcemaps.write('./')) // writes .map file
     .pipe(gulp.dest('www/public/js/'));
 }
@@ -99,7 +99,7 @@ gulp.task('styles:clean', function(cb) {
 
 gulp.task('images', ['images:clean'], function() {
   gulp.src(['www/src/images/**/*'])
-  .pipe(imagemin())
+  .pipe(process.env.NODE_ENV === 'development'? gutil.noop() : imagemin())
   .pipe(gulp.dest('www/public/images'));
 });
 

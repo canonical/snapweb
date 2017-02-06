@@ -20,14 +20,15 @@ module.exports = Backbone.Marionette.ItemView.extend({
   },
 
   restart: function() {
-    this.displayConfirmation("Your device will be restarted immediately", 
+    this.displayConfirmation("Are you sure you want to restart the device?", 
                              "Restart",
                              function() { this.sendAction("restart"); });
   },
 
   powerOff: function() {
-    this.displayConfirmation("Choosing to power off will disconnect" +
-                              " from snapweb instantly. Do you want to proceed",
+    this.displayConfirmation("<div class=\"p-confirmation__dialog__icon\">" +
+                             "Choosing to power off will disconnect" +
+                             " from snapweb instantly.<br/>Do you want to proceed?</div>",
                              "Power off",
                              function() { this.sendAction("power-off"); });
   },

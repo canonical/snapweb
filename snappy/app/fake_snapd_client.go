@@ -149,4 +149,14 @@ func (f *FakeSnapdClient) Logout() error {
 	return nil
 }
 
+// Enable enables the snap
+func (f *FakeSnapdClient) Enable(name string, options *client.SnapOptions) (string, error) {
+	return "", nil
+}
+
+// Disable disables the snap
+func (f *FakeSnapdClient) Disable(name string, options *client.SnapOptions) (string, error) {
+	return "", nil
+}
+
 var _ snapdclient.SnapdClient = (*FakeSnapdClient)(nil)

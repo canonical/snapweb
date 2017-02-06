@@ -47,6 +47,8 @@ type SnapdClient interface {
 	Change(id string) (*client.Change, error)
 	Logout() error
 	LoggedInUser() *client.User
+	Enable(id string, options *client.SnapOptions) (string, error)
+	Disable(id string, options *client.SnapOptions) (string, error)
 }
 
 // ClientAdapter adapts our expectations to the snapd client API.
@@ -134,6 +136,16 @@ func (a *ClientAdapter) LoggedInUser() *client.User {
 // Logout logs the user out.
 func (a *ClientAdapter) Logout() error {
 	return a.snapdClient.Logout()
+}
+
+// Enable enables the snap
+func (a *ClientAdapter) Enable(name string, options *client.SnapOptions) (string, error) {
+	return a.snapdClient.Enable(name, options)
+}
+
+// Disable disables the snap
+func (a *ClientAdapter) Disable(name string, options *client.SnapOptions) (string, error) {
+	return a.snapdClient.Disable(name, options)
 }
 
 // internal

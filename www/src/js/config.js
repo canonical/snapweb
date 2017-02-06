@@ -31,6 +31,8 @@ module.exports = {
     INSTALLING: 'installing',
     REMOVED: 'uninstalled',
     REMOVING: 'uninstalling',
+    ENABLING: 'enabling',
+    DISABLING: 'disabling',
     ACTIVE: 'active',
     PRICED: 'priced'
   },

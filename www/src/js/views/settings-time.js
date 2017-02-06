@@ -8,9 +8,9 @@ module.exports = Backbone.Marionette.ItemView.extend({
   events: {
     'change #date-picker': 'dateChanged',
     'change #time-picker': 'timeChanged',
-    'change #ntp-active-checkbox': 'ntpActiveCheckboxChanged',
+    'change input[type=radio]': 'ntpServerTypeChanged',
     'change #ntp-server-name': 'ntpServerNameChanged',
-    'change #time-zone-select': 'timezoneSelectChanged'
+    'change #time-zone-select': 'timezoneSelectChanged',
   },
 
   initialize: function() {
@@ -30,17 +30,18 @@ module.exports = Backbone.Marionette.ItemView.extend({
     this.model.save({'time': timePicker.val()}, {patch: true});
   },
 
-  ntpActiveCheckboxChanged: function() {
-    var checked = this.$('#ntp-active-checkbox').prop('checked');
-
-    this.$('#ntp-server-name').prop('disabled', !checked)
-    this.$('#date-picker').prop('disabled', checked);
-    this.$('#time-picker').prop('disabled', checked);
+  ntpServerTypeChanged: function(event) {
+    if (event.currentTarget.id === "automatic-ntp-radio") {
+      this.$('#ntp-server-name').prop('disabled', true);
+      this.$('#ntp-server-name').val('');
+      this.ntpServerNameChanged();
+    } else {
+      this.$('#ntp-server-name').prop('disabled', false);
+    } 
   },
 
   ntpServerNameChanged: function() {
     var ntpServerName = this.$('#ntp-server-name').val();
-
     if (ntpServerName !== this.model.get('ntpServer')) {
       this.model.save({'ntpServer': ntpServerName}, {patch: true});
     }
@@ -54,98 +55,73 @@ module.exports = Backbone.Marionette.ItemView.extend({
   },
 
   onRender: function() {
-    var haveServer = this.model.get('ntpServer') !== '';
+    var haveServer = this.model.get('ntpServer') || false;
 
-    this.$('#ntp-active-checkbox').prop('checked', haveServer);
+    this.$('#automatic-ntp-radio').prop('checked', !haveServer);
+    this.$('#manual-ntp-radio').prop('checked', haveServer);
     this.$('#ntp-server-name').prop('disabled', !haveServer)
-    this.$('#date-picker').prop('disabled', haveServer);
-    this.$('#time-picker').prop('disabled', haveServer);
+    this.$('#date-picker').prop('disabled', true);
+    this.$('#time-picker').prop('disabled', true);
 
     var dropDown = this.$('#time-zone-select');
     dropDown.append([
           // jscs:disable maximumLineLength
-          '<option value="-12">(UTC-12:00) International Date Line West</option>',
-          '<option value="-11">(UTC-11:00) Midway Island, Samoa</option>',
-          '<option value="-10">(UTC-10:00) Hawaii</option>',
-          '<option value="-9">(UTC-09:00) Alaska</option>',
-          '<option value="-8">(UTC-08:00) Pacific Time (US & Canada)</option>',
-          '<option value="-8">(UTC-08:00) Tijuana, Baja California</option>',
-          '<option value="-7">(UTC-07:00) Arizona</option>',
-          '<option value="-7">(UTC-07:00) Chihuahua, La Paz, Mazatlan</option>',
-          '<option value="-7">(UTC-07:00) Mountain Time (US & Canada)</option>',
-          '<option value="-6">(UTC-06:00) Central America</option>',
-          '<option value="-6">(UTC-06:00) Central Time (US & Canada)</option>',
-          '<option value="-6">(UTC-06:00) Guadalajara, Mexico City, Monterrey</option>',
-          '<option value="-6">(UTC-06:00) Saskatchewan</option>',
-          '<option value="-5">(UTC-05:00) Bogota, Lima, Quito, Rio Branco</option>',
-          '<option value="-5">(UTC-05:00) Eastern Time (US & Canada)</option>',
-          '<option value="-5">(UTC-05:00) Indiana (East)</option>',
-          '<option value="-4">(UTC-04:00) Atlantic Time (Canada)</option>',
-          '<option value="-4">(UTC-04:00) Caracas, La Paz</option>',
-          '<option value="-4">(UTC-04:00) Manaus</option>',
-          '<option value="-4">(UTC-04:00) Santiago</option>',
-          '<option value="-3.5">(UTC-03:30) Newfoundland</option>',
-          '<option value="-3">(UTC-03:00) Brasilia</option>',
-          '<option value="-3">(UTC-03:00) Buenos Aires, Georgetown</option>',
-          '<option value="-3">(UTC-03:00) Greenland</option>',
-          '<option value="-3">(UTC-03:00) Montevideo</option>',
-          '<option value="-2">(UTC-02:00) Mid-Atlantic</option>',
-          '<option value="-1">(UTC-01:00) Cape Verde Is.</option>',
-          '<option value="-1">(UTC-01:00) Azores</option>',
-          '<option value="0">(UTC+00:00) Casablanca, Monrovia, Reykjavik</option>',
-          '<option value="0">(UTC+00:00) Dublin, Edinburgh, Lisbon, London</option>',
-          '<option value="1">(UTC+01:00) Amsterdam, Berlin, Rome, Stockholm, Vienna</option>',
-          '<option value="1">(UTC+01:00) Belgrade, Budapest, Ljubljana, Prague</option>',
-          '<option value="1">(UTC+01:00) Brussels, Copenhagen, Madrid, Paris</option>',
-          '<option value="1">(UTC+01:00) Sarajevo, Skopje, Warsaw, Zagreb</option>',
-          '<option value="1">(UTC+01:00) West Central Africa</option>',
-          '<option value="2">(UTC+02:00) Amman</option>',
-          '<option value="2">(UTC+02:00) Athens, Bucharest, Istanbul</option>',
-          '<option value="2">(UTC+02:00) Beirut</option>',
-          '<option value="2">(UTC+02:00) Cairo</option>',
-          '<option value="2">(UTC+02:00) Harare, Pretoria</option>',
-          '<option value="2">(UTC+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius</option>',
-          '<option value="2">(UTC+02:00) Jerusalem</option>',
-          '<option value="2">(UTC+02:00) Minsk</option>',
-          '<option value="2">(UTC+02:00) Windhoek</option>',
-          '<option value="3">(UTC+03:00) Kuwait, Riyadh, Baghdad</option>',
-          '<option value="3">(UTC+03:00) Moscow, St. Petersburg, Volgograd</option>',
-          '<option value="3">(UTC+03:00) Nairobi</option>',
-          '<option value="3">(UTC+03:00) Tbilisi</option>',
-          '<option value="3.5">(UTC+03:30) Tehran</option>',
-          '<option value="4">(UTC+04:00) Abu Dhabi, Muscat</option>',
-          '<option value="4">(UTC+04:00) Baku</option>',
-          '<option value="4">(UTC+04:00) Yerevan</option>',
-          '<option value="4.5">(UTC+04:30) Kabul</option>',
-          '<option value="5">(UTC+05:00) Yekaterinburg</option>',
-          '<option value="5">(UTC+05:00) Islamabad, Karachi, Tashkent</option>',
-          '<option value="5.5">(UTC+05:30) Sri Jayawardenapura</option>',
-          '<option value="5.5">(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi</option>',
-          '<option value="5.75">(UTC+05:45) Kathmandu</option>',
-          '<option value="6">(UTC+06:00) Almaty, Novosibirsk</option>',
-          '<option value="6">(UTC+06:00) Astana, Dhaka</option>',
-          '<option value="6.5">(UTC+06:30) Rangoon</option>',
-          '<option value="7">(UTC+07:00) Bangkok, Hanoi, Jakarta</option>',
-          '<option value="7">(UTC+07:00) Krasnoyarsk</option>',
-          '<option value="8">(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi</option>',
-          '<option value="8">(UTC+08:00) Kuala Lumpur, Singapore</option>',
-          '<option value="8">(UTC+08:00) Irkutsk, Ulaan Bataar</option>',
-          '<option value="8">(UTC+08:00) Perth</option>',
-          '<option value="8">(UTC+08:00) Taipei</option>',
-          '<option value="9">(UTC+09:00) Osaka, Sapporo, Tokyo</option>',
-          '<option value="9">(UTC+09:00) Seoul</option>',
-          '<option value="9">(UTC+09:00) Yakutsk</option>',
-          '<option value="9.5">(UTC+09:30) Adelaide</option>',
-          '<option value="9.5">(UTC+09:30) Darwin</option>',
-          '<option value="10">(UTC+10:00) Brisbane</option>',
-          '<option value="10">(UTC+10:00) Canberra, Melbourne, Sydney</option>',
-          '<option value="10">(UTC+10:00) Hobart</option>',
-          '<option value="10">(UTC+10:00) Guam, Port Moresby</option>',
-          '<option value="10">(UTC+10:00) Vladivostok</option>',
-          '<option value="11">(UTC+11:00) Magadan, Solomon Is., New Caledonia</option>',
-          '<option value="12">(UTC+12:00) Auckland, Wellington</option>',
-          '<option value="12">(UTC+12:00) Fiji, Kamchatka, Marshall Is.</option>',
-          '<option value="13">(UTC+13:00) Nuku\'alofa</option>',
+          '<option value="Pacific/Midway">Midway Island, Samoa</option>',
+          '<option value="Pacific/Honolulu">Hawaii</option>',
+          '<option value="America/Anchorage">Alaska (most areas)</option>',
+          '<option value="American/Tijuana">Pacific Time US - Baja California</option>',
+          '<option value="America/Phoenix">MST - Arizona (except Navajo)</option>',
+          '<option value="America/Chihuahua">Mountain Time - Chihuahua (most areas)</option',
+          '<option value="America/Chicago">America Central (most area)</option>',
+          '<option value="America/Mexico_City">Mexico City</option>',
+          '<option value="America/Bogota">Bogota</option>',
+          '<option value="America/New_York">Eastern Time (US & Canada)</option>',
+          '<option value="America/Indiana/Indianapolis">Indiana (East)</option>',
+          '<option value="America/Santiago">Santiago</option>',
+          '<option value="America/St_Johns">Newfoundland; Labrador (southeast)</option>',
+          '<option value="America/Argentina/Buenos_Aires">Buenos Aires (BA, CF)</option>',
+          '<option value="American/Godthab">Greenland (most areas)</option>',
+          '<option value="Atlantic/Cape_Verde">Cape Verde Is.</option>',
+          '<option value="Atlantic/Azores">Azores</option>',
+          '<option value="Africa/Casablanca">Casablanca</option>',
+          '<option value="Europe/Dublin">Dublin/option>',
+          '<option value="Europe/Amsterdam">Amsterdam</option>',
+          '<option value="Europe/Budapest">Budapest</option>',
+          '<option value="Europe/Brussels">Brussels</option>',
+          '<option value="Europe/Paris">Paris</option>',
+          '<option value="Europe/Madrid">Spain (mainland)</option>',
+          '<option value="Europe/Warsaw">Warsaw</option>',
+          '<option value="Europe/Athens">Athens</option>',
+          '<option value="Asia/Beirut">Beirut</option>',
+          '<option value="Africa/Johannesburg">Johannesburg</option>',
+          '<option value="Europe/Helsinki">Helsinki</option>',
+          '<option value="Europe/Minsk">Minsk</option>',
+          '<option value="Africa/Windhoek">Windhoek</option>',
+          '<option value="Asia/Kuwait">Kuwait</option>',
+          '<option value="Europe/Moscow">MSK+00 - Moscow area</option>',
+          '<option value="Africa/Nairobi">Nairobi</option>',
+          '<option value="Asia/Baku">Baku</option>',
+          '<option value="Asia/Yerevan">Yerevan</option>',
+          '<option value="Asia/Kabul">Kabul</option>',
+          '<option value="Asia/Yekaterinburg">MSK+02 - Urals</option>',
+          '<option value="Asia/Karachi">Karachi</option>',
+          '<option value="Asia/Kathmandu">Kathmandu</option>',
+          '<option value="Asia/Dhaka">Dhaka</option>',
+          '<option value="Asia/Bangkok">Bangkok</option>',
+          '<option value="Asia/Shanghai">Beijing Time</option>',
+          '<option value="Asia/Kuala_Lumpur">Malaysia (peninsula)</option>',
+          '<option value="Asia/Irkutsk">MSK+05 - Irkutsk, Buryatia</option>',
+          '<option value="Australia/Perth">Western Australia (most areas)</option>',
+          '<option value="Asia/Taipei">Taipei</option>',
+          '<option value="Asia/Tokyo">Tokyo</option>',
+          '<option value="Asia/Seoul">Seoul</option>',
+          '<option value="Australia/Brisbane">Queensland (most areas)</option>',
+          '<option value="Australia/Sydney">New South Wales (most areas)</option>',
+          '<option value="Pacific/Guam">Guam</option>',
+          '<option value="Asia/Vladivostok">MSK+07 - Amur River</option>',
+          '<option value="Asia/Magadan">Magadan</option>',
+          '<option value="Pacific/Auckland">New Zealand (most areas)</option>',
+          '<option value="Pacific/Fiji">Fiji</option>',
         ].join('\n'));
     dropDown.prop('value', this.model.get('timezone'));
   }
