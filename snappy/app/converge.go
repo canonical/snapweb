@@ -159,6 +159,46 @@ func (h *Handler) installPackage(name string) error {
 	return err
 }
 
+func (h *Handler) enable(name string) error {
+	snap, err := h.getSnap(name)
+	if err != nil && snap != nil {
+		return err
+	}
+
+	if snap.Status != statetracker.StatusInstalled {
+		return errors.New("Snap not installed and disabled")
+	}
+
+	var changeID string
+
+	changeID, err = h.snapdClient.Enable(name, nil)
+	if err == nil {
+		h.stateTracker.TrackEnable(changeID, snap)
+	}
+
+	return err
+}
+
+func (h *Handler) disable(name string) error {
+	snap, err := h.getSnap(name)
+	if err != nil && snap != nil {
+		return err
+	}
+
+	if snap.Status != statetracker.StatusActive {
+		return errors.New("Snap not installed and enabled")
+	}
+
+	var changeID string
+
+	changeID, err = h.snapdClient.Disable(name, nil)
+	if err == nil {
+		h.stateTracker.TrackDisable(changeID, snap)
+	}
+
+	return err
+}
+
 func formatInstallData(d time.Time) string {
 	// store snaps dont have install dates
 	// are their install date are time.Time zero values
@@ -210,7 +250,8 @@ func (h *Handler) snapToPayload(snapQ *client.Snap) snapPkg {
 		InstallDate: formatInstallData(snapQ.InstallDate),
 	}
 
-	isInstalled := snapQ.Status == client.StatusInstalled || snapQ.Status == client.StatusActive
+	isInstalled := snapQ.Status == client.StatusInstalled ||
+		snapQ.Status == client.StatusActive
 
 	if isInstalled {
 		iconPath, err := localIconPath(h.snapdClient, snap.Name)

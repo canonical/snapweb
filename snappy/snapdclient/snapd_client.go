@@ -45,6 +45,8 @@ type SnapdClient interface {
 	Interfaces() (client.Interfaces, error)
 	Known(assertTypeName string, headers map[string]string) ([]asserts.Assertion, error)
 	Change(id string) (*client.Change, error)
+	Enable(id string, options *client.SnapOptions) (string, error)
+	Disable(id string, options *client.SnapOptions) (string, error)
 }
 
 // ClientAdapter adapts our expectations to the snapd client API.
@@ -122,6 +124,16 @@ func (a *ClientAdapter) Sections() ([]string, error) {
 // Change returns the list of ongoing changes for a given snap and changeid
 func (a *ClientAdapter) Change(id string) (*client.Change, error) {
 	return a.snapdClient.Change(id)
+}
+
+// Enable enables the snap
+func (a *ClientAdapter) Enable(name string, options *client.SnapOptions) (string, error) {
+	return a.snapdClient.Enable(name, options)
+}
+
+// Disable disables the snap
+func (a *ClientAdapter) Disable(name string, options *client.SnapOptions) (string, error) {
+	return a.snapdClient.Disable(name, options)
 }
 
 // internal

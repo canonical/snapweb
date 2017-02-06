@@ -36,7 +36,9 @@ module.exports = Backbone.Model.extend({
 
       if (
         status === CONF.INSTALL_STATE.INSTALLING ||
-        status === CONF.INSTALL_STATE.REMOVING
+        status === CONF.INSTALL_STATE.REMOVING ||
+        status === CONF.INSTALL_STATE.DISABLING ||
+        status === CONF.INSTALL_STATE.ENABLING
       ) {
         _.delay(function(model) {
           model.fetch();
@@ -46,7 +48,10 @@ module.exports = Backbone.Model.extend({
     });
 
     this.on('error', function(model, response, opts) {
-      var json = JSON.parse(response.responseText);
+      var json = {}
+      try {
+        json = JSON.parse(response.responseText);
+      } catch(e) {}
       var previous = model.previousAttributes();
       var message;
       if (json && json.message) {
@@ -92,15 +97,25 @@ module.exports = Backbone.Model.extend({
     var status = model.get('status');
     if (
         status !== CONF.INSTALL_STATE.INSTALLING &&
-        status !== CONF.INSTALL_STATE.REMOVING
-    ) {
+        status !== CONF.INSTALL_STATE.REMOVING &&
+        status !== CONF.INSTALL_STATE.DISABLING &&
+        status !== CONF.INSTALL_STATE.ENABLING) {
       model.set('download_progress', 0);
       model.set('task_summary', '');
     }
 
+    this.updateInstallWidgets(model);
+    this.updateEnableDisableWidgets(model);
+  },
+
+  updateInstallWidgets: function(model) {
     this.setInstallActionString(model);
     this.setInstallHTMLClass(model);
     this.setInstallButtonClass(model);
+  },
+
+  updateEnableDisableWidgets: function(model) {
+    this.setEnableDisableActionString(model);
   },
 
   // XXX move to install behaviour
@@ -161,6 +176,29 @@ module.exports = Backbone.Model.extend({
     return model.set('installActionString', action);
   },
 
+  setEnableDisableActionString: function(model) {
+    var status = model.get('status');
+    var action;
+
+    switch (status) {
+      case CONF.INSTALL_STATE.ENABLING:
+        action = 'Enabling…';
+        break;
+      case CONF.INSTALL_STATE.DISABLING:
+        action = 'Disabling…';
+        break;
+      case CONF.INSTALL_STATE.INSTALLED:
+        action = 'Enable';
+        break;
+      case CONF.INSTALL_STATE.ACTIVE:
+        action = 'Disable';
+        break;
+      default:
+    }
+
+    return model.set('enableDisableActionString', action);
+  },
+
   setInstallButtonClass: function(model) {
     var status = model.get('status');
     var installButtonClass;
@@ -201,13 +239,22 @@ module.exports = Backbone.Model.extend({
     if (
       status === CONF.INSTALL_STATE.INSTALLED ||
       status === CONF.INSTALL_STATE.ACTIVE ||
-      status === CONF.INSTALL_STATE.REMOVING
+      status === CONF.INSTALL_STATE.REMOVING ||
+      status === CONF.INSTALL_STATE.ENABLING ||
+      status === CONF.INSTALL_STATE.DISABLING
     ) {
       response.isInstalled = true;
     }
 
     if (response.hasOwnProperty('icon') && !response.icon.length) {
       response.icon = this.defaults.icon;
+    }
+
+    response.isEnabled = false;
+    if (status === CONF.INSTALL_STATE.INSTALLED) {
+      response.isEnabled = false;
+    } else if (status === CONF.INSTALL_STATE.ACTIVE) {
+      response.isEnabled = true;
     }
 
     if (status === CONF.INSTALL_STATE.PRICED) {

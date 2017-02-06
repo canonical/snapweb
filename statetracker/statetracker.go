@@ -16,10 +16,11 @@
  */
 
 // Package statetracker enables the tracking of a limited amount
-// of snap states: installation/removal, current download progress during
-// install.
+// of snap states during long running snap operations:
+// - installation/removal (current download progress during install, ...)
+// - enabling/disabling of snaps,
 //
-// Once a snap has been marked as "installing" it will remain in that
+// Note: Once a snap has been marked as "installing" it will remain in that
 // state until it's status as provided by snapd indicates that it is installed
 // on the system. Similarly for removing snaps. Status lifecycle is thus:
 //
@@ -39,9 +40,9 @@ import (
 const (
 	// StatusPriced indicates the package is priced and has not been bought.
 	StatusPriced = "priced"
-	// StatusInstalled indicates the package is in an installed state.
+	// StatusInstalled indicates the package is in an installed state but disabled.
 	StatusInstalled = "installed"
-	// StatusActive indicates the package is in an installed but disabled state.
+	// StatusActive indicates the package is in an installed and enabled state.
 	StatusActive = "active"
 	// StatusUninstalled indicates the package is in an uninstalled state.
 	StatusUninstalled = "uninstalled"
@@ -49,6 +50,10 @@ const (
 	StatusInstalling = "installing"
 	// StatusUninstalling indicates the package is in an uninstalling state.
 	StatusUninstalling = "uninstalling"
+	// StatusEnabling indicates the package is in an enabling state.
+	StatusEnabling = "enabling"
+	// StatusDisabling indicates the package is in an disabling state.
+	StatusDisabling = "disabling"
 )
 
 // TODO: naive approach to track big downloads
@@ -89,7 +94,7 @@ func (s *StateTracker) State(c snapdclient.SnapdClient, snap *client.Snap) *Snap
 		}
 	}
 
-	if changing, changeID := s.IsInstalling(snap); changing && c != nil {
+	if changing, changeID := s.IsTrackedForRunningOperation(snap); changing && c != nil {
 		change, err := c.Change(changeID)
 
 		if err == nil {
@@ -106,7 +111,7 @@ func (s *StateTracker) State(c snapdclient.SnapdClient, snap *client.Snap) *Snap
 		}
 	}
 
-	if hasCompleted(cstate.Status, snap) {
+	if hasOperationCompleted(cstate.Status, snap) {
 		delete(s.states, snap.Name)
 		return &SnapState{
 			Status: translateStatus(snap),
@@ -116,23 +121,67 @@ func (s *StateTracker) State(c snapdclient.SnapdClient, snap *client.Snap) *Snap
 	return &cstate
 }
 
+// IsTrackedForRunningOperation checks if a given snap is currently concerned by
+// by a running operation
+func (s *StateTracker) IsTrackedForRunningOperation(snap *client.Snap) (bool, string) {
+	state, ok := s.states[snap.Name]
+	if !ok {
+		return false, ""
+	}
+
+	return !hasOperationCompleted(state.Status, snap), state.ChangeID
+}
+
 // TrackInstall tracks the installation of the given snap
 func (s *StateTracker) TrackInstall(changeID string, snap *client.Snap) {
 	if isInstalled(snap) {
 		return
 	}
 
+	if tracked, _ := s.IsTrackedForRunningOperation(snap); tracked {
+		return
+	}
+
 	s.trackOperation(changeID, snap.Name, StatusInstalling)
 }
 
-// IsInstalling checks if a given snap is being installed
-func (s *StateTracker) IsInstalling(snap *client.Snap) (bool, string) {
-	state, ok := s.states[snap.Name]
-	if !ok {
-		return false, ""
+// TrackUninstall tracks the removal of the given snap
+func (s *StateTracker) TrackUninstall(changeID string, snap *client.Snap) {
+	if !isInstalled(snap) {
+		return
 	}
 
-	return !hasCompleted(state.Status, snap), state.ChangeID
+	if tracked, _ := s.IsTrackedForRunningOperation(snap); tracked {
+		return
+	}
+
+	s.trackOperation(changeID, snap.Name, StatusUninstalling)
+}
+
+// TrackEnable tracks the installation of the given snap
+func (s *StateTracker) TrackEnable(changeID string, snap *client.Snap) {
+	if !isInstalled(snap) {
+		return
+	}
+
+	if tracked, _ := s.IsTrackedForRunningOperation(snap); tracked {
+		return
+	}
+
+	s.trackOperation(changeID, snap.Name, StatusEnabling)
+}
+
+// TrackDisable tracks the disabling of the given snap
+func (s *StateTracker) TrackDisable(changeID string, snap *client.Snap) {
+	if !isInstalled(snap) {
+		return
+	}
+
+	if tracked, _ := s.IsTrackedForRunningOperation(snap); tracked {
+		return
+	}
+
+	s.trackOperation(changeID, snap.Name, StatusDisabling)
 }
 
 func (s *StateTracker) trackOperation(changeID, name, operation string) {
@@ -150,15 +199,6 @@ func (s *StateTracker) trackOperation(changeID, name, operation string) {
 		delete(s.states, name)
 		s.Unlock()
 	}()
-}
-
-// TrackUninstall tracks the removal of the given snap
-func (s *StateTracker) TrackUninstall(changeID string, snap *client.Snap) {
-	if !isInstalled(snap) {
-		return
-	}
-
-	s.trackOperation(changeID, snap.Name, StatusUninstalling)
 }
 
 func isInstalled(s *client.Snap) bool {
@@ -180,9 +220,15 @@ func translateStatus(s *client.Snap) string {
 }
 
 // has the tracked process denoted by status completed?
-func hasCompleted(status string, snap *client.Snap) bool {
-	if status == StatusInstalling {
+func hasOperationCompleted(s string, snap *client.Snap) bool {
+	if s == StatusInstalling {
 		return isInstalled(snap)
+	}
+	if s == StatusEnabling {
+		return snap.Status == client.StatusActive
+	}
+	if s == StatusDisabling {
+		return snap.Status == client.StatusInstalled
 	}
 
 	return !isInstalled(snap)
