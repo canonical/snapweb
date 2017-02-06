@@ -19,7 +19,6 @@ var model = new LayoutModel;
 $.when(
   model.fetch()
 ).then(function() {
-  console.log(JSON.stringify(model))
   var layout = new LayoutView({
     model: model
   });
@@ -37,8 +36,5 @@ snapweb.on('start', function() {
 $(document).ajaxError(function(event, jqxhr, settings, exception) {
   if (jqxhr.status === 403 && window.location.pathname != '/access-control') {
     window.location = '/access-control';
-  }
-  if (jqxhr.status === 401 && window.location.pathname != '/login') {
-    window.location = '/login';
   }
 });

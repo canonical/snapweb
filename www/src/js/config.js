@@ -39,10 +39,4 @@ module.exports = {
   INSTALL_POLL_WAIT: 16, // milliseconds
   // TODO remove
   SNAPWEB_AUTH_TOKEN_COOKIE_NAME: "SnapwebLocalToken",
-  SNAPWEB_AUTH_MACAROON_COOKIE_NAME: "SnapwebAuthMacaroon",
-  // TODO add prod vs staging vs tests
-  REMOTE_SERVER: {
-    UBUNTU_SCA_HOST: "https://myapps.developer.ubuntu.com/dev/api/acl",
-    UBUNTU_SSO_HOST: "https://login.ubuntu.com",
-  }
 };

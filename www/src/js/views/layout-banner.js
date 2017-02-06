@@ -26,7 +26,6 @@ module.exports = Marionette.ItemView.extend({
   },
 
   template : function(model) {
-    console.log('ddd ' + JSON.stringify(model))
     return template(model);
   },
 
