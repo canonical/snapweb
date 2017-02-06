@@ -382,7 +382,7 @@ func (s *HandlersSuite) TestTimeInfoInvalidMethod(c *C) {
 	req, err := http.NewRequest("POST", "/api/v2/time-info", nil)
 	c.Assert(err, IsNil)
 
-	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
+	req.AddCookie(&http.Cookie{Name: SnapwebAuthTokenCookieName, Value: "1234"})
 
 	http.DefaultServeMux.ServeHTTP(rec, req)
 	c.Assert(rec.Code, Equals, http.StatusMethodNotAllowed)
@@ -402,7 +402,7 @@ func (s *HandlersSuite) TestTimeInfoGET(c *C) {
 	req, err := http.NewRequest("GET", "/api/v2/time-info", nil)
 	c.Assert(err, IsNil)
 
-	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
+	req.AddCookie(&http.Cookie{Name: SnapwebAuthTokenCookieName, Value: "1234"})
 
 	http.DefaultServeMux.ServeHTTP(rec, req)
 	c.Assert(rec.Code, Equals, http.StatusOK)
@@ -435,7 +435,7 @@ func (s *HandlersSuite) TestTimeInfoInvalidContentType(c *C) {
 	req, err := http.NewRequest("PATCH", "/api/v2/time-info", nil)
 	c.Assert(err, IsNil)
 
-	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
+	req.AddCookie(&http.Cookie{Name: SnapwebAuthTokenCookieName, Value: "1234"})
 
 	http.DefaultServeMux.ServeHTTP(rec, req)
 	c.Assert(rec.Code, Equals, http.StatusUnsupportedMediaType)
@@ -456,7 +456,7 @@ func (s *HandlersSuite) TestTimeInfoInvalidJSON(c *C) {
 	req, err := http.NewRequest("PATCH", "/api/v2/time-info", bytes.NewBuffer(patchJSON))
 	c.Assert(err, IsNil)
 
-	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
+	req.AddCookie(&http.Cookie{Name: SnapwebAuthTokenCookieName, Value: "1234"})
 	req.Header.Set("Content-Type", "application/json")
 
 	http.DefaultServeMux.ServeHTTP(rec, req)
@@ -478,7 +478,7 @@ func (s *HandlersSuite) TestEmptyTimeInfoUpdate(c *C) {
 	req, err := http.NewRequest("PATCH", "/api/v2/time-info", bytes.NewBuffer(patchJSON))
 	c.Assert(err, IsNil)
 
-	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
+	req.AddCookie(&http.Cookie{Name: SnapwebAuthTokenCookieName, Value: "1234"})
 	req.Header.Set("Content-Type", "application/json")
 
 	http.DefaultServeMux.ServeHTTP(rec, req)

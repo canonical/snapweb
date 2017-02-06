@@ -21,6 +21,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"net"
 	"net/http"
@@ -310,9 +311,9 @@ func handleUserLogout(w http.ResponseWriter, r *http.Request) {
 
 func handleUserProfile(w http.ResponseWriter, r *http.Request) {
 	profileData := struct {
-		Name  string `json:"name"`
-		Email string `json:"email"`
-		IsAuthenticated bool `json:"isAuthenticated"`
+		Name            string `json:"name"`
+		Email           string `json:"email"`
+		IsAuthenticated bool   `json:"isAuthenticated"`
 	}{}
 
 	c := newSnapdClient()
