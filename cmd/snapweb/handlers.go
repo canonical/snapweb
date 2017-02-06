@@ -265,74 +265,27 @@ func makePassthroughHandler(socketPath string, prefix string) http.HandlerFunc {
 	})
 }
 
-func handleUserLogin(w http.ResponseWriter, r *http.Request) {
-	// overloaded with logout
-	if v, ok := r.URL.Query()["do"]; ok {
-		if v[0] != "logout" {
-			log.Printf("login: unexpected 'do' query")
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
-		c := newSnapdClient()
-
-		err := c.Logout()
-		if err != nil {
-			log.Println(fmt.Sprintf("Logout: %s", err))
-			w.WriteHeader(http.StatusInternalServerError)
-		} else {
-			http.Redirect(
-				w,
-				r,
-				fmt.Sprintf("https://%s/", r.Host),
-				303)
-		}
-		return
-	}
-
-	if r.Method != "POST" {
-		log.Printf("login: unexpected HTTP request method")
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		return
-	}
-
-	contentType := r.Header.Get("Content-Type")
-	if contentType != "application/json" {
-		log.Printf("login: invalid HTTP request content type")
-		w.WriteHeader(http.StatusUnsupportedMediaType)
-		return
-	}
-
-	loginData := struct {
-		Email    string `json:"email"`
-		Password string `json:"password"`
-		Otp      string `json:"otp,omitempty"`
-	}{}
-
-	dec := json.NewDecoder(r.Body)
-	if err := dec.Decode(&loginData); err != nil {
-		log.Printf("login: invalid login data %v", err)
-		w.WriteHeader(http.StatusBadRequest)
-	}
-
+func handleUserLogout(w http.ResponseWriter, r *http.Request) {
 	c := newSnapdClient()
 
-	_, err := c.Login(loginData.Email, loginData.Password, loginData.Otp)
+	err := c.Logout()
 	if err != nil {
-		// TODO check error (e.g. OTP needed)
-		log.Println(fmt.Sprintf("login: %s", err))
+		log.Println(fmt.Sprintf("Logout: %s", err))
 		w.WriteHeader(http.StatusInternalServerError)
-		return
+	} else {
+		http.Redirect(
+			w,
+			r,
+			fmt.Sprintf("https://%s/", r.Host),
+			303)
 	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "{}")
 }
 
 func handleUserProfile(w http.ResponseWriter, r *http.Request) {
 	profileData := struct {
 		Name  string `json:"name"`
 		Email string `json:"email"`
+		IsAuthenticated bool `json:"isAuthenticated"`
 	}{}
 
 	c := newSnapdClient()
@@ -341,6 +294,7 @@ func handleUserProfile(w http.ResponseWriter, r *http.Request) {
 	if user != nil {
 		profileData.Name = user.Username
 		profileData.Email = user.Email
+		profileData.IsAuthenticated = true
 	}
 
 	w.Header().Set("Content-Type", "application/json")

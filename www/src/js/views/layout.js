@@ -22,12 +22,12 @@ module.exports = Marionette.LayoutView.extend({
 
   el: '.b-layout',
 
-  template : function() {
-    return template();
+  template : function(model) {
+    return template(model);
   },
 
   onRender: function() {
-    this.showChildView('bannerRegion', new BannerView());
+    this.showChildView('bannerRegion', new BannerView({model : this.model}));
     this.showChildView('footerRegion', new FooterView());
   },
 

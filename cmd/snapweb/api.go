@@ -68,7 +68,7 @@ func makeAPIHandler(apiRootPath string) http.Handler {
 	router.HandleFunc("/time-info", handleTimeInfo)
 	router.HandleFunc("/device-info", handleDeviceInfo)
 	router.HandleFunc("/device-action", handleDeviceAction)
-	router.HandleFunc("/user-login", handleUserLogin)
+	router.HandleFunc("/user-logout", handleUserLogout)
 	router.HandleFunc("/user-profile", handleUserProfile)
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
