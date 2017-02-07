@@ -27,6 +27,7 @@ import (
 	"path/filepath"
 	"strings"
 	"syscall"
+	"time"
 	"text/template"
 
 	"github.com/snapcore/snapd/client"
@@ -36,6 +37,7 @@ import (
 )
 
 var logger *log.Logger
+var server net.Listener
 
 const (
 	httpAddr string = ":4200"
@@ -174,7 +176,7 @@ func sendSignalToSnapweb() {
 func doneHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		sendSignalToSnapweb()
-		logger.Fatal("webconf done")
+		server.Close()
 	}
 }
 
@@ -190,7 +192,8 @@ func initURLHandlers(log *log.Logger) {
 }
 
 func main() {
-
+	var err error
+	
 	if IsDeviceManaged() {
 		log.Println("web-conf does not run on managed devices")
 		os.Exit(0)
@@ -201,8 +204,12 @@ func main() {
 	go avahi.InitMDNS(logger)
 
 	// open a plain HTTP end-point on the "usual" 4200 port
-	if err := http.ListenAndServe(httpAddr, nil); err != nil {
+	if server, err = net.Listen("tcp", httpAddr); err != nil {
 		logger.Fatalf("%v", err)
 	}
 
+	http.Serve(server, nil)
+
+	// let snapweb start
+	time.Sleep(2 * time.Second)
 }
