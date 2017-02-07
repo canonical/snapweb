@@ -58,7 +58,7 @@ if [ ! -d "$modules_dir" ]; then
   modules_dir="../node_modules"
 fi
 
-echo 'Run selenium tests for snapweb service on given IP'
+echo "Run selenium tests for snapweb on $host:$port with user:$user/$sudo"
 USER=$user HOST=$host PORT=$port SUDO=$sudo $modules_dir/.bin/wdio -b https://$2:4201
 exitcode=$?
 
