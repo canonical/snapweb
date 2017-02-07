@@ -3,6 +3,8 @@ dist: trusty
 language: go
 go:
   - 1.6
+node_js:
+  - "5.11"
 services: docker
 
 env:
@@ -38,7 +40,7 @@ script:
 after_success:
   - go get github.com/mattn/goveralls
   - goveralls -coverprofile=.coverage-go/coverage.out -service=travis-ci
-  - npm install coveralls
+  - yarn install coveralls
   - cat .coverage-js/report-lcov/lcov.info | ./node_modules/coveralls/bin/coveralls.js
   - mkdir -p "${HOME}/.config/snapcraft"
   - openssl aes-256-cbc -K $encrypted_e72199912f3d_key -iv $encrypted_e72199912f3d_iv
