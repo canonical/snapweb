@@ -18,6 +18,7 @@ matrix:
       cache: false
 
 cache:
+  yarn: true
   directories:
     - node_modules
 
