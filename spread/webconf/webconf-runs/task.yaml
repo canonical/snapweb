@@ -1,13 +1,11 @@
 summary: Verify that webconf will start on an un-managed system by default
-environment:
-    SEED_DIR: /var/lib/snapd/seed
 execute: |
     echo "The system should not be managed yet"
     test `snap managed` = 'false'
 
-    echo "Verifying that snapweb is NOT running as normal"
-    test `ps ax | grep -- -linux-gnu/snapweb | grep -v grep | grep -v web-conf | wc -l` -eq 0
-
     echo "Verifying that webconf is running"
     test `ps ax | grep -- -linux-gnu/web-conf | grep -v grep | wc -l` -eq 1
+
+    echo "Verifying that webconf is controlling port 4200" 
+    printf "GET / HTTP/1.1\nHost:localhost\nUser-Agent:nc\n\n" | nc localhost 4200 | grep "script src" | grep webconf.js
     
