@@ -10,15 +10,12 @@ var DeviceInfo = require('../models/device-info.js');
 module.exports = {
   index: function() {
     var chan = Radio.channel('root');
-    var timeInfo = new TimeInfo;
     var deviceInfo = new DeviceInfo;
 
     $.when(
-          timeInfo.fetch(),
           deviceInfo.fetch()
         ).then(function() {
           var view = new SettingsLayoutView({
-                  timeInfo: timeInfo,
                   deviceInfo: deviceInfo
                 });
           chan.command('set:content', {backboneView: view});

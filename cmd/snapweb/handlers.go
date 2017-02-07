@@ -76,9 +76,9 @@ func getSnappyVersion() string {
 }
 
 type timeInfoResponse struct {
-	Date      string `json:"date,omitempty"`
-	Time      string `json:"time,omitempty"`
+	DateTime  int64  `json:"dateTime,omitempty"`
 	Timezone  string `json:"timezone,omitempty"`
+	NTP       bool   `json:"ntp,omitempty"`
 	NTPServer string `json:"ntpServer,omitempty"`
 }
 
@@ -92,9 +92,9 @@ func handleTimeInfo(w http.ResponseWriter, r *http.Request) {
 		}
 
 		info := timeInfoResponse{
-			Date:      values["Date"].(string),
-			Time:      values["Time"].(string),
+			DateTime:  values["DateTime"].(int64),
 			Timezone:  values["Timezone"].(string),
+			NTP:       values["NTP"].(bool),
 			NTPServer: values["NTPServer"].(string),
 		}
 
