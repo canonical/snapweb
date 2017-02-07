@@ -43,6 +43,7 @@
     "karma-jasmine-ajax": "^0.1.12",
     "karma-phantomjs-launcher": "~0.1.4",
     "karma-phantomjs-shim": "^1.4.0",
+    "phantomjs-prebuilt": "^2.1.5",
     "gulp": "~3.9.1",
     "gulp-concat": "~2.5.2",
     "gulp-csso": "~1.0.0",
