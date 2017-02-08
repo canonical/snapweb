@@ -40,7 +40,6 @@
     "gulp": "~3.9.1",
     "gulp-concat": "~2.5.2",
     "gulp-csso": "~1.0.0",
-    "gulp-imagemin": "~2.2.1",
     "gulp-jscs": "~4.0.0",
     "gulp-jshint": "~1.9.4",
     "gulp-postcss": "^5.1.6",
