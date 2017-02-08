@@ -27,7 +27,7 @@ module.exports = {
       model.save({
         status: Config.INSTALL_STATE.INSTALLING
       }, {
-        dataType : 'json'
+        dataType : 'json',
       });
     }
 
