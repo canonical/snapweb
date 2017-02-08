@@ -2,7 +2,7 @@
 
   .p-navigation {
     background: $color-x-light;
-    border-bottom: 1px solid $color-mid-dark;
+    border-bottom: 1px solid $color-mid-light;
     color: $color-dark;
     margin-bottom: 1rem;
 
@@ -17,8 +17,8 @@
     &__links {
 
       .p-navigation__link {
-        color: $color-dark;
-        border-left-color: $color-dark;
+        color: $color-mid-dark;
+        border-left-color: $color-mid-light;
         padding-bottom: .75rem;
 
         &:hover {

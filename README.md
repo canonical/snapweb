@@ -34,7 +34,6 @@ Branch:
     
 Install:
 
-    npm install -g --prefix=$(npm config get prefix) gulp
     npm install
 
 ## Building

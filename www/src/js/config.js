@@ -27,7 +27,10 @@ module.exports = {
     INSTALLING: 'installing',
     REMOVED: 'uninstalled',
     REMOVING: 'uninstalling',
-    ACTIVE: 'active'
+    ENABLING: 'enabling',
+    DISABLING: 'disabling',
+    ACTIVE: 'active',
+    PRICED: 'priced'
   },
   INSTALL_POLL_WAIT: 16 // milliseconds
 };

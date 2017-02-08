@@ -1,0 +1,343 @@
+/*
+ * Copyright (C) 2014-2016 Canonical Ltd
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3 as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+package snappy
+
+import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"os"
+	"path/filepath"
+	"strconv"
+
+	"github.com/snapcore/snapweb/snappy/snapdclient"
+	"github.com/snapcore/snapweb/statetracker"
+
+	"github.com/gorilla/mux"
+)
+
+// Handler implements snappy's packages api.
+type Handler struct {
+	stateTracker *statetracker.StateTracker
+	snapdClient  snapdclient.SnapdClient
+}
+
+// NewHandler creates an instance that implements snappy's packages api.
+func NewHandler() *Handler {
+	return &Handler{
+		stateTracker: statetracker.New(),
+		snapdClient:  snapdclient.NewClientAdapter(),
+	}
+}
+
+func (h *Handler) setClient(c snapdclient.SnapdClient) {
+	h.snapdClient = c
+}
+
+func (h *Handler) jsonResponseOrError(v interface{}, w http.ResponseWriter) {
+	w.Header().Set("Content-Type", "application/json")
+	enc := json.NewEncoder(w)
+
+	if err := enc.Encode(v); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "Error: %s", err)
+		log.Print(err)
+	}
+}
+
+func (h *Handler) snapOperationResponse(name string, err error, w http.ResponseWriter) {
+	msg := "Accepted"
+	status := http.StatusAccepted
+
+	if err != nil {
+		msg = "Processing error"
+		status = http.StatusInternalServerError
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+	h.jsonResponseOrError(response{Message: msg, Package: name}, w)
+}
+
+func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
+	snapCondition := availableSnaps
+	if r.FormValue("installed_only") == "true" {
+		snapCondition = installedSnaps
+	} else {
+		snapCondition = availableSnaps
+	} else if r.FormValue("updatable_only") == "true" {
+		snapCondition = updatableSnaps
+	}
+
+	privateSnaps := false
+	if r.FormValue("private_snaps") == "true" {
+		privateSnaps = true
+	}
+
+	section := r.FormValue("section")
+
+	query := r.FormValue("q")
+	// This is a workaround until there is a way to get the list of snaps:
+	// https://bugs.launchpad.net/ubuntu/+source/snapd/+bug/1609368
+	if query == "" {
+		query = "."
+	}
+
+	payload, err := h.allPackages(snapCondition, query, privateSnaps, section)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "Error: %s", err)
+		return
+	}
+
+	h.jsonResponseOrError(payload, w)
+}
+
+func (h *Handler) getUpdates(w http.ResponseWriter, r *http.Request) {
+	if SimpleCookieCheckOrRedirect(w, r) != nil {
+		return
+	}
+
+	payload, err := h.allPackages(updatableSnaps, ".")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "Error: %s", err)
+		return
+	}
+
+	h.jsonResponseOrError(payload, w)
+}
+
+func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
+	name := mux.Vars(r)["name"]
+
+	payload, err := h.packagePayload(name)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintln(w, err, name)
+		return
+	}
+
+	h.jsonResponseOrError(payload, w)
+}
+
+func (h *Handler) getHistories(w http.ResponseWriter, r *http.Request) {
+	if SimpleCookieCheckOrRedirect(w, r) != nil {
+		return
+	}
+
+	var numDepth = 100 // XXX: find max history
+
+	depth := mux.Vars(r)["depth"]
+	if depth != "all" && depth != "any" {
+		if d, err := strconv.Atoi(depth); err == nil {
+			numDepth = d
+		}
+	}
+
+	allPs, err := h.allPackages(installedSnaps, ".")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "Error: %s", err)
+		return
+	}
+
+	var histories [][]snapPkg
+
+	for _, snap := range allPs {
+		var packs []snapPkg
+		if ph, err := h.packageHistory(snap.Name); err == nil {
+			for i, pack := range ph {
+				if i == numDepth {
+					break
+				}
+				packs = append(packs, pack)
+			}
+		}
+		if len(packs) > 0 {
+			histories = append(histories, packs)
+		}
+	}
+
+	h.jsonResponseOrError(histories, w)
+}
+
+func (h *Handler) getHistory(w http.ResponseWriter, r *http.Request) {
+	if SimpleCookieCheckOrRedirect(w, r) != nil {
+		return
+	}
+
+	id := mux.Vars(r)["id"]
+
+	payload, err := h.packageHistory(id)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	h.jsonResponseOrError(payload, w)
+}
+
+func (h *Handler) add(w http.ResponseWriter, r *http.Request) {
+	name := mux.Vars(r)["name"]
+
+	err := h.installPackage(name)
+
+	h.snapOperationResponse(name, err, w)
+}
+
+func (h *Handler) remove(w http.ResponseWriter, r *http.Request) {
+	name := mux.Vars(r)["name"]
+
+	err := h.removePackage(name)
+
+	h.snapOperationResponse(name, err, w)
+}
+
+func (h *Handler) update(w http.ResponseWriter, r *http.Request) {
+	snapName := mux.Vars(r)["name"]
+	if snapName == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	body, err := ioutil.ReadAll(r.Body)
+
+	var snap map[string]*json.RawMessage
+	err = json.Unmarshal(body, &snap)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	// For now only deal with enable/disable updates
+
+	var status string
+	err = json.Unmarshal(*snap["status"], &status)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	if status == statetracker.StatusEnabling {
+		err = h.enable(snapName)
+	} else if status == statetracker.StatusDisabling {
+		err = h.disable(snapName)
+	}
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	h.snapOperationResponse(snapName, err, w)
+}
+
+// MakePackageRouter sets up the handlers multiplexing to handle requests against snappy's
+// packages api
+func (h *Handler) MakePackageRouter(prefix string) http.Handler {
+	var m *mux.Router
+	m := parentRouter.PathPrefix(prefix).Subrouter()
+
+	// Get all of packages.
+	m.HandleFunc("/", h.getAll).Methods("GET")
+
+	// get specific package
+	m.HandleFunc("/{name}", h.get).Methods("GET")
+
+	// Add a package
+	m.HandleFunc("/{name}", h.add).Methods("PUT")
+
+	// Remove a package
+	m.HandleFunc("/{name}", h.remove).Methods("DELETE")
+
+	return m
+}
+
+// MakeSnapRouter sets up endpoints for locally installed snaps
+func (h *Handler) MakeSnapRouter(prefix string) http.Handler {
+	m := mux.NewRouter().PathPrefix(prefix).Subrouter()
+
+	m.HandleFunc("/", h.getUpdates).Methods("GET").Queries("updatable_only", "true")
+	m.HandleFunc("/", h.getHistories).Methods("GET").Queries("history", "{depth}")
+
+	m.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		if SimpleCookieCheckOrRedirect(w, r) != nil {
+			return
+		}
+		payload, err := h.allPackages(installedSnaps, ".")
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			fmt.Fprintf(w, "Error: %s", err)
+			return
+		}
+		h.jsonResponseOrError(payload, w)
+	}).Methods("GET")
+
+	m.HandleFunc("/{id}", h.get).Methods("GET")
+
+	m.HandleFunc("/{id}/history", h.getHistory).Methods("GET")
+
+	m.HandleFunc("/{id}", func(w http.ResponseWriter, r *http.Request) {
+		if SimpleCookieCheckOrRedirect(w, r) != nil {
+			return
+		}
+		data, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		var snapPatch map[string]interface{}
+		err = json.Unmarshal(data, &snapPatch)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		if _, exists := snapPatch["version"]; exists {
+			// Could handle downgrades etc, but for now assume update
+			h.refreshPackage(mux.Vars(r)["id"])
+		} else {
+			w.WriteHeader(422) // http.StatusUnprocessableEntity
+			return
+		}
+
+		w.WriteHeader(http.StatusNoContent)
+	}).Methods("PATCH")
+
+	// Remove a package
+	m.HandleFunc("/{id}", h.remove).Methods("DELETE")
+
+	return m
+}
+
+// TODO: refactor this copy from cmd/snapweb
+
+// Name of the cookie transporting the access token
+const (
+	SnapwebCookieName = "SM"
+)
+=======
+	// Update a snap package
+	m.HandleFunc("/{name}", h.update).Methods("POST")
+>>>>>>> master:snappy/app/handlers.go
+
+	return m
+}

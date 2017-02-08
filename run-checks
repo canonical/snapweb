@@ -95,9 +95,8 @@ if [ ! -z "$STATIC_GO" ]; then
 fi
 
 if [ ! -z "$STATIC_JS" ]; then
-    npm install -g gulp
     npm install
-    gulp js:lint
+    npm run js:lint
 fi
 
 if [ ! -z "$UNIT_GO" ]; then

@@ -1,11 +1,13 @@
 // snap.js
 
 var _ = require('lodash');
+var url = require('url');
 var Backbone = require('backbone');
 var Radio = require('backbone.radio');
 var prettyBytes = require('pretty-bytes');
 var CONF = require('../config.js');
 var chan = Radio.channel('root');
+var linkify = require('linkifyjs/html');
 
 /** Snap Model
  *
@@ -34,7 +36,9 @@ module.exports = Backbone.Model.extend({
 
       if (
         status === CONF.INSTALL_STATE.INSTALLING ||
-        status === CONF.INSTALL_STATE.REMOVING
+        status === CONF.INSTALL_STATE.REMOVING ||
+        status === CONF.INSTALL_STATE.DISABLING ||
+        status === CONF.INSTALL_STATE.ENABLING
       ) {
         _.delay(function(model) {
           model.fetch();
@@ -44,7 +48,10 @@ module.exports = Backbone.Model.extend({
     });
 
     this.on('error', function(model, response, opts) {
-      var json = JSON.parse(response.responseText);
+      var json = {}
+      try {
+        json = JSON.parse(response.responseText);
+      } catch(e) {}
       var previous = model.previousAttributes();
       var message;
       if (json && json.message) {
@@ -87,32 +94,51 @@ module.exports = Backbone.Model.extend({
   },
 
   onStatusChange: function(model) {
+    var status = model.get('status');
+    if (
+        status !== CONF.INSTALL_STATE.INSTALLING &&
+        status !== CONF.INSTALL_STATE.REMOVING &&
+        status !== CONF.INSTALL_STATE.DISABLING &&
+        status !== CONF.INSTALL_STATE.ENABLING) {
+      model.set('download_progress', 0);
+      model.set('task_summary', '');
+    }
+
+    this.updateInstallWidgets(model);
+    this.updateEnableDisableWidgets(model);
+  },
+
+  updateInstallWidgets: function(model) {
     this.setInstallActionString(model);
     this.setInstallHTMLClass(model);
     this.setInstallButtonClass(model);
   },
 
+  updateEnableDisableWidgets: function(model) {
+    this.setEnableDisableActionString(model);
+  },
+
   // XXX move to install behaviour
   setInstallHTMLClass: function(model) {
-    var state = model.get('status');
+    var status = model.get('status');
     var type = model.get('type');
     var installHTMLClass = '';
 
-    if (state === CONF.INSTALL_STATE.REMOVED) {
+    if (status === CONF.INSTALL_STATE.REMOVED) {
       installHTMLClass = 'b-installer_do_install';
     }
-    if ((state === CONF.INSTALL_STATE.INSTALLED &&
-         type &&
-         CONF.NON_REMOVABLE_SNAP_TYPES.indexOf(type) === -1) ||
-        state === CONF.INSTALL_STATE.ACTIVE) {
+
+    if (CONF.NON_REMOVABLE_SNAP_TYPES.indexOf(type) === -1 &&
+        (status === CONF.INSTALL_STATE.INSTALLED ||
+         status === CONF.INSTALL_STATE.ACTIVE)) {
       installHTMLClass = 'b-installer_do_remove';
     }
 
-    if (state === CONF.INSTALL_STATE.INSTALLING) {
+    if (status === CONF.INSTALL_STATE.INSTALLING) {
       installHTMLClass = 'b-installer_do_install b-installer_thinking';
     }
 
-    if (state === CONF.INSTALL_STATE.REMOVING) {
+    if (status === CONF.INSTALL_STATE.REMOVING) {
       installHTMLClass = 'b-installer_do_remove b-installer_thinking';
     }
 
@@ -120,10 +146,13 @@ module.exports = Backbone.Model.extend({
   },
 
   setInstallActionString: function(model) {
-    var state = model.get('status');
+    var status = model.get('status');
     var action;
 
-    switch (state) {
+    switch (status) {
+      case CONF.INSTALL_STATE.PRICED:
+        action = model.get('price');
+        break;
       case CONF.INSTALL_STATE.ACTIVE:
       case CONF.INSTALL_STATE.INSTALLED:
         action = 'Remove';
@@ -147,11 +176,34 @@ module.exports = Backbone.Model.extend({
     return model.set('installActionString', action);
   },
 
+  setEnableDisableActionString: function(model) {
+    var status = model.get('status');
+    var action;
+
+    switch (status) {
+      case CONF.INSTALL_STATE.ENABLING:
+        action = 'Enabling…';
+        break;
+      case CONF.INSTALL_STATE.DISABLING:
+        action = 'Disabling…';
+        break;
+      case CONF.INSTALL_STATE.INSTALLED:
+        action = 'Enable';
+        break;
+      case CONF.INSTALL_STATE.ACTIVE:
+        action = 'Disable';
+        break;
+      default:
+    }
+
+    return model.set('enableDisableActionString', action);
+  },
+
   setInstallButtonClass: function(model) {
-    var state = model.get('status');
+    var status = model.get('status');
     var installButtonClass;
 
-    switch (state) {
+    switch (status) {
       case CONF.INSTALL_STATE.ACTIVE:
       case CONF.INSTALL_STATE.INSTALLED:
       case CONF.INSTALL_STATE.INSTALLING:
@@ -166,36 +218,63 @@ module.exports = Backbone.Model.extend({
   },
 
   parse: function(response) {
-    var status = response.status;
+    var state = response.state;
     var type = response.type;
     var id  = response.id;
 
+    if (state) {
+      var status = state.status;
+
+      response.status = status;
+
+      response.task_summary = state.task_summary;
+
+      if (state.local_size > 0) {
+        response.download_progress =
+          Math.floor((Number(state.local_size) / Number(response.download_size)) * 100);
+      }
+    }
+
+    response.isInstalled = false;
     if (
       status === CONF.INSTALL_STATE.INSTALLED ||
       status === CONF.INSTALL_STATE.ACTIVE ||
-      status === CONF.INSTALL_STATE.REMOVING
+      status === CONF.INSTALL_STATE.REMOVING ||
+      status === CONF.INSTALL_STATE.ENABLING ||
+      status === CONF.INSTALL_STATE.DISABLING
     ) {
       response.isInstalled = true;
-    } else if (
-      status === CONF.INSTALL_STATE.REMOVED ||
-      status === CONF.INSTALL_STATE.INSTALLING
-    ) {
-      response.isInstalled = false;
     }
 
     if (response.hasOwnProperty('icon') && !response.icon.length) {
       response.icon = this.defaults.icon;
     }
 
+    response.isEnabled = false;
+    if (status === CONF.INSTALL_STATE.INSTALLED) {
+      response.isEnabled = false;
+    } else if (status === CONF.INSTALL_STATE.ACTIVE) {
+      response.isEnabled = true;
+    }
+
+    if (status === CONF.INSTALL_STATE.PRICED) {
+      response.isInstallable = true;
+      response.priced = true;
+    }
+
+    response.isCoreSnap = false;
     if (type) {
-      if (_.contains(CONF.NON_INSTALLABLE_TYPES, type)) {
+      if (_.contains(CONF.NON_INSTALLABLE_TYPES, type) ||
+          _.contains(CONF.NON_REMOVABLE_SNAP_TYPES, type)) {
         response.isInstallable = false;
+        response.isCoreSnap = true;
       }
     }
 
     if (id) {
       if (_.contains(CONF.NON_INSTALLABLE_IDS, id)) {
         response.isInstallable = false;
+        response.isCoreSnap = true;
       }
     }
 
@@ -215,6 +294,33 @@ module.exports = Backbone.Model.extend({
         this.prettifyBytes(Number(response.installed_size))
         //jscs:enable requireCamelCaseOrUpperCaseIdentifiers
       );
+    }
+    if (response.description) {
+      var toLocalServiceUri = function(uri) {
+        var u = url.parse(uri);
+        var wl = window.location;
+        return u.protocol + '//'
+          + wl.hostname
+          + ':' + u.port
+          + (u.path ? u.path : '');
+      };
+      response.description =
+        linkify(response.description,
+                {
+                  validate: function (value, type) {
+                    if (type !== 'url') {
+                      return false;
+                    }
+                    var p = url.parse(value).port;
+                    return p && isFinite(p) && parseInt(p) > 0;
+                  },
+                  format: function (value, type) {
+                    return toLocalServiceUri(value)
+                  },
+                  formatHref: function(href, type) {
+                    return toLocalServiceUri(href)
+                  },
+                });
     }
 
     return response;

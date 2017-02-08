@@ -1,23 +1,24 @@
-<div class="twelve-col last-col" style="border: 1px solid #d2d2d2; padding: 50px">
+<a href="/snap/{{ name }}" style="border-bottom: 0px">
+  <img class="p-card__icon" src="{{ icon }}" width="125" height="125"/>
 
-<img class="p-card__icon" src="{{ icon }}" width="125" height="125">
+  <ul class="p-list--divided">
+    <li class="p-list__item">
+      <h3 id="js-snap-title" class="p-card__title js-snap-title">{{ name }}</h3>
+    </li>
+    {{#if developer}}
+    <li class="p-list__item">By {{ developer }}</li>
+    {{/if}}
+  </ul>
+</a>
 
-<h3 id="js-snap-title" class="p-card__title js-snap-title">{{ name }}</h3>
+<div class="col-9">
+  <div class="u-vertically-center">
+    {{#if description}}
+    <p class="p-card__content" style="margin: 1.5em 1.5em">{{ description }}</p>
+    {{/if}}
 
-{{#if developer}}
-  <p class="p-card__content">By {{ developer }}</p>
-{{/if}}
-
-{{#if description}}
-  <p class="p-card__content">{{ description }}</p>
-{{/if}}
-{{#if prettyInstalledSize}}
-  <p class="p-card__content">{{ prettyInstalledSize }}</p>
-{{/if}}
-<footer class="p-card__footer">
     <div class="u-float--right">
       {{> installer installerClass="button--positive"}}
     </div>
-</footer>
-
+  </div>
 </div>

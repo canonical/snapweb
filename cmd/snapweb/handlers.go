@@ -32,10 +32,9 @@ import (
 	"strings"
 	"text/template"
 
-	// "github.com/snapcore/snapd/dirs"
-
 	// most other handlers use the ClientAdapter for now
-	"github.com/snapcore/snapweb/snappy"
+	"github.com/snapcore/snapweb/snappy/app"
+	"github.com/snapcore/snapweb/snappy/snapdclient"
 )
 
 type branding struct {
@@ -61,8 +60,8 @@ func unixDialer(socketPath string) func(string, string) (net.Conn, error) {
 	}
 }
 
-func newSnapdClientImpl() snappy.SnapdClient {
-	return snappy.NewClientAdapter()
+func newSnapdClientImpl() snapdclient.SnapdClient {
+	return snapdclient.NewClientAdapter()
 }
 
 func getSnappyVersion() string {
@@ -77,38 +76,62 @@ func getSnappyVersion() string {
 }
 
 type timeInfoResponse struct {
-	Date      string  `json:"date,omitempty"`
-	Time      string  `json:"time,omitempty"`
-	Timezone  float64 `json:"timezone,omitempty"`
-	NTPServer string  `json:"ntpServer,omitempty"`
+	Date      string `json:"date,omitempty"`
+	Time      string `json:"time,omitempty"`
+	Timezone  string `json:"timezone,omitempty"`
+	NTPServer string `json:"ntpServer,omitempty"`
 }
 
 func handleTimeInfo(w http.ResponseWriter, r *http.Request) {
-
-	SimpleCookieCheckOrRedirect(w, r)
-
 	if r.Method == "GET" {
-		values, err := snappy.GetCoreConfig(
-			[]string{"Date", "Time", "Timezone", "NTPServer"})
+		values, err := getTimeInfo()
 		if err != nil {
-			log.Println("Error extracting core config", err)
+			log.Printf("Error fetching time related information: %v", err)
+			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
 		info := timeInfoResponse{
 			Date:      values["Date"].(string),
 			Time:      values["Time"].(string),
-			Timezone:  values["Timezone"].(float64),
+			Timezone:  values["Timezone"].(string),
 			NTPServer: values["NTPServer"].(string),
 		}
 
 		w.Header().Set("Content-Type", "application/json")
 		if err := json.NewEncoder(w).Encode(info); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			log.Println("Error encoding time response", err)
+			log.Printf("Error encoding time informaiton: %v", err)
 		}
 	} else if r.Method == "PATCH" {
-		w.WriteHeader(http.StatusNotImplemented)
+		contentType := r.Header.Get("Content-Type")
+		if contentType != "application/json" {
+			log.Printf("handleTimeInfo(POST): invalid content")
+			w.WriteHeader(http.StatusUnsupportedMediaType)
+			return
+		}
+
+		data, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			log.Println("Error decoding time patch", err)
+			return
+		}
+
+		var timePatch map[string]interface{}
+		err = json.Unmarshal(data, &timePatch)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			log.Printf("handleTimeInfo(POST): Error decoding time data: %v", err)
+			return
+		}
+
+		err = setTimeInfo(timePatch)
+		if err != nil {
+			log.Printf("handleTimeInfo: failed to set time information; %v", err)
+		}
+	} else {
+		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
 }
 
@@ -123,14 +146,9 @@ type deviceInfoResponse struct {
 }
 
 func handleDeviceInfo(w http.ResponseWriter, r *http.Request) {
-
-	if e := SimpleCookieCheckOrRedirect(w, r); e != nil {
-		return
-	}
-
 	c := newSnapdClient()
 
-	modelInfo, err := snappy.GetModelInfo(c)
+	modelInfo, err := snapdclient.GetModelInfo(c)
 	if err != nil {
 		log.Println(fmt.Sprintf("handleDeviceInfo: error retrieving model info: %s", err))
 		w.WriteHeader(http.StatusInternalServerError)
@@ -154,13 +172,9 @@ func handleDeviceInfo(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleSections(w http.ResponseWriter, r *http.Request) {
-	// Quick auth validation
-	if e := SimpleCookieCheckOrRedirect(w, r); e != nil {
-		return
-	}
 	c := newSnapdClient()
 
-	sections, err := c.GetSections()
+	sections, err := c.Sections()
 	if err != nil {
 		log.Println(fmt.Sprintf("handleSections: error retrieving sections info: %s", err))
 		w.WriteHeader(http.StatusInternalServerError)
@@ -179,10 +193,6 @@ type deviceAction struct {
 }
 
 func handleDeviceAction(w http.ResponseWriter, r *http.Request) {
-	if SimpleCookieCheckOrRedirect(w, r) != nil {
-		return
-	}
-
 	if r.Method != "POST" {
 		log.Printf("handleDeviceAction: invalid method")
 		w.WriteHeader(http.StatusMethodNotAllowed)
@@ -232,14 +242,10 @@ func initURLHandlers(log *log.Logger) {
 	http.Handle("/api/v2/packages/", snappyHandler.MakePackageRouter("/api/v2/packages"))
 	http.Handle("/api/v2/snaps/", snappyHandler.MakeSnapRouter("/api/v2/snaps"))
 
-	http.HandleFunc("/api/v2/sections", handleSections)
+	// API
+	http.Handle("/api/", makeAPIHandler("/api/"))
 
-	http.HandleFunc("/api/v2/time-info", handleTimeInfo)
-	http.HandleFunc("/api/v2/device-info", handleDeviceInfo)
-	http.HandleFunc("/api/v2/device-action", handleDeviceAction)
-
-	// NOTE: the public URLs below shouldn't be using SimpleCookieCheckOrRedirect
-
+	// Resources
 	http.Handle("/public/", loggingHandler(http.FileServer(http.Dir(filepath.Join(os.Getenv("SNAP"), "www")))))
 
 	if iconDir, relativePath, err := snappy.IconDir(); err == nil {
@@ -260,8 +266,8 @@ func tokenFilename() string {
 	return filepath.Join(os.Getenv("SNAP_DATA"), "token.txt")
 }
 
-// SimpleCookieCheckOrRedirect is a simple authorization mechanism
-func SimpleCookieCheckOrRedirect(w http.ResponseWriter, r *http.Request) error {
+// SimpleCookieCheck is a simple authorization mechanism
+func SimpleCookieCheck(w http.ResponseWriter, r *http.Request) error {
 	cookie, _ := r.Cookie(SnapwebCookieName)
 	if cookie != nil {
 		token, err := ioutil.ReadFile(tokenFilename())
@@ -273,26 +279,16 @@ func SimpleCookieCheckOrRedirect(w http.ResponseWriter, r *http.Request) error {
 			}
 		}
 	}
-
-	// in any other case, refuse the request and redirect
-	http.Redirect(w, r, "/access-control", 401)
-
 	return errors.New("Unauthorized")
 }
 
 func validateToken(w http.ResponseWriter, r *http.Request) {
-	log.Println(r.Method, r.URL.Path)
-	if err := SimpleCookieCheckOrRedirect(w, r); err == nil {
-		hdr := w.Header()
-		hdr.Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, "{}")
-	} else {
-		hdr := w.Header()
-		hdr.Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusUnauthorized)
-		fmt.Fprintf(w, "{}")
-	}
+	// We only get here when the Cookie is valid, send an empty response
+	// to keep the model happy
+	hdr := w.Header()
+	hdr.Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "{}")
 }
 
 func makePassthroughHandler(socketPath string, prefix string) http.HandlerFunc {

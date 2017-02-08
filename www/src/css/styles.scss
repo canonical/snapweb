@@ -11,6 +11,7 @@
 @import "patterns_lists";
 @import "patterns_search";
 @import "patterns_view-filters";
+@import "patterns_confirmation";
 @import "utilities_full-width";
 
 // Override default Vanilla variables
@@ -25,6 +26,7 @@ $color-brand: #e95420;
 // Site specific patterns
 @include p-card-deck;
 @include p-view-filters;
+@include p-confirmation;
 
 // Site specific utilities
 @include u-full-width;
@@ -34,4 +36,23 @@ $color-brand: #e95420;
 .row {
   padding-top: 1rem;
   padding-bottom: 1rem;
+}
+
+// This has been proposed upstream to Vanilla Framework
+// https://github.com/ubuntudesign/vanilla-framework/issues/710
+hr {
+  border: 0;
+  height: 0;
+  border-top: 1px solid $color-mid-light;
+  margin: 2rem 0;
+}
+
+// Snaplist
+.region-snaplist {
+
+    h2 {
+        border-bottom: 1px solid $color-mid-light;
+        padding-bottom: 1rem;
+        width: 100%;
+    }
 }

@@ -34,7 +34,8 @@ import (
 
 	. "gopkg.in/check.v1"
 
-	"github.com/snapcore/snapweb/snappy"
+	"github.com/snapcore/snapweb/snappy/app"
+	"github.com/snapcore/snapweb/snappy/snapdclient"
 )
 
 func Test(t *testing.T) { TestingT(t) }
@@ -57,7 +58,7 @@ func (s *HandlersSuite) createAndSaveTestToken(c *C) string {
 func (s *HandlersSuite) SetUpTest(c *C) {
 	s.c = &snappy.FakeSnapdClient{}
 
-	newSnapdClient = func() snappy.SnapdClient {
+	newSnapdClient = func() snapdclient.SnapdClient {
 		return s.c
 	}
 	s.c.Version.Version = "1000"
@@ -264,9 +265,9 @@ func (s *HandlersSuite) TestModelInfoHandler(c *C) {
 	c.Assert(err, IsNil)
 
 	c.Assert(deviceInfos["deviceName"], Equals, "Device Name")
-	c.Assert(deviceInfos["brand"], Equals, "Brand")
-	c.Assert(deviceInfos["model"], Equals, "Model")
-	c.Assert(deviceInfos["serial"], Equals, "Serial Number")
+	c.Assert(deviceInfos["brand"], Equals, "Unknown")
+	c.Assert(deviceInfos["model"], Equals, "Unknown")
+	c.Assert(deviceInfos["serial"], Equals, "Unknown")
 }
 
 func (s *HandlersSuite) TestCheckCookieToken(c *C) {
@@ -365,4 +366,121 @@ func (s *HandlersSuite) TestDeviceActionInvalidAction(c *C) {
 
 	http.DefaultServeMux.ServeHTTP(rec, req)
 	c.Assert(rec.Code, Equals, http.StatusBadRequest)
+}
+
+func (s *HandlersSuite) TestTimeInfoInvalidMethod(c *C) {
+	cwd, err := os.Getwd()
+
+	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
+
+	initURLHandlers(log.New(os.Stdout, "", 0))
+	defer func() {
+		http.DefaultServeMux = http.NewServeMux()
+	}()
+
+	rec := httptest.NewRecorder()
+	req, err := http.NewRequest("POST", "/api/v2/time-info", nil)
+	c.Assert(err, IsNil)
+
+	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
+
+	http.DefaultServeMux.ServeHTTP(rec, req)
+	c.Assert(rec.Code, Equals, http.StatusMethodNotAllowed)
+}
+
+func (s *HandlersSuite) TestTimeInfoGET(c *C) {
+	cwd, err := os.Getwd()
+
+	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
+
+	initURLHandlers(log.New(os.Stdout, "", 0))
+	defer func() {
+		http.DefaultServeMux = http.NewServeMux()
+	}()
+
+	rec := httptest.NewRecorder()
+	req, err := http.NewRequest("GET", "/api/v2/time-info", nil)
+	c.Assert(err, IsNil)
+
+	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
+
+	http.DefaultServeMux.ServeHTTP(rec, req)
+	c.Assert(rec.Code, Equals, http.StatusOK)
+
+	c.Assert(rec.Header().Get("Content-Type"), Equals, "application/json")
+
+	var timeInfo map[string]interface{}
+	err = json.Unmarshal([]byte(rec.Body.String()), &timeInfo)
+	c.Assert(err, IsNil)
+
+	_, exists := timeInfo["date"]
+	c.Assert(exists, Equals, true)
+	_, exists = timeInfo["time"]
+	c.Assert(exists, Equals, true)
+	_, exists = timeInfo["timezone"]
+	c.Assert(exists, Equals, true)
+}
+
+func (s *HandlersSuite) TestTimeInfoInvalidContentType(c *C) {
+	cwd, err := os.Getwd()
+
+	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
+
+	initURLHandlers(log.New(os.Stdout, "", 0))
+	defer func() {
+		http.DefaultServeMux = http.NewServeMux()
+	}()
+
+	rec := httptest.NewRecorder()
+	req, err := http.NewRequest("PATCH", "/api/v2/time-info", nil)
+	c.Assert(err, IsNil)
+
+	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
+
+	http.DefaultServeMux.ServeHTTP(rec, req)
+	c.Assert(rec.Code, Equals, http.StatusUnsupportedMediaType)
+}
+
+func (s *HandlersSuite) TestTimeInfoInvalidJSON(c *C) {
+	cwd, err := os.Getwd()
+
+	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
+
+	initURLHandlers(log.New(os.Stdout, "", 0))
+	defer func() {
+		http.DefaultServeMux = http.NewServeMux()
+	}()
+
+	rec := httptest.NewRecorder()
+	var patchJSON = []byte("{]")
+	req, err := http.NewRequest("PATCH", "/api/v2/time-info", bytes.NewBuffer(patchJSON))
+	c.Assert(err, IsNil)
+
+	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
+	req.Header.Set("Content-Type", "application/json")
+
+	http.DefaultServeMux.ServeHTTP(rec, req)
+	c.Assert(rec.Code, Equals, http.StatusBadRequest)
+}
+
+func (s *HandlersSuite) TestEmptyTimeInfoUpdate(c *C) {
+	cwd, err := os.Getwd()
+
+	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
+
+	initURLHandlers(log.New(os.Stdout, "", 0))
+	defer func() {
+		http.DefaultServeMux = http.NewServeMux()
+	}()
+
+	rec := httptest.NewRecorder()
+	var patchJSON = []byte("{}")
+	req, err := http.NewRequest("PATCH", "/api/v2/time-info", bytes.NewBuffer(patchJSON))
+	c.Assert(err, IsNil)
+
+	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
+	req.Header.Set("Content-Type", "application/json")
+
+	http.DefaultServeMux.ServeHTTP(rec, req)
+	c.Assert(rec.Code, Equals, http.StatusOK)
 }

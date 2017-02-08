@@ -36,7 +36,7 @@ module.exports = {
                   updates: updates,
                   history: history
                 });
-          chan.command('set:content', view);
+          chan.command('set:content', {backboneView: view});
         });
   }
 };

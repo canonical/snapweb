@@ -25,18 +25,16 @@ import (
 
 	"github.com/snapcore/snapd/asserts"
 	"github.com/snapcore/snapd/client"
-	"gopkg.in/ini.v1"
 )
-
-var timesyncdConfigurationFilePath = "/etc/systemd/timesyncd.conf"
 
 // SnapdClient is a client of the snapd REST API
 type SnapdClient interface {
 	Icon(name string) (*client.Icon, error)
 	Snap(name string) (*client.Snap, *client.ResultInfo, error)
-	List(names []string) ([]*client.Snap, error)
-	GetSections() ([]string, error)
+	List(names []string, opts *client.ListOptions) ([]*client.Snap, error)
+	Sections() ([]string, error)
 	Find(opts *client.FindOptions) ([]*client.Snap, *client.ResultInfo, error)
+	FindOne(name string) (*client.Snap, *client.ResultInfo, error)
 	Install(name string, options *client.SnapOptions) (string, error)
 	Refresh(name string, options *client.SnapOptions) (string, error)
 	Remove(name string, options *client.SnapOptions) (string, error)
@@ -71,8 +69,8 @@ func (a *ClientAdapter) Snap(name string) (*client.Snap, *client.ResultInfo, err
 
 // List returns the list of all snaps installed on the system
 // with names in the given list; if the list is empty, all snaps.
-func (a *ClientAdapter) List(names []string) ([]*client.Snap, error) {
-	return a.snapdClient.List(names)
+func (a *ClientAdapter) List(names []string, opts *client.ListOptions) ([]*client.Snap, error) {
+	return a.snapdClient.List(names, opts)
 }
 
 // Find returns a list of snaps available for install from the
@@ -113,43 +111,15 @@ func (a *ClientAdapter) Known(assertTypeName string, headers map[string]string) 
 	return a.snapdClient.Known(assertTypeName, headers)
 }
 
-// GetSections returns the list of available sections
-func (a *ClientAdapter) GetSections() ([]string, error) {
-	return make([]string, 0), nil
-	//	return a.snapdClient.GetSections()
+// FindOne returns a list of snaps available for install from the
+// store for this system and that match the query
+func (a *ClientAdapter) FindOne(name string) (*client.Snap, *client.ResultInfo, error) {
+	return a.snapdClient.FindOne(name)
 }
 
-// internal
-func readNTPServer() string {
-	timesyncd, err := ini.Load(timesyncdConfigurationFilePath)
-	if err != nil {
-		log.Println("readNTPServer: unable to read ",
-			timesyncdConfigurationFilePath)
-		return ""
-	}
-
-	section, err := timesyncd.GetSection("Time")
-	if err != nil || !section.HasKey("NTP") {
-		log.Println("readNTPServer: no NTP servers are set ",
-			timesyncdConfigurationFilePath)
-		return ""
-	}
-
-	return section.Key("NTP").Strings(" ")[0]
-}
-
-// GetCoreConfig gets some aspect of core configuration
-// XXX: current assumption, asking for timezone info
-func GetCoreConfig(keys []string) (map[string]interface{}, error) {
-	var dt = time.Now()
-	_, offset := dt.Zone()
-
-	return map[string]interface{}{
-		"Date":      dt.Format("2006-01-02"), // Format for picker
-		"Time":      dt.Format("15:04"),      // Format for picker
-		"Timezone":  float64(offset) / 60 / 60,
-		"NTPServer": readNTPServer(),
-	}, nil
+// Sections returns the list of available sections
+func (a *ClientAdapter) Sections() ([]string, error) {
+	return a.snapdClient.Sections()
 }
 
 // GetModelInfo returns information about the device.
@@ -174,9 +144,9 @@ func GetModelInfo(c SnapdClient) (map[string]interface{}, error) {
 	deviceName := "Device Name"
 
 	// Model Info
-	brandName := "Brand"
-	modelName := "Model"
-	serialNumber := "Serial Number"
+	brandName := "Unknown"
+	modelName := "Unknown"
+	serialNumber := "Unknown"
 
 	serialInfo, err := c.Known("serial", map[string]string{})
 	if err == nil {

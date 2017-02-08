@@ -1,6 +1,7 @@
 var assert = require('chai').assert;
 var expect = require('chai').expect;
 
+snapDetailsPage = require("../pageobjects/snap-details-page.js");
 snapsPage = require("../pageobjects/installed-snaps-page.js");
 
 describe('Installed Snaps Page - Verify that', function() {
@@ -52,27 +53,27 @@ describe('Installed Snaps Page - Verify that', function() {
     it('clicking store link takes the user to store', function() {
 
         snapsPage.store.click();
-        storepage = browser.element('h2=Available snaps')
+        storepage = browser.element('h2=Featured snaps')
         storepage.waitForVisible();
-        expect(storepage.getText(), "Failed to load store page").to.contain('Available snaps');
+        expect(storepage.getText(), "Failed to load store page").to.contain('Featured snaps');
 
     });
 
     it('Browse store button takes the user to store', function() {
 
         snapsPage.browsestore.click();
-        storepage = browser.element('h2=Available snaps')
+        storepage = browser.element('h2=Featured snaps')
         storepage.waitForVisible();
-        expect(storepage.getText(), "Failed to load store page").to.contain('Available snaps');
+        expect(storepage.getText(), "Failed to load store page").to.contain('Featured snaps');
 
     });
 
     it('Add more snaps button takes the user to store', function() {
 
         snapsPage.addmoresnaps.click();
-        storepage = browser.element('h2=Available snaps')
+        storepage = browser.element('h2=Featured snaps')
         storepage.waitForVisible();
-        expect(storepage.getText(), "Failed to load store page").to.contain('Available snaps');
+        expect(storepage.getText(), "Failed to load store page").to.contain('Featured snaps');
 
     });
 
@@ -82,26 +83,19 @@ describe('Installed Snaps Page - Verify that', function() {
         var snap = snapsPage.snapElement(snap_name);
         snap.waitForVisible();
         snap.click();
-        snaptitle = browser.element('h1.b-snap__title');
-        snaptitle.waitForVisible();
-        expect(snaptitle.getText(), "Failed to open snap's about page").to.equal(snap_name);
-        aboutpage = browser.element('h3=About');
-        aboutpage.waitForVisible();
-
+        browser.waitForVisible(snapDetailsPage.snapTitleElement);
+        expect(snapDetailsPage.snap.getText(), "Failed to open snap's about page").to.equal(snap_name);
+        assert.isNotNull(snapDetailsPage.snapDetail(4).value, "Snap has no update date");
     });
 
-
     it('snapweb updates the page when snap is installed/removed direclty on the device', function() {
-
         var snap_name = "hello-world";
         var re_removed = new RegExp("cannot find snap|" + snap_name + ".*removed")
         var re_installed = new RegExp(snap_name + ".*installed");
 
         //Remove the snap in case it is already installed
         browser.call(function() {
-            return snaputil.removeSnap(snap_name).then(function(res) {
-                expect(res).to.match(re_removed, res);
-            });
+            return snaputil.removeSnap(snap_name);
         });
         browser.refresh();
         //Confirm that snap doesn't exist on page
@@ -137,7 +131,37 @@ describe('Installed Snaps Page - Verify that', function() {
         snapslist_snapweb.value.forEach(function(snap) {
             expect(snap.getText()).to.not.equal(snap_name);
         });
-
     });
 
+    it('snapweb updates the page when snap is removed from ui buttons', function() {
+        var snap_name = "hello-world";
+        var re_installed = new RegExp(snap_name + ".*installed");
+
+        //Remove the snap in case it is already installed
+        browser.call(function() {
+            return snaputil.removeSnap(snap_name);
+        });
+        browser.refresh();
+
+        //Install the snap and refresh page
+        browser.call(function() {
+            return snaputil.installSnap(snap_name).then(function(res) {
+                expect(res).to.match(re_installed, res);
+            });
+        });
+        browser.refresh();
+
+        //Check if snap installed is now shown on page
+        var snap = snapsPage.snapElement(snap_name);
+        snap.waitForVisible();
+        var removeButton = snapsPage.snapInstallButton(snap_name);
+        assert.isNotNull(removeButton.element('.b-installer_do_remove'));
+        expect(removeButton.element('.b-installer__button').getText()).to.be.string('Remove');
+
+        removeButton.click();
+
+        var installButton = snapsPage.snapInstallButton(snap_name);
+        installButton.element('.b-installer_do_install').waitForVisible();
+        expect(installButton.element('.b-installer__button').getText()).to.be.string('Install');
+    });
 });

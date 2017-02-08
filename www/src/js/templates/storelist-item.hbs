@@ -1,13 +1,15 @@
 <a href="{{ targetSnapUri }}">
 
 <img class="p-card__icon" src="{{ icon }}" width="125" height="125">
-<h3 id="js-snap-title" class="p-card__title">{{ name }} ({{ version }})</h3>
-{{#if developer}}
-  <p class="p-card__content">By {{ developer }}</p>
-{{/if}}
-{{#if price }}
-  <p class="p-card__content">{{ price }}</p>
-{{/if}}
+<h3 id="js-snap-title" class="p-card__title">{{ name }}</h3>
+<ul class="p-list">
+    {{#if version}}
+      <li class="p-list__item">Version: {{ version }}</li>
+    {{/if}}
+    {{#if developer}}
+      <li class="p-list__item">Author: {{ developer }}<li>
+    {{/if}}
+</ul>
 <footer class="p-card__footer">
     <div class="u-float--right">
         {{> installer installerClass="b-installer_small"}}

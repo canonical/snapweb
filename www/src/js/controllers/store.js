@@ -2,87 +2,62 @@ var $ = require('jquery');
 var Backbone = require('backbone');
 Backbone.$ = $;
 var Marionette = require('backbone.marionette');
+var React = require('react');
 var Radio = require('backbone.radio');
 var StoreLayoutView = require('../views/store.js');
-var Sections = require('../collections/sections.js');
 var Snaplist = require('../collections/snaplist.js');
+var Sections = require('../common/sections.js');
 var SnaplistTools = require('../common/snaplists.js');
+
+var fetchSnapList = function(title, options) {
+  var chan = Radio.channel('root');
+  var storeSnaplist = new Snaplist();
+  var sections = [];
+
+  var displayStoreView = function(sections, storeSnapList) {
+    var element = React.createElement(StoreLayoutView, {
+      model: new Backbone.Model({
+        query: '',
+        title: title,
+        isGrid: true,
+        isAlpha: true,
+        canSort: false,
+        canStyle: true,
+        isHomeActive: false,
+        sections: sections
+      }),
+      collection: storeSnaplist
+    });
+    chan.command('set:content', {reactElement: element});
+  }
+
+  var sp = $.Deferred(function(deferred) {
+    Sections.fetch().then(function(response) {
+      sections = response;
+    }).always(deferred.resolve);
+  });
+
+  var ssp = $.Deferred(function(deferred) {
+    storeSnaplist.fetch(options).always(deferred.resolve);
+  });
+
+  $.when(sp, ssp).done(function() {
+    displayStoreView(sections, SnaplistTools.updateInstalledStates(storeSnaplist));
+  });
+}
 
 module.exports = {
   index: function() {
-    var chan = Radio.channel('root');
-    var sections = new Sections();
-    var storeSnaplist = new Snaplist();
-
-    $.when(
-          storeSnaplist.fetch({data: $.param({'featured_only': true})}),
-          sections.fetch()
-        ).then(function() {
-        var view =  new StoreLayoutView({
-          model: new Backbone.Model({
-            query: '',
-            title: 'Featured snaps',
-            isGrid: true,
-            isAlpha: true,
-            canSort: false,
-            canStyle: true,
-            isHomeActive: false,
-            sections: sections
-          }),
-          collection: SnaplistTools.updateInstalledStates(storeSnaplist)
-        });
-
-        chan.command('set:content', view);
-      });
+    fetchSnapList('Featured snaps')
   },
   section: function(s) {
-    var chan = Radio.channel('root');
-    var sections = new Sections();
-    var storeSnaplist = new Snaplist();
-
     // Special case for private section which is not a section
     // per se but a specificity of a snap
     if (s === 'private') {
-      $.when(
-        storeSnaplist.fetch()
-      ).then(function() {
-        var view =  new StoreLayoutView({
-          model: new Backbone.Model({
-            query: '',
-            title: 'Private',
-            isGrid: true,
-            isAlpha: true,
-            canSort: false,
-            canStyle: true,
-            isHomeActive: false,
-            sections: sections
-          }),
-          collection: storeSnaplist.private()
-        });
-
-        chan.command('set:content', view);
-      });
+      fetchSnapList('Private snaps', {data: $.param({'private_snaps': true})})
     }
     else {
-      $.when(
-        storeSnaplist.fetch({data: $.param({'section': s})})
-      ).then(function() {
-        var view =  new StoreLayoutView({
-          model: new Backbone.Model({
-            query: '',
-            title: s,
-            isGrid: true,
-            isAlpha: true,
-            canSort: false,
-            canStyle: true,
-            isHomeActive: false,
-            sections: sections
-          }),
-          collection: storeSnaplist.all()
-        });
-
-        chan.command('set:content', view);
-      });
+      fetchSnapList(s, {data: $.param({'section': s})})
     }
   }
 };

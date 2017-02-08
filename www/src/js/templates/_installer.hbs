@@ -1,15 +1,23 @@
-{{#if isInstallable}}
-  <div class="b-installer {{ installerClass }} {{ installHTMLClass }}">
-    {{#if installActionString}}
-      <button class="b-installer__button {{ buttonClass }} {{ installButtonClass }} p-button--neutral">{{ installActionString }}</button>
-    {{/if}}
+{{#if isCoreSnap}}
+  <div class="b-installer">
+    <button class="p-button--base" disabled></button>
   </div>
 {{else}}
-  <div class="b-installer b-installer_disabled {{ installerClass }} {{ installHTMLClass }}">
-    {{#if isInstalled}}
-      <button class="b-installer__button p-button--positive">Installed</button>
-    {{else}}
-      <button class="b-installer__button p-button--negative" disabled>Not installable</button>
-    {{/if}}
-  </div>
+
+  {{#if isInstallable}}
+    <div class="b-installer {{ installerClass }} {{ installHTMLClass }}">
+      {{#if installActionString}}
+        <button class="b-installer__button {{ buttonClass }} {{ installButtonClass }} p-button--neutral">{{ installActionString }}</button>
+      {{/if}}
+    </div>
+  {{else}}
+    <div class="b-installer b-installer_disabled {{ installerClass }} {{ installHTMLClass }}">
+      {{#if isInstalled}}
+        <button class="b-installer__button p-button--positive">Installed</button>
+      {{else}}
+        <button class="b-installer__button p-button--negative" disabled>Not installable</button>
+      {{/if}}
+    </div>
+  {{/if}}
+
 {{/if}}

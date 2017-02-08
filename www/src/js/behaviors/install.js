@@ -3,6 +3,7 @@ var _ = require('lodash');
 var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
 var CONF = require('../config.js');
+var Snap = require('../common/snaps.js');
 
 module.exports = Marionette.Behavior.extend({
   events: {
@@ -24,13 +25,13 @@ module.exports = Marionette.Behavior.extend({
   onHTMLClassChange: function(model) {
     var installer = this.ui.installer;
     installer.removeClass(model.previous('installHTMLClass'))
-    .addClass(model.get('installHTMLClass'));
+             .addClass(model.get('installHTMLClass'));
   },
 
   onButtonClassChange: function(model) {
     var button = this.ui.installerButton;
     button.removeClass(model.previous('installButtonClass'))
-    .addClass(model.get('installButtonClass'));
+          .addClass(model.get('installButtonClass'));
   },
 
   onStatusChange: function(model) {
@@ -49,34 +50,7 @@ module.exports = Marionette.Behavior.extend({
     }
   },
 
-  onInstallClick: function(e) {
-    e.preventDefault();
-    var model = this.view.model;
-    var status = model.get('status');
-    var isInstallable = model.get('isInstallable');
-
-    if (!isInstallable) {
-      return;
-    }
-
-    if (status === CONF.INSTALL_STATE.INSTALLED) {
-      // remove
-      model.set({
-        status: CONF.INSTALL_STATE.REMOVING
-      });
-      model.destroy({
-        dataType : 'json',
-        silent: true
-      });
-    } else if (status === CONF.INSTALL_STATE.REMOVED) {
-      // install
-      model.save({
-        status: CONF.INSTALL_STATE.INSTALLING
-      }, {
-        dataType : 'json'
-      });
-    } else {
-      e.preventDefault();
-    }
-  }
+  onInstallClick: function(event) {
+    return Snap.handleInstallEvent(event, this.view.model);
+  },
 });
