@@ -6,11 +6,17 @@ snapDetailsPage = require("../pageobjects/snap-details-page.js");
 
 describe('Store Page - Verify that', function() {
 
-    beforeEach(function() {
-        storePage.open();
+    before(function() {
+        // gets a new token and enter snapweb
+        snapsPage.open();
     });
 
-    afterEach(function() {});
+    beforeEach(function() {
+        // start from the home page for each test
+        browser.url('/');
+    });
+
+    after(function() {});
 
     it('front page loads correctly', function() {
         // just opening the storePage in "beforeEach" above does prove it
