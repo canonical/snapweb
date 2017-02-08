@@ -8,12 +8,12 @@ describe('Store Page - Verify that', function() {
 
     before(function() {
         // gets a new token and enter snapweb
-        snapsPage.open();
+        storePage.open();
     });
 
     beforeEach(function() {
         // start from the home page for each test
-        browser.url('/');
+        browser.url('/store');
     });
 
     after(function() {});
