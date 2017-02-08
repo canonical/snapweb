@@ -23,8 +23,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
-	"path/filepath"
 	"strconv"
 
 	"github.com/snapcore/snapweb/snappy/snapdclient"
@@ -80,10 +78,10 @@ func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
 	snapCondition := availableSnaps
 	if r.FormValue("installed_only") == "true" {
 		snapCondition = installedSnaps
-	} else {
-		snapCondition = availableSnaps
 	} else if r.FormValue("updatable_only") == "true" {
 		snapCondition = updatableSnaps
+	} else {
+		snapCondition = availableSnaps
 	}
 
 	privateSnaps := false
@@ -111,11 +109,7 @@ func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) getUpdates(w http.ResponseWriter, r *http.Request) {
-	if SimpleCookieCheckOrRedirect(w, r) != nil {
-		return
-	}
-
-	payload, err := h.allPackages(updatableSnaps, ".")
+	payload, err := h.allPackages(updatableSnaps, ".", true, "")
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(w, "Error: %s", err)
@@ -139,10 +133,6 @@ func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) getHistories(w http.ResponseWriter, r *http.Request) {
-	if SimpleCookieCheckOrRedirect(w, r) != nil {
-		return
-	}
-
 	var numDepth = 100 // XXX: find max history
 
 	depth := mux.Vars(r)["depth"]
@@ -152,7 +142,7 @@ func (h *Handler) getHistories(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	allPs, err := h.allPackages(installedSnaps, ".")
+	allPs, err := h.allPackages(installedSnaps, ".", true, "")
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(w, "Error: %s", err)
@@ -180,10 +170,6 @@ func (h *Handler) getHistories(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) getHistory(w http.ResponseWriter, r *http.Request) {
-	if SimpleCookieCheckOrRedirect(w, r) != nil {
-		return
-	}
-
 	id := mux.Vars(r)["id"]
 
 	payload, err := h.packageHistory(id)
@@ -251,8 +237,7 @@ func (h *Handler) update(w http.ResponseWriter, r *http.Request) {
 
 // MakePackageRouter sets up the handlers multiplexing to handle requests against snappy's
 // packages api
-func (h *Handler) MakePackageRouter(prefix string) http.Handler {
-	var m *mux.Router
+func (h *Handler) MakePackageRouter(prefix string, parentRouter *mux.Router) http.Handler {
 	m := parentRouter.PathPrefix(prefix).Subrouter()
 
 	// Get all of packages.
@@ -278,10 +263,7 @@ func (h *Handler) MakeSnapRouter(prefix string) http.Handler {
 	m.HandleFunc("/", h.getHistories).Methods("GET").Queries("history", "{depth}")
 
 	m.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		if SimpleCookieCheckOrRedirect(w, r) != nil {
-			return
-		}
-		payload, err := h.allPackages(installedSnaps, ".")
+		payload, err := h.allPackages(installedSnaps, ".", false, "")
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			fmt.Fprintf(w, "Error: %s", err)
@@ -295,9 +277,6 @@ func (h *Handler) MakeSnapRouter(prefix string) http.Handler {
 	m.HandleFunc("/{id}/history", h.getHistory).Methods("GET")
 
 	m.HandleFunc("/{id}", func(w http.ResponseWriter, r *http.Request) {
-		if SimpleCookieCheckOrRedirect(w, r) != nil {
-			return
-		}
 		data, err := ioutil.ReadAll(r.Body)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
@@ -324,20 +303,6 @@ func (h *Handler) MakeSnapRouter(prefix string) http.Handler {
 
 	// Remove a package
 	m.HandleFunc("/{id}", h.remove).Methods("DELETE")
-
-	return m
-}
-
-// TODO: refactor this copy from cmd/snapweb
-
-// Name of the cookie transporting the access token
-const (
-	SnapwebCookieName = "SM"
-)
-=======
-	// Update a snap package
-	m.HandleFunc("/{name}", h.update).Methods("POST")
->>>>>>> master:snappy/app/handlers.go
 
 	return m
 }

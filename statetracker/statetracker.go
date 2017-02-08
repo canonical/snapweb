@@ -187,12 +187,16 @@ func (s *StateTracker) TrackDisable(changeID string, snap *client.Snap) {
 }
 
 // TrackRefresh tracks the updating of a snap
-func (s *StatusTracker) TrackRefresh(snap *client.Snap) {
+func (s *StateTracker) TrackRefresh(changeID string, snap *client.Snap) {
 	if !isInstalled(snap) {
 		return
 	}
 
-	s.trackOperation(snap.Name, StatusRefreshing)
+	if tracked, _ := s.IsTrackedForRunningOperation(snap); tracked {
+		return
+	}
+
+	s.trackOperation(changeID, snap.Name, StatusRefreshing)
 }
 
 func (s *StateTracker) trackOperation(changeID, name, operation string) {

@@ -22,7 +22,6 @@ import (
 	"fmt"
 	"net/url"
 	"sort"
-	"strings"
 	"strconv"
 	"time"
 
@@ -121,7 +120,6 @@ func (h *Handler) packagePayload(name string) (snapPkg, error) {
 	return h.snapToPayload(snap), nil
 }
 
-<<<<<<< HEAD:snappy/converge.go
 type snapHistoryInfo struct {
 	Path    string
 	ModTime time.Time
@@ -185,7 +183,7 @@ func (h *Handler) packageHistory(id string) ([]snapPkg, error) {
 			Version:       mi.Version,
 			Description:   mi.Description,
 			Icon:          snap.Icon,
-			Status:        snap.Status,
+			State:         snap.State,
 			Price:         snap.Price,
 			Progress:      snap.Progress,
 			InstalledSize: snap.InstalledSize,
@@ -197,22 +195,15 @@ func (h *Handler) packageHistory(id string) ([]snapPkg, error) {
 	return history, nil
 }
 
-func (h *Handler) allPackages(snapCondition int, query string) ([]snapPkg, error) {
-=======
 func (h *Handler) allPackages(snapCondition int, query string, private bool, section string) ([]snapPkg, error) {
->>>>>>> master:snappy/app/converge.go
 	var snaps []*client.Snap
 	var err error
 
 	if snapCondition == installedSnaps {
-<<<<<<< HEAD:snappy/converge.go
-		snaps, err = h.snapdClient.List(nil)
+		snaps, err = h.snapdClient.List(nil, nil)
 	} else if snapCondition == updatableSnaps {
 		opts := &client.FindOptions{Refresh: true}
 		snaps, _, err = h.snapdClient.Find(opts)
-=======
-		snaps, err = h.snapdClient.List(nil, nil)
->>>>>>> master:snappy/app/converge.go
 	} else {
 		opts := &client.FindOptions{
 			Query:   url.QueryEscape(query),
@@ -245,9 +236,11 @@ func (h *Handler) refreshPackage(name string) error {
 		return err
 	}
 
-	h.statusTracker.TrackRefresh(snap)
+	var changeID string
+	changeID, err = h.snapdClient.Refresh(name, nil)
 
-	_, err = h.snapdClient.Refresh(name, nil)
+	h.stateTracker.TrackRefresh(changeID, snap)
+
 	return err
 }
 

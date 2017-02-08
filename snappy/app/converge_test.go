@@ -217,18 +217,18 @@ func (s *AllPackagesSuite) TestHasSnaps(c *C) {
 func (s *AllPackagesSuite) TestNoUpdatableSnaps(c *C) {
 	s.c.StoreErr = errors.New("No updates available")
 
-	snaps, err := s.h.allPackages(updatableSnaps, "")
+	snaps, err := s.h.allPackages(updatableSnaps, "", false, "")
 	c.Assert(snaps, IsNil)
 	c.Assert(err, NotNil)
 }
 
 func (s *AllPackagesSuite) TestUpdatableSnaps(c *C) {
 	s.c.UpdatableSnaps = []*client.Snap{
-		newSnap("app2"),
-		newSnap("app1"),
+		common.NewSnap("app2"),
+		common.NewSnap("app1"),
 	}
 
-	snaps, err := s.h.allPackages(updatableSnaps, "")
+	snaps, err := s.h.allPackages(updatableSnaps, "", false, "")
 	c.Assert(err, IsNil)
 	c.Assert(snaps, HasLen, 2)
 	c.Assert(snaps[0].Name, Equals, "app1")

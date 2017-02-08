@@ -33,7 +33,8 @@ func makeAPIHandler(apiRootPath string) http.Handler {
 	var apiPath = path.Join(apiRootPath, apiVersion)
 
 	router := mux.NewRouter().PathPrefix(apiPath).Subrouter()
-	router.Handle("/packages/", snappy.NewHandler().MakeMuxer("/packages", router))
+	router.Handle("/packages/", snappy.NewHandler().MakePackageRouter("/packages", router))
+	router.Handle("/snaps/", snappy.NewHandler().MakeSnapRouter("/api/v2/snaps"))
 	router.HandleFunc("/validate-token", validateToken)
 	router.HandleFunc("/sections", handleSections)
 	router.HandleFunc("/time-info", handleTimeInfo)
