@@ -10,7 +10,7 @@ set -ev
 dpkg --add-architecture i386
 apt update
 apt install -y bzr gcc-5-multilib gcc-5-aarch64-linux-gnu gcc-5-arm-linux-gnueabihf gcc-aarch64-linux-gnu gcc-arm-linux-gnueabihf git golang-go libc6-dev:i386 nodejs-legacy wget apt-transport-https npm
-apt update
+apt upgrade -y
 # copy node_modules cached in the docker image to speed things up and avoid ECONNRESET errors from npm
 if [ -d /build ]; then
   cp -a /build .
