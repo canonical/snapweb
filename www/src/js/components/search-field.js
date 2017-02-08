@@ -1,15 +1,15 @@
-/** @jsx React.DOM */
 
-var React = require('react');
+import React from 'react';
 
-module.exports = React.createClass({
-  getInitialState: function() {
-    return {
+class SearchField extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
       query: this.props.query
-    }
-  },
+    };
+  }
 
-  render: function() {
+  render() {
     return (
       <div className="col-11">
         <form action="/search" className="p-search">
@@ -19,7 +19,7 @@ module.exports = React.createClass({
             maxLength="255"
             name="q"
             value={this.state.query}
-            onChange={function(event){ this.setState({query: event.target.value})}.bind(this)}
+            onChange={(event) => this.setState({query: event.target.value})}
           />
           <button type="submit" className="p-search__btn">
             <svg
@@ -35,5 +35,6 @@ module.exports = React.createClass({
       </div>
     );
   }
-})
+}
 
+module.exports = SearchField;
