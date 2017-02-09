@@ -61,7 +61,7 @@
     "karma-phantomjs-shim": "^1.4.0",
     "node-sass": "^4.1.1",
     "node-ssh": "^4.0.1",
-    "phantomjs-prebuilt": "^2.1.8",
+    "phantomjs-prebuilt": "^2.1.13",
     "postcss-bem-linter": "^0.6.0",
     "reactify": "^1.1.1",
     "ssh2": "^0.5.4",
