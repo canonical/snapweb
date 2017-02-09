@@ -14,15 +14,15 @@
     <div class="row">
       <div class="col-7"></div>
 
-      <div class="col-2 u-float--right">
+      <div id="enabler-button" class="col-2" style="display: {{#if isInstalled}}block{{else}}none{{/if}}">
         {{> enabler}}
       </div>
 
-      <div class="col-2 u-float--right">
+      <div id="installer-button" class="{{#if isInstalled}}col-2{{else}}col-5{{/if}}">
         {{> installer}}
 
-        <div id="progressbarwrapper" style="margin-top: 1em; width: 100%; height: 0.5em">
-          <div id="progress" style="background-color: green; width: {{ download_progress }}%; height: 0.5em">
+        <div id="progressbarwrapper" style="border: 1px; border-radius: 10px; margin-top: 1em; width: 100%; height: 0.5em">
+          <div id="progress" style="background-color: #003399; width: {{ download_progress }}%; height: 0.5em">
           </div>
         </div>
 
