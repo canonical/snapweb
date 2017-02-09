@@ -1,0 +1,3 @@
+[submodule "www/libs/branded-store"]
+	path = www/libs/branded-store
+	url = https://github.com/ubuntudesign/branded-store.git
