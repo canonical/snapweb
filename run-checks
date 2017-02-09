@@ -104,7 +104,7 @@ if [ ! -z "$STATIC_GO" ]; then
 fi
 
 if [ ! -z "$STATIC_JS" ]; then
-    [ $SKIP_NPM_INSTALL = "no" ] && npm install
+    [ $SKIP_NPM_INSTALL = "no" ] && yarn install
     npm run js:lint
 fi
 
@@ -129,7 +129,7 @@ if [ ! -z "$UNIT_JS" ]; then
     # www
     if [ $SKIP_NPM_INSTALL = "no" ]; then
         echo Obtaining npm dependencies
-        npm install --loglevel error
+        yarn install
     fi
 
     rm -rf .coverage-js
