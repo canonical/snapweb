@@ -14,6 +14,7 @@ describe('Store Page - Verify that', function() {
     beforeEach(function() {
         // start from the home page for each test
         browser.url('/store');
+        browser.waitForVisible('.p-search__field');
     });
 
     after(function() {});
@@ -62,7 +63,7 @@ describe('Store Page - Verify that', function() {
         browser.waitForVisible(storePage.exactSnapMatchSelector);
         var s = storePage.exactMatch.element('.p-card__icon');
         s.click();
-        browser.waitForVisible(snapDetailsPage.snapTitleElement);
+        browser.waitForVisible(snapDetailsPage.snapDetailListElements);
         assert.isNotNull(snapDetailsPage.snap.value, "Snap details not found");
         assert.isNull(snapDetailsPage.snapDetail(4).value, "Snap has an update date");
     });

@@ -14,6 +14,7 @@ describe('Installed Snaps Page - Verify that', function() {
     beforeEach(function() {
         // start from the home page for each test
         browser.url('/');
+        snapsPage.installedsnaps.waitForVisible();
     });
 
     after(function() {});

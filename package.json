@@ -60,8 +60,7 @@
     "karma-phantomjs-launcher": "~0.1.4",
     "karma-phantomjs-shim": "^1.4.0",
     "node-sass": "^4.1.1",
-    "node-ssh": "^3.0.1",
-    "optipng-bin": "3.0.1",
+    "node-ssh": "^4.0.1",
     "phantomjs-prebuilt": "^2.1.8",
     "postcss-bem-linter": "^0.6.0",
     "reactify": "^1.1.1",
@@ -69,8 +68,8 @@
     "vinyl-buffer": "~1.0.0",
     "vinyl-source-stream": "~1.1.0",
     "watchify": "~3.1.2",
-    "wdio-junit-reporter": "^0.1.0",
+    "wdio-junit-reporter": "^0.2.0",
     "wdio-mocha-framework": "^0.5.8",
-    "webdriverio": "^4.6.1"
+    "webdriverio": "^4.6.2"
   }
 }
