@@ -17,7 +17,6 @@ var sourcemaps = require('gulp-sourcemaps');
 var source = require('vinyl-source-stream');
 var uglify = require('gulp-uglify');
 var watchify = require('watchify');
-var reactify = require('reactify');
 
 gulp.task('js:build', ['js:clean', 'js:lint'], function() {
   return createBundler();
@@ -34,7 +33,7 @@ function createBundler(watch) {
   });
   bundler.transform('hbsfy');
   bundler.transform({global: true}, 'aliasify');
-  bundler.transform('reactify');
+  bundler.transform('babelify', {presets: ["es2015", "react"]});
 
   if (watch) {
     bundler = watchify(bundler);
