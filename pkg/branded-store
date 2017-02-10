@@ -20,7 +20,7 @@ case $SNAP_ARCH in
         ;;
 esac
 
-exec $SNAP/bin/$plat_abi/snapweb
+exec $SNAP/bin/$plat_abi/branded-store
 
 # never reach this
 exit 1

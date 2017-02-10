@@ -239,13 +239,13 @@ func initURLHandlers(log *log.Logger) {
 	http.Handle("/api/", makeAPIHandler("/api/"))
 
 	// Snap common resources
-	http.Handle("/static/snapcommon/",
-		http.StripPrefix("/static/snapcommon/",
+	http.Handle("/snapcommon/",
+		http.StripPrefix("/snapcommon/",
 			http.FileServer(
 				http.Dir(os.Getenv("SNAP_COMMON")))))
 
 	// Resources
-	http.Handle("/public/", loggingHandler(http.FileServer(http.Dir(filepath.Join(os.Getenv("SNAP"), "www")))))
+	http.Handle("/store/", loggingHandler(http.StripPrefix("/store/", http.FileServer(http.Dir(filepath.Join(os.Getenv("SNAP"), "www"))))))
 
 	if iconDir, relativePath, err := snappy.IconDir(); err == nil {
 		http.Handle(fmt.Sprintf("/%s/", relativePath), loggingHandler(http.FileServer(http.Dir(filepath.Join(iconDir, "..")))))
@@ -253,7 +253,10 @@ func initURLHandlers(log *log.Logger) {
 		log.Println("Issues while getting icon dir:", err)
 	}
 
-	http.HandleFunc("/", makeMainPageHandler())
+/*	func(w http.ResponseWriter, r *http.Request) {
+		r.URL.Path = '/public/index.html'
+		http.(w, r, "/public/index.html")
+	})*/
 }
 
 // Name of the cookie transporting the access token

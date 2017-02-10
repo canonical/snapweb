@@ -30,8 +30,8 @@ import (
 var logger *log.Logger
 
 const (
-	httpAddr  string = ":4200"
-	httpsAddr string = ":4201"
+	httpAddr  string = ":5200"
+	httpsAddr string = ":5201"
 )
 
 func init() {
@@ -62,7 +62,7 @@ func main() {
 		}
 	}()
 
-	// open a plain HTTP end-point on the "usual" 4200 port, and redirect to HTTPS
+	// open a plain HTTP end-point on the "usual" 5200 port, and redirect to HTTPS
 	if err := http.ListenAndServe(httpAddr, http.HandlerFunc(redir)); err != nil {
 		logger.Fatalf("ListenAndServe failed with: %v", err)
 	}

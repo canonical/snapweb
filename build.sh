@@ -55,7 +55,7 @@ gobuild() {
 
     mkdir -p $output_dir
     cd $output_dir
-    GOARCH=$arch GOARM=7 CGO_ENABLED=1 CC=${plat_abi}-gcc go build -ldflags "-extld=${plat_abi}-gcc" github.com/snapcore/snapweb/cmd/snapweb
+    GOARCH=$arch GOARM=7 CGO_ENABLED=1 CC=${plat_abi}-gcc go build -o branded-store -ldflags "-extld=${plat_abi}-gcc" github.com/snapcore/snapweb/cmd/snapweb
     GOARCH=$arch GOARM=7 CGO_ENABLED=1 CC=${plat_abi}-gcc go build -o generate-token -ldflags "-extld=${plat_abi}-gcc" $srcdir/cmd/generate-token/main.go
     cp generate-token ../../
     cd - > /dev/null
@@ -66,8 +66,10 @@ echo "Building web assets with gulp..."
 
 orig_pwd="$(pwd)"
 
-top_builddir="$(mktemp -d)"
-trap 'rm -rf "$top_builddir"' EXIT
+top_builddir=$orig_pwd/build
+
+# "$(mktemp -d)"
+#trap 'rm -rf "$top_builddir"' EXIT
 
 echo Obtaining go dependencies
 go get launchpad.net/godeps
@@ -78,7 +80,7 @@ pushd $orig_pwd
 cd $orig_pwd/www/libs/branded-store
 npm run build
 popd
-branded_store_public=$orig_pwd/www/libs/branded-store/public
+branded_store_build_www=$orig_pwd/www/libs/branded-store/build
 
 # build one snap per arch
 for ARCH in "${architectures[@]}"; do
@@ -86,10 +88,12 @@ for ARCH in "${architectures[@]}"; do
     builddir="${top_builddir}/${ARCH}"
     mkdir -p "$builddir"
 
+    echo "Top build dir ${builddir}"
+
     srcdir=`pwd`
     cp -r pkg/. ${builddir}/
     mkdir $builddir/www
-    cp -r $branded_store_public $builddir/www
+    cp -r $branded_store_build_www/* $builddir/www
     cd $builddir
 
     sed -i "s/\(architectures: \)UNKNOWN_ARCH/\1[$ARCH]/" \

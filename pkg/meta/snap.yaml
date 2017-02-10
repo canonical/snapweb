@@ -1,8 +1,8 @@
-name: snapweb
-version: "0.25"
-summary: Beautiful and functional interface for snap management
+name: branded-store
+version: "0.1"
+summary: Branded store for snaps
 description: |
-  This service allows you to manage your Ubuntu Core device from a web interface or REST API.
+  Branded store for snaps.
 
   Features include:
 
@@ -15,7 +15,7 @@ architectures: UNKNOWN_ARCH
 apps:
   snapweb:
     daemon: simple
-    command: snapweb
+    command: branded-store
     plugs: [network, network-bind, snapd-control, timeserver-control, timezone-control]
   generate-token:
     command: generate-token
