@@ -62,7 +62,7 @@ gobuild() {
 }
 
 echo "Building web assets with gulp..."
-npm run build
+#npm run build
 
 orig_pwd="$(pwd)"
 
@@ -73,6 +73,13 @@ echo Obtaining go dependencies
 go get launchpad.net/godeps
 godeps -u dependencies.tsv
 
+# build the branded store ui
+pushd $orig_pwd
+cd $orig_pwd/www/libs/branded-store
+npm run build
+popd
+branded_store_public=$orig_pwd/www/libs/branded-store/public
+
 # build one snap per arch
 for ARCH in "${architectures[@]}"; do
     echo "Building for ${ARCH}..."
@@ -82,7 +89,7 @@ for ARCH in "${architectures[@]}"; do
     srcdir=`pwd`
     cp -r pkg/. ${builddir}/
     mkdir $builddir/www
-    cp -r www/public www/templates $builddir/www
+    cp -r $branded_store_public $builddir/www
     cd $builddir
 
     sed -i "s/\(architectures: \)UNKNOWN_ARCH/\1[$ARCH]/" \

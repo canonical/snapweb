@@ -1,5 +1,5 @@
 name: snapweb
-version: "0.24"
+version: "0.25"
 summary: Beautiful and functional interface for snap management
 description: |
   This service allows you to manage your Ubuntu Core device from a web interface or REST API.
@@ -11,6 +11,7 @@ description: |
   - browse the store to install new snappy packages.
 type: app
 architectures: UNKNOWN_ARCH
+
 apps:
   snapweb:
     daemon: simple

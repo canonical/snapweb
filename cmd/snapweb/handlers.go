@@ -238,6 +238,12 @@ func initURLHandlers(log *log.Logger) {
 	// API
 	http.Handle("/api/", makeAPIHandler("/api/"))
 
+	// Snap common resources
+	http.Handle("/static/snapcommon/",
+		http.StripPrefix("/static/snapcommon/",
+			http.FileServer(
+				http.Dir(os.Getenv("SNAP_COMMON")))))
+
 	// Resources
 	http.Handle("/public/", loggingHandler(http.FileServer(http.Dir(filepath.Join(os.Getenv("SNAP"), "www")))))
 
