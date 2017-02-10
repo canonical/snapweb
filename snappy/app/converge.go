@@ -146,7 +146,7 @@ func (h *Handler) removePackage(name string) error {
 
 func (h *Handler) installPackage(name string) error {
 	snap, err := h.getSnap(name)
-	if err != nil {
+	if err != nil || snap == nil {
 		return err
 	}
 
@@ -160,42 +160,16 @@ func (h *Handler) installPackage(name string) error {
 }
 
 func (h *Handler) enable(name string) error {
-	snap, err := h.getSnap(name)
-	if err != nil && snap != nil {
-		return err
-	}
+	_, err := h.snapdClient.Enable(name, nil)
 
-	if snap.Status != statetracker.StatusInstalled {
-		return errors.New("Snap not installed and disabled")
-	}
-
-	var changeID string
-
-	changeID, err = h.snapdClient.Enable(name, nil)
-	if err == nil {
-		h.stateTracker.TrackEnable(changeID, snap)
-	}
-
+	fmt.Println(err.Error())
 	return err
 }
 
 func (h *Handler) disable(name string) error {
-	snap, err := h.getSnap(name)
-	if err != nil && snap != nil {
-		return err
-	}
+	_, err := h.snapdClient.Disable(name, nil)
 
-	if snap.Status != statetracker.StatusActive {
-		return errors.New("Snap not installed and enabled")
-	}
-
-	var changeID string
-
-	changeID, err = h.snapdClient.Disable(name, nil)
-	if err == nil {
-		h.stateTracker.TrackDisable(changeID, snap)
-	}
-
+	fmt.Println(err.Error())
 	return err
 }
 
