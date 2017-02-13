@@ -13,11 +13,12 @@ var SettingsUpdatesView = require('./settings-updates.js');
 var SettingsTimeView = require('./settings-time.js');
 
 var TimeInfo = require('../models/time-info.js');
+var DeviceInfo = require('../models/device-info.js');
 
 module.exports = Backbone.Marionette.LayoutView.extend({
   initialize: function(options) {
     this.timeInfo = options.timeInfo;
-    this.deviceInfo = options.deviceInfo;
+    this.deviceInfoElement = null;
   },
 
   template: function(model) {
@@ -58,10 +59,17 @@ module.exports = Backbone.Marionette.LayoutView.extend({
         return;
       }
       case 'device':
-      default:
-        view = new SettingsDeviceView({
-            model: this.deviceInfo
-          });
+      default: {
+        if (this.deviceInfoElement == null) {
+          var deviceInfo = new DeviceInfo;
+          deviceInfo.fetch();
+          this.deviceInfoElement = React.createElement(SettingsDeviceView, {
+                model: deviceInfo
+              })
+        }
+        ReactDOM.render(this.deviceInfoElement, this.$('.b-settings__content').get(0));
+        return;
+      }
     }
 
     this.showChildView('contentRegion', view);
