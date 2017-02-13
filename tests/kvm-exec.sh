@@ -3,7 +3,7 @@
 FILE_PID=kvm.pid
 FILE_MONITOR=monitor
 PORT_SSH=8022
-IMAGE_BOOTABLE=ubuntu-core-16.img
+IMAGE_BOOTABLE=${IMAGE_BOOTABLE:-ubuntu-core-16.img}
 
 is_vm_running() {
     if [ -e $FILE_PID ] && [ -e $FILE_MONITOR ]; then
