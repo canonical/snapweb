@@ -323,7 +323,7 @@ func makePassthroughHandler(socketPath string, prefix string) http.HandlerFunc {
 
 func loggingHandler(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Println(r.Method, r.URL.Path)
+		log.Println(r.RemoteAddr, r.Method, r.URL.Path)
 		h.ServeHTTP(w, r)
 	})
 }

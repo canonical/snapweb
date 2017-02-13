@@ -25,9 +25,11 @@ import (
 	"strings"
 
 	"github.com/snapcore/snapweb/avahi"
+	"github.com/snapcore/snapweb/cmd/snapweb/netfilter"
 )
 
 var logger *log.Logger
+var filter *netfilter.NetFilter
 
 const (
 	httpAddr  string = ":4200"
@@ -36,6 +38,7 @@ const (
 
 func init() {
 	logger = log.New(os.Stderr, "Snapweb: ", log.Ldate|log.Ltime|log.Lshortfile)
+	filter = netfilter.NewAndAllowByDefault()	
 }
 
 func redir(w http.ResponseWriter, req *http.Request) {
@@ -62,8 +65,13 @@ func main() {
 		}
 	}()
 
+	filteredRedir := filter.FilterHandler(
+		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			redir(w, r)
+		}))
+	
 	// open a plain HTTP end-point on the "usual" 4200 port, and redirect to HTTPS
-	if err := http.ListenAndServe(httpAddr, http.HandlerFunc(redir)); err != nil {
+	if err := http.ListenAndServe(httpAddr, filteredRedir); err != nil {
 		logger.Fatalf("ListenAndServe failed with: %v", err)
 	}
 
