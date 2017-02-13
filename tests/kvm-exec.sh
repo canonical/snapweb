@@ -5,15 +5,6 @@ FILE_MONITOR=monitor
 PORT_SSH=8022
 IMAGE_BOOTABLE=ubuntu-core-16.img
 
-if [ ! -e ${IMAGE_BOOTABLE} ]; then
-	IMAGE_BOOTABLE=${HOME}/.spread/qemu/${IMAGE_BOOTABLE}
-fi
-
-if [ ! -e ${IMAGE_BOOTABLE} ]; then
-    echo "Unable to find a bootable image"
-    exit 1
-fi
-
 is_vm_running() {
     if [ -e $FILE_PID ] && [ -e $FILE_MONITOR ]; then
         return 0
@@ -31,22 +22,25 @@ stop_vm() {
 }
 
 start_vm() {
-  qemu-system-x86_64 \
-    -enable-kvm -snapshot \
-    -m 500 \
-    -net nic -net user,hostfwd=tcp::$PORT_SSH-:22,hostfwd=tcp::4201-:4201 \
-    -drive file=$IMAGE_BOOTABLE,format=raw \
-    -pidfile $FILE_PID \
-    -monitor unix:$FILE_MONITOR,server,nowait \
-    -serial unix:$FILE_MONITOR.serial,server,nowait \
-    -nographic &
+
+    if [ ! -e ${IMAGE_BOOTABLE} ]; then
+	      IMAGE_BOOTABLE=${HOME}/.spread/qemu/${IMAGE_BOOTABLE}
+        if [ ! -e ${IMAGE_BOOTABLE} ]; then
+            echo "Unable to find a bootable image"
+            exit 1
+        fi
+    fi
+
+    qemu-system-x86_64 \
+        -enable-kvm -snapshot \
+        -m 500 \
+        -net nic -net user,hostfwd=tcp::$PORT_SSH-:22,hostfwd=tcp::4201-:4201 \
+        -drive file=$IMAGE_BOOTABLE,format=raw \
+        -pidfile $FILE_PID \
+        -monitor unix:$FILE_MONITOR,server,nowait \
+        -serial unix:$FILE_MONITOR.serial,server,nowait \
+        -nographic &
 }
-
-
-# if [ $(id -u) -ne 0 ]; then
-#    echo "ERROR: needs to be executed as root"
-#    exit 1
-# fi
 
 if [ $# -ne 1 ]; then
     echo "Need exactly one argument to run."
