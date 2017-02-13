@@ -1,0 +1,18 @@
+summary: Verify that webconf will transition to snapweb once done
+execute: |
+    echo "The system should not be managed yet"
+    test `snap managed` = 'false'
+
+    echo "Finish the configuration"
+    snap create-user david.barth@canonical.com
+    printf "GET /done HTTP/1.1\nHost:localhost\nUser-Agent:nc\n\n" | nc localhost 4200
+    
+    # wait a bit
+    sleep 2
+
+    echo "Verifying that snapweb now serves on port 4200"
+    printf "GET / HTTP/1.1\nHost:localhost\nUser-Agent:nc\n\n" | nc localhost 4201
+
+    # echo "The system should be managed now"
+    # test `snap managed` = 'false'
+    
