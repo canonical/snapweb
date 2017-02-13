@@ -33,7 +33,7 @@ import (
 	"text/template"
 
 	// most other handlers use the ClientAdapter for now
-	"github.com/snapcore/snapweb/snappy/app"
+//	"github.com/snapcore/snapweb/snappy/app"
 	"github.com/snapcore/snapweb/snappy/snapdclient"
 )
 
@@ -245,18 +245,9 @@ func initURLHandlers(log *log.Logger) {
 				http.Dir(os.Getenv("SNAP_COMMON")))))
 
 	// Resources
-	http.Handle("/store/", loggingHandler(http.StripPrefix("/store/", http.FileServer(http.Dir(filepath.Join(os.Getenv("SNAP"), "www"))))))
-
-	if iconDir, relativePath, err := snappy.IconDir(); err == nil {
-		http.Handle(fmt.Sprintf("/%s/", relativePath), loggingHandler(http.FileServer(http.Dir(filepath.Join(iconDir, "..")))))
-	} else {
-		log.Println("Issues while getting icon dir:", err)
-	}
-
-/*	func(w http.ResponseWriter, r *http.Request) {
-		r.URL.Path = '/public/index.html'
-		http.(w, r, "/public/index.html")
-	})*/
+	http.Handle(
+		"/",
+		loggingHandler(http.FileServer(http.Dir(filepath.Join(os.Getenv("SNAP"), "www")))))
 }
 
 // Name of the cookie transporting the access token
