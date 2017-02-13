@@ -28,7 +28,7 @@ import (
 var logger *log.Logger
 
 const (
-	httpAddr  string = ":4200"
+	httpAddr string = ":4200"
 )
 
 func init() {

@@ -33,8 +33,13 @@ import (
 	"text/template"
 
 	// most other handlers use the ClientAdapter for now
-//	"github.com/snapcore/snapweb/snappy/app"
+	//	"github.com/snapcore/snapweb/snappy/app"
 	"github.com/snapcore/snapweb/snappy/snapdclient"
+)
+
+const (
+	HomepagePath      = ""
+	BrandSettingsPath = "brand-settings"
 )
 
 type branding struct {
@@ -246,8 +251,8 @@ func initURLHandlers(log *log.Logger) {
 
 	// Resources
 	http.Handle(
-		"/",
-		loggingHandler(http.FileServer(http.Dir(filepath.Join(os.Getenv("SNAP"), "www")))))
+		fmt.Sprintf("/%s", HomepagePath),
+		loggingHandler(brandSettingsHandler(http.FileServer(http.Dir(filepath.Join(os.Getenv("SNAP"), "www"))))))
 }
 
 // Name of the cookie transporting the access token
@@ -318,6 +323,29 @@ func makePassthroughHandler(socketPath string, prefix string) http.HandlerFunc {
 
 		io.Copy(w, resp.Body)
 
+	})
+}
+
+func brandSettingsHandler(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println(r.URL.Path)
+		brandedSettingsHttpPath :=
+			strings.Join([]string{HomepagePath, BrandSettingsPath}, "/") + "/"
+		if strings.HasPrefix(
+			r.URL.Path,
+			brandedSettingsHttpPath) {
+			// branded request
+			brandedSettingsCommonPath :=
+				filepath.Join(os.Getenv("SNAP_COMMON"), BrandSettingsPath)
+			if _, err := os.Stat(brandedSettingsCommonPath); err == nil {
+				brandServer := http.StripPrefix(
+					"/brand-settings/",
+					http.FileServer(http.Dir(brandedSettingsCommonPath)))
+				brandServer.ServeHTTP(w, r)
+				return
+			}
+		}
+		h.ServeHTTP(w, r)
 	})
 }
 
