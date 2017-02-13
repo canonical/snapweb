@@ -21,8 +21,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"path/filepath"
-	"strings"
 
 	"github.com/snapcore/snapweb/avahi"
 )
@@ -30,18 +28,11 @@ import (
 var logger *log.Logger
 
 const (
-	httpAddr  string = ":5200"
-	httpsAddr string = ":5201"
+	httpAddr  string = ":4200"
 )
 
 func init() {
 	logger = log.New(os.Stderr, "Snapweb: ", log.Ldate|log.Ltime|log.Lshortfile)
-}
-
-func redir(w http.ResponseWriter, req *http.Request) {
-	http.Redirect(w, req,
-		"https://"+strings.Replace(req.Host, httpAddr, httpsAddr, -1),
-		http.StatusMovedPermanently)
 }
 
 func main() {
@@ -53,17 +44,7 @@ func main() {
 
 	logger.Println("Snapweb starting...")
 
-	// run the main service over HTTPS
-	go func() {
-		certFile := filepath.Join(os.Getenv("SNAP_DATA"), "cert.pem")
-		keyFile := filepath.Join(os.Getenv("SNAP_DATA"), "key.pem")
-		if err := http.ListenAndServeTLS(httpsAddr, certFile, keyFile, nil); err != nil {
-			logger.Fatalf("http.ListendAndServerTLS() failed with %v", err)
-		}
-	}()
-
-	// open a plain HTTP end-point on the "usual" 5200 port, and redirect to HTTPS
-	if err := http.ListenAndServe(httpAddr, http.HandlerFunc(redir)); err != nil {
+	if err := http.ListenAndServe(httpAddr, nil); err != nil {
 		logger.Fatalf("ListenAndServe failed with: %v", err)
 	}
 

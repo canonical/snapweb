@@ -69,7 +69,7 @@ orig_pwd="$(pwd)"
 top_builddir=$orig_pwd/build
 
 # "$(mktemp -d)"
-#trap 'rm -rf "$top_builddir"' EXIT
+trap 'rm -rf "$top_builddir"' EXIT
 
 echo Obtaining go dependencies
 go get launchpad.net/godeps
