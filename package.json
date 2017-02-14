@@ -69,7 +69,7 @@
     "vinyl-source-stream": "~1.1.0",
     "watchify": "~3.1.2",
     "wdio-junit-reporter": "^0.1.0",
-    "wdio-mocha-framework": "^0.5.4",
-    "webdriverio": "^4.4.0"
+    "wdio-mocha-framework": "^0.5.8",
+    "webdriverio": "^4.6.1"
   }
 }
