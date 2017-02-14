@@ -21,6 +21,8 @@ SKIP_NPM_INSTALL="no"
 # common npm/yarn install process, to avoid repeating the same workarounds
 npm_install()
 {
+    [ $SKIP_NPM_INSTALL = "yes" ] && return
+    echo Obtaining npm dependencies
     set +e
     yarn install
     set -e
@@ -120,7 +122,7 @@ if [ ! -z "$STATIC_GO" ]; then
 fi
 
 if [ ! -z "$STATIC_JS" ]; then
-    [ $SKIP_NPM_INSTALL = "no" ] && npm_install
+    npm_install
     npm run js:lint
 fi
 
@@ -142,10 +144,7 @@ if [ ! -z "$UNIT_GO" ]; then
 fi
 
 if [ ! -z "$UNIT_JS" ]; then
-    if [ $SKIP_NPM_INSTALL = "no" ]; then
-        echo Obtaining npm dependencies
-        npm_install
-    fi
+    npm_install
     rm -rf .coverage-js
 
     # js unit tests
