@@ -40,6 +40,7 @@
     "gulp": "~3.9.1",
     "gulp-concat": "~2.5.2",
     "gulp-csso": "~1.0.0",
+    "gulp-imagemin": "~2.2.1",
     "gulp-jscs": "~4.0.0",
     "gulp-jshint": "~1.9.4",
     "gulp-postcss": "^5.1.6",
@@ -60,16 +61,15 @@
     "karma-phantomjs-launcher": "~0.1.4",
     "karma-phantomjs-shim": "^1.4.0",
     "node-sass": "^4.1.1",
-    "node-ssh": "^4.0.1",
-    "phantomjs-prebuilt": "^2.1.13",
+    "node-ssh": "^3.0.1",
+    "optipng-bin": "3.0.1",
     "postcss-bem-linter": "^0.6.0",
-    "reactify": "^1.1.1",
     "ssh2": "^0.5.4",
     "vinyl-buffer": "~1.0.0",
     "vinyl-source-stream": "~1.1.0",
     "watchify": "~3.1.2",
-    "wdio-junit-reporter": "^0.2.0",
-    "wdio-mocha-framework": "^0.5.8",
-    "webdriverio": "^4.6.2"
+    "wdio-junit-reporter": "^0.1.0",
+    "wdio-mocha-framework": "^0.5.4",
+    "webdriverio": "^4.4.0"
   }
 }
