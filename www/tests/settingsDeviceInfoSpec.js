@@ -101,7 +101,7 @@ describe('SettingsDeviceView', function() {
 
       expect(confirmationDialog.css("display")).toBe("block");
       expect(this.view.$el.find('div[class=p-confirmation__dialog__message]').text()).
-              toBe("Your device will be restarted immediately");
+              toBe("Are you sure you want to restart the device?");
       expect(confirmButton.text()).toBe("Restart");
     });
 
@@ -145,8 +145,8 @@ describe('SettingsDeviceView', function() {
 
       expect(confirmationDialog.css("display")).toBe("block");
       expect(this.view.$el.find('div[class=p-confirmation__dialog__message]').text()).
-              toBe("Choosing to power off will disconnect" +
-                   " from snapweb instantly. Do you want to proceed");
+              toBe("Choosing to power off will disconnect from snapweb instantly." +
+                    "Do you want to proceed?");
       expect(confirmButton.text()).toBe("Power off");
     });
 

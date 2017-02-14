@@ -6,10 +6,14 @@ Backbone.$ = $;
 var Marionette = require('backbone.marionette');
 var Handlebars = require('hbsfy/runtime');
 var InstallBehavior = require('../behaviors/install.js');
+var EnableBehavior = require('../behaviors/enabler.js');
 var template = require('../templates/snap-layout.hbs');
 var CONF = require('../config.js');
 
+// Handles the install/remove button
 Handlebars.registerPartial('installer', require('../templates/_installer.hbs'));
+// Handles the enable/disable button
+Handlebars.registerPartial('enabler', require('../templates/_enabler.hbs'));
 
 var SnapInterfaceListItemView = Marionette.ItemView.extend({
   tagName: 'li',
@@ -54,6 +58,9 @@ module.exports = Marionette.LayoutView.extend({
   behaviors: {
     InstallBehavior: {
       behaviorClass: InstallBehavior
+    },
+    EnableBehavior: {
+      behaviorClass: EnableBehavior
     }
   },
 
