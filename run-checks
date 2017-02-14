@@ -12,38 +12,47 @@ STATIC_GO=""
 STATIC_JS=""
 UNIT_GO=""
 UNIT_JS=""
+SKIP_NPM_INSTALL="no"
 
-case "${1:-all}" in
-    all)
-        STATIC_GO="yes"
-        STATIC_JS="yes"
-        UNIT_GO="yes"
-        UNIT_JS="yes"
-        ;;
-    --static)
-        STATIC_GO="yes"
-        STATIC_JS="yes"
-        ;;
-    --static-go)
-        STATIC_GO="yes"
-        ;;
-    --static-js)
-        STATIC_JS="yes"
-        ;;
-    --unit)
-        UNIT_GO="yes"
-        UNIT_JS="yes"
-        ;;
-    --unit-go)
-        UNIT_GO="yes"
-        ;;
-    --unit-js)
-        UNIT_JS="yes"
-        ;;
-    *)
-        echo "Wrong flag ${1}. To run a single suite use --static, --static-go, --static-js, --unit, --unit-go or --unit-js."
-        exit 1
-esac
+[ "$#" -eq 0 ] && args="--all" || args="$@"
+[ "$args" = "--skip-npm-install" ] && args="--all --skip-npm-install"
+
+for arg in $args; do
+    case "$arg" in
+        --all)
+            STATIC_GO="yes"
+            STATIC_JS="yes"
+            UNIT_GO="yes"
+            UNIT_JS="yes"
+            ;;
+        --static)
+            STATIC_GO="yes"
+            STATIC_JS="yes"
+            ;;
+        --static-go)
+            STATIC_GO="yes"
+            ;;
+        --static-js)
+            STATIC_JS="yes"
+            ;;
+        --unit)
+            UNIT_GO="yes"
+            UNIT_JS="yes"
+            ;;
+        --unit-go)
+            UNIT_GO="yes"
+            ;;
+        --unit-js)
+            UNIT_JS="yes"
+            ;;
+        --skip-npm-install)
+            SKIP_NPM_INSTALL="yes"
+            ;;
+        *)
+            echo "Wrong flag ${1}. To run a single suite use --static, --static-go, --static-js, --unit, --unit-go, --unit-js or --all to run all tests."
+            exit 1
+    esac
+done
 
 # Append the coverage profile of a package to the project coverage.
 append_go_coverage() {
@@ -95,7 +104,7 @@ if [ ! -z "$STATIC_GO" ]; then
 fi
 
 if [ ! -z "$STATIC_JS" ]; then
-    npm install
+    [ $SKIP_NPM_INSTALL = "no" ] && npm install
     npm run js:lint
 fi
 
@@ -118,8 +127,10 @@ fi
 
 if [ ! -z "$UNIT_JS" ]; then
     # www
-    echo Obtaining npm dependencies
-    npm install --loglevel error
+    if [ $SKIP_NPM_INSTALL = "no" ]; then
+        echo Obtaining npm dependencies
+        npm install --loglevel error
+    fi
 
     rm -rf .coverage-js
 
@@ -131,4 +142,4 @@ if [ ! -z "$UNIT_JS" ]; then
 
 fi
 
-echo "All good, what could possibly go wrong"
+echo "\nAll good, what could possibly go wrong"
