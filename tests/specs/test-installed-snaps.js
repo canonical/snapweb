@@ -17,9 +17,6 @@ describe('Installed Snaps Page - Verify that', function() {
         snapsPage.installedsnaps.waitForVisible();
     });
 
-    after(function() {});
-
-
     it('page loads correctly', function() {
 
         title = browser.getTitle();

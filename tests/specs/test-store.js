@@ -17,8 +17,6 @@ describe('Store Page - Verify that', function() {
         browser.waitForVisible('.p-search__field');
     });
 
-    after(function() {});
-
     it('front page loads correctly', function() {
         // just opening the storePage in "beforeEach" above does prove it
         assert(true);
