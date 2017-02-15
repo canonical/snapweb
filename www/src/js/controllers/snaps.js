@@ -22,7 +22,7 @@ var collectionFromInterfaces = function(interfaces) {
 
 var byteSizeToString = function(s) {
   var suffixes = ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB'];
-  for (i in suffixes) {
+  for (var i in suffixes) {
     if (s < 1000) {
       return s.toFixed(2) + suffixes[i];
     }
