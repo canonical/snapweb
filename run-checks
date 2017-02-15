@@ -70,6 +70,13 @@ append_go_coverage() {
     fi
 }
 
+<<<<<<< 971c1ef288302ac7e8707cc5f01e2a6b5bae014e
+=======
+if [ ! -z "$STATIC_GO" ] || [ ! -z "$UNIT_GO" ]; then
+    sh ./get-go-deps.sh
+fi
+
+>>>>>>> simplify run-checks by offloading all the npm setup to a travis-specifc script
 if [ ! -z "$STATIC_GO" ]; then
     # Run go static tests.
 
