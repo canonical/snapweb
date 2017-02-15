@@ -30,7 +30,7 @@ npm_install()
     npm install phantomjs-prebuilt
     export PHANTOMJS_BIN=`pwd`/node_modules/.bin/phantomjs
     # third time to fix other postinstall woes (i'm looking at you sass...)
-    npm install
+    npm install gulp-sass
 }
 
 for arg in $args; do
