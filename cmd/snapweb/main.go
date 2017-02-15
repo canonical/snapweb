@@ -41,7 +41,7 @@ func init() {
 func redir(w http.ResponseWriter, req *http.Request) {
 	http.Redirect(w, req,
 		"https://"+strings.Replace(req.Host, httpAddr, httpsAddr, -1),
-		http.StatusMovedPermanently)
+		http.StatusSeeOther)
 }
 
 func main() {
