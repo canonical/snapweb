@@ -80,7 +80,7 @@ for ARCH in "${architectures[@]}"; do
     mkdir -p "$builddir"
 
     srcdir=`pwd`
-    cp -r pkg/. ${builddir}/
+    cp -r pkg/. booth-demo-manager.def ${builddir}/
     mkdir $builddir/www
     cp -r www/public www/templates $builddir/www
     cd $builddir

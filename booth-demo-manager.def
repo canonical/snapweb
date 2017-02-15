@@ -1,0 +1,4 @@
+snapweb:
+  description: "Snap web store"
+  image: www/public/images/store.svg
+  url: http://localhost:4200
