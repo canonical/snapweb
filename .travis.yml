@@ -27,6 +27,7 @@ before_install:
 
 install:
   - ./scripts/npm-install.sh
+  - ./scripts/get-go-deps.sh
 
 script:
   - if [ -z "$BUILD" ]; then sh -v ./run-checks $TEST_SUITE; fi
