@@ -124,7 +124,6 @@ if [ ! -z "$STATIC_GO" ]; then
 fi
 
 if [ ! -z "$STATIC_JS" ]; then
-    npm_install
     npm run js:lint
 fi
 
