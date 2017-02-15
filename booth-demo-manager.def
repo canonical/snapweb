@@ -1,3 +1,4 @@
+# See https://launchpad.net/booth-demo-manager/
 snapweb:
   description: "Snap web store"
   image: www/public/images/store.svg
