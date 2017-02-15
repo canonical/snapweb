@@ -6,12 +6,16 @@ snapsPage = require("../pageobjects/installed-snaps-page.js");
 
 describe('Installed Snaps Page - Verify that', function() {
 
-    beforeEach(function() {
+    before(function() {
+        // gets a new token and enter snapweb
         snapsPage.open();
     });
 
-    afterEach(function() {});
-
+    beforeEach(function() {
+        // start from the home page for each test
+        browser.url('/');
+        snapsPage.installedsnaps.waitForVisible();
+    });
 
     it('page loads correctly', function() {
 
@@ -153,6 +157,7 @@ describe('Installed Snaps Page - Verify that', function() {
 
         //Check if snap installed is now shown on page
         var snap = snapsPage.snapElement(snap_name);
+
         snap.waitForVisible();
         var removeButton = snapsPage.snapInstallButton(snap_name);
         assert.isNotNull(removeButton.element('.b-installer_do_remove'));
