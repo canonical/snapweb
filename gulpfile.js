@@ -9,7 +9,6 @@ var csso = require('gulp-csso');
 var del = require('del');
 var gulp = require('gulp');
 var gutil = require('gulp-util');
-var imagemin = require('gulp-imagemin');
 var jscs = require('gulp-jscs');
 var jshint = require('gulp-jshint');
 var sass = require('gulp-sass');
@@ -98,7 +97,6 @@ gulp.task('styles:clean', function(cb) {
 
 gulp.task('images', ['images:clean'], function() {
   gulp.src(['www/src/images/**/*'])
-  .pipe(process.env.NODE_ENV === 'development'? gutil.noop() : imagemin())
   .pipe(gulp.dest('www/public/images'));
 });
 

@@ -12,38 +12,63 @@ STATIC_GO=""
 STATIC_JS=""
 UNIT_GO=""
 UNIT_JS=""
+SKIP_NPM_INSTALL="no"
 
-case "${1:-all}" in
-    all)
-        STATIC_GO="yes"
-        STATIC_JS="yes"
-        UNIT_GO="yes"
-        UNIT_JS="yes"
-        ;;
-    --static)
-        STATIC_GO="yes"
-        STATIC_JS="yes"
-        ;;
-    --static-go)
-        STATIC_GO="yes"
-        ;;
-    --static-js)
-        STATIC_JS="yes"
-        ;;
-    --unit)
-        UNIT_GO="yes"
-        UNIT_JS="yes"
-        ;;
-    --unit-go)
-        UNIT_GO="yes"
-        ;;
-    --unit-js)
-        UNIT_JS="yes"
-        ;;
-    *)
-        echo "Wrong flag ${1}. To run a single suite use --static, --static-go, --static-js, --unit, --unit-go or --unit-js."
-        exit 1
-esac
+[ "$#" -eq 0 ] && args="--all" || args="$@"
+[ "$args" = "--skip-npm-install" ] && args="--all --skip-npm-install"
+
+
+# common npm/yarn install process, to avoid repeating the same workarounds
+npm_install()
+{
+    [ $SKIP_NPM_INSTALL = "yes" ] && return
+    echo Obtaining npm dependencies
+    set +e
+    yarn install
+    set -e
+    # twice, to cope with phantomjs postinstall issue
+    npm install phantomjs-prebuilt
+    export PHANTOMJS_BIN=`pwd`/node_modules/.bin/phantomjs
+    # third time to fix other postinstall woes
+    npm rebuild node-sass
+}
+
+for arg in $args; do
+    case "$arg" in
+        --all)
+            STATIC_GO="yes"
+            STATIC_JS="yes"
+            UNIT_GO="yes"
+            UNIT_JS="yes"
+            ;;
+        --static)
+            STATIC_GO="yes"
+            STATIC_JS="yes"
+            ;;
+        --static-go)
+            STATIC_GO="yes"
+            ;;
+        --static-js)
+            STATIC_JS="yes"
+            ;;
+        --unit)
+            UNIT_GO="yes"
+            UNIT_JS="yes"
+            ;;
+        --unit-go)
+            UNIT_GO="yes"
+            ;;
+        --unit-js)
+            UNIT_JS="yes"
+            ;;
+        --skip-npm-install)
+            SKIP_NPM_INSTALL="yes"
+            ;;
+        *)
+            echo "Wrong flag ${1}. To run a single suite use --static, --static-go, --static-js, --unit, --unit-go, --unit-js or --all to run all tests."
+            exit 1
+    esac
+done
 
 # Append the coverage profile of a package to the project coverage.
 append_go_coverage() {
@@ -56,6 +81,10 @@ append_go_coverage() {
 
 if [ ! -z "$STATIC_GO" ] || [ ! -z "$UNIT_GO" ]; then
     sh ./get-go-deps.sh
+fi
+
+if [ ! -z "$STATIC_JS" ] || [ ! -z "$UNIT_JS" ]; then
+   npm_install
 fi
 
 if [ ! -z "$STATIC_GO" ]; then
@@ -95,7 +124,6 @@ if [ ! -z "$STATIC_GO" ]; then
 fi
 
 if [ ! -z "$STATIC_JS" ]; then
-    npm install
     npm run js:lint
 fi
 
@@ -117,10 +145,7 @@ if [ ! -z "$UNIT_GO" ]; then
 fi
 
 if [ ! -z "$UNIT_JS" ]; then
-    # www
-    echo Obtaining npm dependencies
-    npm install --loglevel error
-
+    npm_install
     rm -rf .coverage-js
 
     # js unit tests
