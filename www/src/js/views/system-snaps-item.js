@@ -9,12 +9,4 @@ module.exports = Marionette.ItemView.extend({
   template: function(model) {
     return template(model);
   },
-
-  ui: {
-    'snapTitle': '#js-snap-title'
-  },
-
-  events: {
-    'click @ui.snapTitle':  'showSnap'
-  },
 });

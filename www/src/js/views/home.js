@@ -4,6 +4,7 @@ var Marionette = require('backbone.marionette');
 
 var SnapListView = require('./snaplist.js');
 var SystemSnapsView = require('./system-snaps.js');
+var SnapTools = require('../common/snaps.js')
 
 var template = require('../templates/home.hbs');
 
@@ -32,11 +33,15 @@ module.exports = Backbone.Marionette.LayoutView.extend({
     this.showChildView('systemSnapsRegion', new SystemSnapsView({
       model: this.model,
       collection: new Backbone.Collection(
-        this.collection.filter(
-          function(m) {
-            return m && m.get('type') != 'app' && m.get('type') != 'gadget';
-          }
-        )
+        new Backbone.Collection(
+          this.collection.filter(
+            function(m) {
+              return m && m.get('type') != 'app' && m.get('type') != 'gadget';
+            }
+          )
+        ).each(function(snap) {
+          snap.set('targetSnapUri', SnapTools.getShowSnapUrlFor(snap))
+        })
       )
     }));
   },
