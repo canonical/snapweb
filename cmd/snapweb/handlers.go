@@ -232,11 +232,11 @@ func handleDeviceAction(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func initURLHandlers(log *log.Logger) {
+func initURLHandlers(log *log.Logger, config Config) {
 	log.Println("Initializing HTTP handlers...")
 
 	// API
-	http.Handle("/api/", makeAPIHandler("/api/"))
+	http.Handle("/api/", makeAPIHandler("/api/", config))
 
 	// Resources
 	http.Handle("/public/", loggingHandler(http.FileServer(http.Dir(filepath.Join(os.Getenv("SNAP"), "www")))))

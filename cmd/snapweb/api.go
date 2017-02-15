@@ -29,7 +29,7 @@ import (
 const apiVersion = "v2"
 
 // makeAPIHandler create a handler for all API calls that need authorization
-func makeAPIHandler(apiRootPath string) http.Handler {
+func makeAPIHandler(apiRootPath string, config Config) http.Handler {
 	var apiPath = path.Join(apiRootPath, apiVersion)
 
 	router := mux.NewRouter().PathPrefix(apiPath).Subrouter()
@@ -41,7 +41,7 @@ func makeAPIHandler(apiRootPath string) http.Handler {
 	router.HandleFunc("/device-action", handleDeviceAction)
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if SimpleCookieCheck(w, r) == nil {
+		if config.DisableTokenCheck || SimpleCookieCheck(w, r) == nil {
 			router.ServeHTTP(w, r)
 		} else {
 			// in any other case, refuse the request and redirect
