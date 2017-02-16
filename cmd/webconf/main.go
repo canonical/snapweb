@@ -35,7 +35,6 @@ import (
 )
 
 var logger *log.Logger
-var server net.Listener
 
 const (
 	httpAddr string = ":4200"
@@ -100,17 +99,19 @@ func sendSignalToSnapweb() {
 	}
 }
 
-func doneHandler() http.HandlerFunc {
+func doneHandler(server net.Listener) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		sendSignalToSnapweb()
-		server.Close()
+		if server != nil {
+			server.Close()
+		}
 	}
 }
 
-func initURLHandlers(log *log.Logger) {
+func initURLHandlers(log *log.Logger, server net.Listener) {
 	// API
 	http.Handle("/api/", snappy.MakePassthroughHandler(dirs.SnapdSocket, "/api/"))
-	http.HandleFunc("/done", doneHandler())
+	http.HandleFunc("/done", doneHandler(server))
 
 	// Resources
 	http.Handle("/public/", snappy.LoggingHandler(http.FileServer(http.Dir(filepath.Join(os.Getenv("SNAP"), "www")))))
@@ -119,21 +120,20 @@ func initURLHandlers(log *log.Logger) {
 }
 
 func main() {
-	var err error
-
 	if snappy.IsDeviceManaged() {
 		log.Println("webconf does not run on managed devices")
 		os.Exit(0)
 	}
 
-	initURLHandlers(logger)
-
 	go avahi.InitMDNS(logger)
 
 	// open a plain HTTP end-point on the "usual" 4200 port
-	if server, err = net.Listen("tcp", httpAddr); err != nil {
+	server, err := net.Listen("tcp", httpAddr)
+	if err != nil {
 		logger.Fatalf("%v", err)
 	}
+
+	initURLHandlers(logger, server)
 
 	http.Serve(server, nil)
 

@@ -22,12 +22,17 @@
 package snappy
 
 import (
+	"fmt"
 	"io"
 	"log"
 	"net"
 	"net/http"
 	"os"
+	"os/signal"
+	"path/filepath"
 	"strings"
+	"sync"
+	"syscall"
 
 	"github.com/snapcore/snapd/client"
 )
@@ -102,3 +107,31 @@ func LoggingHandler(h http.Handler) http.Handler {
 		h.ServeHTTP(w, r)
 	})
 }
+
+func WritePidFile() {
+	var err error
+
+	pidFilePath := filepath.Join(os.Getenv("SNAP_DATA"), "snapweb.pid")
+
+	if f, err := os.OpenFile(pidFilePath, os.O_CREATE|os.O_RDWR, os.ModeTemporary|0640); err == nil {
+		fmt.Fprintf(f, "%d\n", os.Getpid())
+	}
+	if err != nil {
+		log.Println(err)
+	}
+
+}
+
+func WaitForSigHup() {
+	var waiter sync.WaitGroup
+	waiter.Add(1)
+	var sigchan chan os.Signal
+	sigchan = make(chan os.Signal, 1)
+	signal.Notify(sigchan, syscall.SIGHUP)
+	go func() {
+		<-sigchan
+		waiter.Done()
+	}()
+	waiter.Wait()
+}
+
