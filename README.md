@@ -40,14 +40,14 @@ Install:
 ## Building
 
     cd $GOPATH/src/github.com/snapcore/snapweb
-    # omit the architecture below to build for all architectures at once
+    # omit the architecture specified below ('amd64') to build for all architectures at once
     ./build.sh amd64
 
 # Installing
 
 Once you have a snap built locally, you can test it on your system by doing:
 
-     snap install snwpweb_<version>.snap --dangerous
+     snap install snapweb_<version>.snap --dangerous
 
 The --dangerous flag is necessary for installing locally built snaps, which
 have not been signed by the store.
@@ -69,11 +69,12 @@ For example, starting a VM with:
 Point the browser directly to [https://localhost:8201]
 
 Note that in all cases you will now need an access token to use snapweb.
-Connect via ssh and do:
+Depending on where you installed the snap package (locally or in a vm)
+run the following command (possibly via ssh in the case of a vcm):
 
      sudo snapweb.generate-token
 
-Then copy/paste the token in the Web UI.
+Then copy/paste the token in the Web UI when requested.
 
 ## API
 
