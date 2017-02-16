@@ -49,7 +49,7 @@ func main() {
 
 	// TODO set warning for hazardous config?
 
-	if !config.DisableHttps {
+	if !config.DisableHTTPS {
 		GenerateCertificate()
 	}
 
@@ -60,7 +60,7 @@ func main() {
 	logger.Println("Snapweb starting...")
 
 	// run the main service over HTTPS
-	if !config.DisableHttps {
+	if !config.DisableHTTPS {
 		go func() {
 			certFile := filepath.Join(os.Getenv("SNAP_DATA"), "cert.pem")
 			keyFile := filepath.Join(os.Getenv("SNAP_DATA"), "key.pem")
@@ -72,7 +72,7 @@ func main() {
 
 	// open a plain HTTP end-point on the "usual" 4200 port, and redirect to HTTPS
 	handler := http.HandlerFunc(redir)
-	if config.DisableHttps {
+	if config.DisableHTTPS {
 		handler = nil
 	}
 

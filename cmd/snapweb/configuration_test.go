@@ -49,16 +49,16 @@ func (s *ConfigurationSuite) SetUpTest(c *C) {
 }
 
 func (s *ConfigurationSuite) TestNonExistentConfigurationFile(c *C) {
-	c.Check(readConfig(), DeepEquals, Config{DisableTokenCheck: false, DisableHttps: false})
+	c.Check(readConfig(), DeepEquals, Config{DisableTokenCheck: false, DisableHTTPS: false})
 }
 
 func (s *ConfigurationSuite) TestExistingInvalidSetupFile(c *C) {
 	setupConfigWithContent(c, s.snapCommonEnv, []byte("Invalid json"))
-	c.Check(readConfig(), DeepEquals, Config{DisableTokenCheck: false, DisableHttps: false})
+	c.Check(readConfig(), DeepEquals, Config{DisableTokenCheck: false, DisableHTTPS: false})
 }
 
 func (s *ConfigurationSuite) TestExistingValidSetupFile(c *C) {
-	conf := Config{DisableTokenCheck: true, DisableHttps: true}
+	conf := Config{DisableTokenCheck: true, DisableHTTPS: true}
 	setupConfig(c, s.snapCommonEnv, conf)
-	c.Check(readConfig(), DeepEquals, Config{DisableTokenCheck: true, DisableHttps: true})
+	c.Check(readConfig(), DeepEquals, Config{DisableTokenCheck: true, DisableHTTPS: true})
 }
