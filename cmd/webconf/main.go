@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Canonical Ltd
+ * Copyright (C) 2017 Canonical Ltd
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -19,21 +19,19 @@ package main
 
 import (
 	"fmt"
-	"io"
 	"log"
 	"net"
 	"net/http"
 	"os"
 	"path/filepath"
-	"strings"
 	"syscall"
-	"time"
 	"text/template"
+	"time"
 
-	"github.com/snapcore/snapd/client"
 	"github.com/snapcore/snapd/dirs"
 
 	"github.com/snapcore/snapweb/avahi"
+	"github.com/snapcore/snapweb/snappy"
 )
 
 var logger *log.Logger
@@ -44,78 +42,7 @@ const (
 )
 
 func init() {
-	logger = log.New(os.Stderr, "web-conf: ", log.Ldate|log.Ltime|log.Lshortfile)
-}
-
-// IsDeviceManaged determines if the device is in the 'managed' state
-func IsDeviceManaged() bool {
-	client := client.New(nil)
-
-	sysInfo, err := client.SysInfo()
-	if err != nil {
-		panic(err)
-	}
-
-	if sysInfo.OnClassic || sysInfo.Managed {
-		return true
-	}
-
-	return false
-}
-
-func unixDialer(socketPath string) func(string, string) (net.Conn, error) {
-	file, err := os.OpenFile(socketPath, os.O_RDWR, 0666)
-	if err == nil {
-		file.Close()
-	}
-
-	return func(_, _ string) (net.Conn, error) {
-		return net.Dial("unix", socketPath)
-	}
-}
-
-func makePassthroughHandler(socketPath string, prefix string) http.HandlerFunc {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		c := &http.Client{
-			Transport: &http.Transport{Dial: unixDialer(socketPath)},
-		}
-
-		log.Println(r.Method, r.URL.Path)
-
-		// need to remove the RequestURI field
-		// and remove the /api prefix from snapweb URLs
-		r.URL.Scheme = "http"
-		r.URL.Host = "localhost"
-		r.URL.Path = strings.TrimPrefix(r.URL.Path, prefix)
-
-		outreq, err := http.NewRequest(r.Method, r.URL.String(), r.Body)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		resp, err := c.Do(outreq)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		// Note: the client.Do method above only returns JSON responses
-		//       even if it doesn't say so
-		hdr := w.Header()
-		hdr.Set("Content-Type", "application/json")
-		w.WriteHeader(resp.StatusCode)
-
-		io.Copy(w, resp.Body)
-
-	})
-}
-
-func loggingHandler(h http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Println(r.Method, r.URL.Path)
-		h.ServeHTTP(w, r)
-	})
+	logger = log.New(os.Stderr, "webconf: ", log.Ldate|log.Ltime|log.Lshortfile)
 }
 
 type branding struct {
@@ -182,20 +109,20 @@ func doneHandler() http.HandlerFunc {
 
 func initURLHandlers(log *log.Logger) {
 	// API
-	http.Handle("/api/", makePassthroughHandler(dirs.SnapdSocket, "/api/"))
+	http.Handle("/api/", snappy.MakePassthroughHandler(dirs.SnapdSocket, "/api/"))
 	http.HandleFunc("/done", doneHandler())
 
 	// Resources
-	http.Handle("/public/", loggingHandler(http.FileServer(http.Dir(filepath.Join(os.Getenv("SNAP"), "www")))))
+	http.Handle("/public/", snappy.LoggingHandler(http.FileServer(http.Dir(filepath.Join(os.Getenv("SNAP"), "www")))))
 
 	http.HandleFunc("/", makeMainPageHandler())
 }
 
 func main() {
 	var err error
-	
-	if IsDeviceManaged() {
-		log.Println("web-conf does not run on managed devices")
+
+	if snappy.IsDeviceManaged() {
+		log.Println("webconf does not run on managed devices")
 		os.Exit(0)
 	}
 
@@ -210,6 +137,6 @@ func main() {
 
 	http.Serve(server, nil)
 
-	// let snapweb start
+	// prepare to exit, but let snapweb start before that
 	time.Sleep(2 * time.Second)
 }
