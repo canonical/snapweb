@@ -70,7 +70,7 @@ Point the browser directly to [https://localhost:8201]
 
 Note that in all cases you will now need an access token to use snapweb.
 Depending on where you installed the snap package (locally or in a vm)
-run the following command (possibly via ssh in the case of a vcm):
+run the following command (possibly via ssh in the case of a vm):
 
      sudo snapweb.generate-token
 
