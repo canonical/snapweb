@@ -64,6 +64,7 @@ func unixDialer(socketPath string) func(string, string) (net.Conn, error) {
 	}
 }
 
+// MakePassthroughHandler maps a snapd API to a snapweb HTTP handler
 func MakePassthroughHandler(socketPath string, prefix string) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		c := &http.Client{
@@ -101,6 +102,7 @@ func MakePassthroughHandler(socketPath string, prefix string) http.HandlerFunc {
 	})
 }
 
+// LoggingHandler adds HTTP logs to a handler
 func LoggingHandler(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		log.Println(r.Method, r.URL.Path)
@@ -108,6 +110,7 @@ func LoggingHandler(h http.Handler) http.Handler {
 	})
 }
 
+// WritePidFile writes the PID of the current process to snapweb.pid
 func WritePidFile() {
 	var err error
 
@@ -122,6 +125,7 @@ func WritePidFile() {
 
 }
 
+// WaitForSigHup waits for the reception of the SIGHUP signal
 func WaitForSigHup() {
 	var waiter sync.WaitGroup
 	waiter.Add(1)
@@ -134,4 +138,3 @@ func WaitForSigHup() {
 	}()
 	waiter.Wait()
 }
-

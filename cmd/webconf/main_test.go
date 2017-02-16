@@ -26,8 +26,8 @@ import (
 	"os/signal"
 	"path/filepath"
 	"strings"
-	"testing"
 	"syscall"
+	"testing"
 
 	. "gopkg.in/check.v1"
 
@@ -36,7 +36,7 @@ import (
 
 func Test(t *testing.T) { TestingT(t) }
 
-type WebconfSuite struct {}
+type WebconfSuite struct{}
 
 var _ = Suite(&WebconfSuite{})
 
@@ -73,7 +73,7 @@ func (s *WebconfSuite) TestDoneHandler(c *C) {
 	sigchan = make(chan os.Signal, 1)
 	signal.Notify(sigchan, syscall.SIGHUP)
 
-	server, _ := net.Listen("tcp", httpAddr)	
+	server, _ := net.Listen("tcp", httpAddr)
 	handler := doneHandler(server)
 
 	req, _ := http.NewRequest("GET", "/done", nil)
@@ -88,4 +88,3 @@ func (s *WebconfSuite) TestDoneHandler(c *C) {
 
 	c.Assert(done, Equals, true)
 }
-
