@@ -150,4 +150,13 @@ func (f *FakeSnapdClient) Disable(name string, options *client.SnapOptions) (str
 	return "Disabling", nil
 }
 
+// Query system information
+func (f *FakeSnapdClient) SysInfo() (*client.SysInfo, error) {
+	managed := &client.SysInfo{
+		OnClassic: true,
+		Managed: true,
+	}
+	return managed, nil
+}
+
 var _ snapdclient.SnapdClient = (*FakeSnapdClient)(nil)
