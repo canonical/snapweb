@@ -36,14 +36,6 @@ if [ -z "$5" ]
 
     echo 'Downloading Standalone Selenium Server...'
     wget -nc https://selenium-release.storage.googleapis.com/3.0/selenium-server-standalone-3.0.1.jar
-
-#install npm deps
-    npm install webdriverio --save-dev
-    npm install chai --save-dev
-    npm install wdio-mocha-framework --save-dev
-    npm install wdio-junit-reporter --save-dev
-    npm install ssh2 --save-dev
-    npm install node-ssh --save-dev
 fi
 
 echo 'Launching Selenium Server ...'
