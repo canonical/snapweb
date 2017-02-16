@@ -1,7 +1,7 @@
 var _ = require('lodash');
 var CreateUser = require('../src/js/models/create-user.js');
 var Backbone = require('backbone');
-var InitView = require('../src/js/views/init.js');
+var InitView = require('../src/js/views/webconf.js');
 var CONF = require('../src/js/config.js');
 
 describe('FirstBoot', function() {
