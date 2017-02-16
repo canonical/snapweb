@@ -113,3 +113,9 @@ func (s *HandlersSuite) TestPassthroughHandler(c *C) {
 	c.Check(strings.Contains(body, "42"), Equals, true)
 	// TODO: check that we receive Content-Type: json/application
 }
+
+func (s *HandlersSuite) TestWritePidFile(c *C) {
+}
+
+func (s *HandlersSuite) TestWaitForSigHup(c *C) {
+}
