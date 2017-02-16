@@ -47,11 +47,7 @@ func redir(w http.ResponseWriter, req *http.Request) {
 func main() {
 	config := readConfig()
 
-	// TODO set warning for hazardous config?
-
-	if !config.DisableHTTPS {
-		GenerateCertificate()
-	}
+	// TODO set warning for too hazardous config?
 
 	initURLHandlers(logger, config)
 
@@ -59,8 +55,12 @@ func main() {
 
 	logger.Println("Snapweb starting...")
 
-	// run the main service over HTTPS
+	// open a plain HTTP end-point on the "usual" 4200 port, and
+	// possibly redirect to HTTPS
+	handler := http.HandlerFunc(redir)
 	if !config.DisableHTTPS {
+		GenerateCertificate()
+
 		go func() {
 			certFile := filepath.Join(os.Getenv("SNAP_DATA"), "cert.pem")
 			keyFile := filepath.Join(os.Getenv("SNAP_DATA"), "key.pem")
@@ -68,11 +68,7 @@ func main() {
 				logger.Fatalf("http.ListendAndServerTLS() failed with %v", err)
 			}
 		}()
-	}
-
-	// open a plain HTTP end-point on the "usual" 4200 port, and redirect to HTTPS
-	handler := http.HandlerFunc(redir)
-	if config.DisableHTTPS {
+	} else {
 		handler = nil
 	}
 

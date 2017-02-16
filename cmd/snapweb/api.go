@@ -41,7 +41,7 @@ func makeAPIHandler(apiRootPath string, config Config) http.Handler {
 	router.HandleFunc("/device-action", handleDeviceAction)
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if config.DisableTokenCheck || SimpleCookieCheck(w, r) == nil {
+		if config.DisableAccessToken || SimpleCookieCheck(w, r) == nil {
 			router.ServeHTTP(w, r)
 		} else {
 			// in any other case, refuse the request and redirect

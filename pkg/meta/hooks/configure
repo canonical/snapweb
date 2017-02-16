@@ -5,9 +5,9 @@ import json
 import sys
 import subprocess
 
-disable_token_check = False
+disable_access_token = False
 try:
-    disable_token_check = subprocess.check_output("snapctl get disable_token_check")
+    disable_access_token = subprocess.check_output("snapctl get disable_access_token")
 except:
     pass
 
@@ -33,7 +33,7 @@ CONF_FILEPATH = os.path.join(SNAP_COMMON_ENV, CONF_FILENAME)
 with open(CONF_FILEPATH, 'w+') as f:
     f.write(
         json.dumps({
-            'disableTokenCheck': disable_token_check,
+            'disableAccessToken': disable_access_token,
             'disableHttps': disable_https
         })
         )

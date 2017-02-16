@@ -31,8 +31,8 @@ const (
 
 // Config described the runtime configuration
 type Config struct {
-	DisableTokenCheck bool `json:"disableTokenCheck,omitempty"`
-	DisableHTTPS      bool `json:"disableHttps,omitempty"`
+	DisableAccessToken bool `json:"disableAccessToken,omitempty"`
+	DisableHTTPS       bool `json:"disableHttps,omitempty"`
 }
 
 func readConfig() Config {
