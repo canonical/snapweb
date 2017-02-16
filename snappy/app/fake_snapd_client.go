@@ -157,7 +157,7 @@ func (f *FakeSnapdClient) Abort(id string) (*client.Change, error) {
 	f.AbortedChangeID = id
 	return nil, nil
 
-// Query system information
+// SysInfo returns system information
 func (f *FakeSnapdClient) SysInfo() (*client.SysInfo, error) {
 	managed := &client.SysInfo{
 		OnClassic: true,
