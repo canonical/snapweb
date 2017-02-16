@@ -48,9 +48,10 @@ func readConfig() Config {
 	var config Config
 	err = json.Unmarshal(content, &config)
 	if err != nil {
-		logger.Println("Invalid configuration file %s: %s",
-			configFilepath,
-			err.Error())
+		logger.Println(
+			fmt.Sprintf("Invalid configuration file %s: %s",
+				configFilepath,
+				err.Error()))
 		return Config{}
 	}
 
