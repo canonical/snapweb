@@ -34,7 +34,11 @@ Branch:
     
 Install:
 
-    npm install
+    # this script does a npm install using yarn and fixes some extra issues
+    # with dependencies
+    ./scripts/npm-install.sh
+    ./scripts/get-go-deps.sh
+
 
 ## Building
 
