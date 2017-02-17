@@ -12,8 +12,7 @@ STATIC_GO=""
 STATIC_JS=""
 UNIT_GO=""
 UNIT_JS=""
-DIR="$( dirname "${BASH_SOURCE[0]}" )"
-export PHANTOMJS_BIN=$DIR/node_modules/.bin/phantomjs
+export PHANTOMJS_BIN=`pwd`/node_modules/.bin/phantomjs
 
 [ "$#" -eq 0 ] && args="--all" || args="$@"
 
