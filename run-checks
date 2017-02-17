@@ -41,6 +41,14 @@ for arg in $args; do
             UNIT_GO="yes"
             UNIT_JS="yes"
             ;;
+        --go)
+            STATIC_GO="yes"
+            UNIT_GO="yes"
+            ;;
+        --js)
+            STATIC_JS="yes"
+            UNIT_JS="yes"
+            ;;
         --static)
             STATIC_GO="yes"
             STATIC_JS="yes"
@@ -129,7 +137,7 @@ fi
 
 if [ ! -z "$UNIT_GO" ]; then
     echo Building
-    go build -v github.com/snapcore/snapweb/...
+    go build github.com/snapcore/snapweb/...
 
     # Prepare the coverage output profile.
     rm -rf .coverage-go
@@ -139,7 +147,7 @@ if [ ! -z "$UNIT_GO" ]; then
     # tests
     echo Running tests from $(pwd)
     for pkg in $(go list ./... | grep -v integration-tests); do
-        $goctest -v -coverprofile=.coverage-go/profile.out $pkg
+        $goctest -coverprofile=.coverage-go/profile.out $pkg
         append_go_coverage .coverage-go/profile.out
     done
 fi

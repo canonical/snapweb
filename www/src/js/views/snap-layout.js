@@ -31,7 +31,7 @@ module.exports = Marionette.LayoutView.extend({
   initialize: function() {
     var self = this;
     this.model.on('change:download_progress', function() {
-      $("#progressbarwrapper").css({'background-color': 'LightGray'});
+      $("#progressbarwrapper").css({'border': '1px', 'border-radius': '10%'});
       $("#progress").css('width', self.model.get("download_progress")+"%");
     });
     this.model.on('change:task_summary', function() {
@@ -40,7 +40,16 @@ module.exports = Marionette.LayoutView.extend({
     this.model.on('change:status', function() {
       var status = self.model.get('status');
       if (status !== CONF.INSTALL_STATE.INSTALLING) {
-        $("#progressbarwrapper").css({'background-color': ''});
+        $("#progressbarwrapper").css({'border': '0px', 'border-radius': 'initial', 'background-color': ''});
+      }
+      if (status === CONF.INSTALL_STATE.INSTALLED ||
+          status === CONF.INSTALL_STATE.ACTIVE) {
+        $("#enabler-button").css({'display': 'block'});
+        $("#installer-button").removeClass('col-5').addClass('col-2');
+      }
+      if (status === CONF.INSTALL_STATE.REMOVED) {
+        $("#enabler-button").css({'display': 'none'});
+        $("#installer-button").removeClass('col-2').addClass('col-5');
       }
     })
   },

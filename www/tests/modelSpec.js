@@ -144,10 +144,10 @@ describe('Snap', function() {
       expect(this.model.get('installActionString')).toBe('Install');
 
       this.model.set('status', CONF.INSTALL_STATE.REMOVING);
-      expect(this.model.get('installActionString')).toBe('Removing…');
+      expect(this.model.get('installActionString')).toBe('Removing');
 
       this.model.set('status', CONF.INSTALL_STATE.INSTALLING);
-      expect(this.model.get('installActionString')).toBe('Installing…');
+      expect(this.model.get('installActionString')).toBe('Installing');
 
     });
 
