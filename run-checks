@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 set -eu
 
@@ -12,26 +12,9 @@ STATIC_GO=""
 STATIC_JS=""
 UNIT_GO=""
 UNIT_JS=""
-SKIP_NPM_INSTALL="no"
+export PHANTOMJS_BIN=`pwd`/node_modules/.bin/phantomjs
 
 [ "$#" -eq 0 ] && args="--all" || args="$@"
-[ "$args" = "--skip-npm-install" ] && args="--all --skip-npm-install"
-
-
-# common npm/yarn install process, to avoid repeating the same workarounds
-npm_install()
-{
-    [ $SKIP_NPM_INSTALL = "yes" ] && return
-    echo Obtaining npm dependencies
-    set +e
-    yarn install
-    set -e
-    # twice, to cope with phantomjs postinstall issue
-    npm install phantomjs-prebuilt
-    export PHANTOMJS_BIN=`pwd`/node_modules/.bin/phantomjs
-    # third time to fix other postinstall woes
-    npm rebuild node-sass
-}
 
 for arg in $args; do
     case "$arg" in
@@ -87,14 +70,6 @@ append_go_coverage() {
     fi
 }
 
-if [ ! -z "$STATIC_GO" ] || [ ! -z "$UNIT_GO" ]; then
-    sh ./get-go-deps.sh
-fi
-
-if [ ! -z "$STATIC_JS" ] || [ ! -z "$UNIT_JS" ]; then
-   npm_install
-fi
-
 if [ ! -z "$STATIC_GO" ]; then
     # Run go static tests.
 
@@ -111,14 +86,6 @@ if [ ! -z "$STATIC_GO" ]; then
     echo Running vet
     go vet ./...
 
-    echo Install golint
-    go get -d github.com/golang/lint/golint
-    (
-        cd $GOPATH/src/github.com/golang/lint
-        # revert to the last commit before go 1.5 support was dropped
-        git checkout c6242afa6ced3be489e1184eb80bc2d85f1f5e7b .
-    )
-    go install github.com/golang/lint/golint
     export PATH=$PATH:$GOPATH/bin
 
     echo Running lint
@@ -153,7 +120,6 @@ if [ ! -z "$UNIT_GO" ]; then
 fi
 
 if [ ! -z "$UNIT_JS" ]; then
-    npm_install
     rm -rf .coverage-js
 
     # js unit tests
