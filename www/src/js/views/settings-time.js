@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
 var React = require('react');
