@@ -20,6 +20,7 @@ package snappy
 import (
 	"errors"
 	"os"
+	"testing"
 	"time"
 
 	"github.com/snapcore/snapd/client"
@@ -29,6 +30,8 @@ import (
 	"github.com/snapcore/snapweb/snappy/common"
 	"github.com/snapcore/snapweb/statetracker"
 )
+
+func Test(t *testing.T) { TestingT(t) }
 
 type GetSnapSuite struct {
 	h Handler

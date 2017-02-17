@@ -97,7 +97,7 @@ func (s *StateTracker) State(c snapdclient.SnapdClient, snap *client.Snap) *Snap
 	if changing, changeID := s.IsTrackedForRunningOperation(snap); changing && c != nil {
 		change, err := c.Change(changeID)
 
-		if err == nil {
+		if change != nil && err == nil {
 			for _, task := range change.Tasks {
 				if uint64(task.Progress.Done) > 1 {
 					cstate.LocalSize = uint64(task.Progress.Done)
