@@ -11,8 +11,21 @@ var StorelistItemView = require('./storelist-item.js');
 module.exports = React.createBackboneClass({
   render: function() {
     var model = this.props.model;
-    var collection = this.props.collection;
 
+    if (model.get('loading')) {
+      return (
+        <div className="u-vertically-center">
+          <img
+            className="progress-spinner"
+            style={{marginLeft: "auto", marginRight: "auto"}}
+            src="/public/images/in-progress.svg"
+            width="100px"
+            height="100px" />
+        </div>
+      )
+    } 
+
+    var collection = this.props.collection;
     var deckClass = "p-card-deck " +
         (this.props.deckStyle === 'grid' ?
          'p-card-deck--grid' : 'p-card-deck--row');
