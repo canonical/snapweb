@@ -54,7 +54,7 @@ func redir(w http.ResponseWriter, req *http.Request) {
 func main() {
 	config := readConfig()
 
-	for ! IsDeviceManaged() {
+	for !IsDeviceManaged() {
 		logger.Println("Snapweb cannot run until the device is managed...")
 		snappy.WritePidFile()
 		snappy.WaitForSigHup()
