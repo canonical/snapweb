@@ -92,7 +92,7 @@ describe('Installed Snaps Page - Verify that', function() {
         assert.isNotNull(snapDetailsPage.snapDetail(4).value, "Snap has no update date");
     });
 
-    it('snapweb updates the page when snap is installed/removed direclty on the device', function() {
+    xit('snapweb updates the page when snap is installed/removed direclty on the device', function() {
         var snap_name = "hello-world";
         var re_removed = new RegExp("cannot find snap|" + snap_name + ".*removed")
         var re_installed = new RegExp(snap_name + ".*installed");
@@ -137,7 +137,7 @@ describe('Installed Snaps Page - Verify that', function() {
         });
     });
 
-    it('snapweb updates the page when snap is removed from ui buttons', function() {
+    xit('snapweb updates the page when snap is removed from ui buttons', function() {
         var snap_name = "hello-world";
         var re_installed = new RegExp(snap_name + ".*installed");
 
