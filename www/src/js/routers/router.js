@@ -39,7 +39,8 @@ module.exports = {
   settings: new Marionette.AppRouter({
     controller: settingsController,
     appRoutes: {
-      'settings': 'index'
+      'settings?page=:p': 'page',
+      'settings': 'index',
     }
   }),
 
@@ -55,5 +56,5 @@ module.exports = {
     appRoutes: {
       'search?q=:query': 'query',
     }
-  })
+  }),
 };

@@ -45,6 +45,8 @@ type SnapdClient interface {
 	Interfaces() (client.Interfaces, error)
 	Known(assertTypeName string, headers map[string]string) ([]asserts.Assertion, error)
 	Change(id string) (*client.Change, error)
+	Logout() error
+	LoggedInUser() *client.User
 	Enable(id string, options *client.SnapOptions) (string, error)
 	Disable(id string, options *client.SnapOptions) (string, error)
 }
@@ -124,6 +126,16 @@ func (a *ClientAdapter) Sections() ([]string, error) {
 // Change returns the list of ongoing changes for a given snap and changeid
 func (a *ClientAdapter) Change(id string) (*client.Change, error) {
 	return a.snapdClient.Change(id)
+}
+
+// LoggedInUser returns the logged in User or nil
+func (a *ClientAdapter) LoggedInUser() *client.User {
+	return a.snapdClient.LoggedInUser()
+}
+
+// Logout logs the user out.
+func (a *ClientAdapter) Logout() error {
+	return a.snapdClient.Logout()
 }
 
 // Enable enables the snap

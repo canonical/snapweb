@@ -64,7 +64,7 @@ func (h *Handler) snapOperationResponse(name string, err error, w http.ResponseW
 	status := http.StatusAccepted
 
 	if err != nil {
-		msg = "Processing error"
+		msg = fmt.Sprintf("Processing error '%s'", err.Error())
 		status = http.StatusInternalServerError
 	}
 

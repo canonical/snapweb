@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015, 2016 Canonical Ltd
+ * Copyright (C) 2014-2017 Canonical Ltd
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -19,7 +19,6 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -250,31 +249,6 @@ func initURLHandlers(log *log.Logger) {
 	http.HandleFunc("/", makeMainPageHandler())
 }
 
-// Name of the cookie transporting the access token
-const (
-	SnapwebCookieName = "SM"
-)
-
-func tokenFilename() string {
-	return filepath.Join(os.Getenv("SNAP_DATA"), "token.txt")
-}
-
-// SimpleCookieCheck is a simple authorization mechanism
-func SimpleCookieCheck(w http.ResponseWriter, r *http.Request) error {
-	cookie, _ := r.Cookie(SnapwebCookieName)
-	if cookie != nil {
-		token, err := ioutil.ReadFile(tokenFilename())
-		if err == nil {
-			if string(token) == cookie.Value {
-				// the auth-token and the cookie do match
-				// we can continue with the request
-				return nil
-			}
-		}
-	}
-	return errors.New("Unauthorized")
-}
-
 func validateToken(w http.ResponseWriter, r *http.Request) {
 	// We only get here when the Cookie is valid, send an empty response
 	// to keep the model happy
@@ -289,8 +263,6 @@ func makePassthroughHandler(socketPath string, prefix string) http.HandlerFunc {
 		c := &http.Client{
 			Transport: &http.Transport{Dial: unixDialer(socketPath)},
 		}
-
-		log.Println(r.Method, r.URL.Path)
 
 		// need to remove the RequestURI field
 		// and remove the /api prefix from snapweb URLs
@@ -319,6 +291,47 @@ func makePassthroughHandler(socketPath string, prefix string) http.HandlerFunc {
 		io.Copy(w, resp.Body)
 
 	})
+}
+
+func handleUserLogout(w http.ResponseWriter, r *http.Request) {
+	c := newSnapdClient()
+
+	err := c.Logout()
+	if err != nil {
+		log.Println(fmt.Sprintf("Logout: %s", err))
+		w.WriteHeader(http.StatusInternalServerError)
+	} else {
+		http.Redirect(
+			w,
+			r,
+			fmt.Sprintf("https://%s/", r.Host),
+			303)
+	}
+}
+
+func handleUserProfile(w http.ResponseWriter, r *http.Request) {
+	profileData := struct {
+		Name            string `json:"name"`
+		Email           string `json:"email"`
+		IsAuthenticated bool   `json:"isAuthenticated"`
+	}{}
+
+	c := newSnapdClient()
+
+	user := c.LoggedInUser()
+	if user != nil {
+		profileData.Name = user.Username
+		profileData.Email = user.Email
+		profileData.IsAuthenticated = true
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(profileData); err != nil {
+		log.Println(fmt.Sprintf("handleUserProfile: %s", err))
+		w.WriteHeader(http.StatusInternalServerError)
+	} else {
+		w.WriteHeader(http.StatusOK)
+	}
 }
 
 func loggingHandler(h http.Handler) http.Handler {

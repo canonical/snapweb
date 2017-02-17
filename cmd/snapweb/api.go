@@ -18,8 +18,12 @@
 package main
 
 import (
+	"errors"
+	"io/ioutil"
 	"net/http"
+	"os"
 	"path"
+	"path/filepath"
 
 	"github.com/gorilla/mux"
 
@@ -27,6 +31,31 @@ import (
 )
 
 const apiVersion = "v2"
+
+// Name of the cookie transporting the access token
+const (
+	SnapwebAuthTokenCookieName = "SnapwebLocalToken"
+)
+
+func tokenFilename() string {
+	return filepath.Join(os.Getenv("SNAP_DATA"), "token.txt")
+}
+
+// ValidateRequestToken is a simple authorization mechanism
+func ValidateRequestToken(w http.ResponseWriter, r *http.Request) error {
+	cookie, _ := r.Cookie(SnapwebAuthTokenCookieName)
+	if cookie != nil {
+		token, err := ioutil.ReadFile(tokenFilename())
+		if err == nil {
+			if string(token) == cookie.Value {
+				// the auth-token and the cookie do match
+				// we can continue with the request
+				return nil
+			}
+		}
+	}
+	return errors.New("Unauthorized")
+}
 
 // makeAPIHandler create a handler for all API calls that need authorization
 func makeAPIHandler(apiRootPath string) http.Handler {
@@ -39,13 +68,15 @@ func makeAPIHandler(apiRootPath string) http.Handler {
 	router.HandleFunc("/time-info", handleTimeInfo)
 	router.HandleFunc("/device-info", handleDeviceInfo)
 	router.HandleFunc("/device-action", handleDeviceAction)
+	router.HandleFunc("/user-logout", handleUserLogout)
+	router.HandleFunc("/user-profile", handleUserProfile)
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if SimpleCookieCheck(w, r) == nil {
-			router.ServeHTTP(w, r)
-		} else {
-			// in any other case, refuse the request and redirect
-			http.Redirect(w, r, "/access-control", 401)
+		// TODO
+		if ValidateRequestToken(w, r) != nil {
+			http.Redirect(w, r, "/access-control", 403)
+			return
 		}
+		router.ServeHTTP(w, r)
 	})
 }

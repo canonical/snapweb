@@ -139,6 +139,16 @@ func (f *FakeSnapdClient) Change(id string) (*client.Change, error) {
 	return nil, nil
 }
 
+// LoggedInUser returns the logged in User or nil
+func (f *FakeSnapdClient) LoggedInUser() *client.User {
+	return nil
+}
+
+// Logout logs the user out.
+func (f *FakeSnapdClient) Logout() error {
+	return nil
+}
+
 // Enable enables the snap
 func (f *FakeSnapdClient) Enable(name string, options *client.SnapOptions) (string, error) {
 	return "", nil
