@@ -15,6 +15,7 @@ npm_install()
     export PHANTOMJS_BIN=`pwd`/node_modules/.bin/phantomjs
     # third time to fix other postinstall woes
     npm rebuild node-sass
+    npm install reactify
 }
 
 npm_install
