@@ -1,0 +1,41 @@
+#!/usr/bin/env python
+
+import os
+import json
+import sys
+import subprocess
+
+disable_access_token = False
+try:
+    disable_access_token = subprocess.check_output("snapctl get disable_access_token")
+except:
+    pass
+
+disable_https = False
+try:
+    disable_https = subprocess.check_output("snapctl get disable_https")
+except:
+    pass
+
+
+# TODO add a configure.in to factor that & the go part in configuration.go
+CONF_FILENAME = "settings.json"
+
+SNAP_COMMON_ENV = ''
+try:
+    SNAP_COMMON_ENV = os.environ["SNAP_COMMON"]
+except Exception, e:
+    sys.stderr.write("Could not find $SNAP_COMMON environment variable\n")
+    sys.exit(1)
+
+CONF_FILEPATH = os.path.join(SNAP_COMMON_ENV, CONF_FILENAME)
+
+with open(CONF_FILEPATH, 'w+') as f:
+    f.write(
+        json.dumps({
+            'disableAccessToken': disable_access_token,
+            'disableHttps': disable_https
+        })
+        )
+
+# TODO kill & restart main snap daemon
