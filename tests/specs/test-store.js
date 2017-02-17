@@ -59,11 +59,10 @@ describe('Store Page - Verify that', function() {
     it('search exact match and see snap details', function() {
         storePage.search('hello-world');
         browser.waitForVisible(storePage.exactSnapMatchSelector);
-        var s = storePage.exactMatch.element('.p-card__icon');
-        s.click();
+        browser.waitForVisible(".p-card__icon");
+        browser.click('.p-card__icon');
         browser.waitForVisible(snapDetailsPage.snapDetailListElements);
         assert.isNotNull(snapDetailsPage.snap.value, "Snap details not found");
-        assert.isNull(snapDetailsPage.snapDetail(4).value, "Snap has an update date");
     });
 
     it('search non exact match and check snap details', function() {
