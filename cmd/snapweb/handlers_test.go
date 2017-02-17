@@ -413,9 +413,7 @@ func (s *HandlersSuite) TestTimeInfoGET(c *C) {
 	err = json.Unmarshal([]byte(rec.Body.String()), &timeInfo)
 	c.Assert(err, IsNil)
 
-	_, exists := timeInfo["date"]
-	c.Assert(exists, Equals, true)
-	_, exists = timeInfo["time"]
+	_, exists := timeInfo["dateTime"]
 	c.Assert(exists, Equals, true)
 	_, exists = timeInfo["timezone"]
 	c.Assert(exists, Equals, true)
