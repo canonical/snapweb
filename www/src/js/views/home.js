@@ -20,6 +20,7 @@ module.exports = Backbone.Marionette.LayoutView.extend({
     // TODO if collection empty use emptyView
 
     this.showChildView('installedRegion', new SnapListView({
+      doNotDisplayEmptyList: true,
       model: this.model,
       collection: new Backbone.Collection(
         this.collection.filter(
