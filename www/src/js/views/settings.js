@@ -50,11 +50,15 @@ module.exports = Backbone.Marionette.LayoutView.extend({
         view = new SettingsUpdatesView();
         break;
       case 'time': {
-        timeInfo = new TimeInfo;
-        timeInfo.fetch();
-        this.timeElement = this.timeElement || React.createElement(SettingsTimeView, {
-            model: timeInfo
-          });
+        if (this.timeElement == null) {
+          var timeInfo = new TimeInfo;
+          timeInfo.fetch();
+          this.timeElement = React.createElement(SettingsTimeView, {
+              model: timeInfo
+            });
+        } else {
+          this.timeElement.props.model.fetch();
+        }
         ReactDOM.render(this.timeElement, this.$('.b-settings__content').get(0));
         return;
       }
@@ -66,6 +70,8 @@ module.exports = Backbone.Marionette.LayoutView.extend({
           this.deviceInfoElement = React.createElement(SettingsDeviceView, {
                 model: deviceInfo
               })
+        } else {
+          this.deviceInfoElement.props.model.fetch();
         }
         ReactDOM.render(this.deviceInfoElement, this.$('.b-settings__content').get(0));
         return;

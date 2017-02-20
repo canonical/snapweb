@@ -10,9 +10,7 @@ module.exports = {
   index: function() {
     var chan = Radio.channel('root');
 
-    var view = new SettingsLayoutView();
-
-    chan.command('set:content', {backboneView: view});
+    chan.command('set:content', {backboneView: new SettingsLayoutView()});
   }
 };
 
