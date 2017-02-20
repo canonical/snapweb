@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python3
 
 import os
 import json
@@ -24,7 +24,7 @@ CONF_FILENAME = "settings.json"
 SNAP_COMMON_ENV = ''
 try:
     SNAP_COMMON_ENV = os.environ["SNAP_COMMON"]
-except Exception, e:
+except Exception as e:
     sys.stderr.write("Could not find $SNAP_COMMON environment variable\n")
     sys.exit(1)
 
