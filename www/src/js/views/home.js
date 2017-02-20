@@ -24,7 +24,7 @@ module.exports = Backbone.Marionette.LayoutView.extend({
       collection: new Backbone.Collection(
         this.collection.filter(
           function(m) {
-            return m.get('type') == 'app';
+            return m.get('type') == 'app' && m.get('id') != 'snapweb';
           }
         )
       )
@@ -36,7 +36,9 @@ module.exports = Backbone.Marionette.LayoutView.extend({
         new Backbone.Collection(
           this.collection.filter(
             function(m) {
-              return m && m.get('type') != 'app' && m.get('type') != 'gadget';
+              return m &&
+                ((m.get('type') != 'app' && m.get('type') != 'gadget') ||
+                 (m.get('id') == 'snapweb'));
             }
           )
         ).each(function(snap) {

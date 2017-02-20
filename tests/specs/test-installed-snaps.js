@@ -51,7 +51,8 @@ describe('Installed Snaps Page - Verify that', function() {
             expect(snapslist_raw).to.include(snap.getText());
         });
 
-        expect(snapslist_snapweb.value).to.have.length(snapslist_device.length - 1, "Snaps installed on device didn't match");
+        systemsnaps_snapweb = snapsPage.systemsnaps;
+        expect(snapslist_snapweb.value.concat(systemsnaps_snapweb.value)).to.have.length(snapslist_device.length - 1, "Snaps installed on device didn't match");
     });
 
     it('clicking store link takes the user to store', function() {
@@ -84,7 +85,7 @@ describe('Installed Snaps Page - Verify that', function() {
     it("Clicking on snap entry opens the about snap's about page", function() {
 
         var snap_name = 'snapweb';
-        var snap = snapsPage.snapElement(snap_name);
+        var snap = snapsPage.systemSnapElement(snap_name);
         snap.waitForVisible();
         snap.click();
         browser.waitForVisible(snapDetailsPage.snapTitleElement);
