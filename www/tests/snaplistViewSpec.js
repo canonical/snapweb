@@ -34,7 +34,21 @@ describe('SnapListView', function() {
     delete view;
   });
 
-  it('should not display message for empty collection', function() {
+  it('should not display message for empty collection if requested', function() {
+    var view = new SnapListView({
+      doNotDisplayEmptyList: true,
+      model: this.model,
+      collection: this.empty_collection,
+    });
+    view.render();
+    var l = view.$el.find('.p-card')
+    expect(l.length).toBe(0);
+    expect(view.$el.html().indexOf('No results')).toBe(-1);
+    view.remove();
+    delete view;
+  });
+
+  it('should not display message for empty collection by default', function() {
     var view = new SnapListView({
       model: this.model,
       collection: this.empty_collection,
@@ -42,6 +56,7 @@ describe('SnapListView', function() {
     view.render();
     var l = view.$el.find('.p-card')
     expect(l.length).toBe(0);
+    expect(view.$el.html().indexOf('No results')).not.toBe(-1);
     view.remove();
     delete view;
   });
