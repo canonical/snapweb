@@ -10,8 +10,8 @@ var ConfirmationDialog = require('../components/confirmation-dialog.js');
 
 
 function DeviceInfo({model}) {
-  var interfaces = model.get('interfaces');
-  var interfacesText = "";
+  var interfaces = model.get('interfaces') || [];
+  var interfacesText = '';
   if (interfaces.length == 0) {
       interfacesText = 'No interfaces found';
   } else {
