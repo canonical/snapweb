@@ -11,13 +11,10 @@ fi
 
 snap_name="${snap##*/}"
 
-SSH_OPTS="-o StrictHostKeyChecking=no"
+# ssh-keygen -f "~/.ssh/known_hosts" -R [localhost]:8022
+
+SSH_OPTS="-o StrictHostKeyChecking=no -o PreferredAuthentications=\"password\""
 SSH_OPTS="$SSH_OPTS -p $port $user@$host"
 
-ssh ${SSH_OPTS} "if [ -d tmpsnaps ]; then rm -rf tmpsnaps; fi; mkdir tmpsnaps;"
-scp -P $port $snap  $user@$host:~/tmpsnaps/
-ssh ${SSH_OPTS} "sudo snap remove snapweb >/dev/null"
-ssh ${SSH_OPTS} "sudo snap install ~/tmpsnaps/$snap_name --devmode"
-# need to manually connect interfaces as snapd won't do it anymore in devmode
-ssh ${SSH_OPTS} "sudo snap connect snapweb:snapd-control"
-ssh ${SSH_OPTS} "sudo snap connect snapweb:timeserver-control"
+scp -P $port $snap  $user@$host:~/
+ssh ${SSH_OPTS} "sudo snap remove snapweb >/dev/null && sudo snap install $snap_name --devmode && sudo snap connect snapweb:snapd-control"
