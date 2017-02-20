@@ -40,6 +40,11 @@ var installedSnapsPage = Object.create(basepage, {
             return browser.element("a=Add more snaps for this device");
         }
     },
+    addsnapscard: {
+        get: function() {
+            return browser.elements(".p-card h3.p-card__title")
+        }
+    },
     installedsnaps: {
         get: function() {
             return browser.elements(".p-card h3.js-snap-title")
