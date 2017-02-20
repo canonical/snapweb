@@ -11,7 +11,9 @@ fi
 
 snap_name="${snap##*/}"
 
-SSH_OPTS="-o StrictHostKeyChecking=no"
+# ssh-keygen -f "~/.ssh/known_hosts" -R [localhost]:8022
+
+SSH_OPTS="-o StrictHostKeyChecking=no -o PreferredAuthentications=\"password\""
 SSH_OPTS="$SSH_OPTS -p $port $user@$host"
 
 ssh ${SSH_OPTS} "if [ -d tmpsnaps ]; then rm -rf tmpsnaps; fi; mkdir tmpsnaps;"
