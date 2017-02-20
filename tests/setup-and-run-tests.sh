@@ -20,5 +20,5 @@ fi
 snap=$(find "$(pwd)" -name snapweb\*_amd64.snap)
 
 cd tests
-./remote-install-snap.sh $user $host $port $snap || { echo "Warning: unable to deploy snap; skipping integration tests"; exit 0; }
+./remote-install-snap.sh $user $host $port $snap || { echo "Error: unable to deploy snap"; exit 1; }
 ./run-tests.sh $user $host $port sudo
