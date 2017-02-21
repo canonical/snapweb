@@ -71,3 +71,15 @@ func (s *ReadNtpSuite) TestReadValidNTP(c *C) {
 		formatNTPContent([]string{ntpServer}))
 	c.Check(readNTPServer(), Equals, ntpServer)
 }
+
+func (s *ReadNtpSuite) TestWriteValidNTP(c *C) {
+	timesyncdConfigurationFilePath = filepath.Join(s.ntpFilePath, timesyncFileName)
+	var ntpServer interface{} = "1.1.1.1, 2.2.2.2"
+	mockNTPFileContent(c,
+		timesyncdConfigurationFilePath,
+		formatNTPContent([]string{""}))
+	c.Assert(setTimeInfo(map[string]interface{}{"ntpServer": ntpServer}), IsNil)
+	ntpServer = "2.2.2.2"
+	c.Assert(setTimeInfo(map[string]interface{}{"ntpServer": ntpServer}), IsNil)
+	c.Check(readNTPServer(), Equals, ntpServer)
+}
