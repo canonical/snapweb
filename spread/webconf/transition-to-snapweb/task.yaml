@@ -10,9 +10,8 @@ execute: |
     # wait a bit
     sleep 2
 
-    echo "Verifying that snapweb now serves on port 4200"
+    echo "Verifying that snapweb now serves on port 4201"
     printf "GET / HTTP/1.1\nHost:localhost\nUser-Agent:nc\n\n" | nc localhost 4201
 
-    # echo "The system should be managed now"
-    # test `snap managed` = 'false'
-    
+    echo "The system should be managed now"
+    test `snap managed` = 'true'
