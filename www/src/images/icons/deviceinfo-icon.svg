@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 96 96.000001">
+  <g transform="matrix(0 -.9996 -1 0 441.362 437.83)" color="#000">
+    <path overflow="visible" fill="none" d="M438.002 345.362h-96.038v96h96.038z"/>
+    <path style="line-height:normal;font-variant-ligatures:none;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;text-transform:none;block-progression:tb;shape-padding:0;isolation:auto;mix-blend-mode:normal" d="M432 393.36c0 23.174-18.835 42-42.016 42-23.18 0-42.017-18.826-42.017-42 0-23.17 18.837-42 42.017-42 23.18 0 42.016 18.83 42.016 42zm-4.002 0c0-21.008-16.994-37.997-38.014-37.997-21.02 0-38.015 16.99-38.015 37.998 0 21.01 16.995 38 38.014 38 21.02 0 38.014-16.99 38.014-38z" font-family="sans-serif" white-space="normal" overflow="visible" solid-color="#000000" fill="gray"/>
+    <path overflow="visible" fill="gray" d="M397.987 396.362v-6h-32.013v6z"/>
+    <ellipse cx="-393.362" cy="-408.991" transform="matrix(0 -1 -1 0 0 0)" rx="5" ry="5.002" overflow="visible" fill="gray"/>
+  </g>
+</svg>

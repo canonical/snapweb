@@ -1,6 +1,5 @@
 
 var Backbone = require('backbone');
-var Marionette = require('backbone.marionette');
 var React = require('react');
 var ReactBackbone = require('react.backbone');
 
@@ -8,6 +7,12 @@ var Config = require('../config.js');
 
 var ConfirmationDialog = require('../components/confirmation-dialog.js');
 
+
+const DeviceInfoLine = ({id, name, value}) =>
+  <div className="row">
+    <div className="col-2"><strong>{name}</strong></div>
+    <div className="col-6" id={id}>{value}</div>
+  </div>;
 
 function DeviceInfo({model}) {
   var interfaces = model.get('interfaces') || [];
@@ -23,34 +28,20 @@ function DeviceInfo({model}) {
       <div className="row">
           <h2>Device information</h2>
       </div>
-      <div className="row">
-        <div className="col-2"><strong>Device name</strong></div>
-        <div className="col-6" id="info-device-name">{model.get('deviceName')}</div>
-      </div>
-      <div className="row">
-        <div className="col-2"><strong>Brand</strong></div>
-        <div className="col-6" id="info-brand">{model.get('brand')}</div>
-      </div>
-      <div className="row">
-        <div className="col-2"><strong>Model</strong></div>
-        <div className="col-6" id="info-model">{model.get('model')}</div>
-      </div>
-      <div className="row">
-        <div className="col-2"><strong>Serial</strong></div>
-        <div className="col-6" id="info-serial">{model.get('serial')}</div>
-      </div>
-      <div className="row">
-        <div className="col-2"><strong>Operating System</strong></div>
-        <div className="col-6" id="info-operating-system">{model.get('operatingSystem')}</div>
-      </div>
-      <div className="row">
-        <div className="col-2"><strong>Interfaces</strong></div>
-        <div className="col-6" id="info-interfaces">{interfacesText}</div>
-      </div>
-      <div className="row">
-        <div className="col-2"><strong>Uptime</strong></div>
-        <div className="col-6" id="info-uptime">{model.get('uptime')}</div>
-      </div>
+      <DeviceInfoLine id="info-device-name"
+          name="Device name" value={model.get('deviceName')} />
+      <DeviceInfoLine id="info-brand"
+          name="Brand" value={model.get('brand')} />
+      <DeviceInfoLine id="info-model"
+          name="Model" value={model.get('model')} />
+      <DeviceInfoLine id="info-serial"
+          name="Serial" value={model.get('serial')} />
+      <DeviceInfoLine id="info-operating-system"
+          name="Operating System" value={model.get('operatingSystem')} />
+      <DeviceInfoLine id="info-interfaces"
+          name="Interfaces" value={interfacesText} />
+      <DeviceInfoLine id="info-uptime"
+          name="Uptime" value={model.get('uptime')} />
     </div>
   );
 }

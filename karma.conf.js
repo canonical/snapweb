@@ -41,7 +41,7 @@ module.exports = function(config) {
       transform: [
         'hbsfy',
         ['babelify', {
-          presets: ["es2015", "react"]
+          presets: ["react-app"]
         }],
         ['browserify-istanbul', {
           instrumenterConfig:  {

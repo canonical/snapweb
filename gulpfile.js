@@ -32,7 +32,7 @@ function createBundler(watch) {
   });
   bundler.transform('hbsfy');
   bundler.transform({global: true}, 'aliasify');
-  bundler.transform('babelify', {presets: ["es2015", "react"]});
+  bundler.transform('babelify', {presets: ["react-app"]});
 
   if (watch) {
     bundler = watchify(bundler);
