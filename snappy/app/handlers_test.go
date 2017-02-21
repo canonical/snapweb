@@ -18,6 +18,7 @@
 package snappy
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"io/ioutil"
@@ -150,6 +151,20 @@ func (s *HandlersSuite) TestRemove(c *C) {
 	s.h.MakeMuxer("", mux.NewRouter()).ServeHTTP(rec, req)
 	c.Assert(rec.Code, Equals, http.StatusAccepted)
 	c.Assert(s.c.Removed, Equals, "chatroom")
+}
+
+func (s *HandlersSuite) TestUpdate(c *C) {
+	s.c.Snaps = []*client.Snap{common.NewDefaultSnap()}
+	s.c.Snaps[0].Status = "StatusInstalled"
+
+	rec := httptest.NewRecorder()
+	status := []byte(`{"status": "StatusEnabling"}`)
+	req, err := http.NewRequest("POST", "/chatroom", bytes.NewBuffer(status))
+	req.Header.Set("Content-Type", "application/json")
+	c.Assert(err, IsNil)
+
+	s.h.MakeMuxer("", mux.NewRouter()).ServeHTTP(rec, req)
+	c.Assert(rec.Code, Equals, http.StatusAccepted)
 }
 
 func (s *HandlersSuite) TestJsonResponseOrError(c *C) {
