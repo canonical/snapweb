@@ -25,32 +25,54 @@ import (
 	. "gopkg.in/check.v1"
 )
 
-type CertSuite struct{}
+type CertSuite struct {
+	snapdata     string
+	certFilename string
+	keyFilename  string
+}
 
 var _ = Suite(&CertSuite{})
 
-func (s *CertSuite) TestGenerate(c *C) {
-	tmp := c.MkDir()
-	os.Setenv("SNAP_DATA", tmp)
-	certFile := filepath.Join(os.Getenv("SNAP_DATA"), "cert.pem")
-	keyFile := filepath.Join(os.Getenv("SNAP_DATA"), "key.pem")
+func (s *CertSuite) SetUpTest(c *C) {
+	s.snapdata = c.MkDir()
+	os.Setenv("SNAP_DATA", s.snapdata)
 
-	c.Assert(ioutil.WriteFile(certFile, nil, 0600), IsNil)
-	c.Assert(ioutil.WriteFile(keyFile, nil, 0600), IsNil)
+	s.certFilename = filepath.Join(os.Getenv("SNAP_DATA"), "cert.pem")
+	s.keyFilename = filepath.Join(os.Getenv("SNAP_DATA"), "key.pem")
+}
 
-	GenerateCertificate()
-	certData, err := ioutil.ReadFile(certFile)
+func (s *CertSuite) TearDownTest(c *C) {
+	os.RemoveAll(s.snapdata)
+}
+
+func (s *CertSuite) TestDumpCertificate(c *C) {
+	c.Assert(ioutil.WriteFile(s.certFilename, nil, 0600), IsNil)
+	c.Assert(ioutil.WriteFile(s.keyFilename, nil, 0600), IsNil)
+
+	DumpCertificate()
+	certData, err := ioutil.ReadFile(s.certFilename)
 	c.Assert(err, IsNil)
-	keyData, err := ioutil.ReadFile(keyFile)
+	keyData, err := ioutil.ReadFile(s.keyFilename)
 	c.Assert(err, IsNil)
 
-	GenerateCertificate()
-	certData2, err := ioutil.ReadFile(certFile)
+	DumpCertificate()
+	certData2, err := ioutil.ReadFile(s.certFilename)
 	c.Assert(err, IsNil)
-	keyData2, err := ioutil.ReadFile(keyFile)
+	keyData2, err := ioutil.ReadFile(s.keyFilename)
 	c.Assert(err, IsNil)
 
 	// ensure the certificate is not re-generated if one already exists
 	c.Assert(certData, DeepEquals, certData2)
 	c.Assert(keyData, DeepEquals, keyData2)
+}
+
+func (s *CertSuite) TestGenerateCertificate(c *C) {
+	GenerateCertificate(s.certFilename, s.keyFilename)
+	_, err := os.Stat(s.certFilename)
+	c.Assert(err, IsNil)
+	_, err = os.Stat(s.keyFilename)
+	c.Assert(err, IsNil)
+	// TODO check for content
+	c.Assert(createPublicKeycertFile(s.certFilename, nil), IsNil)
+	c.Assert(createPrivateKeyFile(s.keyFilename, nil), NotNil)
 }
