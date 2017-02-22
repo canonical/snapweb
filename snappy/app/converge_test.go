@@ -217,6 +217,55 @@ func (s *AllPackagesSuite) TestHasSnaps(c *C) {
 	c.Assert(snaps[1].Name, Equals, "app2")
 }
 
+func (s *AllPackagesSuite) TestNoUpdatableSnaps(c *C) {
+	s.c.StoreErr = errors.New("No updates available")
+
+	snaps, err := s.h.allPackages(updatableSnaps, "", false, "")
+	c.Assert(snaps, IsNil)
+	c.Assert(err, NotNil)
+}
+
+func (s *AllPackagesSuite) TestUpdatableSnaps(c *C) {
+	s.c.UpdatableSnaps = []*client.Snap{
+		common.NewSnap("app2"),
+		common.NewSnap("app1"),
+	}
+
+	snaps, err := s.h.allPackages(updatableSnaps, "", false, "")
+	c.Assert(err, IsNil)
+	c.Assert(snaps, HasLen, 2)
+	c.Assert(snaps[0].Name, Equals, "app1")
+	c.Assert(snaps[1].Name, Equals, "app2")
+}
+
+func (s *AllPackagesSuite) TestHistoryNoSnap(c *C) {
+	s.c.Err = errors.New("fail")
+
+	_, err := s.h.packageHistory("invalid")
+	c.Assert(err, NotNil)
+}
+
+func (s *AllPackagesSuite) TestRefreshNoSnap(c *C) {
+	s.c.Err = errors.New("fail")
+
+	err := s.h.refreshPackage("invalid")
+	c.Assert(err, NotNil)
+}
+
+func (s *AllPackagesSuite) TestRemoveNoSnap(c *C) {
+	s.c.Err = errors.New("fail")
+
+	err := s.h.removePackage("invalid")
+	c.Assert(err, NotNil)
+}
+
+func (s *AllPackagesSuite) TestInstallNoSnap(c *C) {
+	s.c.Err = errors.New("fail")
+
+	err := s.h.removePackage("invalid")
+	c.Assert(err, NotNil)
+}
+
 func (s *AllPackagesSuite) TestFormatInstallDate(c *C) {
 	c.Assert(formatInstallData(time.Time{}), Equals, "")
 	t, _ := time.Parse("2006-Jan-02", "2013-Feb-03")

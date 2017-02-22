@@ -47,6 +47,7 @@ type SnapdClient interface {
 	Change(id string) (*client.Change, error)
 	Enable(id string, options *client.SnapOptions) (string, error)
 	Disable(id string, options *client.SnapOptions) (string, error)
+	Refresh(name string, options *client.SnapOptions) (string, error)
 }
 
 // ClientAdapter adapts our expectations to the snapd client API.
@@ -134,6 +135,10 @@ func (a *ClientAdapter) Enable(name string, options *client.SnapOptions) (string
 // Disable disables the snap
 func (a *ClientAdapter) Disable(name string, options *client.SnapOptions) (string, error) {
 	return a.snapdClient.Disable(name, options)
+}
+
+func (a *ClientAdapter) Refresh(name string, options *client.SnapOptions) (string, error) {
+	return a.snapdClient.Refresh(name, options)
 }
 
 // internal

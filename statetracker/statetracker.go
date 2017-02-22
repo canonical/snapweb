@@ -48,6 +48,8 @@ const (
 	StatusUninstalled = "uninstalled"
 	// StatusInstalling indicates the package is in an installing state.
 	StatusInstalling = "installing"
+	// StatusRefreshing the packaging is being updated
+	StatusRefreshing = "refreshing"
 	// StatusUninstalling indicates the package is in an uninstalling state.
 	StatusUninstalling = "uninstalling"
 	// StatusEnabling indicates the package is in an enabling state.
@@ -182,6 +184,19 @@ func (s *StateTracker) TrackDisable(changeID string, snap *client.Snap) {
 	}
 
 	s.trackOperation(changeID, snap.Name, StatusDisabling)
+}
+
+// TrackRefresh tracks the updating of a snap
+func (s *StateTracker) TrackRefresh(changeID string, snap *client.Snap) {
+	if !isInstalled(snap) {
+		return
+	}
+
+	if tracked, _ := s.IsTrackedForRunningOperation(snap); tracked {
+		return
+	}
+
+	s.trackOperation(changeID, snap.Name, StatusRefreshing)
 }
 
 func (s *StateTracker) trackOperation(changeID, name, operation string) {

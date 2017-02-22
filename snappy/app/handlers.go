@@ -23,6 +23,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/snapcore/snapweb/snappy/snapdclient"
 	"github.com/snapcore/snapweb/statetracker"
@@ -77,6 +78,8 @@ func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
 	snapCondition := availableSnaps
 	if r.FormValue("installed_only") == "true" {
 		snapCondition = installedSnaps
+	} else if r.FormValue("updatable_only") == "true" {
+		snapCondition = updatableSnaps
 	} else {
 		snapCondition = availableSnaps
 	}
@@ -105,6 +108,17 @@ func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
 	h.jsonResponseOrError(payload, w)
 }
 
+func (h *Handler) getUpdates(w http.ResponseWriter, r *http.Request) {
+	payload, err := h.allPackages(updatableSnaps, ".", true, "")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "Error: %s", err)
+		return
+	}
+
+	h.jsonResponseOrError(payload, w)
+}
+
 func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
 	name := mux.Vars(r)["name"]
 
@@ -112,6 +126,55 @@ func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintln(w, err, name)
+		return
+	}
+
+	h.jsonResponseOrError(payload, w)
+}
+
+func (h *Handler) getHistories(w http.ResponseWriter, r *http.Request) {
+	var numDepth = 100 // XXX: find max history
+
+	depth := mux.Vars(r)["depth"]
+	if depth != "all" && depth != "any" {
+		if d, err := strconv.Atoi(depth); err == nil {
+			numDepth = d
+		}
+	}
+
+	allPs, err := h.allPackages(installedSnaps, ".", true, "")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "Error: %s", err)
+		return
+	}
+
+	var histories [][]snapPkg
+
+	for _, snap := range allPs {
+		var packs []snapPkg
+		if ph, err := h.packageHistory(snap.Name); err == nil {
+			for i, pack := range ph {
+				if i == numDepth {
+					break
+				}
+				packs = append(packs, pack)
+			}
+		}
+		if len(packs) > 0 {
+			histories = append(histories, packs)
+		}
+	}
+
+	h.jsonResponseOrError(histories, w)
+}
+
+func (h *Handler) getHistory(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+
+	payload, err := h.packageHistory(id)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
@@ -177,9 +240,9 @@ func (h *Handler) update(w http.ResponseWriter, r *http.Request) {
 	h.snapOperationResponse(snapName, err, w)
 }
 
-// MakeMuxer sets up the handlers multiplexing to handle requests against snappy's
+// MakePackageRouter sets up the handlers multiplexing to handle requests against snappy's
 // packages api
-func (h *Handler) MakeMuxer(prefix string, parentRouter *mux.Router) http.Handler {
+func (h *Handler) MakePackageRouter(prefix string, parentRouter *mux.Router) http.Handler {
 	m := parentRouter.PathPrefix(prefix).Subrouter()
 
 	// Get all of packages.
@@ -194,8 +257,57 @@ func (h *Handler) MakeMuxer(prefix string, parentRouter *mux.Router) http.Handle
 	// Remove a package
 	m.HandleFunc("/{name}", h.remove).Methods("DELETE")
 
-	// Update a snap package
-	m.HandleFunc("/{name}", h.update).Methods("POST")
+	return m
+}
+
+// MakeSnapRouter sets up endpoints for locally installed snaps
+func (h *Handler) MakeSnapRouter(prefix string, parentRouter *mux.Router) http.Handler {
+	m := parentRouter.PathPrefix(prefix).Subrouter()
+
+	m.HandleFunc("/", h.getUpdates).Methods("GET").Queries("updatable_only", "true")
+	m.HandleFunc("/", h.getHistories).Methods("GET").Queries("history", "{depth}")
+
+	m.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		payload, err := h.allPackages(installedSnaps, ".", false, "")
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			fmt.Fprintf(w, "Error: %s", err)
+			return
+		}
+		h.jsonResponseOrError(payload, w)
+	}).Methods("GET")
+
+	m.HandleFunc("/{id}", h.get).Methods("GET")
+
+	m.HandleFunc("/{id}/history", h.getHistory).Methods("GET")
+
+	m.HandleFunc("/{id}", func(w http.ResponseWriter, r *http.Request) {
+		data, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		var snapPatch map[string]interface{}
+		err = json.Unmarshal(data, &snapPatch)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		if _, exists := snapPatch["version"]; exists {
+			// Could handle downgrades etc, but for now assume update
+			h.refreshPackage(mux.Vars(r)["id"])
+		} else {
+			w.WriteHeader(422) // http.StatusUnprocessableEntity
+			return
+		}
+
+		w.WriteHeader(http.StatusNoContent)
+	}).Methods("PATCH")
+
+	// Remove a package
+	m.HandleFunc("/{id}", h.remove).Methods("DELETE")
 
 	return m
 }

@@ -18,6 +18,8 @@ module.exports = Backbone.Marionette.LayoutView.extend({
   initialize: function(options) {
     this.timeInfo = options.timeInfo;
     this.deviceInfo = options.deviceInfo;
+    this.updates = options.updates;
+    this.history = options.history;
   },
 
   template: function(model) {
@@ -46,7 +48,10 @@ module.exports = Backbone.Marionette.LayoutView.extend({
         view = new SettingsUsersView();
         break;
       case 'updates':
-        view = new SettingsUpdatesView();
+        view = new SettingsUpdatesView({
+            collection: this.updates,
+            history: this.history
+          });
         break;
       case 'time': {
         timeInfo = new TimeInfo;
