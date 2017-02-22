@@ -257,8 +257,8 @@ func (h *Handler) MakePackageRouter(prefix string, parentRouter *mux.Router) htt
 }
 
 // MakeSnapRouter sets up endpoints for locally installed snaps
-func (h *Handler) MakeSnapRouter(prefix string) http.Handler {
-	m := mux.NewRouter().PathPrefix(prefix).Subrouter()
+func (h *Handler) MakeSnapRouter(prefix string, parentRouter *mux.Router) http.Handler {
+	m := parentRouter.PathPrefix(prefix).Subrouter()
 
 	m.HandleFunc("/", h.getUpdates).Methods("GET").Queries("updatable_only", "true")
 	m.HandleFunc("/", h.getHistories).Methods("GET").Queries("history", "{depth}")

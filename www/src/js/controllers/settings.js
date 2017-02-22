@@ -26,7 +26,7 @@ module.exports = {
                     data: $.param({
                       'history': 1
                     })
-                  })
+                  }),
           deviceInfo.fetch()
         ).then(function() {
           var view = new SettingsLayoutView({
