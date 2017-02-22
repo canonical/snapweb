@@ -19,6 +19,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -61,4 +62,14 @@ func (s *ConfigurationSuite) TestExistingValidSetupFile(c *C) {
 	conf := Config{DisableAccessToken: true, DisableHTTPS: true}
 	setupConfig(c, s.snapCommonEnv, conf)
 	c.Check(readConfig(), DeepEquals, Config{DisableAccessToken: true, DisableHTTPS: true})
+}
+
+func (s *ConfigurationSuite) TestErrorWhileReadingFile(c *C) {
+	conf := Config{DisableAccessToken: true, DisableHTTPS: true}
+	setupConfig(c, s.snapCommonEnv, conf)
+	readFile = func(filename string) ([]byte, error) {
+		return nil, errors.New("error")
+	}
+	c.Check(readConfig(), DeepEquals, Config{})
+	readFile = ioutil.ReadFile
 }

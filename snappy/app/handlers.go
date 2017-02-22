@@ -152,6 +152,10 @@ func (h *Handler) update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// For now only deal with enable/disable updates
+	if _, ok := snap["status"]; !ok {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
 	var status string
 	err = json.Unmarshal(*snap["status"], &status)
