@@ -70,6 +70,11 @@ func (s *ReadNtpSuite) TestReadValidNTP(c *C) {
 		timesyncdConfigurationFilePath,
 		formatNTPContent([]string{ntpServer}))
 	c.Check(readNTPServer(), Equals, ntpServer)
+
+	mockNTPFileContent(c,
+		timesyncdConfigurationFilePath,
+		formatNTPContent([]string{""}))
+	c.Check(readNTPServer(), Equals, "")
 }
 
 func (s *ReadNtpSuite) TestWriteValidNTP(c *C) {
