@@ -40,6 +40,7 @@ module.exports = function(config) {
       debug: true,
       transform: [
         'hbsfy',
+        'reactify',
         ['browserify-istanbul', {
           instrumenterConfig:  {
             embedSource: true

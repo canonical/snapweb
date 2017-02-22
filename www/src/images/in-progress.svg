@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 41.2 (35397) - http://www.bohemiancoding.com/sketch -->
+    <title>in-progress</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="-3.92023038e-13%" y1="3.44840904%" x2="96.551591%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#2AB7EC" offset="0%"></stop>
+            <stop stop-color="#2AB7EC" stop-opacity="0.50196081" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="0%" y1="3.44840904%" x2="96.551591%" y2="100%" id="linearGradient-2">
+            <stop stop-color="#2AB7EC" offset="0%"></stop>
+            <stop stop-color="#2AB7EC" stop-opacity="0.50196081" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="-0.000275861689%" y1="3.44827111%" x2="96.5513151%" y2="99.9998621%" id="linearGradient-3">
+            <stop stop-color="#2AB7EC" offset="0%"></stop>
+            <stop stop-color="#2AB7EC" stop-opacity="0.50196081" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="in-progress" stroke-width="1.5">
+            <circle id="circle5454" stroke="#2AB7EC" opacity="0.1" cx="7.99999852" cy="8.00001312" r="7.2500086"></circle>
+            <path d="M0.74998852,8.00001312 C2.67281084,8.00001275 4.51687947,8.76385078 5.87652017,10.1234915 C7.23616086,11.4831322 7.99999889,13.3272008 7.99999852,15.2500231" id="path5458" stroke="url(#linearGradient-1)" transform="translate(4.374994, 11.625018) scale(-1, 1) rotate(90.000000) translate(-4.374994, -11.625018) "></path>
+            <path d="M7.99999852,8.00001312 C9.92282084,8.00001275 11.7668895,8.76385078 13.1265302,10.1234915 C14.4861709,11.4831322 15.2500089,13.3272008 15.2500085,15.2500231" id="path5460" stroke="url(#linearGradient-2)" opacity="0.5" transform="translate(11.625004, 11.625018) scale(1, -1) translate(-11.625004, -11.625018) "></path>
+            <path d="M7.99999852,0.75000312 C9.92282084,0.750002749 11.7668895,1.51384078 13.1265302,2.87348148 C14.4861709,4.23312218 15.2500089,6.0771908 15.2500085,8.00001312" id="path5462" stroke="url(#linearGradient-3)" opacity="0.25" transform="translate(11.625004, 4.375008) scale(-1, 1) rotate(-90.000000) translate(-11.625004, -4.375008) "></path>
+            <path d="M0.74998852,0.75000312 C2.67281084,0.750002749 4.51687947,1.51384078 5.87652017,2.87348148 C7.23616086,4.23312218 7.99999889,6.0771908 7.99999852,8.00001312" id="path5464" stroke="#2AB7EC" transform="translate(4.374994, 4.375008) scale(-1, 1) translate(-4.374994, -4.375008) "></path>
+        </g>
+    </g>
+</svg>

@@ -12,14 +12,11 @@ var History = require('../collections/history.js');
 module.exports = {
   index: function() {
     var chan = Radio.channel('root');
-    var timeInfo = new TimeInfo;
     var deviceInfo = new DeviceInfo;
     var updates = new Updates;
     var history = new History;
 
     $.when(
-          timeInfo.fetch(),
-          deviceInfo.fetch(),
           updates.fetch({
                     data: $.param({
                       'updatable_only': true
@@ -30,11 +27,12 @@ module.exports = {
                       'history': 1
                     })
                   })
+          deviceInfo.fetch()
         ).then(function() {
           var view = new SettingsLayoutView({
-                  timeInfo: timeInfo,
                   updates: updates,
-                  history: history
+                  history: history,
+                  deviceInfo: deviceInfo
                 });
           chan.command('set:content', {backboneView: view});
         });

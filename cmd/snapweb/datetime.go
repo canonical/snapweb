@@ -96,20 +96,50 @@ func writeNTPServer(ntpServer string) error {
 }
 
 func setTimeInfo(patch map[string]interface{}) error {
-	if v, exists := patch["ntpServer"]; exists {
-		return writeNTPServer(v.(string))
-	} else if v, exists := patch["timezone"]; exists {
-		timezone := v.(string)
+	for k, v := range patch {
+		if k == "ntp" {
+			ntp := v.(bool)
 
-		bus, err := dbus.SystemBus()
-		if err != nil {
-			return err
-		}
+			bus, err := dbus.SystemBus()
+			if err != nil {
+				return err
+			}
 
-		timedatectl := bus.Object("org.freedesktop.timedate1", "/org/freedesktop/timedate1")
-		call := timedatectl.Call("org.freedesktop.timedate1.SetTimezone", 0, timezone, false)
-		if call.Err != nil {
-			return call.Err
+			timedatectl := bus.Object("org.freedesktop.timedate1", "/org/freedesktop/timedate1")
+			call := timedatectl.Call("org.freedesktop.timedate1.SetNTP", 0, ntp, false)
+			if call.Err != nil {
+				return call.Err
+			}
+		} else if k == "ntpServer" {
+			if err := writeNTPServer(v.(string)); err != nil {
+				return err
+			}
+		} else if k == "dateTime" {
+			dateTime := v.(float64) * 1000000
+
+			bus, err := dbus.SystemBus()
+			if err != nil {
+				return err
+			}
+
+			timedatectl := bus.Object("org.freedesktop.timedate1", "/org/freedesktop/timedate1")
+			call := timedatectl.Call("org.freedesktop.timedate1.SetTime", 0, int64(dateTime), false, false)
+			if call.Err != nil {
+				return call.Err
+			}
+		} else if k == "timezone" {
+			timezone := v.(string)
+
+			bus, err := dbus.SystemBus()
+			if err != nil {
+				return err
+			}
+
+			timedatectl := bus.Object("org.freedesktop.timedate1", "/org/freedesktop/timedate1")
+			call := timedatectl.Call("org.freedesktop.timedate1.SetTimezone", 0, timezone, false)
+			if call.Err != nil {
+				return call.Err
+			}
 		}
 	}
 
@@ -137,8 +167,6 @@ func readNTPServer() string {
 }
 
 func getTimeInfo() (map[string]interface{}, error) {
-	dt := time.Now()
-
 	bus, err := dbus.SystemBus()
 	if err != nil {
 		return map[string]interface{}{}, err
@@ -146,15 +174,19 @@ func getTimeInfo() (map[string]interface{}, error) {
 
 	timedatectl := bus.Object("org.freedesktop.timedate1", "/org/freedesktop/timedate1")
 	timezone, err := timedatectl.GetProperty("org.freedesktop.timedate1.Timezone")
+	if err != nil {
+		return map[string]interface{}{}, err
+	}
 
+	ntp, err := timedatectl.GetProperty("org.freedesktop.timedate1.NTP")
 	if err != nil {
 		return map[string]interface{}{}, err
 	}
 
 	return map[string]interface{}{
-		"Date":      dt.Format("2006-01-02"), // Format for picker
-		"Time":      dt.Format("15:04"),      // Format for picker
+		"DateTime":  time.Now().Unix(),
 		"Timezone":  timezone.Value().(string),
+		"NTP":       ntp.Value().(bool),
 		"NTPServer": readNTPServer(),
 	}, nil
 }

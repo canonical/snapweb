@@ -205,6 +205,7 @@ func (h *Handler) update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	body, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
 
 	var snap map[string]*json.RawMessage
 	err = json.Unmarshal(body, &snap)

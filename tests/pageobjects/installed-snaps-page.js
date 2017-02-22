@@ -32,7 +32,7 @@ var installedSnapsPage = Object.create(basepage, {
     },
     browsestore: {
         get: function() {
-            return browser.element("a=Browse store");
+            return browser.element("a=Store");
         }
     },
     addmoresnaps: {
@@ -40,9 +40,19 @@ var installedSnapsPage = Object.create(basepage, {
             return browser.element("a=Add more snaps for this device");
         }
     },
+    addsnapscard: {
+        get: function() {
+            return browser.elements(".p-card h3.p-card__title")
+        }
+    },
     installedsnaps: {
         get: function() {
-            return browser.elements(".p-card h3.js-snap-title");
+            return browser.elements(".p-card h3.js-snap-title")
+        }
+    },
+    systemsnaps: {
+        get: function() {
+            return browser.elements("#systems-snap-list tr")
         }
     },
     /**
@@ -74,9 +84,19 @@ var installedSnapsPage = Object.create(basepage, {
         }
     },
 
+    systemSnapElement: {
+        value: function(snap_name) {
+
+            var systemsnaps = browser.element("#systems-snap-list");
+            systemsnaps.waitForVisible();
+            return systemsnaps.element("span=" + snap_name);
+
+        }
+    },
+
     snapwebsnap: {
         get: function() {
-            return this.snapElement("snapweb");
+            return this.systemSnapElement("snapweb");
         }
     },
 

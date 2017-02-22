@@ -6,12 +6,16 @@ snapsPage = require("../pageobjects/installed-snaps-page.js");
 
 describe('Installed Snaps Page - Verify that', function() {
 
-    beforeEach(function() {
+    before(function() {
+        // gets a new token and enter snapweb
         snapsPage.open();
     });
 
-    afterEach(function() {});
-
+    beforeEach(function() {
+        // start from the home page for each test
+        browser.url('/');
+        snapsPage.addsnapscard.waitForVisible();
+    });
 
     it('page loads correctly', function() {
 
@@ -47,7 +51,8 @@ describe('Installed Snaps Page - Verify that', function() {
             expect(snapslist_raw).to.include(snap.getText());
         });
 
-        expect(snapslist_snapweb.value).to.have.length(snapslist_device.length - 1, "Snaps installed on device didn't match");
+        systemsnaps_snapweb = snapsPage.systemsnaps;
+        expect(snapslist_snapweb.value.concat(systemsnaps_snapweb.value)).to.have.length(snapslist_device.length - 1, "Snaps installed on device didn't match");
     });
 
     it('clicking store link takes the user to store', function() {
@@ -80,7 +85,7 @@ describe('Installed Snaps Page - Verify that', function() {
     it("Clicking on snap entry opens the about snap's about page", function() {
 
         var snap_name = 'snapweb';
-        var snap = snapsPage.snapElement(snap_name);
+        var snap = snapsPage.systemSnapElement(snap_name);
         snap.waitForVisible();
         snap.click();
         browser.waitForVisible(snapDetailsPage.snapTitleElement);
@@ -88,7 +93,7 @@ describe('Installed Snaps Page - Verify that', function() {
         assert.isNotNull(snapDetailsPage.snapDetail(4).value, "Snap has no update date");
     });
 
-    it('snapweb updates the page when snap is installed/removed direclty on the device', function() {
+    xit('snapweb updates the page when snap is installed/removed direclty on the device', function() {
         var snap_name = "hello-world";
         var re_removed = new RegExp("cannot find snap|" + snap_name + ".*removed")
         var re_installed = new RegExp(snap_name + ".*installed");
@@ -133,7 +138,7 @@ describe('Installed Snaps Page - Verify that', function() {
         });
     });
 
-    it('snapweb updates the page when snap is removed from ui buttons', function() {
+    xit('snapweb updates the page when snap is removed from ui buttons', function() {
         var snap_name = "hello-world";
         var re_installed = new RegExp(snap_name + ".*installed");
 
@@ -153,6 +158,7 @@ describe('Installed Snaps Page - Verify that', function() {
 
         //Check if snap installed is now shown on page
         var snap = snapsPage.snapElement(snap_name);
+
         snap.waitForVisible();
         var removeButton = snapsPage.snapInstallButton(snap_name);
         assert.isNotNull(removeButton.element('.b-installer_do_remove'));

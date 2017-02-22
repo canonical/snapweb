@@ -19,4 +19,6 @@ key.pem
 Session.vim
 .netrwhist
 tags
-
+**/*.jar
+**/*.zip
+**/*.tar.gz

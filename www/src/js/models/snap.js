@@ -158,13 +158,13 @@ module.exports = Backbone.Model.extend({
         action = 'Remove';
         break;
       case CONF.INSTALL_STATE.INSTALLING:
-        action = 'Installing…';
+        action = 'Installing';
         break;
       case CONF.INSTALL_STATE.REMOVED:
         action = 'Install';
         break;
       case CONF.INSTALL_STATE.REMOVING:
-        action = 'Removing…';
+        action = 'Removing';
         break;
       default:
         // XXX

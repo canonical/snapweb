@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Canonical Ltd
+ * Copyright (C) 2014-2017 Canonical Ltd
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -41,29 +41,38 @@ func init() {
 func redir(w http.ResponseWriter, req *http.Request) {
 	http.Redirect(w, req,
 		"https://"+strings.Replace(req.Host, httpAddr, httpsAddr, -1),
-		http.StatusMovedPermanently)
+		http.StatusSeeOther)
 }
 
 func main() {
-	GenerateCertificate()
+	config := readConfig()
 
-	initURLHandlers(logger)
+	// TODO set warning for too hazardous config?
+
+	initURLHandlers(logger, config)
 
 	go avahi.InitMDNS(logger)
 
 	logger.Println("Snapweb starting...")
 
-	// run the main service over HTTPS
-	go func() {
-		certFile := filepath.Join(os.Getenv("SNAP_DATA"), "cert.pem")
-		keyFile := filepath.Join(os.Getenv("SNAP_DATA"), "key.pem")
-		if err := http.ListenAndServeTLS(httpsAddr, certFile, keyFile, nil); err != nil {
-			logger.Fatalf("http.ListendAndServerTLS() failed with %v", err)
-		}
-	}()
+	// open a plain HTTP end-point on the "usual" 4200 port, and
+	// possibly redirect to HTTPS
+	handler := http.HandlerFunc(redir)
+	if !config.DisableHTTPS {
+		DumpCertificate()
 
-	// open a plain HTTP end-point on the "usual" 4200 port, and redirect to HTTPS
-	if err := http.ListenAndServe(httpAddr, http.HandlerFunc(redir)); err != nil {
+		go func() {
+			certFile := filepath.Join(os.Getenv("SNAP_DATA"), "cert.pem")
+			keyFile := filepath.Join(os.Getenv("SNAP_DATA"), "key.pem")
+			if err := http.ListenAndServeTLS(httpsAddr, certFile, keyFile, nil); err != nil {
+				logger.Fatalf("http.ListendAndServerTLS() failed with %v", err)
+			}
+		}()
+	} else {
+		handler = nil
+	}
+
+	if err := http.ListenAndServe(httpAddr, handler); err != nil {
 		logger.Fatalf("ListenAndServe failed with: %v", err)
 	}
 

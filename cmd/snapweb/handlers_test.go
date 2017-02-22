@@ -114,7 +114,7 @@ func (s *HandlersSuite) TestServesIcons(c *C) {
 	c.Assert(os.Mkdir(icons, os.ModePerm), IsNil)
 	c.Assert(ioutil.WriteFile(iconPath, []byte{}, os.ModePerm), IsNil)
 
-	initURLHandlers(log.New(os.Stdout, "", 0))
+	initURLHandlers(log.New(os.Stdout, "", 0), Config{})
 	defer func() {
 		http.DefaultServeMux = http.NewServeMux()
 	}()
@@ -141,7 +141,7 @@ func (s *HandlersSuite) TestMakeMainPageHandler(c *C) {
 	c.Assert(err, IsNil)
 	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
 
-	initURLHandlers(log.New(os.Stdout, "", 0))
+	initURLHandlers(log.New(os.Stdout, "", 0), Config{})
 	defer func() {
 		http.DefaultServeMux = http.NewServeMux()
 	}()
@@ -246,7 +246,7 @@ func (s *HandlersSuite) TestModelInfoHandler(c *C) {
 
 	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
 
-	initURLHandlers(log.New(os.Stdout, "", 0))
+	initURLHandlers(log.New(os.Stdout, "", 0), Config{})
 	defer func() {
 		http.DefaultServeMux = http.NewServeMux()
 	}()
@@ -288,7 +288,7 @@ func (s *HandlersSuite) TestDeviceActionInvalidMethod(c *C) {
 
 	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
 
-	initURLHandlers(log.New(os.Stdout, "", 0))
+	initURLHandlers(log.New(os.Stdout, "", 0), Config{})
 	defer func() {
 		http.DefaultServeMux = http.NewServeMux()
 	}()
@@ -308,7 +308,7 @@ func (s *HandlersSuite) TestDeviceActionInvalidContentType(c *C) {
 
 	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
 
-	initURLHandlers(log.New(os.Stdout, "", 0))
+	initURLHandlers(log.New(os.Stdout, "", 0), Config{})
 	defer func() {
 		http.DefaultServeMux = http.NewServeMux()
 	}()
@@ -328,7 +328,7 @@ func (s *HandlersSuite) TestDeviceActionInvalidJSON(c *C) {
 
 	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
 
-	initURLHandlers(log.New(os.Stdout, "", 0))
+	initURLHandlers(log.New(os.Stdout, "", 0), Config{})
 	defer func() {
 		http.DefaultServeMux = http.NewServeMux()
 	}()
@@ -351,7 +351,7 @@ func (s *HandlersSuite) TestDeviceActionInvalidAction(c *C) {
 
 	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
 
-	initURLHandlers(log.New(os.Stdout, "", 0))
+	initURLHandlers(log.New(os.Stdout, "", 0), Config{})
 	defer func() {
 		http.DefaultServeMux = http.NewServeMux()
 	}()
@@ -373,7 +373,7 @@ func (s *HandlersSuite) TestTimeInfoInvalidMethod(c *C) {
 
 	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
 
-	initURLHandlers(log.New(os.Stdout, "", 0))
+	initURLHandlers(log.New(os.Stdout, "", 0), Config{})
 	defer func() {
 		http.DefaultServeMux = http.NewServeMux()
 	}()
@@ -393,7 +393,7 @@ func (s *HandlersSuite) TestTimeInfoGET(c *C) {
 
 	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
 
-	initURLHandlers(log.New(os.Stdout, "", 0))
+	initURLHandlers(log.New(os.Stdout, "", 0), Config{})
 	defer func() {
 		http.DefaultServeMux = http.NewServeMux()
 	}()
@@ -413,9 +413,7 @@ func (s *HandlersSuite) TestTimeInfoGET(c *C) {
 	err = json.Unmarshal([]byte(rec.Body.String()), &timeInfo)
 	c.Assert(err, IsNil)
 
-	_, exists := timeInfo["date"]
-	c.Assert(exists, Equals, true)
-	_, exists = timeInfo["time"]
+	_, exists := timeInfo["dateTime"]
 	c.Assert(exists, Equals, true)
 	_, exists = timeInfo["timezone"]
 	c.Assert(exists, Equals, true)
@@ -426,7 +424,7 @@ func (s *HandlersSuite) TestTimeInfoInvalidContentType(c *C) {
 
 	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
 
-	initURLHandlers(log.New(os.Stdout, "", 0))
+	initURLHandlers(log.New(os.Stdout, "", 0), Config{})
 	defer func() {
 		http.DefaultServeMux = http.NewServeMux()
 	}()
@@ -446,7 +444,7 @@ func (s *HandlersSuite) TestTimeInfoInvalidJSON(c *C) {
 
 	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
 
-	initURLHandlers(log.New(os.Stdout, "", 0))
+	initURLHandlers(log.New(os.Stdout, "", 0), Config{})
 	defer func() {
 		http.DefaultServeMux = http.NewServeMux()
 	}()
@@ -468,7 +466,7 @@ func (s *HandlersSuite) TestEmptyTimeInfoUpdate(c *C) {
 
 	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
 
-	initURLHandlers(log.New(os.Stdout, "", 0))
+	initURLHandlers(log.New(os.Stdout, "", 0), Config{})
 	defer func() {
 		http.DefaultServeMux = http.NewServeMux()
 	}()

@@ -152,12 +152,12 @@ func (f *FakeSnapdClient) Change(id string) (*client.Change, error) {
 
 // Enable enables the snap
 func (f *FakeSnapdClient) Enable(name string, options *client.SnapOptions) (string, error) {
-	return "", nil
+	return "Enabling", nil
 }
 
 // Disable disables the snap
 func (f *FakeSnapdClient) Disable(name string, options *client.SnapOptions) (string, error) {
-	return "", nil
+	return "Disabling", nil
 }
 
 var _ snapdclient.SnapdClient = (*FakeSnapdClient)(nil)

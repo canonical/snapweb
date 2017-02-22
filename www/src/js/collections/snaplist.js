@@ -10,8 +10,10 @@ module.exports = Backbone.Collection.extend({
   model: Snap,
   installed: function() {
     return new this.constructor(
-      this.where({status: 'installed'})
-          .slice(0, this.limits.installedSnapListMaxItems))
+      this.filter(function(m) {
+        var s = m.get('status')
+        return s === 'installed' || s === 'active'
+      }).slice(0, this.limits.installedSnapListMaxItems))
   },
   all: function() {
     return new this.constructor(
