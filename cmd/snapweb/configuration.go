@@ -35,6 +35,8 @@ type Config struct {
 	DisableHTTPS       bool `json:"disableHttps,omitempty"`
 }
 
+var readFile = ioutil.ReadFile
+
 func readConfig() Config {
 	configFilepath := filepath.Join(os.Getenv("SNAP_COMMON"), configFilename)
 	if _, err := os.Stat(configFilepath); err != nil {
@@ -43,7 +45,7 @@ func readConfig() Config {
 
 	var err error
 	var content []byte
-	if content, err = ioutil.ReadFile(configFilepath); err != nil {
+	if content, err = readFile(configFilepath); err != nil {
 		return Config{}
 	}
 
