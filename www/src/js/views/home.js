@@ -2,6 +2,8 @@
 var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
 
+var SnapListView = require('../components/snaplist.js');
+
 var SnapListView = require('./snaplist.js');
 var SystemSnapsView = require('./system-snaps.js');
 var SnapTools = require('../common/snaps.js')

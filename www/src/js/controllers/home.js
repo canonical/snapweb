@@ -20,12 +20,17 @@ module.exports = {
       success: function(snaplist) {
         var c = snaplist.all()
 
-        var installedSnapsView = new HomeLayoutView({
+        var installedSnapsView = React.createElement(HomeLayoutView, {
           model: new Backbone.Model({
             title: 'Installed snaps',
             isHomeActive: true,
           }),
           collection: c
+        });
+        chan.command('set:content', {reactElement: element});
+
+        var installedSnapsView = new HomeLayoutView({
+          model: 
         });
 
         chan.command('set:content', {backboneView: installedSnapsView});
