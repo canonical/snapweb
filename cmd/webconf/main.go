@@ -110,7 +110,8 @@ func doneHandler(server net.Listener) http.HandlerFunc {
 
 func initURLHandlers(log *log.Logger, server net.Listener) {
 	// API
-	http.Handle("/api/", snappy.MakePassthroughHandler(dirs.SnapdSocket, "/api/"))
+	http.Handle("/api/v2/create-user",
+		snappy.MakePassthroughHandler(dirs.SnapdSocket, "/api/v2/create-user"))
 	http.HandleFunc("/done", doneHandler(server))
 
 	// Resources
