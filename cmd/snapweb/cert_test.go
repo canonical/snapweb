@@ -45,17 +45,17 @@ func (s *CertSuite) TearDownTest(c *C) {
 	os.RemoveAll(s.snapdata)
 }
 
-func (s *CertSuite) TestDumpCertificate(c *C) {
+func (s *CertSuite) TestCreateCertificateIfNeeded(c *C) {
 	c.Assert(ioutil.WriteFile(s.certFilename, nil, 0600), IsNil)
 	c.Assert(ioutil.WriteFile(s.keyFilename, nil, 0600), IsNil)
 
-	DumpCertificate()
+	CreateCertificateIfNeeded()
 	certData, err := ioutil.ReadFile(s.certFilename)
 	c.Assert(err, IsNil)
 	keyData, err := ioutil.ReadFile(s.keyFilename)
 	c.Assert(err, IsNil)
 
-	DumpCertificate()
+	CreateCertificateIfNeeded()
 	certData2, err := ioutil.ReadFile(s.certFilename)
 	c.Assert(err, IsNil)
 	keyData2, err := ioutil.ReadFile(s.keyFilename)

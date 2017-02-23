@@ -57,8 +57,6 @@ func main() {
 		time.Sleep(1000)
 	}
 
-	GenerateCertificate()
-
 	// TODO set warning for too hazardous config?
 
 	initURLHandlers(logger, config)
@@ -71,7 +69,7 @@ func main() {
 	// possibly redirect to HTTPS
 	handler := http.HandlerFunc(redir)
 	if !config.DisableHTTPS {
-		DumpCertificate()
+		CreateCertificateIfNeeded()
 
 		go func() {
 			certFile := filepath.Join(os.Getenv("SNAP_DATA"), "cert.pem")
