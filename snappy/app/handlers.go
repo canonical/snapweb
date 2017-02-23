@@ -142,6 +142,7 @@ func (h *Handler) update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	body, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
 
 	var snap map[string]*json.RawMessage
 	err = json.Unmarshal(body, &snap)
@@ -151,6 +152,10 @@ func (h *Handler) update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// For now only deal with enable/disable updates
+	if _, ok := snap["status"]; !ok {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
 	var status string
 	err = json.Unmarshal(*snap["status"], &status)

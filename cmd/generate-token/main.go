@@ -42,11 +42,15 @@ func tokenFilename() string {
 	return filepath.Join(os.Getenv("SNAP_DATA"), "token.txt")
 }
 
+var exit = os.Exit
+var getUserID = os.Geteuid
+
 // checkUser verifies that the user running the command is administrator
 func checkUser() {
-	if os.Geteuid() != 0 {
-		fmt.Println("You need administrator privileges to run this command. Use:\n\nsudo snapweb.generate-token")
-		os.Exit(1)
+	if getUserID() != 0 {
+		fmt.Println("You need administrator privileges" +
+			" to run this command. Use:\n\nsudo snapweb.generate-token")
+		exit(1)
 	}
 }
 
@@ -68,6 +72,7 @@ func generateToken(n int) string {
 	_, err := rand.Read(b)
 	if err != nil {
 		logger.Fatal(err)
+		return ""
 	}
 	for i := range b {
 		index := int(b[i]) % len(alphabet)
@@ -84,13 +89,18 @@ func saveToken() string {
 	return token
 }
 
-func main() {
+func displayToken() string {
 	logger = log.New(os.Stderr, "generate-token: ", log.Ldate|log.Ltime|log.Lshortfile)
-
-	checkUser()
 
 	token := saveToken()
 
 	fmt.Printf("Snapweb Access Token:\n\n%s\n\n", token)
 	fmt.Printf("Use the above token in the Snapweb interface to be granted access.\n")
+
+	return token
+}
+
+func main() {
+	checkUser()
+	displayToken()
 }

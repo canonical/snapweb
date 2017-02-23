@@ -14,7 +14,10 @@ module.exports = Marionette.CompositeView.extend({
 
   childViewContainer: '#js-snaplist',
 
-  initialize : function() {
+  initialize : function(options) {
+    if (options.doNotDisplayEmptyList) {
+      this.emptyView = null;
+    }
     // "patch" the model with the snap details browse URI
     this.collection.each(function(snap) {
       snap.set('targetSnapUri', SnapTools.getShowSnapUrlFor(snap))

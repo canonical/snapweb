@@ -18,6 +18,7 @@
 package avahi
 
 import (
+	"errors"
 	"io/ioutil"
 	"log"
 	"os"
@@ -26,16 +27,23 @@ import (
 	. "gopkg.in/check.v1"
 )
 
+type NullMdnsScanner struct{}
+
+func (*NullMdnsScanner) ScanInterfaces() (string, error) {
+	return "", nil
+}
+
 func Test(t *testing.T) { TestingT(t) }
 
 type AvahiSuite struct {
 	mockHostname string
+	logger       *log.Logger
 }
 
 var _ = Suite(&AvahiSuite{})
 
 func (s *AvahiSuite) SetUpTest(c *C) {
-	logger = log.New(ioutil.Discard, "", 0)
+	s.logger = log.New(ioutil.Discard, "", 0)
 
 	osHostname = func() (string, error) { return s.mockHostname, nil }
 }
@@ -50,6 +58,21 @@ func (s *AvahiSuite) TestGetHostname(c *C) {
 
 	s.mockHostname = "something-else"
 	c.Check(getHostname(), Equals, "something-else")
+}
+
+func (s *AvahiSuite) TestErrorMdnsInit(c *C) {
+	s.mockHostname = "localhost"
+	newMDNS = func(hostname, p1, p2 string, p3 bool, p4 int) (mdnsScanner, error) {
+		return nil, errors.New("Error")
+	}
+	c.Assert(InitMDNS(s.logger), NotNil)
+
+	newMDNS = func(hostname, p1, p2 string, p3 bool, p4 int) (mdnsScanner, error) {
+		return &NullMdnsScanner{}, nil
+	}
+	c.Assert(InitMDNS(s.logger), IsNil)
+
+	newMDNS = defaultNewMDNS
 }
 
 /*

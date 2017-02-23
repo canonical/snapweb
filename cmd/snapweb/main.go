@@ -59,7 +59,7 @@ func main() {
 	// possibly redirect to HTTPS
 	handler := http.HandlerFunc(redir)
 	if !config.DisableHTTPS {
-		GenerateCertificate()
+		DumpCertificate()
 
 		go func() {
 			certFile := filepath.Join(os.Getenv("SNAP_DATA"), "cert.pem")

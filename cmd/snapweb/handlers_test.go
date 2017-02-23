@@ -482,3 +482,51 @@ func (s *HandlersSuite) TestEmptyTimeInfoUpdate(c *C) {
 	http.DefaultServeMux.ServeHTTP(rec, req)
 	c.Assert(rec.Code, Equals, http.StatusOK)
 }
+
+func (s *HandlersSuite) TestHandleSections(c *C) {
+	s.c.SnapSections = []string{"foo", "bar"}
+
+	initURLHandlers(log.New(os.Stdout, "", 0), Config{})
+	defer func() {
+		http.DefaultServeMux = http.NewServeMux()
+	}()
+
+	rec := httptest.NewRecorder()
+	req, err := http.NewRequest("GET", "/api/v2/sections", nil)
+	c.Assert(err, IsNil)
+
+	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
+
+	http.DefaultServeMux.ServeHTTP(rec, req)
+
+	c.Assert(rec.Code, Equals, http.StatusOK)
+	c.Assert(rec.Header().Get("Content-Type"), Equals, "application/json")
+
+	body := rec.Body.String()
+
+	var sections []string
+	err = json.Unmarshal([]byte(body), &sections)
+	c.Assert(err, IsNil)
+
+	c.Assert(sections, DeepEquals, s.c.SnapSections)
+}
+
+func (s *HandlersSuite) TestHandleSectionsError(c *C) {
+	s.c.SnapSections = nil
+	s.c.Err = errors.New("foo")
+
+	initURLHandlers(log.New(os.Stdout, "", 0), Config{})
+	defer func() {
+		http.DefaultServeMux = http.NewServeMux()
+	}()
+
+	rec := httptest.NewRecorder()
+	req, err := http.NewRequest("GET", "/api/v2/sections", nil)
+	c.Assert(err, IsNil)
+
+	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
+
+	http.DefaultServeMux.ServeHTTP(rec, req)
+
+	c.Assert(rec.Code, Equals, http.StatusInternalServerError)
+}

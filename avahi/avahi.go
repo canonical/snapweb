@@ -18,18 +18,22 @@
 package avahi
 
 import (
+	"fmt"
+	"github.com/presotto/go-mdns-sd"
 	"log"
 	"os"
 	"strings"
 	"sync"
 	"time"
-
-	"github.com/presotto/go-mdns-sd"
 )
 
 var logger *log.Logger
 
-var _mdns *mdns.MDNS
+type mdnsScanner interface {
+	ScanInterfaces() (string, error)
+}
+
+var _mdns mdnsScanner
 
 var initOnce sync.Once
 
@@ -37,8 +41,14 @@ const hostnameDefault = "snapweb"
 
 const addressUpdateDelay = 3 * time.Second
 
+var defaultNewMDNS = func(hostname, p1, p2 string, p3 bool, p4 int) (mdnsScanner, error) {
+	return mdns.NewMDNS(hostname, p1, p2, p3, p4)
+}
+
+var newMDNS = defaultNewMDNS
+
 // InitMDNS initializes the avahi subsystem.
-func InitMDNS(l *log.Logger) {
+func InitMDNS(l *log.Logger) error {
 	logger = l
 
 	// the hostname is read once on startup; there is no Linux interface to
@@ -47,21 +57,22 @@ func InitMDNS(l *log.Logger) {
 	var err error
 	hostname := getHostname()
 	logger.Println("Registering hostname:", hostname)
-	_mdns, err = mdns.NewMDNS(hostname, "", "", false, 0)
+	_mdns, err = newMDNS(hostname, "", "", false, 0)
 	if err != nil {
 		logger.Println("Cannot create mDNS instance:", err)
-		return
+		return fmt.Errorf("Cannot create mDNS instance: %s", err.Error())
 	}
 	// poll to update published IP addresses for this mDNS name; ideally
 	// we'd use something like netlink to trigger updates to avoid wakeups;
 	// this might require extra permissions though
 	initOnce.Do(addressUpdateLoop)
+	return nil
 }
 
 func addressUpdateLoop() {
 	timer := time.NewTimer(addressUpdateDelay)
 
-	for {
+	{
 		if _mdns != nil {
 			_mdns.ScanInterfaces()
 		}

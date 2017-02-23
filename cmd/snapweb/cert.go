@@ -18,12 +18,12 @@
 package main
 
 import (
-	"crypto/ecdsa"
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/x509"
 	"crypto/x509/pkix"
 	"encoding/pem"
+	"errors"
 	"log"
 	"math/big"
 	"net"
@@ -32,36 +32,11 @@ import (
 	"time"
 )
 
-func publicKey(priv interface{}) interface{} {
-	switch k := priv.(type) {
-	case *rsa.PrivateKey:
-		return &k.PublicKey
-	case *ecdsa.PrivateKey:
-		return &k.PublicKey
-	default:
-		return nil
-	}
-}
-
-func pemBlockForKey(priv interface{}) *pem.Block {
-	switch k := priv.(type) {
-	case *rsa.PrivateKey:
-		return &pem.Block{Type: "RSA PRIVATE KEY", Bytes: x509.MarshalPKCS1PrivateKey(k)}
-	case *ecdsa.PrivateKey:
-		b, err := x509.MarshalECPrivateKey(k)
-		if err != nil {
-			log.Fatalf("Unable to marshal ECDSA private key: %v", err)
-		}
-		return &pem.Block{Type: "EC PRIVATE KEY", Bytes: b}
-	default:
-		return nil
-	}
-}
-
-// GenerateCertificate will generate a new self-signed certifiate at startup
-func GenerateCertificate() {
+// DumpCertificate create the certificate & key files
+func DumpCertificate() {
 	certFilename := filepath.Join(os.Getenv("SNAP_DATA"), "cert.pem")
 	keyFilename := filepath.Join(os.Getenv("SNAP_DATA"), "key.pem")
+
 	_, err1 := os.Stat(certFilename)
 	_, err2 := os.Stat(keyFilename)
 
@@ -70,13 +45,17 @@ func GenerateCertificate() {
 		return
 	}
 
+	GenerateCertificate(certFilename, keyFilename)
+}
+
+// GenerateCertificate will generate a new self-signed certifiate at startup
+func GenerateCertificate(certFilename string, keyFilename string) {
 	/* With help from https://golang.org/src/crypto/tls/generate_cert.go */
 
-	var priv interface{}
-	var err error
-	priv, err = rsa.GenerateKey(rand.Reader, 2048)
+	priv, err := rsa.GenerateKey(rand.Reader, 2048)
 	if err != nil {
-		log.Fatalf("failed to generate private key: %s", err)
+		log.Fatalf("Failed to generate private key: %s", err)
+		return
 	}
 
 	notBefore := time.Now()
@@ -86,7 +65,8 @@ func GenerateCertificate() {
 	serialNumberLimit := new(big.Int).Lsh(big.NewInt(1), 128)
 	serialNumber, err := rand.Int(rand.Reader, serialNumberLimit)
 	if err != nil {
-		log.Fatalf("failed to generate serial number: %s", err)
+		log.Fatalf("Failed to generate serial number: %s", err)
+		return
 	}
 
 	template := x509.Certificate{
@@ -105,23 +85,37 @@ func GenerateCertificate() {
 	template.IPAddresses = append(template.IPAddresses, net.ParseIP("127.0.0.1"))
 	template.IsCA = false
 
-	derBytes, err := x509.CreateCertificate(rand.Reader, &template, &template, publicKey(priv), priv)
+	derBytes, err := x509.CreateCertificate(rand.Reader, &template, &template, &priv.PublicKey, priv)
 	if err != nil {
 		log.Fatalf("Failed to create certificate: %s", err)
+		return
 	}
 
-	certOut, err := os.Create(certFilename)
+	createPublicKeycertFile(certFilename, derBytes)
+	createPrivateKeyFile(keyFilename, priv)
+}
+
+func createPublicKeycertFile(filename string, b []byte) error {
+	certOut, err := os.Create(filename)
 	if err != nil {
 		log.Fatalf("failed to open cert.pem for writing: %s", err)
+		return err
 	}
-	pem.Encode(certOut, &pem.Block{Type: "CERTIFICATE", Bytes: derBytes})
+	pem.Encode(certOut, &pem.Block{Type: "CERTIFICATE", Bytes: b})
 	certOut.Close()
+	return nil
+}
 
-	keyOut, err := os.OpenFile(keyFilename, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
+func createPrivateKeyFile(filename string, k *rsa.PrivateKey) error {
+	keyOut, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
 	if err != nil {
 		log.Fatal("failed to open key.pem for writing:", err)
+		return err
 	}
-
-	pem.Encode(keyOut, pemBlockForKey(priv))
+	if k == nil {
+		return errors.New("Invalid private key context")
+	}
+	pem.Encode(keyOut, &pem.Block{Type: "RSA PRIVATE KEY", Bytes: x509.MarshalPKCS1PrivateKey(k)})
 	keyOut.Close()
+	return nil
 }

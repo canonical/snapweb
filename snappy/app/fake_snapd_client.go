@@ -38,6 +38,7 @@ type FakeSnapdClient struct {
 	Removed         string
 	CrUser          client.CreateUserResult
 	Name            string
+	SnapSections    []string
 }
 
 // Icon returns the icon of an installed snap
@@ -118,7 +119,7 @@ func (f *FakeSnapdClient) Known(assertTypeName string, headers map[string]string
 
 // Sections returns the list of existing sections in the store.
 func (f *FakeSnapdClient) Sections() ([]string, error) {
-	return nil, nil
+	return f.SnapSections, f.Err
 }
 
 // FindOne returns a list of snaps available for install from the
@@ -141,12 +142,12 @@ func (f *FakeSnapdClient) Change(id string) (*client.Change, error) {
 
 // Enable enables the snap
 func (f *FakeSnapdClient) Enable(name string, options *client.SnapOptions) (string, error) {
-	return "", nil
+	return "Enabling", nil
 }
 
 // Disable disables the snap
 func (f *FakeSnapdClient) Disable(name string, options *client.SnapOptions) (string, error) {
-	return "", nil
+	return "Disabling", nil
 }
 
 var _ snapdclient.SnapdClient = (*FakeSnapdClient)(nil)
