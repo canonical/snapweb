@@ -62,8 +62,6 @@ func main() {
 		time.Sleep(1000)
 	}
 
-	GenerateCertificate()
-
 	// TODO set warning for too hazardous config?
 	config, err := snappy.ReadConfig()
 	if err != nil {
@@ -78,7 +76,7 @@ func main() {
 	logger.Println("Snapweb starting...")
 
 	if !config.DisableHTTPS {
-		DumpCertificate()
+		CreateCertificateIfNeeded()
 
 		go func() {
 			certFile := filepath.Join(os.Getenv("SNAP_DATA"), "cert.pem")

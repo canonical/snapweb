@@ -32,8 +32,8 @@ import (
 	"time"
 )
 
-// DumpCertificate create the certificate & key files
-func DumpCertificate() {
+// CreateCertificateIfNeeded creates the certificate & key files, if they don't exist yet
+func CreateCertificateIfNeeded() {
 	certFilename := filepath.Join(os.Getenv("SNAP_DATA"), "cert.pem")
 	keyFilename := filepath.Join(os.Getenv("SNAP_DATA"), "key.pem")
 
