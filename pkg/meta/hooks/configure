@@ -14,37 +14,34 @@ try:
 except Exception as e:
     sys.stderr.write("Could not find $SNAP_COMMON environment variable\n")
     sys.exit(1)
-
 CONF_FILEPATH = os.path.join(SNAP_COMMON_ENV, CONF_FILENAME)
 
-if not os.path.exists(CONF_FILEPATH):
-    subprocess.run("snapctl set disable-access-token=false", shell=True)
-    subprocess.run("snapctl set disable-https=false", shell=True)
-
-disable_access_token = False
+disable_access_token = "false"
 try:
-    disable_access_token = subprocess.run("snapctl get disable-access-token", shell=True, stdout=subprocess.PIPE, check=True, stderr=subprocess.PIPE).stdout.decode("utf-8").strip()
+    disable_access_token = subprocess.run("snapctl get disableaccesstoken", shell=True, stdout=subprocess.PIPE, check=True, stderr=subprocess.PIPE).stdout.decode("utf-8").strip()
 except Exception as e:
-    with open(os.path.join(os.environ["SNAP_COMMON"], "roro"), 'w+') as f:
-        f.write(str(e))
     print(e)
     pass
 
-disable_https = False
+disable_https = "false"
 try:
-    disable_https = subprocess.run("snapctl get disable-https", shell=True, stdout=subprocess.PIPE, check=True, stderr=subprocess.PIPE).stdout.decode("utf-8").strip()
+    disable_https = subprocess.run("snapctl get disablehttps", shell=True, stdout=subprocess.PIPE, check=True, stderr=subprocess.PIPE).stdout.decode("utf-8").strip()
 except Exception as e:
-    with open(os.path.join(os.environ["SNAP_COMMON"], "riri"), 'w+') as f:
-        f.write(str(e))
     print(e)
     pass
 
+def validate_bool_with_default(value, default=False):
+    if value == "true":
+        return True
+    elif value == "false":
+        return False
+    return default
 
 with open(CONF_FILEPATH, 'w+') as f:
     f.write(
         json.dumps({
-            'disableAccessToken': disable_access_token,
-            'disableHttps': disable_https
+            'disableAccessToken': validate_bool_with_default(disable_access_token),
+            'disableHttps': validate_bool_with_default(disable_https)
         })
         )
 
