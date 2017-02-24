@@ -21,7 +21,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"log"
 	"net"
@@ -29,7 +28,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strings"
 	"text/template"
 
 	// most other handlers use the ClientAdapter for now
@@ -282,43 +280,6 @@ func validateToken(w http.ResponseWriter, r *http.Request) {
 	hdr.Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, "{}")
-}
-
-func makePassthroughHandler(socketPath string, prefix string) http.HandlerFunc {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		c := &http.Client{
-			Transport: &http.Transport{Dial: unixDialer(socketPath)},
-		}
-
-		log.Println(r.Method, r.URL.Path)
-
-		// need to remove the RequestURI field
-		// and remove the /api prefix from snapweb URLs
-		r.URL.Scheme = "http"
-		r.URL.Host = "localhost"
-		r.URL.Path = strings.TrimPrefix(r.URL.Path, prefix)
-
-		outreq, err := http.NewRequest(r.Method, r.URL.String(), r.Body)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		resp, err := c.Do(outreq)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		// Note: the client.Do method above only returns JSON responses
-		//       even if it doesn't say so
-		hdr := w.Header()
-		hdr.Set("Content-Type", "application/json")
-		w.WriteHeader(resp.StatusCode)
-
-		io.Copy(w, resp.Body)
-
-	})
 }
 
 func loggingHandler(h http.Handler) http.Handler {
