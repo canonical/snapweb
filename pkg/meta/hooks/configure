@@ -18,12 +18,12 @@ except Exception as e:
 CONF_FILEPATH = os.path.join(SNAP_COMMON_ENV, CONF_FILENAME)
 
 if not os.path.exists(CONF_FILEPATH):
-    subprocess.run("snapctl set disable_access_token=true", shell=True)
-    subprocess.run("snapctl set disable_https=true", shell=True)
+    subprocess.run("snapctl set disable-access-token=false", shell=True)
+    subprocess.run("snapctl set disable-https=false", shell=True)
 
 disable_access_token = False
 try:
-    disable_access_token = subprocess.run("snapctl get disable_access_token", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    disable_access_token = subprocess.run("snapctl get disable-access-token", shell=True, stdout=subprocess.PIPE, check=True, stderr=subprocess.PIPE).stdout.decode("utf-8").strip()
 except Exception as e:
     with open(os.path.join(os.environ["SNAP_COMMON"], "roro"), 'w+') as f:
         f.write(str(e))
@@ -32,7 +32,7 @@ except Exception as e:
 
 disable_https = False
 try:
-    disable_https = subprocess.run("snapctl get disable_https", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    disable_https = subprocess.run("snapctl get disable-https", shell=True, stdout=subprocess.PIPE, check=True, stderr=subprocess.PIPE).stdout.decode("utf-8").strip()
 except Exception as e:
     with open(os.path.join(os.environ["SNAP_COMMON"], "riri"), 'w+') as f:
         f.write(str(e))
