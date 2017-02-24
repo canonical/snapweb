@@ -48,7 +48,11 @@ function createBundler(watch) {
 
 function bundleShared(bundler) {
   return bundler.bundle()
-    .on('error', gutil.log.bind(gutil, 'Browserify Error'))
+    .on('error', function(err) {
+      gutil.log(gutil.colors.green('Browserify Error: ' + err));
+      this.emit('end');
+      process.exit(1);
+    })
     .pipe(source('snapweb.js'))
       .pipe(buffer())
       .pipe(sourcemaps.init({loadMaps: true})) // loads map from browserify file
