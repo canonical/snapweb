@@ -5,19 +5,6 @@ import json
 import sys
 import subprocess
 
-disable_access_token = False
-try:
-    disable_access_token = subprocess.check_output("snapctl get disable_access_token")
-except:
-    pass
-
-disable_https = False
-try:
-    disable_https = subprocess.check_output("snapctl get disable_https")
-except:
-    pass
-
-
 # TODO add a configure.in to factor that & the go part in configuration.go
 CONF_FILENAME = "settings.json"
 
@@ -29,6 +16,29 @@ except Exception as e:
     sys.exit(1)
 
 CONF_FILEPATH = os.path.join(SNAP_COMMON_ENV, CONF_FILENAME)
+
+if not os.path.exists(CONF_FILEPATH):
+    subprocess.run("snapctl set disable_access_token=true", shell=True)
+    subprocess.run("snapctl set disable_https=true", shell=True)
+
+disable_access_token = False
+try:
+    disable_access_token = subprocess.run("snapctl get disable_access_token", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+except Exception as e:
+    with open(os.path.join(os.environ["SNAP_COMMON"], "roro"), 'w+') as f:
+        f.write(str(e))
+    print(e)
+    pass
+
+disable_https = False
+try:
+    disable_https = subprocess.run("snapctl get disable_https", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+except Exception as e:
+    with open(os.path.join(os.environ["SNAP_COMMON"], "riri"), 'w+') as f:
+        f.write(str(e))
+    print(e)
+    pass
+
 
 with open(CONF_FILEPATH, 'w+') as f:
     f.write(
