@@ -124,7 +124,7 @@ if [ ! -z "$UNIT_JS" ]; then
 
     # js unit tests
     echo "Running js unit tests (set JS_TESTER to override)"
-    ${JS_TESTER:- ./node_modules/karma/bin/karma start --single-run}
+    NODE_ENV=test ${JS_TESTER:- ./node_modules/karma/bin/karma start --single-run}
 
     cat .coverage-js/text-summary.txt
 

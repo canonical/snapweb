@@ -1,11 +1,13 @@
-var Backbone = require('backbone');
-var Marionette = require('backbone.marionette');
-var template = require('../templates/settings-users.hbs');
+import React from 'react'
 
-module.exports = Backbone.Marionette.ItemView.extend({
-  className: 'b-settings__users',
-
-  template: function() {
-    return template();
+export default class SettingsUsers extends React.Component {
+  render() {
+    return (
+      <div className="row">
+        <div className="col-12">
+          <h2>Users</h2>
+        </div>
+      </div>
+    );
   }
-});
+}
