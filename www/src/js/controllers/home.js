@@ -29,6 +29,9 @@ module.exports = {
         });
 
         chan.command('set:content', {backboneView: installedSnapsView});
+      },
+      error: function() {
+	console.log('error')
       }
     });
   },

@@ -74,13 +74,17 @@ module.exports = Marionette.LayoutView.extend({
   },
 
   onBeforeShow: function() {
-    this.showChildView(
+    // disabled for now until https://bugs.launchpad.net/snapweb/+bug/1668390
+    // is fixed
+    /*
+this.showChildView(
         'interfacesRegion',
         new SnapInterfaceCollectionView({
           model: this.model,
           collection: this.collection
         })
     );
+*/
   },
 
   onShow: function() {
