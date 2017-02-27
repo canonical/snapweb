@@ -56,6 +56,8 @@ func localIconPath(c snapdclient.SnapdClient, name string) (relativePath string,
 	// TODO escape names?
 	baseIcon := fmt.Sprintf("%s_%s", name, icon.Filename)
 
+	fmt.Printf("for %#v baseIcon = %#v, icon = %#v\n", name, baseIcon, icon.Filename)
+
 	relativePath = filepath.Join(relativePath, baseIcon)
 	iconDstPath := filepath.Join(dataPath, baseIcon)
 
@@ -76,7 +78,7 @@ func localIconPath(c snapdclient.SnapdClient, name string) (relativePath string,
 func IconDir() (dataPath, relativeBasePath string, err error) {
 	dataPath = os.Getenv("SNAP_DATA")
 	if dataPath == "" {
-		return "", "", ErrDataPathNotSet
+		dataPath = "."
 	}
 
 	dataPath = filepath.Join(dataPath, "icons")

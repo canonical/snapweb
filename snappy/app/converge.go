@@ -21,6 +21,7 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
+	"regexp"
 	"sort"
 	"strconv"
 	"time"
@@ -263,7 +264,18 @@ func (h *Handler) snapToPayload(snapQ *client.Snap) snapPkg {
 		snap.Icon = iconPath
 		snap.InstalledSize = snapQ.InstalledSize
 	} else {
-		snap.Icon = snapQ.Icon
+		// quick fix for the icon problem (LP:#1668193)
+		r := regexp.MustCompile("^/v2/icons/(.*)")
+		match := r.Match([]byte(snapQ.Icon))
+		if match == true {
+			iconPath, err := localIconPath(h.snapdClient, snap.Name)
+			if err != nil {
+				iconPath = ""
+			}
+			snap.Icon = iconPath
+		} else {
+			snap.Icon = snapQ.Icon
+		}
 		snap.DownloadSize = snapQ.DownloadSize
 	}
 

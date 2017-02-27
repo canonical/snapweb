@@ -48,10 +48,11 @@ func (s *IconSuite) TestIconDir(c *C) {
 	c.Check(relativePath, Equals, "icons")
 }
 
-func (s *IconSuite) TestNoSnapAppDataPathCausesError(c *C) {
+func (s *IconSuite) TestNoSnapAppDataPathDoesNotCauseError(c *C) {
 	os.Setenv("SNAP_DATA", "")
-	_, _, err := IconDir()
-	c.Assert(err, Equals, ErrDataPathNotSet)
+	str, _, err := IconDir()
+	c.Assert(err, Equals, nil)
+	c.Assert(str, Equals, "icons")
 }
 
 func (s *IconSuite) TestIconDirCreateFails(c *C) {
@@ -96,10 +97,12 @@ func (s *IconPathSuite) TestIconCopy(c *C) {
 	c.Assert(string(contents), Equals, "png")
 }
 
-func (s *IconPathSuite) TestIconCopyNoDataPath(c *C) {
-	os.Setenv("SNAP_DATA", "")
+func (s *IconPathSuite) TestIconCopyBadDataPath(c *C) {
+	fileAsDir := filepath.Join(s.dataPath, "badDataPath")
+	c.Assert(ioutil.WriteFile(fileAsDir, []byte{}, 0644), IsNil)
+	os.Setenv("SNAP_DATA", fileAsDir)
 	_, err := localIconPath(s, "mypackage")
-	c.Assert(err, Equals, ErrDataPathNotSet)
+	c.Assert(err, Equals, ErrOnIconDataPathSet)
 }
 
 func (s *IconPathSuite) TestIconCopyNoIcon(c *C) {
