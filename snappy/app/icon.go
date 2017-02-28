@@ -42,7 +42,7 @@ var (
 // we do snapd requests everytime even for icons
 // that we got already (just to get the name, we should
 // locally cache it)
-func localIconPath(c snapdclient.SnapdClient, name string) (relativePath string, err error) {
+var localIconPath = func(c snapdclient.SnapdClient, name string) (relativePath string, err error) {
 	dataPath, relativePath, err := IconDir()
 	if err != nil {
 		return "", err

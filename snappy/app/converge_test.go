@@ -28,6 +28,7 @@ import (
 	. "gopkg.in/check.v1"
 
 	"github.com/snapcore/snapweb/snappy/common"
+	"github.com/snapcore/snapweb/snappy/snapdclient"
 	"github.com/snapcore/snapweb/statetracker"
 )
 
@@ -164,6 +165,58 @@ func (s *PayloadSuite) TestPayloadSnapInstalling(c *C) {
 
 	payload := s.h.snapToPayload(fakeSnap)
 	c.Assert(payload.State, DeepEquals, SnapState{Status: statetracker.StatusInstalling})
+}
+
+func (s *PayloadSuite) TestPayloadEmptyIconPath(c *C) {
+	fakeSnap := common.NewDefaultSnap()
+
+	previousLocalIconPath := localIconPath
+	defer func() {
+		localIconPath = previousLocalIconPath
+	}()
+
+	localIconPath = func(c snapdclient.SnapdClient, name string) (relativePath string, err error) {
+		return "", errors.New("error")
+	}
+
+	q := s.h.snapToPayload(fakeSnap)
+	c.Check(q.Icon, Equals, "")
+}
+
+func (s *PayloadSuite) TestPayloadStoreSnapWrongIconPathWithErr(c *C) {
+	fakeSnap := common.NewDefaultSnap()
+	fakeSnap.Status = client.StatusAvailable
+	fakeSnap.Icon = "/v2/icons/chatroom/icon"
+
+	previousLocalIconPath := localIconPath
+	defer func() {
+		localIconPath = previousLocalIconPath
+	}()
+
+	localIconPath = func(c snapdclient.SnapdClient, name string) (relativePath string, err error) {
+		return "", errors.New("error")
+	}
+
+	q := s.h.snapToPayload(fakeSnap)
+	c.Check(q.Icon, Equals, "")
+}
+
+func (s *PayloadSuite) TestPayloadStoreSnapWrongIconPathNoErr(c *C) {
+	fakeSnap := common.NewDefaultSnap()
+	fakeSnap.Status = client.StatusAvailable
+	fakeSnap.Icon = "/v2/icons/chatroom/icon"
+
+	previousLocalIconPath := localIconPath
+	defer func() {
+		localIconPath = previousLocalIconPath
+	}()
+
+	localIconPath = func(c snapdclient.SnapdClient, name string) (relativePath string, err error) {
+		return "iconpath", nil
+	}
+
+	q := s.h.snapToPayload(fakeSnap)
+	c.Check(q.Icon, Equals, "iconpath")
 }
 
 type AllPackagesSuite struct {
