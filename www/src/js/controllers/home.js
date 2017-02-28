@@ -5,6 +5,8 @@ var Marionette = require('backbone.marionette');
 var Radio = require('backbone.radio');
 var Snap = require('../models/snap.js');
 var HomeLayoutView = require('../views/home.js');
+var React = require('react')
+var ReactBackbone = require('react.backbone');
 
 var SnapList = require('../collections/snaplist.js');
 
@@ -27,13 +29,7 @@ module.exports = {
           }),
           collection: c
         });
-        chan.command('set:content', {reactElement: element});
-
-        var installedSnapsView = new HomeLayoutView({
-          model: 
-        });
-
-        chan.command('set:content', {backboneView: installedSnapsView});
+        chan.command('set:content', {reactElement: installedSnapsView});
       }
     });
   },

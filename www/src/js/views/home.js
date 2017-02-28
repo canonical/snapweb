@@ -1,58 +1,106 @@
-// home view
+import {
+  ContentWrapper,
+  CardsList,
+} from 'snapweb-toolkit'
+
 var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
+var React = require('react');
+var ReactBackbone = require('react.backbone');
 
-var SnapListView = require('../components/snaplist.js');
+module.exports = React.createBackboneClass({
+  render: function() {
+    var model = this.props.model;
+    var collection = this.props.collection;
 
-var SnapListView = require('./snaplist.js');
-var SystemSnapsView = require('./system-snaps.js');
-var SnapTools = require('../common/snaps.js')
+    const cards = collection;
 
-var template = require('../templates/home.hbs');
+    const systemSnaps = []
 
-module.exports = Backbone.Marionette.LayoutView.extend({
+    var photo = ""
+    var brandData = {
+      brandName: "",
+      deviceName: "",
+      systemName: "",
+      color: "",
+      
+    }
+    return (
+      <div>
+        <ContentWrapper>
+        </ContentWrapper>
 
-  className: 'b-layout__container',
+        <ContentWrapper background bordered>
 
-  template : function(model) {
-    return template(model);
-  },
+          <CardsList
+            title='Apps installed'
+            cards={cards}
+          />
 
-  onBeforeShow: function() {
-    // TODO if collection empty use emptyView
+          <div style={{ paddingBottom: '100px' }}>
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Name</th>
+                  <th scope="col">Publisher</th>
+                  <th scope="col">Category</th>
+                </tr>
+              </thead>
 
-    this.showChildView('installedRegion', new SnapListView({
-      doNotDisplayEmptyList: true,
-      model: this.model,
-      collection: new Backbone.Collection(
-        this.collection.filter(
-          function(m) {
-            return m.get('type') == 'app' && m.get('id') != 'snapweb';
-          }
-        )
-      )
-    }));
+              <tbody id="systems-snap-list">
+              </tbody>
 
-    this.showChildView('systemSnapsRegion', new SystemSnapsView({
-      model: this.model,
-      collection: new Backbone.Collection(
-        new Backbone.Collection(
-          this.collection.filter(
-            function(m) {
-              return m &&
-                ((m.get('type') != 'app' && m.get('type') != 'gadget') ||
-                 (m.get('id') == 'snapweb'));
-            }
-          )
-        ).each(function(snap) {
-          snap.set('targetSnapUri', SnapTools.getShowSnapUrlFor(snap))
-        })
-      )
-    }));
-  },
+            </table>
 
-  regions: {
-    installedRegion: '.region-installed',
-    systemSnapsRegion: '.region-system-snaps',
-  },
+           <SnapsTable
+              title='System'
+              snaps={systemSnaps.map(snap => ({
+                id: snap.id,
+                name: snap.name,
+                author: snap.author,
+                category: snap.category,
+                icon: `${pub}/icons/cards/${snap.id}.png`,
+              }))}
+            />
+          </div>
+        </ContentWrapper>
+      </div>
+  )
+
+/*    return (
+      <div className="b-grey-wrapper">
+        <div className="inner-wrapper">
+          <div
+            style={{display: "inline-block", width: "100%", marginTop: "20px"}}>
+            <div className="row">
+              <SearchField query={model.get('query')} />
+              <DeckStyler
+                deckStyle={this.state.deckStyle}
+                styleChanged={this.deckStyleChanged}
+              />
+            </div>
+          </div>
+
+          <div className="row">
+            <StoreHeaderView
+              title={model.get('title')}
+              sections={model.get('sections')}
+            />
+          </div>
+
+          <div className="p-strip--light">
+            <div className="row">
+              <StorelistView
+                deckStyle={this.state.deckStyle}
+                model={model}
+                collection={this.props.collection.all()}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+*/
+
+  }
 });
