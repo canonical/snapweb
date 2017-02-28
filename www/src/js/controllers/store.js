@@ -60,6 +60,8 @@ var fetchSnapList = function(title, options) {
 
   storeSnaplist.fetch(options).always(function(response) {
     storeModel.set('loading', false);
+  }).done(function() {
+      storeSnaplist = SnaplistTools.updateInstalledStates(storeSnaplist)
   });
 }
 
