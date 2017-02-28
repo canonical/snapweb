@@ -162,8 +162,11 @@ func (h *Handler) installPackage(name string) error {
 
 func (h *Handler) enable(name string) error {
 	snap, err := h.getSnap(name)
-	if err != nil && snap != nil {
+	if err != nil {
 		return err
+	}
+	if snap == nil {
+		return fmt.Errorf("Snap not found %s", name)
 	}
 
 	if snap.Status != statetracker.StatusInstalled {
@@ -182,8 +185,11 @@ func (h *Handler) enable(name string) error {
 
 func (h *Handler) disable(name string) error {
 	snap, err := h.getSnap(name)
-	if err != nil && snap != nil {
+	if err != nil  {
 		return err
+	}
+	if snap == nil {
+		return fmt.Errorf("Snap not found %s", name)
 	}
 
 	if snap.Status != statetracker.StatusActive {

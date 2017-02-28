@@ -314,3 +314,40 @@ func (s *SnapOperationTrackingSuite) TestEnableDisableNonLocalSnaps(c *C) {
 	err = s.h.disable(fakeSnap.Name)
 	c.Assert(err, NotNil)
 }
+
+func (s *SnapOperationTrackingSuite) TestEnableDisableNonLocalSnapsWithErr(c *C) {
+	fakeSnap := common.NewDefaultSnap()
+
+	// Non local snaps
+
+	fakeSnap.Status = "available"
+	s.c.Snaps = []*client.Snap{fakeSnap}
+
+	err := s.h.enable(fakeSnap.Name)
+	c.Assert(err, NotNil)
+
+	err = s.h.disable(fakeSnap.Name)
+	c.Assert(err, NotNil)
+
+	// Various error paths, getSnap error
+
+	fakeSnap.Status = "installed"
+	s.c.Err = errors.New("error")
+
+	err = s.h.enable(fakeSnap.Name)
+	c.Assert(err, NotNil)
+
+	err = s.h.disable(fakeSnap.Name)
+	c.Assert(err, NotNil)
+
+	// Various error paths, getSnap snap not there
+
+	s.c.Snaps = []*client.Snap{}
+	s.c.Err = nil
+
+	err = s.h.enable(fakeSnap.Name)
+	c.Assert(err, NotNil)
+
+	err = s.h.disable(fakeSnap.Name)
+	c.Assert(err, NotNil)
+}
