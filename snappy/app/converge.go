@@ -162,8 +162,11 @@ func (h *Handler) installPackage(name string) error {
 
 func (h *Handler) enable(name string) error {
 	snap, err := h.getSnap(name)
-	if err != nil && snap != nil {
+	if err != nil {
 		return err
+	}
+	if snap == nil {
+		return fmt.Errorf("Snap not found %s", name)
 	}
 
 	if snap.Status != statetracker.StatusInstalled {
@@ -182,8 +185,11 @@ func (h *Handler) enable(name string) error {
 
 func (h *Handler) disable(name string) error {
 	snap, err := h.getSnap(name)
-	if err != nil && snap != nil {
+	if err != nil {
 		return err
+	}
+	if snap == nil {
+		return fmt.Errorf("Snap not found %s", name)
 	}
 
 	if snap.Status != statetracker.StatusActive {
@@ -257,8 +263,20 @@ func (h *Handler) snapToPayload(snapQ *client.Snap) snapPkg {
 	if isInstalled {
 		iconPath, err := localIconPath(h.snapdClient, snap.Name)
 		if err != nil {
-			log.Println("Icon path for installed package cannot be set", err)
-			iconPath = ""
+			if err == ErrIconNotExist {
+				// We have an installed snap, but no icon found,
+				// this could happen during an uninstall process.
+				var p string
+				p, err = tryLocateCachedIconForSnap(snap.Name)
+				if err == nil {
+					iconPath = p
+				} else {
+					iconPath = ""
+				}
+			} else {
+				log.Println("Icon path for installed package cannot be set:", err)
+				iconPath = ""
+			}
 		}
 
 		snap.Icon = iconPath
@@ -267,7 +285,7 @@ func (h *Handler) snapToPayload(snapQ *client.Snap) snapPkg {
 		// quick fix for the icon problem (LP:#1668193)
 		r := regexp.MustCompile("^/v2/icons/(.*)")
 		match := r.Match([]byte(snapQ.Icon))
-		if match == true {
+		if match {
 			iconPath, err := localIconPath(h.snapdClient, snap.Name)
 			if err != nil {
 				iconPath = ""

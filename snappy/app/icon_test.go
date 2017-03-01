@@ -19,6 +19,7 @@ package snappy
 
 import (
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -53,6 +54,13 @@ func (s *IconSuite) TestNoSnapAppDataPathDoesNotCauseError(c *C) {
 	str, _, err := IconDir()
 	c.Assert(err, Equals, nil)
 	c.Assert(str, Equals, "icons")
+}
+
+func (s *IconSuite) TestLocateCachedDataWhenNoSnapDataExists(c *C) {
+	os.Setenv("SNAP_DATA", "")
+	str, err := tryLocateCachedIconForSnap("")
+	c.Assert(err, Not(Equals), nil)
+	c.Assert(str, Equals, "")
 }
 
 func (s *IconSuite) TestIconDirCreateFails(c *C) {
@@ -119,4 +127,45 @@ func (s *IconPathSuite) TestIconCopyTargetIconExists(c *C) {
 	relativePath, err := localIconPath(s, "mypackage")
 	c.Assert(err, IsNil)
 	c.Check(relativePath, Equals, filepath.Join("/", iconBaseName))
+}
+
+func (s *IconSuite) TestLocateCachedIconError(c *C) {
+	c.Assert(os.MkdirAll(filepath.Join(s.dataPath, "icons"), 0755), IsNil)
+
+	str, err := tryLocateCachedIconForSnap("snap")
+
+	c.Assert(err, Equals, ErrIconNotExist)
+	c.Assert(str, Equals, "")
+}
+
+func (s *IconSuite) TestLocateCachedIcons(c *C) {
+	trials := []struct {
+		iconName string
+		name     string
+		success  bool
+	}{
+		{"icons/mysnap_pkgIcon.png", "mysnap", true},
+		{"icons/mysnap_pkgIcon.png", "notmysnap", false},
+		{"icons/notmysnap_.", "mysnap", false},
+		{"icons/mysnap_pkgIconpng", "mysnap", false},
+	}
+
+	c.Assert(os.MkdirAll(filepath.Join(s.dataPath, "icons"), 0755), IsNil)
+
+	for _, t := range trials {
+		iconFilePath := filepath.Join(s.dataPath, t.iconName)
+		c.Assert(ioutil.WriteFile(iconFilePath, []byte{}, 0644), IsNil)
+
+		str, err := tryLocateCachedIconForSnap(t.name)
+
+		fmt.Println(t.iconName, str, err)
+		if t.success {
+			c.Assert(err, Equals, nil)
+			c.Assert(str, Equals, fmt.Sprintf("/icons/%s_pkgIcon.png", t.name))
+		} else {
+			c.Assert(err, Not(Equals), nil)
+			c.Assert(str, Equals, "")
+		}
+		os.Remove(iconFilePath)
+	}
 }

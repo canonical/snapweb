@@ -28,6 +28,7 @@ import (
 	. "gopkg.in/check.v1"
 
 	"github.com/snapcore/snapweb/snappy/common"
+	"github.com/snapcore/snapweb/snappy/snapdclient"
 	"github.com/snapcore/snapweb/statetracker"
 )
 
@@ -166,6 +167,86 @@ func (s *PayloadSuite) TestPayloadSnapInstalling(c *C) {
 	c.Assert(payload.State, DeepEquals, SnapState{Status: statetracker.StatusInstalling})
 }
 
+func (s *PayloadSuite) TestPayloadEmptyIconPath(c *C) {
+	fakeSnap := common.NewDefaultSnap()
+
+	previousLocalIconPath := localIconPath
+	defer func() {
+		localIconPath = previousLocalIconPath
+	}()
+
+	localIconPath = func(c snapdclient.SnapdClient, name string) (relativePath string, err error) {
+		return "", errors.New("error")
+	}
+
+	q := s.h.snapToPayload(fakeSnap)
+	c.Check(q.Icon, Equals, "")
+}
+
+func (s *PayloadSuite) TestPayloadStoreSnapWrongIconPathWithErr(c *C) {
+	fakeSnap := common.NewDefaultSnap()
+	fakeSnap.Status = client.StatusAvailable
+	fakeSnap.Icon = "/v2/icons/chatroom/icon"
+
+	previousLocalIconPath := localIconPath
+	defer func() {
+		localIconPath = previousLocalIconPath
+	}()
+
+	localIconPath = func(c snapdclient.SnapdClient, name string) (relativePath string, err error) {
+		return "", errors.New("error")
+	}
+
+	q := s.h.snapToPayload(fakeSnap)
+	c.Check(q.Icon, Equals, "")
+}
+
+func (s *PayloadSuite) TestPayloadStoreSnapWrongIconPathNoErr(c *C) {
+	fakeSnap := common.NewDefaultSnap()
+	fakeSnap.Status = client.StatusAvailable
+	fakeSnap.Icon = "/v2/icons/chatroom/icon"
+
+	previousLocalIconPath := localIconPath
+	defer func() {
+		localIconPath = previousLocalIconPath
+	}()
+
+	localIconPath = func(c snapdclient.SnapdClient, name string) (relativePath string, err error) {
+		return "iconpath", nil
+	}
+
+	q := s.h.snapToPayload(fakeSnap)
+	c.Check(q.Icon, Equals, "iconpath")
+}
+
+func (s *PayloadSuite) TestPayloadInstalledSnapBeingRemoved(c *C) {
+	fakeSnap := common.NewDefaultSnap()
+
+	previousTryLocateCachedIconForSnap := tryLocateCachedIconForSnap
+	previousLocalIconPath := localIconPath
+	defer func() {
+		localIconPath = previousLocalIconPath
+		tryLocateCachedIconForSnap = previousTryLocateCachedIconForSnap
+	}()
+
+	localIconPath = func(c snapdclient.SnapdClient, name string) (relativePath string, err error) {
+		return "", ErrIconNotExist
+	}
+	tryLocateCachedIconForSnap = func(snapName string) (string, error) {
+		return "", ErrIconNotExist
+	}
+
+	q := s.h.snapToPayload(fakeSnap)
+	c.Check(q.Icon, Equals, "")
+
+	tryLocateCachedIconForSnap = func(snapName string) (string, error) {
+		return "myicon", nil
+	}
+
+	q = s.h.snapToPayload(fakeSnap)
+	c.Check(q.Icon, Equals, "myicon")
+}
+
 type AllPackagesSuite struct {
 	c *FakeSnapdClient
 	h Handler
@@ -256,6 +337,43 @@ func (s *SnapOperationTrackingSuite) TestEnableDisableNonLocalSnaps(c *C) {
 	s.c.Snaps = []*client.Snap{fakeSnap}
 
 	err := s.h.enable(fakeSnap.Name)
+	c.Assert(err, NotNil)
+
+	err = s.h.disable(fakeSnap.Name)
+	c.Assert(err, NotNil)
+}
+
+func (s *SnapOperationTrackingSuite) TestEnableDisableNonLocalSnapsWithErr(c *C) {
+	fakeSnap := common.NewDefaultSnap()
+
+	// Non local snaps
+
+	fakeSnap.Status = "available"
+	s.c.Snaps = []*client.Snap{fakeSnap}
+
+	err := s.h.enable(fakeSnap.Name)
+	c.Assert(err, NotNil)
+
+	err = s.h.disable(fakeSnap.Name)
+	c.Assert(err, NotNil)
+
+	// Various error paths, getSnap error
+
+	fakeSnap.Status = "installed"
+	s.c.Err = errors.New("error")
+
+	err = s.h.enable(fakeSnap.Name)
+	c.Assert(err, NotNil)
+
+	err = s.h.disable(fakeSnap.Name)
+	c.Assert(err, NotNil)
+
+	// Various error paths, getSnap snap not there
+
+	s.c.Snaps = []*client.Snap{}
+	s.c.Err = nil
+
+	err = s.h.enable(fakeSnap.Name)
 	c.Assert(err, NotNil)
 
 	err = s.h.disable(fakeSnap.Name)
