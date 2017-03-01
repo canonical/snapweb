@@ -219,6 +219,34 @@ func (s *PayloadSuite) TestPayloadStoreSnapWrongIconPathNoErr(c *C) {
 	c.Check(q.Icon, Equals, "iconpath")
 }
 
+func (s *PayloadSuite) TestPayloadInstalledSnapBeingRemoved(c *C) {
+	fakeSnap := common.NewDefaultSnap()
+
+	previousTryLocateCachedIconForSnap := tryLocateCachedIconForSnap
+	previousLocalIconPath := localIconPath
+	defer func() {
+		localIconPath = previousLocalIconPath
+		tryLocateCachedIconForSnap = previousTryLocateCachedIconForSnap
+	}()
+
+	localIconPath = func(c snapdclient.SnapdClient, name string) (relativePath string, err error) {
+		return "", ErrIconNotExist
+	}
+	tryLocateCachedIconForSnap = func(snapName string) (string, error) {
+		return "", ErrIconNotExist
+	}
+
+	q := s.h.snapToPayload(fakeSnap)
+	c.Check(q.Icon, Equals, "")
+
+	tryLocateCachedIconForSnap = func(snapName string) (string, error) {
+		return "myicon", nil
+	}
+
+	q = s.h.snapToPayload(fakeSnap)
+	c.Check(q.Icon, Equals, "myicon")
+}
+
 type AllPackagesSuite struct {
 	c *FakeSnapdClient
 	h Handler
