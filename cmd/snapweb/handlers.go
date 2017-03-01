@@ -31,6 +31,7 @@ import (
 	"text/template"
 
 	// most other handlers use the ClientAdapter for now
+	"github.com/snapcore/snapweb/snappy"
 	"github.com/snapcore/snapweb/snappy/app"
 	"github.com/snapcore/snapweb/snappy/snapdclient"
 )
@@ -232,6 +233,8 @@ func handleDeviceAction(w http.ResponseWriter, r *http.Request) {
 
 func initURLHandlers(log *log.Logger, config Config) {
 	log.Println("Initializing HTTP handlers...")
+
+	f := NewFilter()
 
 	// API
 	http.Handle("/api/", makeAPIHandler("/api/", config))
