@@ -13,11 +13,16 @@
 
     <div class="row">
       <div class="col-7"></div>
-      <div class="col-5 u-float--right">
+
+      <div id="enabler-button" class="col-2" style="display: {{#if isInstalled}}block{{else}}none{{/if}}">
+        {{> enabler}}
+      </div>
+
+      <div id="installer-button" class="{{#if isInstalled}}col-2{{else}}col-5{{/if}}">
         {{> installer}}
 
-        <div id="progressbarwrapper" style="margin-top: 1em; width: 100%; height: 0.5em">
-          <div id="progress" style="background-color: green; width: {{ download_progress }}%; height: 0.5em">
+        <div id="progressbarwrapper" style="border: 1px; border-radius: 10px; margin-top: 1em; width: 100%; height: 0.5em">
+          <div id="progress" style="background-color: #003399; width: {{ download_progress }}%; height: 0.5em">
           </div>
         </div>
 
@@ -60,9 +65,10 @@
 
   </div>
 
-  <div class="col-5" style="border: 1px dotted #cdcdcd; padding: 1em 1em; height: 15em; overflow-x: hidden; overflow-y: scroll;">
+  <div class="col-5" style="border: 1px dotted #cdcdcd; padding: 1em 1em; height: 15em; overflow-x: hidden; overflow-y: hidden;">
     <h3 class="">Interfaces</h3>
     <div id="interface-list">
+      <li>N/A</li>
     </div>
   </div>
 
@@ -72,7 +78,7 @@
   <div class="col-8">
     <h3>About</h3>
       {{#if description}}
-      <p>{{ description }}</p>
+      <p>{{{ description }}}</p>
       {{/if}}
     </div>
 </div>

@@ -1,11 +1,13 @@
-var Backbone = require('backbone');
-var Marionette = require('backbone.marionette');
-var template = require('../templates/settings-updates.hbs');
+import React from 'react'
 
-module.exports = Backbone.Marionette.ItemView.extend({
-  className: 'b-settings__updates',
-
-  template: function() {
-    return template();
+export default class SettingsUpdates extends React.Component {
+  render() {
+    return (
+      <div className="row">
+        <div className="col-12">
+          <h2>Updates</h2>
+        </div>
+      </div>
+    );
   }
-});
+}

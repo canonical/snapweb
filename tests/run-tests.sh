@@ -36,14 +36,6 @@ if [ -z "$5" ]
 
     echo 'Downloading Standalone Selenium Server...'
     wget -nc https://selenium-release.storage.googleapis.com/3.0/selenium-server-standalone-3.0.1.jar
-
-#install npm deps
-    npm install webdriverio --save-dev
-    npm install chai --save-dev
-    npm install wdio-mocha-framework --save-dev
-    npm install wdio-junit-reporter --save-dev
-    npm install ssh2 --save-dev
-    npm install node-ssh --save-dev
 fi
 
 echo 'Launching Selenium Server ...'
@@ -58,7 +50,7 @@ if [ ! -d "$modules_dir" ]; then
   modules_dir="../node_modules"
 fi
 
-echo 'Run selenium tests for snapweb service on given IP'
+echo "Run selenium tests for snapweb on $host:$port with user:$user/$sudo"
 USER=$user HOST=$host PORT=$port SUDO=$sudo $modules_dir/.bin/wdio -b https://$2:4201
 exitcode=$?
 

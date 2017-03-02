@@ -21,11 +21,14 @@ module.exports = {
         })
         collection.forEach(function(s) {
           if (installedById[s.id]) {
+            // TODO make sure that active & installed state is preserved
             s.set('status', CONF.INSTALL_STATE.INSTALLED)
+            s.set('icon', installedById[s.id].get('icon'))
           }
         });
       },
       error: function(snaplist) {
+	console.log('error')
       }
     });
     return collection

@@ -30,6 +30,36 @@ module.exports = {
         dataType : 'json'
       });
     }
+
+    return false;
+  },
+  handleEnableEvent: function(event, model) {
+    event.preventDefault();
+
+    var status = model.get('status');
+    var isInstalled = model.get('isInstalled');
+
+    if (!isInstalled) {
+      return;
+    }
+
+    if (status === Config.INSTALL_STATE.INSTALLED) {
+      //
+      model.save({
+        status: Config.INSTALL_STATE.ENABLING
+      }, {
+        dataType : 'json',
+        type: 'post'
+      });
+    } if (status === Config.INSTALL_STATE.ACTIVE) {
+      model.save({
+        status: Config.INSTALL_STATE.DISABLING
+      }, {
+        dataType : 'json',
+        type: 'post'
+      });
+    }
+
     return false;
   },
   getShowSnapUrlFor: function(model) {

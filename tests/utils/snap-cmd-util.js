@@ -103,11 +103,11 @@ SnapUtil.prototype.getToken = function() {
 }
 
 SnapUtil.prototype.installSnap = function(name) {
-    return this._promisifyExec('snap install ' + name, this.isSudoRequired);
+  return this._promisifyExec('snap install ' + name, true);
 }
 
 SnapUtil.prototype.removeSnap = function(name) {
-    return this._promisifyExec('snap remove ' + name, this.isSudoRequired);
+  return this._promisifyExec('snap remove ' + name, true);
 }
 
 SnapUtil.prototype.snapVersion = function() {

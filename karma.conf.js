@@ -40,6 +40,9 @@ module.exports = function(config) {
       debug: true,
       transform: [
         'hbsfy',
+        ['babelify', {
+          presets: ["react-app"]
+        }],
         ['browserify-istanbul', {
           instrumenterConfig:  {
             embedSource: true

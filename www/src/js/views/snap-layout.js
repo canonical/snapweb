@@ -6,10 +6,14 @@ Backbone.$ = $;
 var Marionette = require('backbone.marionette');
 var Handlebars = require('hbsfy/runtime');
 var InstallBehavior = require('../behaviors/install.js');
+var EnableBehavior = require('../behaviors/enabler.js');
 var template = require('../templates/snap-layout.hbs');
 var CONF = require('../config.js');
 
+// Handles the install/remove button
 Handlebars.registerPartial('installer', require('../templates/_installer.hbs'));
+// Handles the enable/disable button
+Handlebars.registerPartial('enabler', require('../templates/_enabler.hbs'));
 
 var SnapInterfaceListItemView = Marionette.ItemView.extend({
   tagName: 'li',
@@ -27,7 +31,7 @@ module.exports = Marionette.LayoutView.extend({
   initialize: function() {
     var self = this;
     this.model.on('change:download_progress', function() {
-      $("#progressbarwrapper").css({'background-color': 'LightGray'});
+      $("#progressbarwrapper").css({'border': '1px', 'border-radius': '10%'});
       $("#progress").css('width', self.model.get("download_progress")+"%");
     });
     this.model.on('change:task_summary', function() {
@@ -36,7 +40,16 @@ module.exports = Marionette.LayoutView.extend({
     this.model.on('change:status', function() {
       var status = self.model.get('status');
       if (status !== CONF.INSTALL_STATE.INSTALLING) {
-        $("#progressbarwrapper").css({'background-color': ''});
+        $("#progressbarwrapper").css({'border': '0px', 'border-radius': 'initial', 'background-color': ''});
+      }
+      if (status === CONF.INSTALL_STATE.INSTALLED ||
+          status === CONF.INSTALL_STATE.ACTIVE) {
+        $("#enabler-button").css({'display': 'block'});
+        $("#installer-button").removeClass('col-5').addClass('col-2');
+      }
+      if (status === CONF.INSTALL_STATE.REMOVED) {
+        $("#enabler-button").css({'display': 'none'});
+        $("#installer-button").removeClass('col-2').addClass('col-5');
       }
     })
   },
@@ -54,17 +67,24 @@ module.exports = Marionette.LayoutView.extend({
   behaviors: {
     InstallBehavior: {
       behaviorClass: InstallBehavior
+    },
+    EnableBehavior: {
+      behaviorClass: EnableBehavior
     }
   },
 
   onBeforeShow: function() {
-    this.showChildView(
+    // disabled for now until https://bugs.launchpad.net/snapweb/+bug/1668390
+    // is fixed
+    /*
+this.showChildView(
         'interfacesRegion',
         new SnapInterfaceCollectionView({
           model: this.model,
           collection: this.collection
         })
     );
+*/
   },
 
   onShow: function() {

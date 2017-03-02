@@ -9,7 +9,6 @@ var csso = require('gulp-csso');
 var del = require('del');
 var gulp = require('gulp');
 var gutil = require('gulp-util');
-var imagemin = require('gulp-imagemin');
 var jscs = require('gulp-jscs');
 var jshint = require('gulp-jshint');
 var sass = require('gulp-sass');
@@ -17,7 +16,6 @@ var sourcemaps = require('gulp-sourcemaps');
 var source = require('vinyl-source-stream');
 var uglify = require('gulp-uglify');
 var watchify = require('watchify');
-var reactify = require('reactify');
 
 gulp.task('js:build', ['js:clean', 'js:lint'], function() {
   return createBundler();
@@ -34,7 +32,7 @@ function createBundler(watch) {
   });
   bundler.transform('hbsfy');
   bundler.transform({global: true}, 'aliasify');
-  bundler.transform('reactify');
+  bundler.transform('babelify', {presets: ["react-app"]});
 
   if (watch) {
     bundler = watchify(bundler);
@@ -50,11 +48,15 @@ function createBundler(watch) {
 
 function bundleShared(bundler) {
   return bundler.bundle()
-    .on('error', gutil.log.bind(gutil, 'Browserify Error'))
+    .on('error', function(err) {
+      gutil.log(gutil.colors.green('Browserify Error: ' + err));
+      this.emit('end');
+      process.exit(1);
+    })
     .pipe(source('snapweb.js'))
       .pipe(buffer())
       .pipe(sourcemaps.init({loadMaps: true})) // loads map from browserify file
-      .pipe(uglify())
+      .pipe(process.env.NODE_ENV === 'development'? gutil.noop() : uglify())
       .pipe(sourcemaps.write('./')) // writes .map file
     .pipe(gulp.dest('www/public/js/'));
 }
@@ -99,7 +101,6 @@ gulp.task('styles:clean', function(cb) {
 
 gulp.task('images', ['images:clean'], function() {
   gulp.src(['www/src/images/**/*'])
-  .pipe(imagemin())
   .pipe(gulp.dest('www/public/images'));
 });
 

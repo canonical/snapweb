@@ -21,10 +21,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"log"
-	"net"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -114,7 +112,7 @@ func (s *HandlersSuite) TestServesIcons(c *C) {
 	c.Assert(os.Mkdir(icons, os.ModePerm), IsNil)
 	c.Assert(ioutil.WriteFile(iconPath, []byte{}, os.ModePerm), IsNil)
 
-	initURLHandlers(log.New(os.Stdout, "", 0))
+	initURLHandlers(log.New(os.Stdout, "", 0), Config{})
 	defer func() {
 		http.DefaultServeMux = http.NewServeMux()
 	}()
@@ -141,7 +139,7 @@ func (s *HandlersSuite) TestMakeMainPageHandler(c *C) {
 	c.Assert(err, IsNil)
 	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
 
-	initURLHandlers(log.New(os.Stdout, "", 0))
+	initURLHandlers(log.New(os.Stdout, "", 0), Config{})
 	defer func() {
 		http.DefaultServeMux = http.NewServeMux()
 	}()
@@ -204,49 +202,12 @@ func (s *HandlersSuite) TestRenderLayout(c *C) {
 	c.Assert(rec.Code, Equals, http.StatusOK)
 }
 
-func (s *HandlersSuite) TestPassthroughHandler(c *C) {
-	socketPath := "/tmp/snapd-test.socket"
-	c.Assert(os.MkdirAll(filepath.Dir(socketPath), 0755), IsNil)
-	l, err := net.Listen("unix", socketPath)
-	if err != nil {
-		c.Fatalf("unable to listen on %q: %v", socketPath, err)
-	}
-
-	f := func(w http.ResponseWriter, r *http.Request) {
-		c.Check(r.URL.Path, Equals, "/v2/system-info")
-		c.Check(r.URL.RawQuery, Equals, "")
-
-		fmt.Fprintln(w, `{"type":"sync", "result":{"series":"42"}}`)
-	}
-
-	srv := &httptest.Server{
-		Listener: l,
-		Config:   &http.Server{Handler: http.HandlerFunc(f)},
-	}
-	srv.Start()
-	defer srv.Close()
-
-	handler := http.HandlerFunc(makePassthroughHandler(socketPath, "/api"))
-
-	rec := httptest.NewRecorder()
-	req, err := http.NewRequest("GET", "/api/v2/system-info", nil)
-	c.Assert(err, IsNil)
-
-	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
-
-	handler(rec, req)
-	body := rec.Body.String()
-	c.Assert(rec.Code, Equals, http.StatusOK)
-	c.Check(strings.Contains(body, "42"), Equals, true)
-	// TODO: check that we receive Content-Type: json/application
-}
-
 func (s *HandlersSuite) TestModelInfoHandler(c *C) {
 	cwd, err := os.Getwd()
 
 	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
 
-	initURLHandlers(log.New(os.Stdout, "", 0))
+	initURLHandlers(log.New(os.Stdout, "", 0), Config{})
 	defer func() {
 		http.DefaultServeMux = http.NewServeMux()
 	}()
@@ -288,7 +249,7 @@ func (s *HandlersSuite) TestDeviceActionInvalidMethod(c *C) {
 
 	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
 
-	initURLHandlers(log.New(os.Stdout, "", 0))
+	initURLHandlers(log.New(os.Stdout, "", 0), Config{})
 	defer func() {
 		http.DefaultServeMux = http.NewServeMux()
 	}()
@@ -308,7 +269,7 @@ func (s *HandlersSuite) TestDeviceActionInvalidContentType(c *C) {
 
 	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
 
-	initURLHandlers(log.New(os.Stdout, "", 0))
+	initURLHandlers(log.New(os.Stdout, "", 0), Config{})
 	defer func() {
 		http.DefaultServeMux = http.NewServeMux()
 	}()
@@ -328,7 +289,7 @@ func (s *HandlersSuite) TestDeviceActionInvalidJSON(c *C) {
 
 	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
 
-	initURLHandlers(log.New(os.Stdout, "", 0))
+	initURLHandlers(log.New(os.Stdout, "", 0), Config{})
 	defer func() {
 		http.DefaultServeMux = http.NewServeMux()
 	}()
@@ -351,7 +312,7 @@ func (s *HandlersSuite) TestDeviceActionInvalidAction(c *C) {
 
 	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
 
-	initURLHandlers(log.New(os.Stdout, "", 0))
+	initURLHandlers(log.New(os.Stdout, "", 0), Config{})
 	defer func() {
 		http.DefaultServeMux = http.NewServeMux()
 	}()
@@ -366,4 +327,167 @@ func (s *HandlersSuite) TestDeviceActionInvalidAction(c *C) {
 
 	http.DefaultServeMux.ServeHTTP(rec, req)
 	c.Assert(rec.Code, Equals, http.StatusBadRequest)
+}
+
+func (s *HandlersSuite) TestTimeInfoInvalidMethod(c *C) {
+	cwd, err := os.Getwd()
+
+	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
+
+	initURLHandlers(log.New(os.Stdout, "", 0), Config{})
+	defer func() {
+		http.DefaultServeMux = http.NewServeMux()
+	}()
+
+	rec := httptest.NewRecorder()
+	req, err := http.NewRequest("POST", "/api/v2/time-info", nil)
+	c.Assert(err, IsNil)
+
+	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
+
+	http.DefaultServeMux.ServeHTTP(rec, req)
+	c.Assert(rec.Code, Equals, http.StatusMethodNotAllowed)
+}
+
+func (s *HandlersSuite) TestTimeInfoGET(c *C) {
+	cwd, err := os.Getwd()
+
+	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
+
+	initURLHandlers(log.New(os.Stdout, "", 0), Config{})
+	defer func() {
+		http.DefaultServeMux = http.NewServeMux()
+	}()
+
+	rec := httptest.NewRecorder()
+	req, err := http.NewRequest("GET", "/api/v2/time-info", nil)
+	c.Assert(err, IsNil)
+
+	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
+
+	http.DefaultServeMux.ServeHTTP(rec, req)
+	c.Assert(rec.Code, Equals, http.StatusOK)
+
+	c.Assert(rec.Header().Get("Content-Type"), Equals, "application/json")
+
+	var timeInfo map[string]interface{}
+	err = json.Unmarshal([]byte(rec.Body.String()), &timeInfo)
+	c.Assert(err, IsNil)
+
+	_, exists := timeInfo["dateTime"]
+	c.Assert(exists, Equals, true)
+	_, exists = timeInfo["timezone"]
+	c.Assert(exists, Equals, true)
+}
+
+func (s *HandlersSuite) TestTimeInfoInvalidContentType(c *C) {
+	cwd, err := os.Getwd()
+
+	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
+
+	initURLHandlers(log.New(os.Stdout, "", 0), Config{})
+	defer func() {
+		http.DefaultServeMux = http.NewServeMux()
+	}()
+
+	rec := httptest.NewRecorder()
+	req, err := http.NewRequest("PATCH", "/api/v2/time-info", nil)
+	c.Assert(err, IsNil)
+
+	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
+
+	http.DefaultServeMux.ServeHTTP(rec, req)
+	c.Assert(rec.Code, Equals, http.StatusUnsupportedMediaType)
+}
+
+func (s *HandlersSuite) TestTimeInfoInvalidJSON(c *C) {
+	cwd, err := os.Getwd()
+
+	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
+
+	initURLHandlers(log.New(os.Stdout, "", 0), Config{})
+	defer func() {
+		http.DefaultServeMux = http.NewServeMux()
+	}()
+
+	rec := httptest.NewRecorder()
+	var patchJSON = []byte("{]")
+	req, err := http.NewRequest("PATCH", "/api/v2/time-info", bytes.NewBuffer(patchJSON))
+	c.Assert(err, IsNil)
+
+	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
+	req.Header.Set("Content-Type", "application/json")
+
+	http.DefaultServeMux.ServeHTTP(rec, req)
+	c.Assert(rec.Code, Equals, http.StatusBadRequest)
+}
+
+func (s *HandlersSuite) TestEmptyTimeInfoUpdate(c *C) {
+	cwd, err := os.Getwd()
+
+	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
+
+	initURLHandlers(log.New(os.Stdout, "", 0), Config{})
+	defer func() {
+		http.DefaultServeMux = http.NewServeMux()
+	}()
+
+	rec := httptest.NewRecorder()
+	var patchJSON = []byte("{}")
+	req, err := http.NewRequest("PATCH", "/api/v2/time-info", bytes.NewBuffer(patchJSON))
+	c.Assert(err, IsNil)
+
+	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
+	req.Header.Set("Content-Type", "application/json")
+
+	http.DefaultServeMux.ServeHTTP(rec, req)
+	c.Assert(rec.Code, Equals, http.StatusOK)
+}
+
+func (s *HandlersSuite) TestHandleSections(c *C) {
+	s.c.SnapSections = []string{"foo", "bar"}
+
+	initURLHandlers(log.New(os.Stdout, "", 0), Config{})
+	defer func() {
+		http.DefaultServeMux = http.NewServeMux()
+	}()
+
+	rec := httptest.NewRecorder()
+	req, err := http.NewRequest("GET", "/api/v2/sections", nil)
+	c.Assert(err, IsNil)
+
+	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
+
+	http.DefaultServeMux.ServeHTTP(rec, req)
+
+	c.Assert(rec.Code, Equals, http.StatusOK)
+	c.Assert(rec.Header().Get("Content-Type"), Equals, "application/json")
+
+	body := rec.Body.String()
+
+	var sections []string
+	err = json.Unmarshal([]byte(body), &sections)
+	c.Assert(err, IsNil)
+
+	c.Assert(sections, DeepEquals, s.c.SnapSections)
+}
+
+func (s *HandlersSuite) TestHandleSectionsError(c *C) {
+	s.c.SnapSections = nil
+	s.c.Err = errors.New("foo")
+
+	initURLHandlers(log.New(os.Stdout, "", 0), Config{})
+	defer func() {
+		http.DefaultServeMux = http.NewServeMux()
+	}()
+
+	rec := httptest.NewRecorder()
+	req, err := http.NewRequest("GET", "/api/v2/sections", nil)
+	c.Assert(err, IsNil)
+
+	req.AddCookie(&http.Cookie{Name: SnapwebCookieName, Value: "1234"})
+
+	http.DefaultServeMux.ServeHTTP(rec, req)
+
+	c.Assert(rec.Code, Equals, http.StatusInternalServerError)
 }

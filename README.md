@@ -34,29 +34,50 @@ Branch:
     
 Install:
 
-    npm install -g --prefix=$(npm config get prefix) gulp
-    npm install
+    # this script does a npm install using yarn and fixes some extra issues
+    # with dependencies
+    ./scripts/npm-install.sh
+    ./scripts/get-go-deps.sh
+
 
 ## Building
 
     cd $GOPATH/src/github.com/snapcore/snapweb
-    ./build.sh
+    # omit the architecture specified below ('amd64') to build for all architectures at once
+    ./build.sh amd64
 
 # Installing
 
-Once you have a snap you can transfer it onto a running snappy system and from
-there install it by running:
+Once you have a snap built locally, you can test it on your system by doing:
 
-     sudo snap install [snap]
+     snap install snapweb_<version>.snap --dangerous
+
+The --dangerous flag is necessary for installing locally built snaps, which
+have not been signed by the store.
 
 # Using
 
-Given that the snappy system where it was installed on was created with
+Connect to the Snapweb interface with this URL: [http://localhost:4200/]
 
-     kvm -m 768 -redir :8022::22 -redir :4200::4200 -hda snappy.img
+Snapweb will automatically redirect to HTTPS on port 4201, using a self-signed
+certificate.
 
-Then pointing the browser to [http://localhost:4200] will take you to the
-portal.
+Warning : if testing snapweb inside a VM with redirected ports, be sure to
+connect directly to the HTTPS socket, as the HTTP redirect won't work.
+
+For example, starting a VM with:
+
+     kvm -m 768 -redir :8022::22 -redir :8201::4201 -hda snappy.img
+
+Point the browser directly to [https://localhost:8201]
+
+Note that in all cases you will now need an access token to use snapweb.
+Depending on where you installed the snap package (locally or in a vm)
+run the following command (possibly via ssh in the case of a vm):
+
+     sudo snapweb.generate-token
+
+Then copy/paste the token in the Web UI when requested.
 
 ## API
 

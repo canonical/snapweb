@@ -20,6 +20,7 @@ package snappy
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 
@@ -133,6 +134,49 @@ func (h *Handler) remove(w http.ResponseWriter, r *http.Request) {
 	h.snapOperationResponse(name, err, w)
 }
 
+func (h *Handler) update(w http.ResponseWriter, r *http.Request) {
+	snapName := mux.Vars(r)["name"]
+	if snapName == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	body, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+
+	var snap map[string]*json.RawMessage
+	err = json.Unmarshal(body, &snap)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	// For now only deal with enable/disable updates
+	if _, ok := snap["status"]; !ok {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	var status string
+	err = json.Unmarshal(*snap["status"], &status)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	if status == statetracker.StatusEnabling {
+		err = h.enable(snapName)
+	} else if status == statetracker.StatusDisabling {
+		err = h.disable(snapName)
+	}
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	h.snapOperationResponse(snapName, err, w)
+}
+
 // MakeMuxer sets up the handlers multiplexing to handle requests against snappy's
 // packages api
 func (h *Handler) MakeMuxer(prefix string, parentRouter *mux.Router) http.Handler {
@@ -149,6 +193,9 @@ func (h *Handler) MakeMuxer(prefix string, parentRouter *mux.Router) http.Handle
 
 	// Remove a package
 	m.HandleFunc("/{name}", h.remove).Methods("DELETE")
+
+	// Update a snap package
+	m.HandleFunc("/{name}", h.update).Methods("POST")
 
 	return m
 }

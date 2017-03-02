@@ -22,5 +22,7 @@ esac
 
 exec $SNAP/bin/$plat_abi/snapweb
 
+echo "STARTED"
+
 # never reach this
 exit 1

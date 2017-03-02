@@ -6,22 +6,33 @@ var CONF = require('../src/js/config.js');
 describe('SnapLayoutView', function() {
 
   beforeEach(function() {
-    this.model = new Snap({
-      status: CONF.INSTALL_STATE.REMOVED,
-      installActionString: 'Install'
-    });
+    this.mockModelFetchResponse = {
+      id: 'test',
+      status: CONF.INSTALL_STATE.INSTALLED,
+      installActionString: 'Install',
+      type: 'app',
+    };
+
+    this.model = new Snap(this.mockModelFetchResponse);
+    var self = this;
+    this.model.fetch = function() {
+      return self.mockModelFetchResponse;
+    }
+
     this.view = new SnapLayoutView({
       model: this.model
     });
     this.view.render();
 
     this.uiInstaller = this.view.$el.find('.b-installer'); 
+    this.uiEnabler = this.view.$el.find('.b-enabler');
   });
 
   afterEach(function() {
     this.view.remove();
     delete this.model;
     delete this.view;
+    delete this.mockModelFetchResponse;
   });
 
   it('should be an instance of Backbone.View', function() {
@@ -52,6 +63,19 @@ describe('SnapLayoutView', function() {
   it('should deactivate install button if model has unrecognised status', function() {
     this.model.set('status', '');
     expect(this.uiInstaller).not.toBe();
+    expect(this.uiEnabler).not.toBe();
+  });
+
+  it('should not show enable/disable button for non removable snaps', function() {
+    for (var i in CONF.NON_REMOVABLE_SNAP_TYPES) {
+      this.mockModelFetchResponse.type = CONF.NON_REMOVABLE_SNAP_TYPES[i];
+      var view = new SnapLayoutView({
+        model: new Snap(this.model.parse(this.mockModelFetchResponse))
+      });
+      view.render();
+      var uiEnabler = view.$el.find('.b-enabler');
+      expect(uiEnabler.length).toBe(0);
+    }
   });
 
   xit('should inform user when install succeeds', function() {

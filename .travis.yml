@@ -3,13 +3,13 @@ dist: trusty
 language: go
 go:
   - 1.6
+node_js:
+  - "5.11"
 services: docker
 
 env:
-  - TEST_SUITE="--static-go"
-  - TEST_SUITE="--static-js"
-  - TEST_SUITE="--unit-go"
-  - TEST_SUITE="--unit-js"
+  - TEST_SUITE="--static"
+  - TEST_SUITE="--unit"
 
 matrix:
   include:
@@ -18,6 +18,7 @@ matrix:
       cache: false
 
 cache:
+  yarn: true
   directories:
     - node_modules
 
@@ -25,19 +26,17 @@ before_install:
   - if [ $encrypted_527ca8567c65_key ]; then eval "$(ssh-agent)"; ./tests/setup-deploy-key.sh; fi
 
 install:
-  - sudo apt remove -y chromium-browser
-  - sudo apt-get install -y  google-chrome-stable
-  - if [ "$TEST_SUITE" == "--unit-node" ]; then . $HOME/.nvm/nvm.sh && nvm install stable && nvm use stable; fi
+  - ./scripts/npm-install.sh
+  - ./scripts/get-go-deps.sh
 
 script:
   - if [ -z "$BUILD" ]; then sh -v ./run-checks $TEST_SUITE; fi
-  - if [ ! -z "$BUILD" ] && [ "$TRAVIS_PULL_REQUEST" = "false" ]; then ./scripts/snap-in-docker.sh; fi
-  - if [ ! -z "$BUILD" ] && [ "$TRAVIS_PULL_REQUEST" = "false" ]; then ./tests/setup-and-run-tests.sh $user $host $port; fi
+  - if [ ! -z "$BUILD" ] && [ "$TRAVIS_PULL_REQUEST" = "false" ]; then ./scripts/snap-in-docker.sh; ./tests/setup-and-run-tests.sh $user $host $port; fi
 
 after_success:
   - go get github.com/mattn/goveralls
   - goveralls -coverprofile=.coverage-go/coverage.out -service=travis-ci
-  - npm install coveralls
+  - yarn install coveralls
   - cat .coverage-js/report-lcov/lcov.info | ./node_modules/coveralls/bin/coveralls.js
   - mkdir -p "${HOME}/.config/snapcraft"
   - openssl aes-256-cbc -K $encrypted_e72199912f3d_key -iv $encrypted_e72199912f3d_iv

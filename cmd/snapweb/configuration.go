@@ -1,0 +1,63 @@
+/*
+ * Copyright (C) 2017 Canonical Ltd
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3 as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"os"
+	"path/filepath"
+)
+
+const (
+	configFilename string = "settings.json"
+)
+
+// Config described the runtime configuration
+type Config struct {
+	DisableAccessToken bool `json:"disableAccessToken,omitempty"`
+	DisableHTTPS       bool `json:"disableHttps,omitempty"`
+}
+
+var readFile = ioutil.ReadFile
+
+func readConfig() Config {
+	configFilepath := filepath.Join(os.Getenv("SNAP_COMMON"), configFilename)
+	if _, err := os.Stat(configFilepath); err != nil {
+		return Config{}
+	}
+
+	var err error
+	var content []byte
+	if content, err = readFile(configFilepath); err != nil {
+		return Config{}
+	}
+
+	var config Config
+	err = json.Unmarshal(content, &config)
+	if err != nil {
+		logger.Println(
+			fmt.Sprintf("Invalid configuration file %s: %s",
+				configFilepath,
+				err.Error()))
+		return Config{}
+	}
+
+	return config
+}

@@ -9,14 +9,29 @@ var Snaplist = require('../collections/snaplist.js');
 var Sections = require('../common/sections.js');
 var SnaplistTools = require('../common/snaplists.js');
 
+
+function isDiffArray(arr1, arr2) {
+  if (arr1.length != arr2.length)
+    return true;
+
+  for (var i = 0; i < arr1.length; ++i) {
+    if (arr1[i] !== arr2[i])
+      return true;
+  }
+
+  return false;
+}
+
 var fetchSnapList = function(title, options) {
   var chan = Radio.channel('root');
   var storeSnaplist = new Snaplist();
   var sections = [];
 
-  var displayStoreView = function(sections, storeSnapList) {
-    var element = React.createElement(StoreLayoutView, {
-      model: new Backbone.Model({
+  if (localStorage) {
+    sections = JSON.parse(localStorage.getItem('storeSections')) || [];
+  }
+
+  var storeModel = new Backbone.Model({
         query: '',
         title: title,
         isGrid: true,
@@ -24,25 +39,29 @@ var fetchSnapList = function(title, options) {
         canSort: false,
         canStyle: true,
         isHomeActive: false,
-        sections: sections
-      }),
-      collection: storeSnaplist
+        sections: sections.concat('private'),
+        loading: true
+      });
+
+  var element = React.createElement(StoreLayoutView, {
+    model: storeModel,
+    collection: storeSnaplist
+  });
+  chan.command('set:content', {reactElement: element});
+
+  Sections.fetch().done(function(response) {
+      if (isDiffArray(sections, response)) {
+        if (localStorage) {
+          localStorage.setItem('storeSections', JSON.stringify(response));
+        }
+        storeModel.set('sections', response.concat('private'));
+      }
     });
-    chan.command('set:content', {reactElement: element});
-  }
 
-  var sp = $.Deferred(function(deferred) {
-    Sections.fetch().then(function(response) {
-      sections = response;
-    }).always(deferred.resolve);
-  });
-
-  var ssp = $.Deferred(function(deferred) {
-    storeSnaplist.fetch(options).always(deferred.resolve);
-  });
-
-  $.when(sp, ssp).done(function() {
-    displayStoreView(sections, SnaplistTools.updateInstalledStates(storeSnaplist));
+  storeSnaplist.fetch(options).always(function(response) {
+    storeModel.set('loading', false);
+  }).done(function() {
+      storeSnaplist = SnaplistTools.updateInstalledStates(storeSnaplist)
   });
 }
 

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 set -eu
 
@@ -12,38 +12,54 @@ STATIC_GO=""
 STATIC_JS=""
 UNIT_GO=""
 UNIT_JS=""
+export PHANTOMJS_BIN=`pwd`/node_modules/.bin/phantomjs
 
-case "${1:-all}" in
-    all)
-        STATIC_GO="yes"
-        STATIC_JS="yes"
-        UNIT_GO="yes"
-        UNIT_JS="yes"
-        ;;
-    --static)
-        STATIC_GO="yes"
-        STATIC_JS="yes"
-        ;;
-    --static-go)
-        STATIC_GO="yes"
-        ;;
-    --static-js)
-        STATIC_JS="yes"
-        ;;
-    --unit)
-        UNIT_GO="yes"
-        UNIT_JS="yes"
-        ;;
-    --unit-go)
-        UNIT_GO="yes"
-        ;;
-    --unit-js)
-        UNIT_JS="yes"
-        ;;
-    *)
-        echo "Wrong flag ${1}. To run a single suite use --static, --static-go, --static-js, --unit, --unit-go or --unit-js."
-        exit 1
-esac
+[ "$#" -eq 0 ] && args="--all" || args="$@"
+
+for arg in $args; do
+    case "$arg" in
+        --all)
+            STATIC_GO="yes"
+            STATIC_JS="yes"
+            UNIT_GO="yes"
+            UNIT_JS="yes"
+            ;;
+        --go)
+            STATIC_GO="yes"
+            UNIT_GO="yes"
+            ;;
+        --js)
+            STATIC_JS="yes"
+            UNIT_JS="yes"
+            ;;
+        --static)
+            STATIC_GO="yes"
+            STATIC_JS="yes"
+            ;;
+        --static-go)
+            STATIC_GO="yes"
+            ;;
+        --static-js)
+            STATIC_JS="yes"
+            ;;
+        --unit)
+            UNIT_GO="yes"
+            UNIT_JS="yes"
+            ;;
+        --unit-go)
+            UNIT_GO="yes"
+            ;;
+        --unit-js)
+            UNIT_JS="yes"
+            ;;
+        --skip-npm-install)
+            SKIP_NPM_INSTALL="yes"
+            ;;
+        *)
+            echo "Wrong flag ${1}. To run a single suite use --static, --static-go, --static-js, --unit, --unit-go, --unit-js or --all to run all tests."
+            exit 1
+    esac
+done
 
 # Append the coverage profile of a package to the project coverage.
 append_go_coverage() {
@@ -53,10 +69,6 @@ append_go_coverage() {
         rm $profile
     fi
 }
-
-if [ ! -z "$STATIC_GO" ] || [ ! -z "$UNIT_GO" ]; then
-    sh ./get-go-deps.sh
-fi
 
 if [ ! -z "$STATIC_GO" ]; then
     # Run go static tests.
@@ -74,14 +86,6 @@ if [ ! -z "$STATIC_GO" ]; then
     echo Running vet
     go vet ./...
 
-    echo Install golint
-    go get -d github.com/golang/lint/golint
-    (
-        cd $GOPATH/src/github.com/golang/lint
-        # revert to the last commit before go 1.5 support was dropped
-        git checkout c6242afa6ced3be489e1184eb80bc2d85f1f5e7b .
-    )
-    go install github.com/golang/lint/golint
     export PATH=$PATH:$GOPATH/bin
 
     echo Running lint
@@ -95,16 +99,12 @@ if [ ! -z "$STATIC_GO" ]; then
 fi
 
 if [ ! -z "$STATIC_JS" ]; then
-    if [ -n "${TRAVIS+set}" ]; then 
-        npm install -g gulp
-    fi
-    npm install
-    gulp js:lint
+    npm run js:lint
 fi
 
 if [ ! -z "$UNIT_GO" ]; then
     echo Building
-    go build -v github.com/snapcore/snapweb/...
+    go build github.com/snapcore/snapweb/...
 
     # Prepare the coverage output profile.
     rm -rf .coverage-go
@@ -114,24 +114,20 @@ if [ ! -z "$UNIT_GO" ]; then
     # tests
     echo Running tests from $(pwd)
     for pkg in $(go list ./... | grep -v integration-tests); do
-        $goctest -v -coverprofile=.coverage-go/profile.out $pkg
+        $goctest -coverprofile=.coverage-go/profile.out $pkg
         append_go_coverage .coverage-go/profile.out
     done
 fi
 
 if [ ! -z "$UNIT_JS" ]; then
-    # www
-    echo Obtaining npm dependencies
-    npm install --loglevel error
-
     rm -rf .coverage-js
 
     # js unit tests
     echo "Running js unit tests (set JS_TESTER to override)"
-    ${JS_TESTER:- ./node_modules/karma/bin/karma start --single-run}
+    NODE_ENV=test ${JS_TESTER:- ./node_modules/karma/bin/karma start --single-run}
 
     cat .coverage-js/text-summary.txt
 
 fi
 
-echo "All good, what could possibly go wrong"
+echo "\nAll good, what could possibly go wrong"

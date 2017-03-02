@@ -12,17 +12,10 @@ var SnapTools = require('../common/snaps.js')
 var snapChannel = Radio.channel('snap');
 var rootChannel = Radio.channel('root');
 
-var collectionFromInterfaces = function(interfaces) {
-  interfaces = interfaces || ''
-  var c = _.map(
-      interfaces.split(','),
-      function(v) { return {id: v, name: v} });
-  return new Backbone.Collection(c)
-};
 
 var byteSizeToString = function(s) {
   var suffixes = ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB'];
-  for (i in suffixes) {
+  for (var i in suffixes) {
     if (s < 1000) {
       return s.toFixed(2) + suffixes[i];
     }
@@ -45,7 +38,7 @@ module.exports = {
       snap.set('size', byteSizeToString(parseInt(size)))
       var view =  new SnapLayoutView({
         model: snap,
-        collection: collectionFromInterfaces(deviceInfo.get('interfaces'))
+        collection: new Backbone.Collection(deviceInfo.get('interfaces'))
       });
       rootChannel.command('set:content', {backboneView: view});
     });
@@ -63,7 +56,7 @@ snapChannel.comply('show', function(model) {
     var url = 'snap/' + name;
     var view =  new SnapLayoutView({
       model: snapModel,
-      collection: collectionFromInterfaces(interfaces)
+      collection: new Backbone.Collection(deviceInfo.get('interfaces'))
     });
     rootChannel.command('set:content', {backboneView: view});
     Backbone.history.navigate(url);

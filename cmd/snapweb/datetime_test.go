@@ -15,7 +15,7 @@
  *
  */
 
-package snapdclient
+package main
 
 import (
 	"fmt"
@@ -70,4 +70,36 @@ func (s *ReadNtpSuite) TestReadValidNTP(c *C) {
 		timesyncdConfigurationFilePath,
 		formatNTPContent([]string{ntpServer}))
 	c.Check(readNTPServer(), Equals, ntpServer)
+
+	mockNTPFileContent(c,
+		timesyncdConfigurationFilePath,
+		formatNTPContent([]string{""}))
+	c.Check(readNTPServer(), Equals, "")
+}
+
+func (s *ReadNtpSuite) TestWriteValidNTP(c *C) {
+	timesyncdConfigurationFilePath = filepath.Join(s.ntpFilePath, timesyncFileName)
+	var ntpServer interface{} = "1.1.1.1 2.2.2.2"
+	mockNTPFileContent(c,
+		timesyncdConfigurationFilePath,
+		formatNTPContent([]string{""}))
+
+	c.Assert(setTimeInfo(map[string]interface{}{"ntpServer": ntpServer}), IsNil)
+	ntpServer = "2.2.2.2"
+
+	c.Assert(setTimeInfo(map[string]interface{}{"ntpServer": ntpServer}), IsNil)
+	c.Check(readNTPServer(), Equals, ntpServer)
+
+	c.Assert(setTimeInfo(map[string]interface{}{"ntpServer": ""}), IsNil)
+	c.Check(readNTPServer(), Equals, "1.1.1.1")
+
+	mockNTPFileContent(c,
+		timesyncdConfigurationFilePath,
+		"[Time]")
+
+	c.Assert(setTimeInfo(map[string]interface{}{"ntpServer": ""}), IsNil)
+	c.Check(readNTPServer(), Equals, "")
+
+	c.Assert(setTimeInfo(map[string]interface{}{"ntpServer": "1.1.1.1"}), IsNil)
+	c.Check(readNTPServer(), Equals, "1.1.1.1")
 }

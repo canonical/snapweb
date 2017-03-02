@@ -5,12 +5,13 @@ var Marionette = require('backbone.marionette');
 var Radio = require('backbone.radio');
 var Snap = require('../models/snap.js');
 var HomeLayoutView = require('../views/home.js');
-var Bask = require('../collections/snaplist.js');
+
+var SnapList = require('../collections/snaplist.js');
 
 module.exports = {
   index: function() {
     var chan = Radio.channel('root');
-    var installedBask = new Bask();
+    var installedBask = new SnapList();
 
     installedBask.fetch({
       data: $.param({
@@ -19,7 +20,7 @@ module.exports = {
       success: function(snaplist) {
         var c = snaplist.all()
 
-        var view = new HomeLayoutView({
+        var installedSnapsView = new HomeLayoutView({
           model: new Backbone.Model({
             title: 'Installed snaps',
             isHomeActive: true,
@@ -27,7 +28,10 @@ module.exports = {
           collection: c
         });
 
-        chan.command('set:content', {backboneView: view});
+        chan.command('set:content', {backboneView: installedSnapsView});
+      },
+      error: function() {
+	console.log('error')
       }
     });
   },
