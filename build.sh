@@ -5,10 +5,12 @@
 # Arguments:
 #   [arch ...]: The architectures to build for. By default it will build for
 #               amd64, arm64, armhf and i386.
+#
+#   [--ups]:    Build the ubuntu-personal-store snap as well
 
 set -e
 
-if [ "$#" -eq 0 ]; then
+if [ "$#" -eq 0 ] || ([ "$#" -eq 1 ] && [ "$1" = "--ups" ]); then
     architectures=( amd64 arm64 armhf i386 )
 else
     architectures=( "$@" )
@@ -76,6 +78,10 @@ godeps -u dependencies.tsv
 
 # build one snap per arch
 for ARCH in "${architectures[@]}"; do
+    if [ $ARCH = "--ups" ]; then
+        continue
+    fi
+
     echo "Building for ${ARCH}..."
     builddir="${top_builddir}/${ARCH}"
     mkdir -p "$builddir"
@@ -104,7 +110,8 @@ for ARCH in "${architectures[@]}"; do
     cd "$orig_pwd"
     snapcraft snap $builddir
 
-    if [[ $* == *--ups* ]]; then
+    # TODO: We only support amd64 ups builds for now -Need a cross-compile fix for "after: [desktop-qt5]"
+    if [[ $* == *--ups* ]] && [ $ARCH = amd64 ]; then
         # now build ubuntu-personal-store
         cd $builddir
         gobuild $BUILD_ARCH "5200"
