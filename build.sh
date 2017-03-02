@@ -44,6 +44,7 @@ get_platform_abi() {
 
 gobuild() {
     arch=$1
+    http_port=$2
 
     plat_abi=$(get_platform_abi $arch)
 
@@ -55,7 +56,7 @@ gobuild() {
 
     mkdir -p $output_dir
     cd $output_dir
-    GOARCH=$arch GOARM=7 CGO_ENABLED=1 CC=${plat_abi}-gcc go build -ldflags "-extld=${plat_abi}-gcc" github.com/snapcore/snapweb/cmd/snapweb
+    GOARCH=$arch GOARM=7 CGO_ENABLED=1 CC=${plat_abi}-gcc go build -ldflags "-extld=${plat_abi}-gcc -X main.http_port=${http_port}" github.com/snapcore/snapweb/cmd/snapweb
     GOARCH=$arch GOARM=7 CGO_ENABLED=1 CC=${plat_abi}-gcc go build -o generate-token -ldflags "-extld=${plat_abi}-gcc" $srcdir/cmd/generate-token/main.go
     cp generate-token ../../
     cd - > /dev/null
@@ -90,19 +91,24 @@ for ARCH in "${architectures[@]}"; do
 
     # *sigh* armhf in snappy is the go arm arch
     if [ $ARCH = armhf ]; then
-        gobuild arm
+        BUILD_ARCH="arm"
     # and 386 vs i386
     elif [ $ARCH = i386 ]; then
-        gobuild 386
+        BUILD_ARCH="386"
     else
-        gobuild $ARCH
+        BUILD_ARCH=$ARCH
     fi
+
+    gobuild $BUILD_ARCH "4200"
 
     cd "$orig_pwd"
     snapcraft snap $builddir
 
     if [[ $* == *--ups* ]]; then
         # now build ubuntu-personal-store
+        cd $builddir
+        gobuild $BUILD_ARCH "5200"
+
         cd $orig_pwd/ubuntu-personal-store
 
         cp snapcraft.yaml.in snapcraft.yaml

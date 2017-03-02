@@ -22,6 +22,7 @@ parts:
     stage-packages:
       - qmlscene:UNKNOWN_ARCH
       - qml-module-qtquick2:UNKNOWN_ARCH
+      - qml-module-qtquick-controls:UNKNOWN_ARCH
       - qml-module-ubuntu-web:UNKNOWN_ARCH
     after: [desktop-qt5]
 

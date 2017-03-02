@@ -18,10 +18,12 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/snapcore/snapweb/avahi"
@@ -29,13 +31,17 @@ import (
 
 var logger *log.Logger
 
-const (
-	httpAddr  string = ":4200"
-	httpsAddr string = ":4201"
-)
+var http_port string // set from go build ldflags
+var httpAddr string
+var httpsAddr string
 
 func init() {
 	logger = log.New(os.Stderr, "Snapweb: ", log.Ldate|log.Ltime|log.Lshortfile)
+
+	httpPort, _ := strconv.Atoi(http_port)
+
+	httpAddr = fmt.Sprint(":", httpPort)
+	httpsAddr = fmt.Sprint(":", httpPort + 1)
 }
 
 func redir(w http.ResponseWriter, req *http.Request) {
