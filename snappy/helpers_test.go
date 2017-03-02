@@ -28,7 +28,8 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
-
+	"time"
+	
 	. "gopkg.in/check.v1"
 
 	"github.com/snapcore/snapweb/snappy/app"
@@ -52,10 +53,6 @@ func (s *HandlersSuite) SetUpTest(c *C) {
 }
 
 func (s *HandlersSuite) TearDownTest(c *C) {
-}
-
-func (s *HandlersSuite) TestIsDeviceManaged(c *C) {
-	c.Assert(IsDeviceManaged(), Equals, true)
 }
 
 func (s *HandlersSuite) TestLoggingHandler(c *C) {
@@ -114,8 +111,35 @@ func (s *HandlersSuite) TestPassthroughHandler(c *C) {
 	// TODO: check that we receive Content-Type: json/application
 }
 
-func (s *HandlersSuite) TestWritePidFile(c *C) {
-}
+func (s *HandlersSuite) TestSnapwebSignaling(c *C) {
+	os.Setenv("SNAP_DATA", c.MkDir())
 
-func (s *HandlersSuite) TestWaitForSigHup(c *C) {
+	WritePidFile()
+	
+	ready := make(chan bool)
+	done := make(chan bool)
+
+	// the thread where we test the function
+	go func() {
+		for ; ; {
+			ready <- true
+			WaitForSigHup()
+			// say the test passed
+			done <- true
+		}
+	}()
+
+	// send the signal, *once* the function is ready to be tested
+	<-ready
+	time.Sleep(1000)
+	SendSignalToSnapweb()
+
+	c.Assert(<-done, Equals, true)
+
+	// do it a second time
+	<-ready
+	time.Sleep(1000)
+	SendSignalToSnapweb()
+
+	c.Assert(<-done, Equals, true)
 }

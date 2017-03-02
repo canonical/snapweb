@@ -51,16 +51,20 @@ func redir(w http.ResponseWriter, req *http.Request) {
 		http.StatusSeeOther)
 }
 
-func main() {
-	config := readConfig()
+type blockerFn func() bool
 
-	for !IsDeviceManaged() {
-		logger.Println("Snapweb cannot run until the device is managed...")
-		snappy.WritePidFile()
+func blockOn(managedCondition blockerFn) {
+	snappy.WritePidFile()
+	for managedCondition() == false {
 		snappy.WaitForSigHup()
 		// wait futher more, to let webconf release the 4200 port
 		time.Sleep(1000)
 	}
+}
+
+
+func main() {
+	blockOn(snappy.IsDeviceManaged)
 
 	// TODO set warning for too hazardous config?
 	config, err := snappy.ReadConfig()

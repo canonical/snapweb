@@ -82,26 +82,9 @@ func makeMainPageHandler() http.HandlerFunc {
 	}
 }
 
-func sendSignalToSnapweb() {
-	var pid int
-	var err error
-
-	pidFilePath := filepath.Join(os.Getenv("SNAP_DATA"), "snapweb.pid")
-
-	if f, err := os.Open(pidFilePath); err == nil {
-		if _, err = fmt.Fscanf(f, "%d\n", &pid); err == nil {
-			p, _ := os.FindProcess(pid)
-			err = p.Signal(syscall.Signal(syscall.SIGHUP))
-		}
-	}
-	if err != nil {
-		log.Println(err)
-	}
-}
-
 func doneHandler(server net.Listener) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		sendSignalToSnapweb()
+		snappy.SendSignalToSnapweb()
 		if server != nil {
 			server.Close()
 		}
