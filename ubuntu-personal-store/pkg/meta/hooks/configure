@@ -1,0 +1,19 @@
+#!/usr/bin/python3
+
+import os
+import json
+import sys
+
+CONF_FILENAME = "settings.json"
+
+SNAP_COMMON_ENV = ''
+try:
+    SNAP_COMMON_ENV = os.environ["SNAP_COMMON"]
+except Exception as e:
+    sys.stderr.write("Could not find $SNAP_COMMON environment variable\n")
+    sys.exit(1)
+
+CONF_FILEPATH = os.path.join(SNAP_COMMON_ENV, CONF_FILENAME)
+
+with open(CONF_FILEPATH, 'w+') as f:
+    f.write(json.dumps({'disableAccessToken': True}))
