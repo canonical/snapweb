@@ -19,7 +19,3 @@ with open(CONF_FILEPATH, 'w+') as f:
     f.write(json.dumps({'disableAccessToken': True}))
 
 # TODO kill & restart main snap daemon
-
-# HACK HACK HACK
-os.system("snap disable ubuntu-personal-store")
-os.system("snap enable ubuntu-personal-store")
