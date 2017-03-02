@@ -17,27 +17,21 @@ module.exports = React.createBackboneClass({
 
     const systemSnaps = []
 
-    var photo = ""
-    var brandData = {
-      brandName: "",
-      deviceName: "",
-      systemName: "",
-      color: "",
-      
-    }
+    var targetSnapUri = ''
     return (
-      <div>
-        <ContentWrapper>
-        </ContentWrapper>
-
-        <ContentWrapper background bordered>
+    <div className="b-grey-wrapper">
+       <div className="inner-wrapper p-strip--light" style={{paddingBottom: "5em"}}>
 
           <CardsList
             title='Apps installed'
             cards={cards}
           />
 
-          <div style={{ paddingBottom: '100px' }}>
+          <div className="row">
+            <h2 className="col-6">System</h2>
+          </div>
+
+          <div style={{paddingBottom: "100px"}}>
             <table>
               <thead>
                 <tr>
@@ -48,59 +42,30 @@ module.exports = React.createBackboneClass({
               </thead>
 
               <tbody id="systems-snap-list">
+
+              {collection.map(function(snap) {
+                return [
+                    <td>
+                      <a href={targetSnapUri}>
+                        <div className="u-vertically-center">
+                          <img className="" src={snap.icon} width="40" height="40"></img>
+                          <span style={{marginLeft: "1em"}}>{snap.name}</span>
+                        </div>
+                      </a>
+                    </td>,
+                    <td>By {snap.developer}</td>,
+                    <td>{snap.type}</td>
+                ];
+              })}
+
               </tbody>
 
             </table>
-
-           <SnapsTable
-              title='System'
-              snaps={systemSnaps.map(snap => ({
-                id: snap.id,
-                name: snap.name,
-                author: snap.author,
-                category: snap.category,
-                icon: `${pub}/icons/cards/${snap.id}.png`,
-              }))}
-            />
-          </div>
-        </ContentWrapper>
-      </div>
-  )
-
-/*    return (
-      <div className="b-grey-wrapper">
-        <div className="inner-wrapper">
-          <div
-            style={{display: "inline-block", width: "100%", marginTop: "20px"}}>
-            <div className="row">
-              <SearchField query={model.get('query')} />
-              <DeckStyler
-                deckStyle={this.state.deckStyle}
-                styleChanged={this.deckStyleChanged}
-              />
-            </div>
           </div>
 
-          <div className="row">
-            <StoreHeaderView
-              title={model.get('title')}
-              sections={model.get('sections')}
-            />
-          </div>
-
-          <div className="p-strip--light">
-            <div className="row">
-              <StorelistView
-                deckStyle={this.state.deckStyle}
-                model={model}
-                collection={this.props.collection.all()}
-              />
-            </div>
-          </div>
         </div>
       </div>
-    );
-*/
+  )
 
   }
 });
