@@ -31,7 +31,6 @@ import (
 	"os/signal"
 	"path/filepath"
 	"strings"
-	"sync"
 	"syscall"
 
 	"github.com/snapcore/snapd/client"
@@ -127,14 +126,26 @@ func WritePidFile() {
 
 // WaitForSigHup waits for the reception of the SIGHUP signal
 func WaitForSigHup() {
-	var waiter sync.WaitGroup
-	waiter.Add(1)
 	var sigchan chan os.Signal
 	sigchan = make(chan os.Signal, 1)
 	signal.Notify(sigchan, syscall.SIGHUP)
-	go func() {
-		<-sigchan
-		waiter.Done()
-	}()
-	waiter.Wait()
+	defer signal.Stop(sigchan)
+	<-sigchan
+}
+
+func SendSignalToSnapweb() {
+	var pid int
+
+	pidFilePath := filepath.Join(os.Getenv("SNAP_DATA"), "snapweb.pid")
+
+	if f, err := os.Open(pidFilePath); err == nil {
+		if _, err = fmt.Fscanf(f, "%d\n", &pid); err == nil {
+			p, _ := os.FindProcess(pid)
+			err = p.Signal(syscall.Signal(syscall.SIGHUP))
+		} else {
+			log.Println(err)
+		}
+	} else {
+		log.Println(err)
+	}
 }
