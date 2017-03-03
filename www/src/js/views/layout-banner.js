@@ -35,7 +35,8 @@ module.exports = Marionette.ItemView.extend({
       'subname': snapweb.SUBNAME,
       'isHomeActive': (path === ''),
       'isStoreActive': (path === 'store' || path === 'search'),
-      'isSettingsActive': (path === 'settings')
+      'isSettingsActive': (path === 'settings'),
+      'isUPS': (window.location.port === '5201')
     };
   },
 
