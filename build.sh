@@ -6,7 +6,7 @@
 #   [arch ...]: The architectures to build for. By default it will build for
 #               amd64, arm64, armhf and i386.
 #
-#   [--ups]:    Build the ubuntu-personal-store snap as well
+#   [--ups]:    Build the ubuntu-personal-store snap as well.
 
 set -e
 
