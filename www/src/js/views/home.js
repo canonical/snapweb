@@ -9,6 +9,7 @@ var Marionette = require('backbone.marionette');
 var React = require('react');
 var ReactBackbone = require('react.backbone');
 
+var Snap = require('../models/snap.js')
 var Common = require('../common/snaps.js')
 var Config = require('../config.js')
 
@@ -18,7 +19,7 @@ function snapToCard(snap) {
     name: snap.get('name'),
     author: snap.get('developer'),
     type: snap.get('type') === 'app'? '' : snap.get('type'),
-    action: snap.get('status') === 'installing'? 'Installing' : null,
+    action: snap.get('installActionString'),
     image: snap.get('id'),
     installProgress: (
       snap.get('status') === 'installing'
