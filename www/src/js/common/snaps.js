@@ -3,7 +3,9 @@ var Config = require('../config.js');
 module.exports = {
   // TODO: remove dep on DOM event
   handleInstallEvent: function(event, model) {
-    event.preventDefault();
+    if (event) {
+      event.preventDefault();
+    }
 
     var status = model.get('status');
     var isInstallable = model.get('isInstallable');
@@ -34,7 +36,9 @@ module.exports = {
     return false;
   },
   handleEnableEvent: function(event, model) {
-    event.preventDefault();
+    if (event) {
+      event.preventDefault();
+    }
 
     var status = model.get('status');
     var isInstalled = model.get('isInstalled');

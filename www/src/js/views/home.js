@@ -62,15 +62,8 @@ module.exports = React.createBackboneClass({
           });
 
     var self = this;
-    var handleOpenSnap = (id) => {
-      if (id === 'add') {
-        return self.goto('store')
-      }
-      const snap = self.getSnap(id)
-      // if (snap && !snap.preinstalled) {
-      if (snap) {
-        self.goto(`snap/${id}`)
-      }
+    var handleOpenSnap = function(id) {
+      Common.handleInstallEvent(null, collection.where({ id: id })[0])
     }
 
     return (
@@ -85,7 +78,7 @@ module.exports = React.createBackboneClass({
               <CardsList
                 title=''
                 cards={cards}
-                onOpenSnap={this.handleOpenSnap}
+                onCardClick={handleOpenSnap}
               />
           </div>
 
