@@ -2,7 +2,7 @@ var Config = require('../config.js');
 
 module.exports = {
   // TODO: remove dep on DOM event
-  handleInstallEvent: function(event, model) {
+  handleInstallEvent: function(event, model, onchange) {
     if (event) {
       event.preventDefault();
     }
@@ -24,6 +24,9 @@ module.exports = {
         dataType : 'json',
         silent: true
       });
+      if (onchange) {
+        model.on("change:status", onchange)
+      }
     } else if (status === Config.INSTALL_STATE.REMOVED) {
       // install
       model.save({

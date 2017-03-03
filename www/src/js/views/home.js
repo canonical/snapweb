@@ -22,8 +22,8 @@ function snapToCard(snap) {
     action: snap.get('installActionString'),
     image: snap.get('id'),
     installProgress: (
-      snap.get('status') === 'installing'
-        ? snap.installProgress
+      snap.get('status') === Config.INSTALL_STATE.INSTALLING
+        ? snap.get('download_progress')
         : -1
     ),
     snap: snap.toJSON(),
@@ -32,9 +32,15 @@ function snapToCard(snap) {
 }
 
 module.exports = React.createBackboneClass({
+  getInitialState: function() {
+    return {
+      snaps: this.props.collection
+    }
+  },
+
   render: function() {
     var model = this.props.model;
-    var collection = this.props.collection;
+    var collection = this.state.snaps || this.props.collection;
 
     const addCard = {
       id: 'add',
@@ -62,8 +68,18 @@ module.exports = React.createBackboneClass({
           });
 
     var self = this;
-    var handleOpenSnap = function(id) {
-      Common.handleInstallEvent(null, collection.where({ id: id })[0])
+    var handleSnapClick = function(id) {
+      Common.handleInstallEvent(
+        null,
+        collection.where({ id: id })[0],
+        function(model) {
+          if (model.status === Config.INSTALL_STATE.REMOVING) {
+            self.setState({ snaps: self.props.collection })
+          } else {
+            // TODO reset even handler
+          }
+        }
+      )
     }
 
     return (
@@ -78,7 +94,7 @@ module.exports = React.createBackboneClass({
               <CardsList
                 title=''
                 cards={cards}
-                onCardClick={handleOpenSnap}
+                onCardClick={handleSnapClick}
               />
           </div>
 
