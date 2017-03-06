@@ -29,7 +29,8 @@ module.exports = {
     ENABLING: 'enabling',
     DISABLING: 'disabling',
     ACTIVE: 'active',
-    PRICED: 'priced'
+    PRICED: 'priced',
+    CANCEL: 'cancel',
   },
   INSTALL_POLL_WAIT: 16 // milliseconds
 };
