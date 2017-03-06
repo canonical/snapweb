@@ -8,7 +8,7 @@
 This assumes you have a working go environment with a GOPATH env var setup,
 and nodejs and npm installed:
 
-    sudo apt install nodejs-legacy npm snapcraft
+    sudo apt install nodejs-legacy npm snapcraft bzr
 
 Install global npm modules without sudo:
 
