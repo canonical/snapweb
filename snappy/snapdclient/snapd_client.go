@@ -47,6 +47,7 @@ type SnapdClient interface {
 	Change(id string) (*client.Change, error)
 	Enable(id string, options *client.SnapOptions) (string, error)
 	Disable(id string, options *client.SnapOptions) (string, error)
+	Abort(id string) (*client.Change, error)
 }
 
 // ClientAdapter adapts our expectations to the snapd client API.
@@ -134,6 +135,11 @@ func (a *ClientAdapter) Enable(name string, options *client.SnapOptions) (string
 // Disable disables the snap
 func (a *ClientAdapter) Disable(name string, options *client.SnapOptions) (string, error) {
 	return a.snapdClient.Disable(name, options)
+}
+
+// Abort attempts to abort a change that is in not yet ready.
+func (a *ClientAdapter) Abort(id string) (*client.Change, error) {
+	return a.snapdClient.Abort(id)
 }
 
 // internal

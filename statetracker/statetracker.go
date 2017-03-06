@@ -145,6 +145,18 @@ func (s *StateTracker) TrackInstall(changeID string, snap *client.Snap) {
 	s.trackOperation(changeID, snap.Name, StatusInstalling)
 }
 
+// CancelTrackingFor tracks the installation of the given snap
+func (s *StateTracker) CancelTrackingFor(snapName string) {
+	s.Lock()
+	defer s.Unlock()
+
+	_, ok := s.states[snapName]
+	if !ok {
+		return
+	}
+	delete(s.states, snapName)
+}
+
 // TrackUninstall tracks the removal of the given snap
 func (s *StateTracker) TrackUninstall(changeID string, snap *client.Snap) {
 	if !isInstalled(snap) {
