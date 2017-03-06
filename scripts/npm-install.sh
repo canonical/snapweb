@@ -8,6 +8,7 @@ npm_install()
 {
     echo Obtaining npm dependencies
     set +e
+    npm install -g yarn
     yarn install
     set -e
     # twice, to cope with phantomjs postinstall issue
