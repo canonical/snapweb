@@ -57,11 +57,10 @@ func blockOn(managedCondition blockerFn) {
 	}
 }
 
-
 func main() {
 
 	blockOn(snappy.IsDeviceManaged)
-	
+
 	config := readConfig()
 
 	initURLHandlers(logger, config)

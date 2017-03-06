@@ -18,13 +18,11 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net"
 	"net/http"
 	"os"
 	"path/filepath"
-	"syscall"
 	"text/template"
 	"time"
 

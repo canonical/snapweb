@@ -133,6 +133,7 @@ func WaitForSigHup() {
 	<-sigchan
 }
 
+// SendSignalToSnapweb informs snapweb that the webconf process is finished, via a SIGHUP signal
 func SendSignalToSnapweb() {
 	var pid int
 
