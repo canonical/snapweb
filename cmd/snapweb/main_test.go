@@ -41,7 +41,7 @@ func (s *MainSuite) TestBlockUntilManaged(c *C) {
 
 	ready := make(chan bool)
 	done := make(chan bool)
-	
+
 	go func() {
 		ready <- true
 		blockOn(mockIsDeviceManaged)
@@ -58,11 +58,11 @@ func (s *MainSuite) TestBlockUntilManaged(c *C) {
 		c.Fail()
 	default:
 	}
-	
+
 	// try to unblock once the system has changed
 	mockManagedState = true
 	snappy.SendSignalToSnapweb()
 	result := <-done
-	
+
 	c.Assert(result, Equals, true)
 }

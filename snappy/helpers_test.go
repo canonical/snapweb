@@ -29,7 +29,7 @@ import (
 	"strings"
 	"testing"
 	"time"
-	
+
 	. "gopkg.in/check.v1"
 
 	"github.com/snapcore/snapweb/snappy/app"
@@ -115,13 +115,13 @@ func (s *HandlersSuite) TestSnapwebSignaling(c *C) {
 	os.Setenv("SNAP_DATA", c.MkDir())
 
 	WritePidFile()
-	
+
 	ready := make(chan bool)
 	done := make(chan bool)
 
 	// the thread where we test the function
 	go func() {
-		for ; ; {
+		for {
 			ready <- true
 			WaitForSigHup()
 			// say the test passed

@@ -62,9 +62,10 @@ func blockOn(managedCondition blockerFn) {
 	}
 }
 
-
 func main() {
 	blockOn(snappy.IsDeviceManaged)
+
+	config := readConfig()
 
 	// TODO set warning for too hazardous config?
 	config, err := snappy.ReadConfig()
