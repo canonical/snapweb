@@ -1,0 +1,22 @@
+summary: Verify that firstboot won't run on a managed system
+systems: [-ubuntu-core-16-64, -ubuntu-core-16-arm-64, -ubuntu-core-16-arm-32]
+environment:
+    SEED_DIR: /var/lib/snapd/seed
+prepare: |
+    systemctl stop snapd.service
+    rm -f /var/lib/snapd/state.json
+restore: |
+    systemctl start snapd.service
+execute: |
+    echo "Start the daemon with an empty state, this will make it import "
+    echo "assertions from the $SEED_DIR/assertions subdirectory."
+    systemctl start snapd.service
+
+    echo "The system should be managed by now"
+    test `snap managed`
+
+    echo "Verifying that firstboot is NOT running"
+    test `ps axu | grep snapweb.firstboot | grep -v grep | wc -l` -eq 0
+
+    echo "Verifying that snapweb is running as normal"
+    test `ps axu | grep snapweb | grep -v grep | wc -l` -eq 1

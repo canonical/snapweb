@@ -1,33 +1,27 @@
 var _ = require('lodash');
 var CreateUser = require('../src/js/models/create-user.js');
 var Backbone = require('backbone');
-var InitView = require('../src/js/views/init.js');
-var CONF = require('../src/js/config.js');
+var MainView = require('../src/js/views/webconf.js');
 
-describe('FirstBoot', function() {
+describe('WebConf', function() {
 
   describe('create-user model', function() {
 
     beforeEach(function() {
-      jasmine.Ajax.install();
       this.model = new CreateUser({});
       spyOn(this.model, 'save').and.callThrough();
       spyOn(this.model, 'validate').and.callThrough();
     });
 
     afterEach(function() {
-      jasmine.Ajax.uninstall();
-      delete this.model;
     });
 
     it('should be an instance of Backbone.Model', function() {
-      expect(CreateUser).toBeDefined();
       expect(this.model).toEqual(jasmine.any(Backbone.Model));
     });
 
-    it('should have urlRoot prop from config', function() {
-      var expectedPath = CONF.CREATE_USER;
-      expect(this.model.url).toBe(CONF.CREATE_USER);
+    it('should have urlRoot prop', function() {
+      expect(this.model.url).toBe('/api/v2/create-user');
     });
 
     it('should block empty or invalid email', function() {
@@ -44,11 +38,11 @@ describe('FirstBoot', function() {
     });
   });
 
-  describe('InitView', function() {
+  describe('MainView', function() {
 
     beforeEach(function() {
       this.model = new CreateUser({});
-      this.view = new InitView({
+      this.view = new MainView({
         model: this.model
       });
       this.view.render();
@@ -65,7 +59,7 @@ describe('FirstBoot', function() {
     });
     
     it('should be an instance of Backbone.View', function() {
-      expect(InitView).toBeDefined();
+      expect(MainView).toBeDefined();
       expect(this.view).toEqual(jasmine.any(Backbone.View));
     });
     

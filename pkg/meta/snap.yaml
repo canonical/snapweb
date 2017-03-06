@@ -16,5 +16,9 @@ apps:
     daemon: simple
     command: snapweb
     plugs: [network, network-bind, snapd-control, timeserver-control, timezone-control]
+  webconf:
+    daemon: simple
+    command: webconf
+    plugs: [network, network-bind, snapd-control, timeserver-control]
   generate-token:
     command: generate-token

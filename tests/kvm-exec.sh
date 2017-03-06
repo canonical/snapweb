@@ -34,7 +34,7 @@ start_vm() {
     qemu-system-x86_64 \
         -enable-kvm -snapshot \
         -m 500 \
-        -net nic -net user,hostfwd=tcp::$PORT_SSH-:22,hostfwd=tcp::4201-:4201 \
+        -net nic -net user,hostfwd=tcp::$PORT_SSH-:22,hostfwd=tcp::4200-:4200,hostfwd=tcp::4201-:4201 \
         -drive file=$IMAGE_BOOTABLE,format=raw \
         -pidfile $FILE_PID \
         -monitor unix:$FILE_MONITOR,server,nowait \

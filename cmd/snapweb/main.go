@@ -23,8 +23,10 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/snapcore/snapweb/avahi"
+	"github.com/snapcore/snapweb/snappy"
 )
 
 var logger *log.Logger
@@ -44,10 +46,22 @@ func redir(w http.ResponseWriter, req *http.Request) {
 		http.StatusSeeOther)
 }
 
-func main() {
-	config := readConfig()
+type blockerFn func() bool
 
-	// TODO set warning for too hazardous config?
+func blockOn(managedCondition blockerFn) {
+	snappy.WritePidFile()
+	for managedCondition() == false {
+		snappy.WaitForSigHup()
+		// wait futher more, to let webconf release the 4200 port
+		time.Sleep(1000)
+	}
+}
+
+func main() {
+
+	blockOn(snappy.IsDeviceManaged)
+
+	config := readConfig()
 
 	initURLHandlers(logger, config)
 
@@ -59,7 +73,7 @@ func main() {
 	// possibly redirect to HTTPS
 	handler := http.HandlerFunc(redir)
 	if !config.DisableHTTPS {
-		DumpCertificate()
+		CreateCertificateIfNeeded()
 
 		go func() {
 			certFile := filepath.Join(os.Getenv("SNAP_DATA"), "cert.pem")

@@ -2,10 +2,9 @@
 
 var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
-var CONFIG = require('../config.js');
 
 module.exports = Backbone.Model.extend({
-  url: CONFIG.CREATE_USER,
+  url: '/api/v2/create-user',
 
   // forces POST requests on every model update
   isNew: function() {
@@ -21,5 +20,5 @@ module.exports = Backbone.Model.extend({
       return 'Invalid email';
     }
   },
-
+  
 });

@@ -30,6 +30,9 @@ backends:
             - ubuntu-core-16:
                 username: test
                 password: test
+            - ubuntu-core-16-embryonic:
+                # root user access; not a managed system yet
+                password: test
 
 # Put this somewhere where we have read-write access
 path: /home/snapweb
@@ -41,6 +44,7 @@ exclude:
   - key.pem
   - node_modules
   - snapweb
+  - web-conf
   - tests
   - releases
   - generate_token
@@ -55,6 +59,16 @@ suites:
         systems:
             - ubuntu-core-16
         prepare: |
+            . $TESTSLIB/prepare.sh
+        restore-each: |
+            . $TESTSLIB/restore-each.sh
+    spread/webconf/:
+        summary: Full-system tests for the webconf variant of snapweb
+        environment:
+            FIRSTBOOT: yes
+        systems:
+            - ubuntu-core-16-embryonic
+        prepare:
             . $TESTSLIB/prepare.sh
         restore-each: |
             . $TESTSLIB/restore-each.sh

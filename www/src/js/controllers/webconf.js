@@ -3,7 +3,7 @@ var Backbone = require('backbone');
 Backbone.$ = $;
 var Marionette = require('backbone.marionette');
 var Radio = require('backbone.radio');
-var InitLayoutView = require('../views/init.js');
+var InitLayoutView = require('../views/webconf.js');
 var CreateUserModel = require('../models/create-user.js');
 
 module.exports = {

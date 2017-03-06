@@ -15,21 +15,23 @@ for snap in /snap/*; do
 	esac
 done
 
+# Depending on what the test did both services are not meant to be
+# running here.
+systemctl stop snap.snapweb.snapweb.service || true
+
 # Cleanup all configuration files from the snap so that we have
 # a fresh start for the next test
 rm -rf /var/snap/$SNAP_NAME/common/*
 rm -rf /var/snap/$SNAP_NAME/current/*
 
-# Depending on what the test did both services are not meant to be
-# running here.
-systemctl stop snap.snapweb.snapweb.service || true
-
 # Ensure we have the same state for snapd as we had before
-systemctl stop snapd.service snapd.socket
-rm -rf /var/lib/snapd/*
-tar xzf $SPREAD_PATH/snapd-state.tar.gz -C /
-rm -rf /root/.snap
-systemctl start snapd.service snapd.socket
+if [ -f $SPREAD_PATH/snapd-state.tar.gz ]; then
+    systemctl stop snapd.service snapd.socket
+    rm -rf /var/lib/snapd/*
+    tar xzf $SPREAD_PATH/snapd-state.tar.gz -C /
+    rm -rf /root/.snap
+    systemctl start snapd.service snapd.socket
+fi
 
 # Start services again now that the system is restored
 systemctl start snap.snapweb.snapweb.service

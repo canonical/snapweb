@@ -20,9 +20,7 @@ case $SNAP_ARCH in
         ;;
 esac
 
-exec $SNAP/bin/$plat_abi/snapweb
-
-echo "STARTED"
+exec $SNAP/bin/$plat_abi/webconf
 
 # never reach this
 exit 1

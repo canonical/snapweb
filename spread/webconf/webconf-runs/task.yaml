@@ -1,0 +1,11 @@
+summary: Verify that webconf will start on an un-managed system by default
+execute: |
+    echo "The system should not be managed yet"
+    test `snap managed` = 'false'
+
+    echo "Verifying that webconf is running"
+    test `ps h -C webconf` -eq 1
+
+    echo "Verifying that webconf is controlling port 4200" 
+    printf "GET / HTTP/1.1\nHost:localhost\nUser-Agent:nc\n\n" | nc localhost 4200 | grep "script src" | grep webconf.js
+    

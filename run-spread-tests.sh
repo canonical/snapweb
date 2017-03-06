@@ -17,6 +17,7 @@
 set -e
 
 image_name=ubuntu-core-16.img
+image_name2=ubuntu-core-16-embryonic.img
 channel=candidate
 spread_opts=
 force_new_image=0
@@ -74,6 +75,12 @@ if [ ! -e $SPREAD_QEMU_PATH/$image_name ] || [ $force_new_image -eq 1 ] ; then
 	(cd spread/image ; sudo ./create-image.sh $channel)
 	mkdir -p $SPREAD_QEMU_PATH
 	mv -f spread/image/ubuntu-core-16.img $SPREAD_QEMU_PATH/$image_name
+fi
+if [ ! -e $SPREAD_QEMU_PATH/$image_name2 ] || [ $force_new_image -eq 1 ] ; then
+	echo "INFO: Creating new qemu test image(2) ..."
+	(cd spread/image ; sudo ./create-image-embryonic.sh $channel)
+	mkdir -p $SPREAD_QEMU_PATH
+	mv -f spread/image/$image_name2 $SPREAD_QEMU_PATH/$image_name2
 fi
 
 # We currently only run spread tests but we could do other things
