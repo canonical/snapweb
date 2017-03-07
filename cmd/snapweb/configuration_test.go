@@ -40,16 +40,13 @@ func setupConfig(c *C, snapCommonPath string, config Config) {
 
 type ConfigurationSuite struct {
 	snapCommonEnv string
-	snapEnv       string
 }
 
 var _ = Suite(&ConfigurationSuite{})
 
 func (s *ConfigurationSuite) SetUpTest(c *C) {
 	s.snapCommonEnv = c.MkDir()
-	s.snapEnv = c.MkDir()
 	os.Setenv("SNAP_COMMON", s.snapCommonEnv)
-	os.Setenv("SNAP", s.snapEnv)
 }
 
 func (s *ConfigurationSuite) TestNonExistentConfigurationFile(c *C) {
@@ -75,55 +72,4 @@ func (s *ConfigurationSuite) TestErrorWhileReadingFile(c *C) {
 	}
 	c.Check(readConfig(), DeepEquals, Config{})
 	readFile = ioutil.ReadFile
-}
-
-func (s *ConfigurationSuite) TestEmptyConfigurationLocations(c *C) {
-	oldGetSnapConfigurationLocations := getSnapConfigurationLocations
-	defer func() {
-		getSnapConfigurationLocations = oldGetSnapConfigurationLocations
-	}()
-
-	getSnapConfigurationLocations = func() ([]string, error) {
-		return []string{}, nil
-	}
-	c.Check(readConfig(), DeepEquals, Config{})
-}
-
-func (s *ConfigurationSuite) TestErrorWhileGettingConfigurationLocations(c *C) {
-	oldGetSnapConfigurationLocations := getSnapConfigurationLocations
-	defer func() {
-		getSnapConfigurationLocations = oldGetSnapConfigurationLocations
-	}()
-
-	getSnapConfigurationLocations = func() ([]string, error) {
-		return []string{}, errors.New("error")
-	}
-	c.Check(readConfig(), DeepEquals, Config{})
-}
-
-func (s *ConfigurationSuite) TestGetSnapConfigurationCommonAndLocalSnapEmpty(c *C) {
-	c.Check(readConfig(), DeepEquals, Config{})
-}
-
-func (s *ConfigurationSuite) TestGetSnapConfigurationCommonPrevales(c *C) {
-	setupConfig(c, s.snapCommonEnv, Config{DisableAccessToken: true, DisableHTTPS: true})
-	setupConfig(c, s.snapEnv, Config{DisableAccessToken: true, DisableHTTPS: false})
-	c.Check(readConfig(), DeepEquals, Config{DisableAccessToken: true, DisableHTTPS: true})
-}
-
-func (s *ConfigurationSuite) TestGetSnapConfigurationFallbackOnLocalConfig(c *C) {
-	setupConfig(c, s.snapEnv, Config{DisableAccessToken: true, DisableHTTPS: false})
-	c.Check(readConfig(), DeepEquals, Config{DisableAccessToken: true, DisableHTTPS: false})
-}
-
-func (s *ConfigurationSuite) TestGetSnapConfigurationBothConfigAvailButErrorInCommon(c *C) {
-	setupConfigWithContent(c, s.snapCommonEnv, []byte("Invalid json"))
-	setupConfig(c, s.snapEnv, Config{DisableAccessToken: true, DisableHTTPS: false})
-	c.Check(readConfig(), DeepEquals, Config{DisableAccessToken: true, DisableHTTPS: false})
-}
-
-func (s *ConfigurationSuite) TestGetSnapConfigurationBothConfigAvailButErrorInLocal(c *C) {
-	setupConfig(c, s.snapCommonEnv, Config{DisableAccessToken: false, DisableHTTPS: true})
-	setupConfigWithContent(c, s.snapEnv, []byte("Invalid json"))
-	c.Check(readConfig(), DeepEquals, Config{DisableAccessToken: false, DisableHTTPS: true})
 }
