@@ -8,7 +8,10 @@ npm_install()
 {
     echo Obtaining npm dependencies
     set +e
-    npm install -g yarn
+    mkdir yarn
+    wget https://yarnpkg.com/latest.tar.gz -O yarn/yarn.tar.gz
+    tar -xzvf yarn/yarn.tar.gz -C yarn
+    export PATH=$PATH:`pwd`/yarn/dist/bin
     yarn install
     set -e
     # twice, to cope with phantomjs postinstall issue
