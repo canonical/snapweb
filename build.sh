@@ -46,7 +46,8 @@ get_platform_abi() {
 
 gobuild() {
     arch=$1
-    http_port=$2
+    httpAddr=$2
+    httpsAddr=$3
 
     plat_abi=$(get_platform_abi $arch)
 
@@ -58,7 +59,7 @@ gobuild() {
 
     mkdir -p $output_dir
     cd $output_dir
-    GOARCH=$arch GOARM=7 CGO_ENABLED=1 CC=${plat_abi}-gcc go build -ldflags "-extld=${plat_abi}-gcc -X main.http_port=${http_port}" github.com/snapcore/snapweb/cmd/snapweb
+    GOARCH=$arch GOARM=7 CGO_ENABLED=1 CC=${plat_abi}-gcc go build -ldflags "-extld=${plat_abi}-gcc -X main.httpAddr=${httpAddr} -X main.httpsAddr=${httpsAddr}" github.com/snapcore/snapweb/cmd/snapweb
     GOARCH=$arch GOARM=7 CGO_ENABLED=1 CC=${plat_abi}-gcc go build -o generate-token -ldflags "-extld=${plat_abi}-gcc" $srcdir/cmd/generate-token/main.go
     cp generate-token ../../
     cd - > /dev/null
@@ -105,7 +106,7 @@ for ARCH in "${architectures[@]}"; do
         BUILD_ARCH=$ARCH
     fi
 
-    gobuild $BUILD_ARCH "4200"
+    gobuild $BUILD_ARCH ":4200" ":4201"
 
     cd "$orig_pwd"
     snapcraft snap $builddir
@@ -114,7 +115,7 @@ for ARCH in "${architectures[@]}"; do
     if [[ $* == *--ups* ]] && [ $ARCH = amd64 ]; then
         # now build ubuntu-personal-store
         cd $builddir
-        gobuild $BUILD_ARCH "5200"
+        gobuild $BUILD_ARCH "127.0.0.1:5200" "127.0.0.1:5201"
 
         cd $orig_pwd/ubuntu-personal-store
 
