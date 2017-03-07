@@ -41,7 +41,7 @@ func init() {
 	httpPort, _ := strconv.Atoi(http_port)
 
 	httpAddr = fmt.Sprint(":", httpPort)
-	httpsAddr = fmt.Sprint(":", httpPort + 1)
+	httpsAddr = fmt.Sprint(":", httpPort+1)
 }
 
 func redir(w http.ResponseWriter, req *http.Request) {
