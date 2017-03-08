@@ -35,29 +35,43 @@ type Config struct {
 	DisableHTTPS       bool `json:"disableHttps,omitempty"`
 }
 
+var osStat = os.Stat
+
+var getSnapConfigurationLocations = func() ([]string, error) {
+	candidateLocations := []string{
+		filepath.Join(os.Getenv("SNAP_COMMON"), configFilename),
+		filepath.Join(os.Getenv("SNAP"), configFilename),
+	}
+	var validLocations []string
+	for _, l := range candidateLocations {
+		if _, err := osStat(l); err == nil {
+			validLocations = append(validLocations, l)
+		}
+	}
+	return validLocations, nil
+}
+
 var readFile = ioutil.ReadFile
 
 func readConfig() Config {
-	configFilepath := filepath.Join(os.Getenv("SNAP_COMMON"), configFilename)
-	if _, err := os.Stat(configFilepath); err != nil {
-		return Config{}
-	}
-
-	var err error
-	var content []byte
-	if content, err = readFile(configFilepath); err != nil {
+	locations, err := getSnapConfigurationLocations()
+	if err != nil || len(locations) == 0 {
 		return Config{}
 	}
 
 	var config Config
-	err = json.Unmarshal(content, &config)
-	if err != nil {
-		logger.Println(
-			fmt.Sprintf("Invalid configuration file %s: %s",
-				configFilepath,
-				err.Error()))
-		return Config{}
+	for _, l := range locations {
+		var content []byte
+		if content, err = readFile(l); err != nil {
+			continue
+		}
+		err := json.Unmarshal(content, &config)
+		if err != nil {
+			logger.Println(
+				fmt.Sprintf("Invalid configuration file %s: %s",
+					l, err.Error()))
+			continue
+		}
 	}
-
 	return config
 }
