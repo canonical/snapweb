@@ -113,15 +113,22 @@ for ARCH in "${architectures[@]}"; do
 
     # TODO: We only support amd64 ups builds for now -Need a cross-compile fix for "after: [desktop-qt5]"
     if [[ $* == *--ups* ]] && [ $ARCH = amd64 ]; then
+        HTTP_ADDR="127.0.0.1:5200"
+        HTTPS_ADDR="127.0.0.1:5201"
+
         # now build ubuntu-personal-store
         cd $builddir
-        gobuild $BUILD_ARCH "127.0.0.1:5200" "127.0.0.1:5201"
+        gobuild $BUILD_ARCH $HTTP_ADDR $HTTPS_ADDR
 
         cd $orig_pwd/ubuntu-personal-store
 
         cp snapcraft.yaml.in snapcraft.yaml
         sed -i "s/\(:\)UNKNOWN_ARCH/\1$ARCH/" snapcraft.yaml
 
+        cp ubuntu-personal-store.qml.in ubuntu-personal-store.qml
+        sed -i "s/\(\" + \"\)HTTPS_ADDR/\1$HTTPS_ADDR/" ubuntu-personal-store.qml
+
+        snapcraft clean
         snapcraft prime
 
         cp -r $orig_pwd/ubuntu-personal-store/prime/* $builddir

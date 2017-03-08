@@ -20,6 +20,9 @@ import Ubuntu.Web 0.2
 import com.canonical.Oxide 1.15 as Oxide
 
 ApplicationWindow {
+  id: main
+  property string url: "https://" + "HTTPS_ADDR" // set from build.sh
+
   title: "Ubuntu Personal Store"
   width: 500
   height: 500
@@ -35,7 +38,7 @@ ApplicationWindow {
       width: 40
       text: "❰"
       onClicked: {
-        webView.url = "https://127.0.0.1:5201/store"
+        webView.url = main.url + "/store"
         toolbar.visible = false
       }
     }
@@ -46,7 +49,7 @@ ApplicationWindow {
     id: webView
     focus: true
 
-    url: "https://127.0.0.1:5201/store"
+    url: main.url + "/store"
 
     function isNewForegroundWebViewDisposition(disposition) {
         return disposition === Oxide.NavigationRequest.DispositionNewPopup ||
@@ -78,7 +81,7 @@ ApplicationWindow {
     }
     onNavigationRequested: {
       var url = request.url.toString()
-      if (url.indexOf("https://127.0.0.1:5201") < 0) {
+      if (url.indexOf(main.url) < 0) {
         toolbar.visible = true
       }
       else {

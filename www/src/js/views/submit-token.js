@@ -12,7 +12,7 @@ module.exports = Backbone.Marionette.ItemView.extend({
 
   serializeData: function() {
     return {
-      'appName': window.location.port === '5201' ? 'ubuntu-personal-store' : 'snapweb',
+      'appName': (window.location.port === '5201' ? 'ubuntu-personal-store' : 'snapweb'),
     };
   },
 
