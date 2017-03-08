@@ -10,6 +10,12 @@ module.exports = Backbone.Marionette.ItemView.extend({
     return template(model);
   },
 
+  serializeData: function() {
+    return {
+      'appName': window.location.port === '5201' ? 'ubuntu-personal-store' : 'snapweb',
+    };
+  },
+
   ui: {
     statusmessage: '.statusmessage',
     btncreate: '#submit',
