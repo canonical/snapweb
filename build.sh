@@ -106,7 +106,7 @@ for ARCH in "${architectures[@]}"; do
         BUILD_ARCH=$ARCH
     fi
 
-    gobuild $BUILD_ARCH ":4200" ":4201"
+    gobuild $BUILD_ARCH
 
     cd "$orig_pwd"
     snapcraft snap $builddir
