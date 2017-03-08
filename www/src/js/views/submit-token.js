@@ -45,7 +45,7 @@ module.exports = Backbone.Marionette.ItemView.extend({
     this.model.save({}, {
       success: function() {
         // redirect to home for now
-        window.location = '/';
+        window.location = (window.location.port === '5201' ? '/store': '/');
       },
       error: function(model, response) {
         model.trigger('invalid', model, 'Invalid');
