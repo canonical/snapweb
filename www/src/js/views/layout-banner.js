@@ -36,7 +36,7 @@ module.exports = Marionette.ItemView.extend({
       'isHomeActive': (path === ''),
       'isStoreActive': (path === 'store' || path === 'search'),
       'isSettingsActive': (path === 'settings'),
-      'isUPS': (window.location.port === '5201')
+      'isUPS': (window.location.port !== '4201')
     };
   },
 

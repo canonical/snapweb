@@ -12,7 +12,7 @@ module.exports = Backbone.Marionette.ItemView.extend({
 
   serializeData: function() {
     return {
-      'appName': (window.location.port === '5201' ? 'ubuntu-personal-store' : 'snapweb'),
+      'appName': (window.location.port !== '4201' ? 'ubuntu-personal-store' : 'snapweb'),
     };
   },
 
@@ -45,7 +45,7 @@ module.exports = Backbone.Marionette.ItemView.extend({
     this.model.save({}, {
       success: function() {
         // redirect to home for now
-        window.location = (window.location.port === '5201' ? '/store' : '/');
+        window.location = (window.location.port !== '4201' ? '/store' : '/');
       },
       error: function(model, response) {
         model.trigger('invalid', model, 'Invalid');
