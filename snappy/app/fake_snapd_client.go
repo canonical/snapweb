@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Canonical Ltd
+ * Copyright (C) 2016-2017 Canonical Ltd
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -39,6 +39,8 @@ type FakeSnapdClient struct {
 	CrUser          client.CreateUserResult
 	Name            string
 	SnapSections    []string
+	AbortedChangeID string
+	ChangeID        string
 }
 
 // Icon returns the icon of an installed snap
@@ -77,14 +79,14 @@ func (f *FakeSnapdClient) Find(opts *client.FindOptions) ([]*client.Snap, *clien
 func (f *FakeSnapdClient) Install(name string, options *client.SnapOptions) (string, error) {
 	f.Installed = name
 
-	return "", nil
+	return f.ChangeID, nil
 }
 
 // Remove removes the names snap from the system
 func (f *FakeSnapdClient) Remove(name string, options *client.SnapOptions) (string, error) {
 	f.Removed = name
 
-	return "", nil
+	return f.ChangeID, nil
 }
 
 // ServerVersion returns the version of the running `snapd` daemon
@@ -148,6 +150,12 @@ func (f *FakeSnapdClient) Enable(name string, options *client.SnapOptions) (stri
 // Disable disables the snap
 func (f *FakeSnapdClient) Disable(name string, options *client.SnapOptions) (string, error) {
 	return "Disabling", nil
+}
+
+// Abort attempts to abort a change that is in not yet ready.
+func (f *FakeSnapdClient) Abort(id string) (*client.Change, error) {
+	f.AbortedChangeID = id
+	return nil, nil
 }
 
 var _ snapdclient.SnapdClient = (*FakeSnapdClient)(nil)
