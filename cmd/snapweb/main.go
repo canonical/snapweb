@@ -29,13 +29,18 @@ import (
 
 var logger *log.Logger
 
-const (
-	httpAddr  string = ":4200"
-	httpsAddr string = ":4201"
-)
+var httpAddr string  // set from go build ldflags
+var httpsAddr string // set from go build ldflags
 
 func init() {
 	logger = log.New(os.Stderr, "Snapweb: ", log.Ldate|log.Ltime|log.Lshortfile)
+
+	if len(httpAddr) == 0 {
+		httpAddr = ":4200"
+	}
+	if len(httpsAddr) == 0 {
+		httpsAddr = ":4201"
+	}
 }
 
 func redir(w http.ResponseWriter, req *http.Request) {
