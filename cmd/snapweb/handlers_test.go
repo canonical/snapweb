@@ -163,14 +163,12 @@ func (s *HandlersSuite) TestRenderLayoutNoTemplateDir(c *C) {
 func (s *HandlersSuite) TestRenderLayoutParseError(c *C) {
 	tmp := c.MkDir()
 	templateDir := filepath.Join(tmp, "www", "templates")
-	layoutPath := filepath.Join(templateDir, "base.html")
 	templatePath := filepath.Join(templateDir, "foo.html")
 
 	os.Setenv("SNAP", tmp)
 	c.Assert(os.MkdirAll(templateDir, os.ModePerm), IsNil)
 
-	c.Assert(ioutil.WriteFile(layoutPath, []byte("{{{"), os.ModePerm), IsNil)
-	c.Assert(ioutil.WriteFile(templatePath, []byte(""), os.ModePerm), IsNil)
+	c.Assert(ioutil.WriteFile(templatePath, []byte("{{{"), os.ModePerm), IsNil)
 
 	rec := httptest.NewRecorder()
 	renderLayout("foo.html", &templateData{}, rec)
@@ -181,17 +179,15 @@ func (s *HandlersSuite) TestRenderLayoutParseError(c *C) {
 func (s *HandlersSuite) TestRenderLayout(c *C) {
 	tmp := c.MkDir()
 	templateDir := filepath.Join(tmp, "www", "templates")
-	layoutPath := filepath.Join(templateDir, "base.html")
 	templatePath := filepath.Join(templateDir, "foo.html")
 
 	os.Setenv("SNAP", tmp)
 	c.Assert(os.MkdirAll(templateDir, os.ModePerm), IsNil)
 
-	c.Assert(ioutil.WriteFile(layoutPath, []byte(`<title>{{template "title"}}</title>`), os.ModePerm), IsNil)
-	c.Assert(ioutil.WriteFile(templatePath, []byte(`{{define "title"}}foo{{end}}`), os.ModePerm), IsNil)
+	c.Assert(ioutil.WriteFile(templatePath, []byte(`<title>{{.Branding.Name}}</title>`), os.ModePerm), IsNil)
 
 	rec := httptest.NewRecorder()
-	renderLayout("foo.html", &templateData{}, rec)
+	renderLayout("foo.html", &templateData{branding{Name: "foo", Subname: ""}, ""}, rec)
 	c.Assert(rec.Body.String(), Equals, "<title>foo</title>")
 	c.Assert(rec.Code, Equals, http.StatusOK)
 }

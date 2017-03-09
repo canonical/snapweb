@@ -324,8 +324,7 @@ func renderLayout(html string, data *templateData, w http.ResponseWriter) error 
 		return err
 	}
 
-	layoutPath := filepath.Join(os.Getenv("SNAP"), "www", "templates", "base.html")
-	t, err := template.ParseFiles(layoutPath, htmlPath)
+	t, err := template.ParseFiles(htmlPath)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return err

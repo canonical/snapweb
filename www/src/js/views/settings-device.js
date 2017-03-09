@@ -1,6 +1,6 @@
 
-var Backbone = require('backbone');
 var React = require('react');
+var Backbone = require('backbone');
 var ReactBackbone = require('react.backbone');
 
 var Config = require('../config.js');

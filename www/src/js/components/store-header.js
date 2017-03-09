@@ -1,7 +1,6 @@
 
-var Backbone = require('backbone');
-var Marionette = require('backbone.marionette');
 var React = require('react')
+var Backbone = require('backbone');
 var ReactBackbone = require('react.backbone');
 
 var SectionView = React.createClass({

@@ -1,6 +1,5 @@
 // search layout view
 var Backbone = require('backbone');
-var Marionette = require('backbone.marionette');
 var BaskView = require('./storelist.js');
 var SearchBarView = require('./search-bar.js');
 var template = require('../templates/search.hbs');

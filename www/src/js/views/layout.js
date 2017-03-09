@@ -15,7 +15,8 @@ var chan = Radio.channel('root');
 
 module.exports = Marionette.LayoutView.extend({
 
-  initialize: function() {
+  initialize: function(options) {
+    this.externalRender = options.render;
     chan.comply('set:content', this.setContent, this);
     chan.comply('alert:error', this.alertError, this);
   },
@@ -31,10 +32,15 @@ module.exports = Marionette.LayoutView.extend({
     this.showChildView('footerRegion', new FooterView());
   },
 
+  attachElContent: function(html) {
+    this.externalRender(html);
+    return this;
+  },
+
   setContent: function(content) {
     var reactElement = content.reactElement || null;
     if (reactElement !== null) {
-      ReactDOM.render(reactElement, this.$('.b-layout__main').get(0));
+      ReactDOM.render(reactElement, $('.b-layout__main').get(0));
     } else {
       this.mainRegion.show(content.backboneView);
     }
