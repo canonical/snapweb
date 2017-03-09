@@ -12,12 +12,16 @@ var gutil = require('gulp-util');
 var jscs = require('gulp-jscs');
 var jshint = require('gulp-jshint');
 var sass = require('gulp-sass');
+var env = require('gulp-env');
 var sourcemaps = require('gulp-sourcemaps');
 var source = require('vinyl-source-stream');
 var uglify = require('gulp-uglify');
 var watchify = require('watchify');
 
 gulp.task('js:build', ['js:clean', 'js:lint'], function() {
+  const envs = env.set({
+    NODE_ENV: 'development'
+  });
   return createBundler();
 });
 

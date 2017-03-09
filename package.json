@@ -1,16 +1,16 @@
 {
-  "private": true,
-  "aliasify": {
-    "aliases": {
-      "underscore": "lodash"
-    }
-  },
+  "name": "snapweb",
+  "version": "0.2.0",
+  "description": "Snapweb",
+  "author": "Snapweb Developers",
+  "license": "AGPLv3",
   "scripts": {
     "build": "NODE_ENV=production gulp",
     "watch": "NODE_ENV=development gulp watch",
     "js:lint": "NODE_ENV=development gulp js:lint"
   },
   "dependencies": {
+    "aliasify": "~1.7.2",
     "backbone": "~1.1.2",
     "backbone.marionette": "~2.4.1",
     "backbone.radio": "^0.9.0",
@@ -40,6 +40,7 @@
     "gulp": "~3.9.1",
     "gulp-concat": "~2.5.2",
     "gulp-csso": "~1.0.0",
+    "gulp-env": "latest",
     "gulp-imagemin": "~2.2.1",
     "gulp-jscs": "~4.0.0",
     "gulp-jshint": "~1.9.4",
@@ -73,3 +74,4 @@
     "webdriverio": "^4.4.0"
   }
 }
+
