@@ -15,7 +15,7 @@
  *
  */
 
-package main
+package snappy
 
 import (
 	"encoding/json"
@@ -40,7 +40,8 @@ type Config struct {
 
 var readFile = ioutil.ReadFile
 
-func readConfig() Config {
+// ReadConfig loads the configuration from disk
+func ReadConfig() Config {
 	configFilepath := filepath.Join(os.Getenv("SNAP_COMMON"), configFilename)
 	if _, err := os.Stat(configFilepath); err != nil {
 		return Config{}
@@ -55,10 +56,9 @@ func readConfig() Config {
 	var config Config
 	err = json.Unmarshal(content, &config)
 	if err != nil {
-		logger.Println(
-			fmt.Sprintf("Invalid configuration file %s: %s",
-				configFilepath,
-				err.Error()))
+		fmt.Printf("Invalid configuration file %s: %s",
+			configFilepath,
+			err.Error())
 		return Config{}
 	}
 

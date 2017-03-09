@@ -230,7 +230,7 @@ func handleDeviceAction(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func initURLHandlers(log *log.Logger, config Config) http.Handler {
+func initURLHandlers(log *log.Logger, config snappy.Config) http.Handler {
 	log.Println("Initializing HTTP handlers...")
 
 	handler := http.NewServeMux()
@@ -333,7 +333,7 @@ func renderLayout(html string, data *templateData, w http.ResponseWriter) error 
 	return t.Execute(w, *data)
 }
 
-func redirHandler(config Config) http.Handler {
+func redirHandler(config snappy.Config) http.Handler {
 	redir := http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		http.Redirect(w, req,
 			"https://"+strings.Replace(req.Host, httpAddr, httpsAddr, -1),
@@ -344,7 +344,7 @@ func redirHandler(config Config) http.Handler {
 }
 
 // NewFilterHandlerFromConfig creates a new http.Handler with an integrated NetFilter
-func NewFilterHandlerFromConfig(handler http.Handler, config Config) http.Handler {
+func NewFilterHandlerFromConfig(handler http.Handler, config snappy.Config) http.Handler {
 	if config.DisableIPFilter {
 		return handler
 	}

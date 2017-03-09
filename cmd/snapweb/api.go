@@ -29,7 +29,7 @@ import (
 const apiVersion = "v2"
 
 // makeAPIHandler create a handler for all API calls that need authorization
-func makeAPIHandler(apiRootPath string, config Config) http.Handler {
+func makeAPIHandler(apiRootPath string, config snappy.Config) http.Handler {
 	var apiPath = path.Join(apiRootPath, apiVersion)
 
 	router := mux.NewRouter().PathPrefix(apiPath).Subrouter()

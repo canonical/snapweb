@@ -112,7 +112,7 @@ func (s *HandlersSuite) TestServesIcons(c *C) {
 	c.Assert(os.Mkdir(icons, os.ModePerm), IsNil)
 	c.Assert(ioutil.WriteFile(iconPath, []byte{}, os.ModePerm), IsNil)
 
-	handler := initURLHandlers(log.New(os.Stdout, "", 0), Config{DisableIPFilter: true})
+	handler := initURLHandlers(log.New(os.Stdout, "", 0), snappy.Config{DisableIPFilter: true})
 
 	// icon exists
 	rec := httptest.NewRecorder()
@@ -136,7 +136,7 @@ func (s *HandlersSuite) TestMakeMainPageHandler(c *C) {
 	c.Assert(err, IsNil)
 	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
 
-	handler := initURLHandlers(log.New(os.Stdout, "", 0), Config{DisableIPFilter: true})
+	handler := initURLHandlers(log.New(os.Stdout, "", 0), snappy.Config{DisableIPFilter: true})
 
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest("GET", "/", nil)
@@ -201,7 +201,7 @@ func (s *HandlersSuite) TestModelInfoHandler(c *C) {
 
 	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
 
-	handler := initURLHandlers(log.New(os.Stdout, "", 0), Config{DisableIPFilter: true})
+	handler := initURLHandlers(log.New(os.Stdout, "", 0), snappy.Config{DisableIPFilter: true})
 
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest("GET", "/api/v2/device-info", nil)
@@ -240,7 +240,7 @@ func (s *HandlersSuite) TestDeviceActionInvalidMethod(c *C) {
 
 	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
 
-	handler := initURLHandlers(log.New(os.Stdout, "", 0), Config{DisableIPFilter: true})
+	handler := initURLHandlers(log.New(os.Stdout, "", 0), snappy.Config{DisableIPFilter: true})
 
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest("GET", "/api/v2/device-action", nil)
@@ -257,7 +257,7 @@ func (s *HandlersSuite) TestDeviceActionInvalidContentType(c *C) {
 
 	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
 
-	handler := initURLHandlers(log.New(os.Stdout, "", 0), Config{DisableIPFilter: true})
+	handler := initURLHandlers(log.New(os.Stdout, "", 0), snappy.Config{DisableIPFilter: true})
 
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest("POST", "/api/v2/device-action", nil)
@@ -274,7 +274,7 @@ func (s *HandlersSuite) TestDeviceActionInvalidJSON(c *C) {
 
 	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
 
-	handler := initURLHandlers(log.New(os.Stdout, "", 0), Config{DisableIPFilter: true})
+	handler := initURLHandlers(log.New(os.Stdout, "", 0), snappy.Config{DisableIPFilter: true})
 
 	rec := httptest.NewRecorder()
 	var patchJSON = []byte("{]")
@@ -294,7 +294,7 @@ func (s *HandlersSuite) TestDeviceActionInvalidAction(c *C) {
 
 	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
 
-	handler := initURLHandlers(log.New(os.Stdout, "", 0), Config{DisableIPFilter: true})
+	handler := initURLHandlers(log.New(os.Stdout, "", 0), snappy.Config{DisableIPFilter: true})
 
 	rec := httptest.NewRecorder()
 	var patchJSON = []byte("{\"actionType\", \"dance\"}")
@@ -313,7 +313,7 @@ func (s *HandlersSuite) TestTimeInfoInvalidMethod(c *C) {
 
 	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
 
-	handler := initURLHandlers(log.New(os.Stdout, "", 0), Config{DisableIPFilter: true})
+	handler := initURLHandlers(log.New(os.Stdout, "", 0), snappy.Config{DisableIPFilter: true})
 
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest("POST", "/api/v2/time-info", nil)
@@ -330,7 +330,7 @@ func (s *HandlersSuite) TestTimeInfoGET(c *C) {
 
 	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
 
-	handler := initURLHandlers(log.New(os.Stdout, "", 0), Config{DisableIPFilter: true})
+	handler := initURLHandlers(log.New(os.Stdout, "", 0), snappy.Config{DisableIPFilter: true})
 
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest("GET", "/api/v2/time-info", nil)
@@ -358,7 +358,7 @@ func (s *HandlersSuite) TestTimeInfoInvalidContentType(c *C) {
 
 	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
 
-	handler := initURLHandlers(log.New(os.Stdout, "", 0), Config{DisableIPFilter: true})
+	handler := initURLHandlers(log.New(os.Stdout, "", 0), snappy.Config{DisableIPFilter: true})
 
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest("PATCH", "/api/v2/time-info", nil)
@@ -375,7 +375,7 @@ func (s *HandlersSuite) TestTimeInfoInvalidJSON(c *C) {
 
 	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
 
-	handler := initURLHandlers(log.New(os.Stdout, "", 0), Config{DisableIPFilter: true})
+	handler := initURLHandlers(log.New(os.Stdout, "", 0), snappy.Config{DisableIPFilter: true})
 
 	rec := httptest.NewRecorder()
 	var patchJSON = []byte("{]")
@@ -394,7 +394,7 @@ func (s *HandlersSuite) TestEmptyTimeInfoUpdate(c *C) {
 
 	os.Setenv("SNAP", filepath.Join(cwd, "..", ".."))
 
-	handler := initURLHandlers(log.New(os.Stdout, "", 0), Config{DisableIPFilter: true})
+	handler := initURLHandlers(log.New(os.Stdout, "", 0), snappy.Config{DisableIPFilter: true})
 
 	rec := httptest.NewRecorder()
 	var patchJSON = []byte("{}")
@@ -411,7 +411,7 @@ func (s *HandlersSuite) TestEmptyTimeInfoUpdate(c *C) {
 func (s *HandlersSuite) TestHandleSections(c *C) {
 	s.c.SnapSections = []string{"foo", "bar"}
 
-	handler := initURLHandlers(log.New(os.Stdout, "", 0), Config{DisableIPFilter: true})
+	handler := initURLHandlers(log.New(os.Stdout, "", 0), snappy.Config{DisableIPFilter: true})
 
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest("GET", "/api/v2/sections", nil)
@@ -437,7 +437,7 @@ func (s *HandlersSuite) TestHandleSectionsError(c *C) {
 	s.c.SnapSections = nil
 	s.c.Err = errors.New("foo")
 
-	handler := initURLHandlers(log.New(os.Stdout, "", 0), Config{DisableIPFilter: true})
+	handler := initURLHandlers(log.New(os.Stdout, "", 0), snappy.Config{DisableIPFilter: true})
 
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest("GET", "/api/v2/sections", nil)
@@ -451,7 +451,7 @@ func (s *HandlersSuite) TestHandleSectionsError(c *C) {
 }
 
 func (s *HandlersSuite) TestRedirHandler(c *C) {
-	handler := redirHandler(Config{DisableIPFilter: true})
+	handler := redirHandler(snappy.Config{DisableIPFilter: true})
 
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest("GET", "/", nil)
@@ -463,7 +463,7 @@ func (s *HandlersSuite) TestRedirHandler(c *C) {
 }
 
 func (s *HandlersSuite) TestFilterHandler(c *C) {
-	handler := redirHandler(Config{DisableIPFilter: false})
+	handler := redirHandler(snappy.Config{DisableIPFilter: false})
 
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest("GET", "/", nil)
@@ -473,7 +473,7 @@ func (s *HandlersSuite) TestFilterHandler(c *C) {
 	c.Assert(rec.Code, Equals, http.StatusForbidden)
 
 	networks := []string{"192.168.0.0/24"}
-	handler2 := redirHandler(Config{AllowNetworks: networks})
+	handler2 := redirHandler(snappy.Config{AllowNetworks: networks})
 	rec2 := httptest.NewRecorder()
 	req.RemoteAddr = "192.168.0.1:4200"
 

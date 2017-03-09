@@ -15,7 +15,7 @@
  *
  */
 
-package main
+package snappy
 
 import (
 	"encoding/json"
@@ -50,18 +50,18 @@ func (s *ConfigurationSuite) SetUpTest(c *C) {
 }
 
 func (s *ConfigurationSuite) TestNonExistentConfigurationFile(c *C) {
-	c.Check(readConfig(), DeepEquals, Config{DisableAccessToken: false, DisableHTTPS: false})
+	c.Check(ReadConfig(), DeepEquals, Config{DisableAccessToken: false, DisableHTTPS: false})
 }
 
 func (s *ConfigurationSuite) TestExistingInvalidSetupFile(c *C) {
 	setupConfigWithContent(c, s.snapCommonEnv, []byte("Invalid json"))
-	c.Check(readConfig(), DeepEquals, Config{DisableAccessToken: false, DisableHTTPS: false})
+	c.Check(ReadConfig(), DeepEquals, Config{DisableAccessToken: false, DisableHTTPS: false})
 }
 
 func (s *ConfigurationSuite) TestExistingValidSetupFile(c *C) {
 	conf := Config{DisableAccessToken: true, DisableHTTPS: true}
 	setupConfig(c, s.snapCommonEnv, conf)
-	c.Check(readConfig(), DeepEquals, Config{DisableAccessToken: true, DisableHTTPS: true})
+	c.Check(ReadConfig(), DeepEquals, Config{DisableAccessToken: true, DisableHTTPS: true})
 }
 
 func (s *ConfigurationSuite) TestErrorWhileReadingFile(c *C) {
@@ -70,6 +70,6 @@ func (s *ConfigurationSuite) TestErrorWhileReadingFile(c *C) {
 	readFile = func(filename string) ([]byte, error) {
 		return nil, errors.New("error")
 	}
-	c.Check(readConfig(), DeepEquals, Config{})
+	c.Check(ReadConfig(), DeepEquals, Config{})
 	readFile = ioutil.ReadFile
 }

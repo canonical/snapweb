@@ -24,6 +24,7 @@ import (
 	"path/filepath"
 
 	"github.com/snapcore/snapweb/avahi"
+	"github.com/snapcore/snapweb/snappy/app"
 )
 
 var logger *log.Logger
@@ -39,7 +40,7 @@ func init() {
 
 func main() {
 	// TODO set warning for too hazardous config?
-	config := readConfig()
+	config := snappy.ReadConfig()
 
 	mainHandler := initURLHandlers(logger, config)
 	baseHandler := redirHandler(config)
