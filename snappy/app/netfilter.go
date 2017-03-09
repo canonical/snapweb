@@ -23,20 +23,23 @@ import (
 	"net/http"
 )
 
+// NetFilter manages an IP-based filter to limit access to Snapweb
 type NetFilter struct {
 	AllowedNetworks []*net.IPNet
-	acceptCache net.IP
+	acceptCache     net.IP
 }
 
+// NewFilter creates a new empty NetFilter to block all connections by default
 func NewFilter() *NetFilter {
 	f := &NetFilter{
 		AllowedNetworks: nil,
-		acceptCache: nil,
+		acceptCache:     nil,
 	}
 
 	return f
 }
 
+// IsAllowed verifies if an IP is allowed to access Snapweb
 func (f *NetFilter) IsAllowed(ip net.IP) bool {
 	if ip == nil {
 		return false
@@ -59,41 +62,29 @@ func (f *NetFilter) IsAllowed(ip net.IP) bool {
 	return false
 }
 
+// AllowNetwork adds a network definition (CIDR format) to the list of allowed networks
 func (f *NetFilter) AllowNetwork(network string) {
 
 	// look for a network expression
 	if _, net, err := net.ParseCIDR(network); err == nil {
 		f.AllowedNetworks = append(f.AllowedNetworks, net)
+	} else {
+		log.Println("unable to parse", network, "ignoring it")
 	}
 
 }
 
-// FilterHandler verifies if a request originates from an authorized IP address
-func (f *NetFilter) FilterHandler(handler http.Handler) http.Handler {
-
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		host, _, err := net.SplitHostPort(r.RemoteAddr)
-		if err == nil {
-			ip := net.ParseIP(host)
-			if f.IsAllowed(ip) {
-				handler.ServeHTTP(w, r)
-				return
-			}
-		}
-
-		log.Println("Unauthorized access from", host, err)
-		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
-	})
-	
-}
-
+// getLocalNetworks enumerates local interfaces and adds the networks they belong to
+// to the list of allowed networks. This essentially says:
+// connections originating from any of the local networks are authorized,
+// anything else is refused
 func getLocalNetworks() []string {
 
 	var networks []string
-	
+
 	addrs, err := net.InterfaceAddrs()
 	if err != nil {
-		log.Println("error with network interfaces", err.Error());
+		log.Println("error with network interfaces", err.Error())
 		return networks
 	}
 
@@ -112,4 +103,20 @@ func getLocalNetworks() []string {
 	}
 
 	return networks
+}
+
+// FilterHandler wraps and limits access to an http.Handler with the help of a NetFilter
+func (f *NetFilter) FilterHandler(handler http.Handler) http.Handler {
+
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		host, _, _ := net.SplitHostPort(r.RemoteAddr)
+		ip := net.ParseIP(host)
+		if !f.IsAllowed(ip) {
+			log.Println("Unauthorized access from", r.RemoteAddr)
+			http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+			return
+		}
+		handler.ServeHTTP(w, r)
+	})
+
 }

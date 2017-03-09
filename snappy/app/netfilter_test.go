@@ -18,14 +18,14 @@
 package snappy
 
 import (
+	"net"
 	"net/http"
 	"net/http/httptest"
-	"net"
 
 	. "gopkg.in/check.v1"
 )
 
-type FilterSuite struct {}
+type FilterSuite struct{}
 
 var _ = Suite(&FilterSuite{})
 
@@ -58,7 +58,6 @@ func simpleHandler() http.HandlerFunc {
 	}
 }
 
-
 func (s *FilterSuite) TestFilterHandleRequest(c *C) {
 
 	f := NewFilter()
@@ -68,23 +67,27 @@ func (s *FilterSuite) TestFilterHandleRequest(c *C) {
 
 	rec := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/", nil)
-	req.RemoteAddr = "127.0.0.1"
+	req.RemoteAddr = "127.0.0.1:80"
 
 	http.DefaultServeMux.ServeHTTP(rec, req)
 	c.Assert(rec.Code, Equals, http.StatusForbidden)
 
-	f.AllowNetwork("127.0.0.1/24")	
-	http.DefaultServeMux.ServeHTTP(rec, req)
-	c.Assert(rec.Code, Equals, http.StatusOK)
+	rec2 := httptest.NewRecorder()
+	f.AllowNetwork("127.0.0.1/8")
+	http.DefaultServeMux.ServeHTTP(rec2, req)
 
-	req.RemoteAddr = "fd12:3456:789a:1::1"
-	http.DefaultServeMux.ServeHTTP(rec, req)
-	c.Assert(rec.Code, Equals, http.StatusForbidden)
+	c.Assert(rec2.Code, Equals, http.StatusOK)
+
+	rec3 := httptest.NewRecorder()
+	req.RemoteAddr = "fd12:3456:789a:1::1:80"
+	http.DefaultServeMux.ServeHTTP(rec3, req)
+	c.Assert(rec3.Code, Equals, http.StatusForbidden)
 
 	f.AllowNetwork("fd12:3456:789a:1::/64")
-	
-	http.DefaultServeMux.ServeHTTP(rec, req)
-	c.Assert(rec.Code, Equals, http.StatusOK)
+
+	rec4 := httptest.NewRecorder()
+	http.DefaultServeMux.ServeHTTP(rec4, req)
+	c.Assert(rec4.Code, Equals, http.StatusOK)
 }
 
 func (s *FilterSuite) TestGetLocalNetwork(c *C) {

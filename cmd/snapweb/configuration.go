@@ -31,8 +31,11 @@ const (
 
 // Config described the runtime configuration
 type Config struct {
-	DisableAccessToken bool `json:"disableAccessToken,omitempty"`
-	DisableHTTPS       bool `json:"disableHttps,omitempty"`
+	DisableAccessToken bool     `json:"disableAccessToken,omitempty"`
+	DisableHTTPS       bool     `json:"disableHttps,omitempty"`
+	DisableIPFilter    bool     `json:"disableIPFilter,omitempty"`
+	AllowNetworks      []string `json:"allowNetworks,omitempty"`
+	// AllowInterfaces    []string `json:"allowInterfaces,omitempty"`
 }
 
 var readFile = ioutil.ReadFile
