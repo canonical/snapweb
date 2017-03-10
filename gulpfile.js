@@ -141,4 +141,7 @@ gulp.task('install', ['default'], function() {
     .pipe(gulp.dest('../install'));
 });
 
-gulp.task('default', ['js:build', 'js:build:webconf', 'styles', 'images']);
+gulp.task('default',
+          ['js:build',
+           process.env.WITH_WEBCONF === '1' ? 'js:build:webconf' : 'js:clean:webconf',
+           'styles', 'images']);

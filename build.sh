@@ -7,13 +7,36 @@
 #               amd64, arm64, armhf and i386.
 #
 #   [--ups]:    Build the ubuntu-personal-store snap as well.
+#
+#   [--with-webconf]: Adds the new webconf service to the snapweb snap.
+#
 
 set -e
 
-if [ "$#" -eq 0 ] || ([ "$#" -eq 1 ] && [ "$1" = "--ups" ]); then
+BUILD_UPS_SNAP=
+WITH_WEBCONF=
+
+while [ "$1" != "" ]; do
+    case $1 in
+        --ups)
+            BUILD_UPS_SNAP=1
+            ;;
+        --with-webconf)
+            WITH_WEBCONF=1
+            ;;
+        amd64|i386|arm64|armhf)
+            architectures+=("$1")
+            ;;
+        *)
+            # print usage
+            head -13 $0 | tail -12
+            exit
+    esac
+    shift
+done
+
+if [ "$architectures" = "" ]; then
     architectures=( amd64 arm64 armhf i386 )
-else
-    architectures=( "$@" )
 fi
 
 AVAHI_VERSION="0.6.31-4ubuntu4snap2"
@@ -60,7 +83,9 @@ gobuild() {
     mkdir -p $output_dir
     cd $output_dir
     GOARCH=$arch GOARM=7 CGO_ENABLED=1 CC=${plat_abi}-gcc go build -ldflags "-extld=${plat_abi}-gcc" github.com/snapcore/snapweb/cmd/snapweb
-    GOARCH=$arch GOARM=7 CGO_ENABLED=1 CC=${plat_abi}-gcc go build -ldflags "-extld=${plat_abi}-gcc" github.com/snapcore/snapweb/cmd/webconf
+    if [ $WITH_WEBCONF ]; then
+        GOARCH=$arch GOARM=7 CGO_ENABLED=1 CC=${plat_abi}-gcc go build -ldflags "-extld=${plat_abi}-gcc" github.com/snapcore/snapweb/cmd/webconf
+    fi
     GOARCH=$arch GOARM=7 CGO_ENABLED=1 CC=${plat_abi}-gcc go build -o generate-token -ldflags "-extld=${plat_abi}-gcc" $srcdir/cmd/generate-token/main.go
     cp generate-token ../../
     cd - > /dev/null
@@ -113,7 +138,7 @@ for ARCH in "${architectures[@]}"; do
     snapcraft snap $builddir
 
     # TODO: We only support amd64 ups builds for now -Need a cross-compile fix for "after: [desktop-qt5]"
-    if [[ $* == *--ups* ]] && [ $ARCH = amd64 ]; then
+    if [ $BUILD_UPS_SNAP ] && [ $ARCH = amd64 ]; then
         HTTP_ADDR="127.0.0.1:5200"
         HTTPS_ADDR="127.0.0.1:5201"
 
