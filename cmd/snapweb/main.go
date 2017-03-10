@@ -40,7 +40,10 @@ func init() {
 
 func main() {
 	// TODO set warning for too hazardous config?
-	config := snappy.ReadConfig()
+	config, err := snappy.ReadConfig()
+	if err != nil {
+		logger.Fatalf("Configuration error", err)
+	}
 
 	mainHandler := initURLHandlers(logger, config)
 	baseHandler := redirHandler(config)

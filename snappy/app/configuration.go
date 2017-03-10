@@ -41,26 +41,25 @@ type Config struct {
 var readFile = ioutil.ReadFile
 
 // ReadConfig loads the configuration from disk
-func ReadConfig() Config {
+func ReadConfig() (Config, error) {
 	configFilepath := filepath.Join(os.Getenv("SNAP_COMMON"), configFilename)
 	if _, err := os.Stat(configFilepath); err != nil {
-		return Config{}
+		return Config{}, nil
 	}
 
 	var err error
 	var content []byte
 	if content, err = readFile(configFilepath); err != nil {
-		return Config{}
+		return Config{}, nil
 	}
 
 	var config Config
 	err = json.Unmarshal(content, &config)
 	if err != nil {
-		fmt.Printf("Invalid configuration file %s: %s",
+		return Config{}, fmt.Errorf("Invalid configuration file %s: %s",
 			configFilepath,
 			err.Error())
-		return Config{}
 	}
 
-	return config
+	return config, nil
 }

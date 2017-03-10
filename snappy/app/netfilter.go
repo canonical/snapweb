@@ -25,18 +25,13 @@ import (
 
 // NetFilter manages an IP-based filter to limit access to Snapweb
 type NetFilter struct {
-	AllowedNetworks []*net.IPNet
+	allowedNetworks []*net.IPNet
 	acceptCache     net.IP
 }
 
 // NewFilter creates a new empty NetFilter to block all connections by default
 func NewFilter() *NetFilter {
-	f := &NetFilter{
-		AllowedNetworks: nil,
-		acceptCache:     nil,
-	}
-
-	return f
+	return &NetFilter{}
 }
 
 // IsAllowed verifies if an IP is allowed to access Snapweb
@@ -51,7 +46,7 @@ func (f *NetFilter) IsAllowed(ip net.IP) bool {
 	}
 
 	// check "allow" rules
-	for _, n := range f.AllowedNetworks {
+	for _, n := range f.allowedNetworks {
 		if n.Contains(ip) {
 			f.acceptCache = ip
 			return true
@@ -67,7 +62,7 @@ func (f *NetFilter) AllowNetwork(network string) {
 
 	// look for a network expression
 	if _, net, err := net.ParseCIDR(network); err == nil {
-		f.AllowedNetworks = append(f.AllowedNetworks, net)
+		f.allowedNetworks = append(f.allowedNetworks, net)
 	} else {
 		log.Println("unable to parse", network, "ignoring it")
 	}
