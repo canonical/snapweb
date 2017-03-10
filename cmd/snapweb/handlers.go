@@ -28,9 +28,9 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"text/template"
 
-	// most other handlers use the ClientAdapter for now
 	"github.com/snapcore/snapweb/snappy/app"
 	"github.com/snapcore/snapweb/snappy/snapdclient"
 )
@@ -230,22 +230,26 @@ func handleDeviceAction(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func initURLHandlers(log *log.Logger, config Config) {
+func initURLHandlers(log *log.Logger, config snappy.Config) http.Handler {
 	log.Println("Initializing HTTP handlers...")
 
+	handler := http.NewServeMux()
+
 	// API
-	http.Handle("/api/", makeAPIHandler("/api/", config))
+	handler.Handle("/api/", makeAPIHandler("/api/", config))
 
 	// Resources
-	http.Handle("/public/", loggingHandler(http.FileServer(http.Dir(filepath.Join(os.Getenv("SNAP"), "www")))))
+	handler.Handle("/public/", loggingHandler(http.FileServer(http.Dir(filepath.Join(os.Getenv("SNAP"), "www")))))
 
 	if iconDir, relativePath, err := snappy.IconDir(); err == nil {
-		http.Handle(fmt.Sprintf("/%s/", relativePath), loggingHandler(http.FileServer(http.Dir(filepath.Join(iconDir, "..")))))
+		handler.Handle(fmt.Sprintf("/%s/", relativePath), loggingHandler(http.FileServer(http.Dir(filepath.Join(iconDir, "..")))))
 	} else {
 		log.Println("Issues while getting icon dir:", err)
 	}
 
-	http.HandleFunc("/", makeMainPageHandler())
+	handler.HandleFunc("/", makeMainPageHandler())
+
+	return NewFilterHandlerFromConfig(handler, config)
 }
 
 // Name of the cookie transporting the access token
@@ -327,4 +331,32 @@ func renderLayout(html string, data *templateData, w http.ResponseWriter) error 
 	}
 
 	return t.Execute(w, *data)
+}
+
+func redirHandler(config snappy.Config) http.Handler {
+	redir := http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		http.Redirect(w, req,
+			"https://"+strings.Replace(req.Host, httpAddr, httpsAddr, -1),
+			http.StatusSeeOther)
+	})
+
+	return NewFilterHandlerFromConfig(redir, config)
+}
+
+// NewFilterHandlerFromConfig creates a new http.Handler with an integrated NetFilter
+func NewFilterHandlerFromConfig(handler http.Handler, config snappy.Config) http.Handler {
+	if config.DisableIPFilter {
+		return handler
+	}
+
+	f := snappy.NewFilter()
+
+	for _, net := range config.AllowNetworks {
+		f.AllowNetwork(net)
+	}
+
+	// for _, ifname := range config.AllowInterfaces {
+	// }
+
+	return f.FilterHandler(handler)
 }
