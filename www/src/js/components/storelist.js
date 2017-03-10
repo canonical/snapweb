@@ -14,13 +14,13 @@ module.exports = React.createBackboneClass({
 
     if (model.get('loading')) {
       return (
-        <div className="u-vertically-center">
+          <div className="u-vertically-center" style={{paddingTop: "3em", paddingBottom: "3em"}}>
           <img
             className="progress-spinner"
             style={{marginLeft: "auto", marginRight: "auto"}}
             src="/public/images/in-progress.svg"
-            width="100px"
-            height="100px" />
+            width="44px"
+            height="44px" />
         </div>
       )
     } 
