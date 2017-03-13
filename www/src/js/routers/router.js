@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Route, IndexRoute } from 'react-router';
+import { Route, IndexRoute, Redirect } from 'react-router';
 
 import App from '../views/app';
 import BackboneLayout from '../components/backbone-layout';
@@ -17,13 +17,14 @@ const ControllerShim = (controller, method, isQuery = false) =>
   (props) => React.createElement(BackboneLayout, {controller, method, isQuery, ...props});
 
 export default (
-  <Route path="/" component={App}>
+  <Route path='/' component={App}>
     <IndexRoute component={ControllerShim(homeController, 'index')}/>
-    <Route path="store" component={ControllerShim(storeController, 'index')}/>
-    <Route path="store/section/:section" component={ControllerShim(storeController, 'section')}/>
-    <Route path="settings" component={ControllerShim(settingsController, 'index')}/>
-    <Route path="snap/:id" component={ControllerShim(snapController, 'snap')}/>
-    <Route path="search" component={ControllerShim(searchController, 'query', true)}/>
-    <Route path="access-control" component={ControllerShim(tokenController, 'index')}/>
+    <Route path='store' component={ControllerShim(storeController, 'index')}/>
+    <Route path='store/section/:section' component={ControllerShim(storeController, 'section')}/>
+    <Route path='settings' component={ControllerShim(settingsController, 'index')}/>
+    <Route path='snap/:id' component={ControllerShim(snapController, 'snap')}/>
+    <Route path='search' component={ControllerShim(searchController, 'query', true)}/>
+    <Route path='access-control' component={ControllerShim(tokenController, 'index')}/>
+    <Redirect from='*' to='/'/>
   </Route>
 );

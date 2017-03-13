@@ -10,7 +10,6 @@ var Radio = require('backbone.radio');
 var BannerView = require('./layout-banner.js');
 var FooterView = require('./layout-footer.js');
 var NotificationsView = require('./alerts.js');
-var template = require('../templates/layout.hbs');
 var chan = Radio.channel('root');
 
 module.exports = Marionette.LayoutView.extend({
@@ -21,10 +20,8 @@ module.exports = Marionette.LayoutView.extend({
     chan.comply('alert:error', this.alertError, this);
   },
 
-  el: '.b-layout',
-
   template : function() {
-    return template();
+    return '';
   },
 
   onRender: function() {
