@@ -69,18 +69,37 @@ func (f *NetFilter) AllowNetwork(network string) {
 
 }
 
-// getLocalNetworks enumerates local interfaces and adds the networks they belong to
+// AddLocalNetworks enumerates local interfaces and adds the networks they belong to
 // to the list of allowed networks. This essentially says:
 // connections originating from any of the local networks are authorized,
 // anything else is refused
-func getLocalNetworks() []string {
+func (f *NetFilter) AddLocalNetworks() {
 
-	var networks []string
-
-	addrs, err := net.InterfaceAddrs()
+	iflist, err := net.Interfaces()
 	if err != nil {
-		log.Println("error with network interfaces", err.Error())
-		return networks
+		log.Println("Unable to enumerate network interfaces", err.Error())
+		return
+	}
+
+	for _, intf := range iflist {
+		f.AddLocalNetworkForInterface(intf.Name)
+	}
+}
+
+// AddLocalNetworkForInterface adds the network for a given interface to the list of allowed
+// networks
+func (f *NetFilter) AddLocalNetworkForInterface(ifname string) {
+
+	intf, err := net.InterfaceByName(ifname)
+	if err != nil {
+		log.Println("Error with interface", ifname, err.Error())
+		return
+	}
+
+	addrs, err := intf.Addrs()
+	if err != nil {
+		log.Println("Error adding interface", intf.Name, err.Error())
+		return
 	}
 
 	for _, a := range addrs {
@@ -89,15 +108,14 @@ func getLocalNetworks() []string {
 			if ipnet.IP.To4() != nil {
 				// only consider class-C networks, ie with 256 hosts max.
 				if ones, _ := ipnet.Mask.Size(); ones >= 24 {
-					networks = append(networks, ipnet.String())
+					f.AllowNetwork(ipnet.String())
 				} else if ipnet.IP.IsLoopback() {
-					networks = append(networks, ipnet.String())
+					f.AllowNetwork(ipnet.String())
 				}
 			}
 		}
 	}
 
-	return networks
 }
 
 // FilterHandler wraps and limits access to an http.Handler with the help of a NetFilter
