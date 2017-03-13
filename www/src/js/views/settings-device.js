@@ -139,19 +139,20 @@ module.exports = React.createBackboneClass({
   render: function() {
     var model = this.props.model;
 
-    return (
-      <div>
-        <DeviceInfo model={model} />
-        <hr />
-
+    // Disable the power & factory settings for now
+    /**
         <PowerInfo
           model={model}
           restart={() => this.restart()}
           powerOff={() => this.powerOff()}
          />
         <hr />
+        <FactorySettings model={model} /> <hr />
+    */
 
-        <FactorySettings model={model} />
+    return (
+      <div>
+        <DeviceInfo model={model} />
         <hr />
 
         {this.state.confirmAction &&
