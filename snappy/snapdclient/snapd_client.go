@@ -194,8 +194,6 @@ func GetModelInfo(c SnapdClient) (map[string]interface{}, error) {
 		allInterfaces = append(allInterfaces, slot.Name)
 	}
 
-	deviceName := "Device Name"
-
 	// Model Info
 	brandName := "Unknown"
 	modelName := "Unknown"
@@ -222,7 +220,6 @@ func GetModelInfo(c SnapdClient) (map[string]interface{}, error) {
 	}
 
 	return map[string]interface{}{
-		"DeviceName": deviceName,
 		"Brand":      brandName,
 		"Model":      modelName,
 		"Serial":     serialNumber,

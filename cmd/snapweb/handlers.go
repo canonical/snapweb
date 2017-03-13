@@ -154,7 +154,6 @@ func handleDeviceInfo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var info deviceInfoResponse
-	info.DeviceName = modelInfo["DeviceName"].(string)
 	info.Brand = modelInfo["Brand"].(string)
 	info.Model = modelInfo["Model"].(string)
 	info.Serial = modelInfo["Serial"].(string)
