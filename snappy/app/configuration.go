@@ -35,7 +35,7 @@ type Config struct {
 	DisableHTTPS       bool     `json:"disableHttps,omitempty"`
 	DisableIPFilter    bool     `json:"disableIPFilter,omitempty"`
 	AllowNetworks      []string `json:"allowNetworks,omitempty"`
-	// AllowInterfaces    []string `json:"allowInterfaces,omitempty"`
+	AllowInterfaces    []string `json:"allowInterfaces,omitempty"`
 }
 
 var readFile = ioutil.ReadFile

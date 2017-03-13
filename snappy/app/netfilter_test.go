@@ -90,15 +90,18 @@ func (s *FilterSuite) TestFilterHandleRequest(c *C) {
 	c.Assert(rec4.Code, Equals, http.StatusOK)
 }
 
-func (s *FilterSuite) TestGetLocalNetwork(c *C) {
-
-	networks := getLocalNetworks()
-	c.Assert(networks, NotNil)
-
+func (s *FilterSuite) TestAddLocalNetworks(c *C) {
 	f := NewFilter()
-	for _, n := range networks {
-		f.AllowNetwork(n)
-	}
+	f.AddLocalNetworks()
+
+	// the loopback interface should always be allowed
+	res := f.IsAllowed(net.ParseIP("127.0.0.1"))
+	c.Assert(res, Equals, true)
+}
+
+func (s *FilterSuite) TestAddSpecificInterface(c *C) {
+	f := NewFilter()
+	f.AddLocalNetworkForInterface("lo")
 
 	// the loopback interface should always be allowed
 	res := f.IsAllowed(net.ParseIP("127.0.0.1"))

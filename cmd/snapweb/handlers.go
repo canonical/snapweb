@@ -355,8 +355,16 @@ func NewFilterHandlerFromConfig(handler http.Handler, config snappy.Config) http
 		f.AllowNetwork(net)
 	}
 
-	// for _, ifname := range config.AllowInterfaces {
-	// }
+	for _, ifname := range config.AllowInterfaces {
+		f.AddLocalNetworkForInterface(ifname)
+	}
+
+	// if nothing was specified, default to allowing all local networks
+	if (len(config.AllowNetworks) == 0) &&
+		(len(config.AllowInterfaces) == 0) {
+		logger.Println("Allowing local network access by default")
+		f.AddLocalNetworks()
+	}
 
 	return f.FilterHandler(handler)
 }
