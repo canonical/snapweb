@@ -17,11 +17,13 @@ const SettingsViews = [{
    icon: iconPath + 'deviceinfo-icon.svg',
    text: 'Device Information',
    model: DeviceInfo
-  }, {
+  },
+  /* {
     view: SettingsProfileView,
     icon: iconPath + 'profile-icon.svg',
     text: 'Profile'
-  }, {
+    },
+  {
     view: SettingsUsersView,
     icon: iconPath + 'users-icon.svg',
     text: 'Users'
@@ -29,7 +31,8 @@ const SettingsViews = [{
     view: SettingsUpdatesView,
     icon: iconPath + 'updates-icon.svg',
     text: 'Updates'
-  }, {
+  }, */
+  {
     view: SettingsTimeView,
     icon: iconPath + 'datetime-icon.svg',
     text: 'Date and time',
