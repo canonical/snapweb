@@ -79,7 +79,7 @@ func (s *FilterSuite) TestFilterHandleRequest(c *C) {
 	c.Assert(rec2.Code, Equals, http.StatusOK)
 
 	rec3 := httptest.NewRecorder()
-	req.RemoteAddr = "fd12:3456:789a:1::1:80"
+	req.RemoteAddr = "[fd12:3456:789a:1::1]:80"
 	http.DefaultServeMux.ServeHTTP(rec3, req)
 	c.Assert(rec3.Code, Equals, http.StatusForbidden)
 
