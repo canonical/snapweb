@@ -23,8 +23,6 @@ describe('Access Control Page - Verify that', function() {
         assert.isNotNull(accessControlPage.token.value);
         assert.isNotNull(accessControlPage.submit_btn.value);
         assert.isNotNull(accessControlPage.token_cmd.value);
-        assert.isNotNull(accessControlPage.bugreport.value);
-
     });
 
     it('rejects invalid tokens', function() {
