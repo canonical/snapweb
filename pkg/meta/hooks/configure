@@ -16,18 +16,13 @@ except Exception as e:
     sys.exit(1)
 CONF_FILEPATH = os.path.join(SNAP_COMMON_ENV, CONF_FILENAME)
 
-disable_access_token = "false"
+settings = {}
 try:
-    disable_access_token = subprocess.run("snapctl get disableaccesstoken", shell=True, stdout=subprocess.PIPE, check=True, stderr=subprocess.PIPE).stdout.decode("utf-8").strip()
+    with open(CONF_FILEPATH, 'r') as f:
+        c = f.read()
+        settings = json.loads(c)
 except Exception as e:
-    print(e)
-    pass
-
-disable_https = "false"
-try:
-    disable_https = subprocess.run("snapctl get disablehttps", shell=True, stdout=subprocess.PIPE, check=True, stderr=subprocess.PIPE).stdout.decode("utf-8").strip()
-except Exception as e:
-    print(e)
+    print(str(e))
     pass
 
 def validate_bool_with_default(value, default=False):
@@ -37,12 +32,35 @@ def validate_bool_with_default(value, default=False):
         return False
     return default
 
+disable_access_token = "false"
+try:
+    disable_access_token = subprocess.run(
+        "snapctl get disableaccesstoken",
+        shell=True,
+        stdout=subprocess.PIPE,
+        check=True,
+        stderr=subprocess.PIPE).stdout.decode("utf-8").strip()
+
+    settings['disableAccessToken'] = validate_bool_with_default(disable_access_token)
+except Exception as e:
+    print(e)
+    pass
+
+disable_https = "false"
+try:
+    disable_https = subprocess.run(
+        "snapctl get disablehttps",
+        shell=True,
+        stdout=subprocess.PIPE,
+        check=True,
+        stderr=subprocess.PIPE).stdout.decode("utf-8").strip()
+
+    settings['disableHttps'] = validate_bool_with_default(disable_https)
+except Exception as e:
+    print(e)
+    pass
+
 with open(CONF_FILEPATH, 'w+') as f:
-    f.write(
-        json.dumps({
-            'disableAccessToken': validate_bool_with_default(disable_access_token),
-            'disableHttps': validate_bool_with_default(disable_https)
-        })
-        )
+    f.write(json.dumps(settings))
 
 # TODO kill & restart main snap daemon

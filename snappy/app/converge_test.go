@@ -379,3 +379,33 @@ func (s *SnapOperationTrackingSuite) TestEnableDisableNonLocalSnapsWithErr(c *C)
 	err = s.h.disable(fakeSnap.Name)
 	c.Assert(err, NotNil)
 }
+
+func (s *SnapOperationTrackingSuite) TestAbortOperation(c *C) {
+	fakeSnap := common.NewDefaultSnap()
+
+	fakeSnap.Status = "available"
+	s.c.Snaps = []*client.Snap{fakeSnap}
+
+	s.c.ChangeID = "changeid"
+	err := s.h.installPackage(fakeSnap.Name)
+	c.Assert(err, IsNil)
+
+	err = s.h.abortRunningOperation(fakeSnap.Name)
+	c.Assert(err, IsNil)
+	c.Assert(s.c.AbortedChangeID, Equals, "changeid")
+}
+
+func (s *SnapOperationTrackingSuite) TestAbortOperationWithErr(c *C) {
+	fakeSnap := common.NewDefaultSnap()
+
+	fakeSnap.Status = "available"
+	s.c.Snaps = []*client.Snap{}
+
+	err := s.h.abortRunningOperation(fakeSnap.Name)
+	c.Assert(err, NotNil)
+
+	s.c.Snaps = []*client.Snap{fakeSnap}
+	err = s.h.abortRunningOperation(fakeSnap.Name)
+	c.Assert(err, NotNil)
+	c.Assert(s.c.AbortedChangeID, Equals, "")
+}

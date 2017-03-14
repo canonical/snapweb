@@ -160,6 +160,28 @@ func (h *Handler) installPackage(name string) error {
 	return err
 }
 
+func (h *Handler) abortRunningOperation(name string) error {
+	snap, err := h.getSnap(name)
+	if err != nil {
+		return err
+	}
+	if snap == nil {
+		return errors.New("Invalid snap name")
+	}
+
+	tracked, changeID := h.stateTracker.IsTrackedForRunningOperation(snap)
+	if !tracked {
+		return fmt.Errorf("No operation to abort for snap %s", name)
+	}
+
+	_, err = h.snapdClient.Abort(changeID)
+	if err == nil {
+		h.stateTracker.CancelTrackingFor(name)
+	}
+
+	return err
+}
+
 func (h *Handler) enable(name string) error {
 	snap, err := h.getSnap(name)
 	if err != nil {

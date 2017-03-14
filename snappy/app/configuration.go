@@ -15,7 +15,7 @@
  *
  */
 
-package main
+package snappy
 
 import (
 	"encoding/json"
@@ -35,33 +35,31 @@ type Config struct {
 	DisableHTTPS       bool     `json:"disableHttps,omitempty"`
 	DisableIPFilter    bool     `json:"disableIPFilter,omitempty"`
 	AllowNetworks      []string `json:"allowNetworks,omitempty"`
-	// AllowInterfaces    []string `json:"allowInterfaces,omitempty"`
+	AllowInterfaces    []string `json:"allowInterfaces,omitempty"`
 }
 
 var readFile = ioutil.ReadFile
 
 // ReadConfig loads the configuration from disk
-func ReadConfig() Config {
+func ReadConfig() (Config, error) {
 	configFilepath := filepath.Join(os.Getenv("SNAP_COMMON"), configFilename)
 	if _, err := os.Stat(configFilepath); err != nil {
-		return Config{}
+		return Config{}, nil
 	}
 
 	var err error
 	var content []byte
 	if content, err = readFile(configFilepath); err != nil {
-		return Config{}
+		return Config{}, nil
 	}
 
 	var config Config
 	err = json.Unmarshal(content, &config)
 	if err != nil {
-		logger.Println(
-			fmt.Sprintf("Invalid configuration file %s: %s",
-				configFilepath,
-				err.Error()))
-		return Config{}
+		return Config{}, fmt.Errorf("Invalid configuration file %s: %s",
+			configFilepath,
+			err.Error())
 	}
 
-	return config
+	return config, nil
 }
