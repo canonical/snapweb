@@ -49,6 +49,11 @@ ApplicationWindow {
     id: webView
     focus: true
 
+    context: WebContext {
+        dataPath: Qt.application.arguments[1]
+        sessionCookieMode: WebContext.SessionCookieModeRestored
+    }
+
     url: main.url + "/store"
 
     function isNewForegroundWebViewDisposition(disposition) {
