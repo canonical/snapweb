@@ -24,7 +24,7 @@ module.exports = React.createBackboneClass({
 
   dateChanged: function(event) {
     var model = this.props.model; 
-    var dateTime = moment.unix(model.get('dateTime'));
+    var dateTime = moment(model.get('dateTime')).utcOffset(model.get('offset') / 60);
     var newDate = _.map(event.target.value.split('-'), 
                         function(v) { return parseInt(v); });
 
@@ -37,7 +37,7 @@ module.exports = React.createBackboneClass({
 
   timeChanged: function(event) {
     var model = this.props.model; 
-    var dateTime = moment.unix(model.get('dateTime'));
+    var dateTime = moment(model.get('dateTime')).utcOffset(model.get('offset') / 60);
     var newTime = _.map(event.target.value.split(':'),
                         function(v) { return parseInt(v); });
 
@@ -78,7 +78,8 @@ module.exports = React.createBackboneClass({
       }
     }
 
-    var dateTime = moment.unix(model.get('dateTime') || moment().unix());
+    var dateTime = moment.unix(model.get('dateTime') || moment.unix());
+    dateTime = dateTime.utcOffset((model.get('offset') / 60) || 0);
 
     return (
       <div>
@@ -150,62 +151,42 @@ module.exports = React.createBackboneClass({
             id="time-zone-select"
             value={model.get('timezone')}
             onChange={this.timezoneSelectChanged}>
-            <option value="Pacific/Midway">Midway Island, Samoa</option>
-            <option value="Pacific/Honolulu">Hawaii</option>
-            <option value="America/Anchorage">Alaska (most areas)</option>
-            <option value="American/Tijuana">Pacific Time US - Baja California</option>
-            <option value="America/Phoenix">MST - Arizona (except Navajo)</option>
-            <option value="America/Chihuahua">Mountain Time - Chihuahua (most areas)</option>
-            <option value="America/Chicago">America Central (most area)</option>
-            <option value="America/Mexico_City">Mexico City</option>
-            <option value="America/Bogota">Bogota</option>
-            <option value="America/New_York">Eastern Time (US & Canada)</option>
-            <option value="America/Indiana/Indianapolis">Indiana (East)</option>
-            <option value="America/Santiago">Santiago</option>
-            <option value="America/St_Johns">Newfoundland; Labrador (southeast)</option>
-            <option value="America/Argentina/Buenos_Aires">Buenos Aires (BA, CF)</option>
-            <option value="American/Godthab">Greenland (most areas)</option>
-            <option value="Atlantic/Cape_Verde">Cape Verde Is.</option>
-            <option value="Atlantic/Azores">Azores</option>
-            <option value="Africa/Casablanca">Casablanca</option>
-            <option value="Europe/Dublin">Dublin</option>
-            <option value="Europe/Amsterdam">Amsterdam</option>
-            <option value="Europe/Budapest">Budapest</option>
-            <option value="Europe/Brussels">Brussels</option>
-            <option value="Europe/Paris">Paris</option>
-            <option value="Europe/Madrid">Spain (mainland)</option>
-            <option value="Europe/Warsaw">Warsaw</option>
-            <option value="Europe/Athens">Athens</option>
-            <option value="Asia/Beirut">Beirut</option>
-            <option value="Africa/Johannesburg">Johannesburg</option>
-            <option value="Europe/Helsinki">Helsinki</option>
-            <option value="Europe/Minsk">Minsk</option>
-            <option value="Africa/Windhoek">Windhoek</option>
-            <option value="Asia/Kuwait">Kuwait</option>
-            <option value="Europe/Moscow">MSK+00 - Moscow area</option>
-            <option value="Africa/Nairobi">Nairobi</option>
-            <option value="Asia/Baku">Baku</option>
-            <option value="Asia/Yerevan">Yerevan</option>
-            <option value="Asia/Kabul">Kabul</option>
-            <option value="Asia/Yekaterinburg">MSK+02 - Urals</option>
-            <option value="Asia/Karachi">Karachi</option>
-            <option value="Asia/Kathmandu">Kathmandu</option>
-            <option value="Asia/Dhaka">Dhaka</option>
-            <option value="Asia/Bangkok">Bangkok</option>
-            <option value="Asia/Shanghai">Beijing Time</option>
-            <option value="Asia/Kuala_Lumpur">Malaysia (peninsula)</option>
-            <option value="Asia/Irkutsk">MSK+05 - Irkutsk, Buryatia</option>
-            <option value="Australia/Perth">Western Australia (most areas)</option>
-            <option value="Asia/Taipei">Taipei</option>
-            <option value="Asia/Tokyo">Tokyo</option>
-            <option value="Asia/Seoul">Seoul</option>
-            <option value="Australia/Brisbane">Queensland (most areas)</option>
-            <option value="Australia/Sydney">New South Wales (most areas)</option>
-            <option value="Pacific/Guam">Guam</option>
-            <option value="Asia/Vladivostok">MSK+07 - Amur River</option>
-            <option value="Asia/Magadan">Magadan</option>
-            <option value="Pacific/Auckland">New Zealand (most areas)</option>
-            <option value="Pacific/Fiji">Fiji</option>
+            <option value="Pacific/Kiritimati">(UTC+14:00) Samoa and Christmas Island/Kiribati</option>
+            <option value="Pacific/Chatham">(UTC+12:45) Chatham Islands/New Zealand</option>
+            <option value="Pacific/Auckland">(UTC+12:00) New Zealand/Auckland</option>
+            <option value="Pacific/Fiji">(UTC+12:00) Fiji</option>
+            <option value="Australia/Melbourne">(UTC+10:00) Australia/Sydney, Melbourne</option>
+            <option value="Australia/Brisbane">(UTC+10:00) Australia/Brisbane</option>
+            <option value="Australia/Adelaide">(UTC+09:30) Australia/Adelaide, Darwin</option>
+            <option value="Asia/Tokyo">(UTC+09:00) Japan/Tokyo</option>
+            <option value="Asia/Pyongyang">(UTC+08:30) North Korea/Pyongyang</option>
+            <option value="Australia/Perth">(UTC+08:00) Australia/Perth</option>
+            <option value="Asia/Shanghai">(UTC+08:00) China/Beijing Time</option>
+            <option value="Asia/Jakarta">(UTC+07:00) Indonesia/Jakarta</option>
+            <option value="Indian/Cocos">(UTC+06:30) Cocos Islands</option>
+            <option value="Asia/Dhaka">(UTC+06:00) Bangladesh/Dhaka</option>
+            <option value="Asia/Kathmandu">(UTC+05:45) Nepal/Kathmandu</option>
+            <option value="Asia/Kolkata">(UTC+05:30) India</option>
+            <option value="Asia/Karachi">(UTC+05:00) Pakistan/Karachi </option>
+            <option value="Asia/Kabul">(UTC+04:30) Afghanistan/Kabul</option>
+            <option value="Asia/Dubai">(UTC+04:00) Dubai</option>
+            <option value="Asia/Tehran">(UTC+03:30) Iran/Tehran</option>
+            <option value="Europe/Moscow">(UTC+03:00) Russia/Moscow</option>
+            <option value="Africa/Cairo">(UTC+02:00) Egypt/Cairo</option>
+            <option value="Europe/Brussels">(UTC+01:00) Belgium/Brussels</option>
+            <option value="Europe/London">(UTC+00:00) United Kingdom/London</option>
+            <option value="UTC">(UTC+00:00) UTC</option>
+            <option value="Atlantic/Cape_Verde">(UTC-01:00) Cabo Verde/Praia</option>
+            <option value="America/St_Johns">(UTC-02:30) Canada/St. John's</option>
+            <option value="Ameraica/Buenos_Aires">(UTC-03:00) Argentina/Buenos Aires</option>
+            <option value="America/New_York">(UTC-04:00) America/New York</option>
+            <option value="America/Chicago">(UTC-05:00) America/Chicago</option>
+            <option value="America/Mexico_City">(UTC-06:00) Mexico/Mexico City</option>
+            <option value="America/Los_Angeles">(UTC-07:00) America/Los Angeles</option>
+            <option value="America/Anchorage">(UTC-08:00) America/Anchorage</option>
+            <option value="Pacific/Marquesas">(UTC-09:30) Marquesas Islands</option>
+            <option value="Pacific/Honolulu">(UTC-10:00) United States/Honolulu</option>
+            <option value="US/Samoa">(UTC-11:00) American Samoa</option>
           </select>
         </div>
 
