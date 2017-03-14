@@ -15,7 +15,7 @@ describe('SettingsTimeView', function() {
           dateTime: this.testTime,
           ntp: true,
           offset: 0,
-          timezone: "Pacific/Kiritimati",
+          timezone: "America/New_York",
           ntpServer: "example.com"
         });
 

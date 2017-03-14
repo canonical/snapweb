@@ -57,7 +57,8 @@ function pickTimeZoneFromOffset(offset) {
     return (value > max ? max : (value < min ? min : value))
   }
 
-  var offset_hours = Math.sign(offset) * clamp(Math.floor(Math.abs(offset) / 3600), 0, 24);
+  var sign = Math.sign || (function(v) { return v < 0 ? -1 : 1; });
+  var offset_hours = sign(offset) * clamp(Math.floor(Math.abs(offset) / 3600), 0, 24);
   var offset_minutes = clamp(Math.floor((Math.abs(offset) - Math.abs(offset_hours) * 3600) / 60), 0, 59);
 
   var offset_descr = formatUTCOffset(offset_hours, offset_minutes);
@@ -158,7 +159,7 @@ module.exports = React.createBackboneClass({
     if (candidateTZ.length === 0) {
       // Select timezone based on "closer to" offset heuristic
       //  rather than explicit name
-      var offset = model.get('offset');
+      var offset = model.get('offset') || 0;
       timezone = pickTimeZoneFromOffset(offset);
     } else {
       timezone = candidateTZ[0];
