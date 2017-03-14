@@ -54,15 +54,27 @@ var storePage = Object.create(basepage, {
         }
     },
 
-    snapListSelector: {
+    searchResultSnapListSelector: {
         get: function() {
             return '#js-snaplist .p-card'
         }
     },
 
+    sectionSnapListSelector: {
+        get: function() {
+            return '.p-card-deck .p-card'
+        }
+    },
+
     snaps: {
         get: function() {
-            return browser.elements(this.snapListSelector);
+            return browser.elements(this.searchResultSnapListSelector);
+        }
+    },
+
+    sectionSnaps: {
+        get: function() {
+            return browser.elements(this.sectionSnapListSelector);
         }
     },
 
