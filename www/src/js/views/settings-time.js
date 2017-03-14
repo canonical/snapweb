@@ -52,6 +52,29 @@ var TimeZones = [
   {name: "US/Samoa", value: "American Samoa", offset: formatUTCOffset(-10,0)},
 ];
 
+function pickTimeZoneFromOffset(offset) {
+  function clamp(value, min, max) {
+    return (value > max ? max : (value < min ? min : value))
+  }
+
+  var offset_hours = Math.sign(offset) * clamp(Math.floor(Math.abs(offset) / 3600), 0, 24);
+  var offset_minutes = clamp(Math.floor((Math.abs(offset) - Math.abs(offset_hours) * 3600) / 60), 0, 59);
+
+  var offset_descr = formatUTCOffset(offset_hours, offset_minutes);
+
+  var candidateTZ = TimeZones.filter(function(tz) {
+    return tz.offset === offset_descr;
+  });
+
+  var timezone = TimeZones[0];
+  if (candidateTZ.length > 0) {
+    // Pick the first one
+    timezone = candidateTZ[0];
+  }
+
+  return timezone
+}
+
 module.exports = React.createBackboneClass({
 
   timeSourceChanged: function(event) {
@@ -126,25 +149,18 @@ module.exports = React.createBackboneClass({
     var dateTime = moment.unix(model.get('dateTime') || moment.unix());
     dateTime = dateTime.utcOffset((model.get('offset') / 60) || 0);
 
-    // Select timezone based on "closer to" offset heuristic
-    //   rather than explicit name
-    var offset = model.get('offset');
-
-    function clamp(value, min, max) {
-      return (value > max ? max : (value < min ? min : value))
-    }
-
-    var offset_hours = Math.sign(offset) * clamp(Math.floor(Math.abs(offset) / 3600), 0, 24);
-    var offset_minutes = clamp(Math.floor((Math.abs(offset) - Math.abs(offset_hours) * 3600) / 60), 0, 59);
-
-    var offset_descr = formatUTCOffset(offset_hours, offset_minutes);
-
+    var timezoneName = model.get('timezone');
     var candidateTZ = TimeZones.filter(function(tz) {
-      return tz.offset === offset_descr;
+      return tz.name === timezoneName;
     });
 
-    var timezone = TimeZones[0];
-    if (candidateTZ.length > 0) {
+    var timezone;
+    if (candidateTZ.length === 0) {
+      // Select timezone based on "closer to" offset heuristic
+      //  rather than explicit name
+      var offset = model.get('offset');
+      timezone = pickTimeZoneFromOffset(offset);
+    } else {
       timezone = candidateTZ[0];
     }
 
