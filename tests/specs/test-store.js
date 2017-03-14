@@ -66,10 +66,10 @@ describe('Store Page - Verify that', function() {
     });
 
     it('search exact match', function() {
-        storePage.search('hello-world');
+        storePage.search('hello');
         browser.waitForVisible(storePage.exactSnapMatchSelector);
         assert.isNotNull(storePage.exactMatch.value, "No exact match found");
-        assert.equal(storePage.snaps.value.length, 0, "Snap list not empty");
+        assert.isAbove(storePage.snaps.value.length, 0, "Snap list not empty");
     });
 
     it('search exact match and see snap details', function() {
