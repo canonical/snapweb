@@ -1,8 +1,9 @@
-
 var Backbone = require('backbone');
 var Marionette = require('backbone.marionette');
 var React = require('react');
 var ReactBackbone = require('react.backbone');
+
+var TimeTools = require('../common/time.js');
 
 var _ = require('lodash');
 var moment = require('moment');
@@ -23,9 +24,9 @@ module.exports = React.createBackboneClass({
   },
 
   dateChanged: function(event) {
-    var model = this.props.model; 
+    var model = this.props.model;
     var dateTime = moment(model.get('dateTime')).utcOffset(model.get('offset') / 60);
-    var newDate = _.map(event.target.value.split('-'), 
+    var newDate = _.map(event.target.value.split('-'),
                         function(v) { return parseInt(v); });
 
     dateTime.year(newDate[0]);
@@ -36,7 +37,7 @@ module.exports = React.createBackboneClass({
   },
 
   timeChanged: function(event) {
-    var model = this.props.model; 
+    var model = this.props.model;
     var dateTime = moment(model.get('dateTime')).utcOffset(model.get('offset') / 60);
     var newTime = _.map(event.target.value.split(':'),
                         function(v) { return parseInt(v); });
@@ -81,6 +82,25 @@ module.exports = React.createBackboneClass({
     var dateTime = moment.unix(model.get('dateTime') || moment.unix());
     dateTime = dateTime.utcOffset((model.get('offset') / 60) || 0);
 
+    var timezoneName = model.get('timezone');
+    var candidateTZ = TimeTools.TimeZones.filter(function(tz) {
+      return tz.name === timezoneName;
+    });
+
+    var timezone;
+    if (candidateTZ.length === 0) {
+      // Select timezone based on "closer to" offset heuristic
+      //  rather than explicit name
+      var offset = model.get('offset') || 0;
+      timezone = TimeTools.pickTimeZoneFromOffset(offset);
+    } else {
+      timezone = candidateTZ[0];
+    }
+
+    function formatTimeZoneSelectorValue(tz) {
+      return  "(UTC" + tz.offset + ") " + tz.value;
+    }
+
     return (
       <div>
         <div className="row">
@@ -106,7 +126,7 @@ module.exports = React.createBackboneClass({
           <label htmlFor="custom-ntp-radio">
             <strong>Use custom NTP server</strong>
           </label>
-          
+
           <input
             type="radio"
             id="manual-time-source"
@@ -146,49 +166,21 @@ module.exports = React.createBackboneClass({
           <label className="col-3 u-float--left" htmlFor="time-zone-select">
             <strong>Timezone</strong>
           </label>
+
           <select
             className="col-5 u-float--right"
             id="time-zone-select"
-            value={model.get('timezone')}
+            value={timezone.name}
             onChange={this.timezoneSelectChanged}>
-            <option value="Pacific/Kiritimati">(UTC+14:00) Samoa and Christmas Island/Kiribati</option>
-            <option value="Pacific/Chatham">(UTC+12:45) Chatham Islands/New Zealand</option>
-            <option value="Pacific/Auckland">(UTC+12:00) New Zealand/Auckland</option>
-            <option value="Pacific/Fiji">(UTC+12:00) Fiji</option>
-            <option value="Australia/Melbourne">(UTC+10:00) Australia/Sydney, Melbourne</option>
-            <option value="Australia/Brisbane">(UTC+10:00) Australia/Brisbane</option>
-            <option value="Australia/Adelaide">(UTC+09:30) Australia/Adelaide, Darwin</option>
-            <option value="Asia/Tokyo">(UTC+09:00) Japan/Tokyo</option>
-            <option value="Asia/Pyongyang">(UTC+08:30) North Korea/Pyongyang</option>
-            <option value="Australia/Perth">(UTC+08:00) Australia/Perth</option>
-            <option value="Asia/Shanghai">(UTC+08:00) China/Beijing Time</option>
-            <option value="Asia/Jakarta">(UTC+07:00) Indonesia/Jakarta</option>
-            <option value="Indian/Cocos">(UTC+06:30) Cocos Islands</option>
-            <option value="Asia/Dhaka">(UTC+06:00) Bangladesh/Dhaka</option>
-            <option value="Asia/Kathmandu">(UTC+05:45) Nepal/Kathmandu</option>
-            <option value="Asia/Kolkata">(UTC+05:30) India</option>
-            <option value="Asia/Karachi">(UTC+05:00) Pakistan/Karachi </option>
-            <option value="Asia/Kabul">(UTC+04:30) Afghanistan/Kabul</option>
-            <option value="Asia/Dubai">(UTC+04:00) Dubai</option>
-            <option value="Asia/Tehran">(UTC+03:30) Iran/Tehran</option>
-            <option value="Europe/Moscow">(UTC+03:00) Russia/Moscow</option>
-            <option value="Africa/Cairo">(UTC+02:00) Egypt/Cairo</option>
-            <option value="Europe/Brussels">(UTC+01:00) Belgium/Brussels</option>
-            <option value="Europe/London">(UTC+00:00) United Kingdom/London</option>
-            <option value="UTC">(UTC+00:00) UTC</option>
-            <option value="Atlantic/Cape_Verde">(UTC-01:00) Cabo Verde/Praia</option>
-            <option value="America/St_Johns">(UTC-02:30) Canada/St. John's</option>
-            <option value="Ameraica/Buenos_Aires">(UTC-03:00) Argentina/Buenos Aires</option>
-            <option value="America/New_York">(UTC-04:00) America/New York</option>
-            <option value="America/Chicago">(UTC-05:00) America/Chicago</option>
-            <option value="America/Mexico_City">(UTC-06:00) Mexico/Mexico City</option>
-            <option value="America/Los_Angeles">(UTC-07:00) America/Los Angeles</option>
-            <option value="America/Anchorage">(UTC-08:00) America/Anchorage</option>
-            <option value="Pacific/Marquesas">(UTC-09:30) Marquesas Islands</option>
-            <option value="Pacific/Honolulu">(UTC-10:00) United States/Honolulu</option>
-            <option value="US/Samoa">(UTC-11:00) American Samoa</option>
+
+            {TimeTools.TimeZones.map(function(tz) {
+              return (
+                  <option key={tz.name} value={tz.name}> {formatTimeZoneSelectorValue(tz)} </option>
+              );
+            })}
+
           </select>
-        </div>
+      </div>
 
         <div className="row u-vertically-center">
           <label className="col-3 u-float--left" htmlFor="ntp-server-name">
