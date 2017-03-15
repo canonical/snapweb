@@ -141,6 +141,7 @@ module.exports = React.createBackboneClass({
 
     // Disable the power & factory settings for now
     /**
+        <hr />
         <PowerInfo
           model={model}
           restart={() => this.restart()}
@@ -153,7 +154,6 @@ module.exports = React.createBackboneClass({
     return (
       <div>
         <DeviceInfo model={model} />
-        <hr />
 
         {this.state.confirmAction &&
           <ConfirmationDialog
