@@ -24,7 +24,7 @@ ApplicationWindow {
   property string url: "https://" + "HTTPS_ADDR" // set from build.sh
 
   property string cookiePath: {
-      var arg = "CookiePath="
+      var arg = "--cookie_path="
       var args = Qt.application.arguments
       var argsLength = Qt.application.arguments.length
 
