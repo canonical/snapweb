@@ -17,7 +17,7 @@ module.exports = React.createClass({
 
     return (
     <div className="col-1 u-hidden--small">
-      <div className={deckClass}>
+      <div className={deckClass} style={{float: 'right'}}>
         <span
           className="p-view-filters__icon"
           onClick={this.gridClicked}>
