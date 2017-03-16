@@ -7,7 +7,7 @@
       </div>
       <div class="col-6">
         <h1 class="b-snap__title">{{ name }}</h1>
-        <div class="b-snap__developer">By {{ developer }}</div>
+        <div class="b-snap__developer">{{ developer }}</div>
       </div>
     </div>
 
@@ -52,10 +52,12 @@
           <span class="b-snap__version u-float--right">{{ version }}</span>
       </li>
 
+{{#if channel}}
       <li class="p-list__item">
           Channel
           <span class="b-snap__version u-float--right">{{ channel }}</span>
       </li>
+{{/if}}
 {{#if install_date}}
       <li class="p-list__item">
           Updated
@@ -80,6 +82,8 @@
     <h3>About</h3>
       {{#if description}}
       <p>{{{ description }}}</p>
+      {{else}}
+      <p><i>No description</i></p>
       {{/if}}
     </div>
 </div>
