@@ -107,7 +107,6 @@ func (h *Handler) allPackages(snapCondition int, query string, private bool, sec
 	} else {
 		opts := &client.FindOptions{
 			Query:   url.QueryEscape(query),
-			Prefix:  !private,
 			Private: private,
 			Section: section,
 		}
@@ -124,8 +123,6 @@ func (h *Handler) allPackages(snapCondition int, query string, private bool, sec
 			snapPkgs,
 			h.snapToPayload(snap))
 	}
-
-	sort.Sort(snapPkgsByName(snapPkgs))
 
 	return snapPkgs, nil
 }

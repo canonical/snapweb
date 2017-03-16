@@ -33,6 +33,23 @@ func (s *FilterSuite) TestFilterCreation(c *C) {
 
 	f := NewFilter()
 	c.Assert(f, NotNil)
+	c.Assert(f.IsAllowed(nil), Equals, false)
+}
+
+func (s *FilterSuite) TestAllowInvalidNetworkCIDR(c *C) {
+
+	f := NewFilter()
+	c.Assert(f, NotNil)
+
+	invalidCIDRs := []string{
+		"",
+		"11111.0.",
+		"12:36:789a:1::/",
+	}
+
+	for _, cidr := range invalidCIDRs {
+		c.Assert(f.AllowNetwork(cidr), NotNil)
+	}
 }
 
 func (s *FilterSuite) TestFilterAddNetwork(c *C) {
@@ -43,6 +60,11 @@ func (s *FilterSuite) TestFilterAddNetwork(c *C) {
 	f.AllowNetwork("127.0.0.1/24")
 	res := f.IsAllowed(net.ParseIP("127.0.0.1"))
 	c.Assert(res, Equals, true)
+
+	// This second call is a "whitebox" way to use the cache
+	res = f.IsAllowed(net.ParseIP("127.0.0.1"))
+	c.Assert(res, Equals, true)
+
 	not := f.IsAllowed(net.ParseIP("192.168.0.1"))
 	c.Assert(not, Equals, false)
 

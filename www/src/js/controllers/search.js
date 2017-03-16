@@ -22,13 +22,6 @@ module.exports = {
         'q': q
       }),
       success: function(snaplist) {
-        var match = snaplist.where({'name': q})
-        if (match.length === 1) {
-          snaplist = new Backbone.Collection(snaplist.filter(function(s) {
-            return s.get('name') !== q;
-          }));
-        }
-
         snaplist = SnaplistTools.updateInstalledStates(snaplist)
         var view =  new SearchLayoutView({
           model: new Backbone.Model({
@@ -43,7 +36,6 @@ module.exports = {
           }),
           sectionsPromise: sp,
           collection: snaplist,
-          matchedSnap: match.length === 1 ? match[0] : null,
         });
         chan.command('set:content', {backboneView: view});
       }

@@ -18,6 +18,7 @@
 package snappy
 
 import (
+	"fmt"
 	"log"
 	"net"
 	"net/http"
@@ -58,15 +59,16 @@ func (f *NetFilter) IsAllowed(ip net.IP) bool {
 }
 
 // AllowNetwork adds a network definition (CIDR format) to the list of allowed networks
-func (f *NetFilter) AllowNetwork(network string) {
-
+func (f *NetFilter) AllowNetwork(network string) error {
 	// look for a network expression
 	if _, net, err := net.ParseCIDR(network); err == nil {
 		f.allowedNetworks = append(f.allowedNetworks, net)
 	} else {
 		log.Println("unable to parse", network, "ignoring it")
+		return fmt.Errorf("Invalid network CIDR %s", network)
 	}
 
+	return nil
 }
 
 // AddLocalNetworks enumerates local interfaces and adds the networks they belong to
@@ -74,7 +76,6 @@ func (f *NetFilter) AllowNetwork(network string) {
 // connections originating from any of the local networks are authorized,
 // anything else is refused
 func (f *NetFilter) AddLocalNetworks() {
-
 	iflist, err := net.Interfaces()
 	if err != nil {
 		log.Println("Unable to enumerate network interfaces", err.Error())
@@ -89,7 +90,6 @@ func (f *NetFilter) AddLocalNetworks() {
 // AddLocalNetworkForInterface adds the network for a given interface to the list of allowed
 // networks
 func (f *NetFilter) AddLocalNetworkForInterface(ifname string) {
-
 	intf, err := net.InterfaceByName(ifname)
 	if err != nil {
 		log.Println("Error with interface", ifname, err.Error())
@@ -120,7 +120,6 @@ func (f *NetFilter) AddLocalNetworkForInterface(ifname string) {
 
 // FilterHandler wraps and limits access to an http.Handler with the help of a NetFilter
 func (f *NetFilter) FilterHandler(handler http.Handler) http.Handler {
-
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		host, _, _ := net.SplitHostPort(r.RemoteAddr)
 		ip := net.ParseIP(host)
