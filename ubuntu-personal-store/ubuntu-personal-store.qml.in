@@ -23,6 +23,20 @@ ApplicationWindow {
   id: main
   property string url: "https://" + "HTTPS_ADDR" // set from build.sh
 
+  property string cookiePath: {
+      var arg = "CookiePath="
+      var args = Qt.application.arguments
+      var argsLength = Qt.application.arguments.length
+
+      for (var i = 0; i < argsLength; i++) {
+          if (args[i].indexOf(arg) === 0) {
+              return args[i].substring(arg.length)
+          }
+      }
+
+      return "" // If no cookie path set, don't store cookies at all
+  }
+
   title: "Ubuntu Personal Store"
   width: 500
   height: 500
@@ -50,7 +64,7 @@ ApplicationWindow {
     focus: true
 
     context: WebContext {
-        dataPath: Qt.application.arguments[1]
+        dataPath: main.cookiePath
         sessionCookieMode: WebContext.SessionCookieModeRestored
     }
 
