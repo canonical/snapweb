@@ -101,7 +101,6 @@ func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Error: %s", err)
 		return
 	}
-
 	h.jsonResponseOrError(payload, w)
 }
 

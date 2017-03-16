@@ -77,18 +77,6 @@ var storePage = Object.create(basepage, {
             return browser.elements(this.sectionSnapListSelector);
         }
     },
-
-    exactSnapMatchSelector: {
-        get: function() {
-            return '.region-matched-snap-result .row';
-        }
-    },
-    
-    exactMatch: {
-        get: function() {
-            return browser.element(this.exactSnapMatchSelector);
-        }
-    },
 });
 
 module.exports = storePage

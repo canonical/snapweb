@@ -47,6 +47,7 @@ func (s *StateTrackerSuite) TestTranslateStatus(c *C) {
 		{client.StatusActive, StatusActive},
 		{client.StatusAvailable, StatusUninstalled},
 		{client.StatusRemoved, StatusUninstalled},
+		{"priced", StatusPriced},
 	}
 
 	for _, tt := range tests {

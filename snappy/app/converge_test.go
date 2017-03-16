@@ -294,8 +294,9 @@ func (s *AllPackagesSuite) TestHasSnaps(c *C) {
 	snaps, err := s.h.allPackages(availableSnaps, "", false, "")
 	c.Assert(err, IsNil)
 	c.Assert(snaps, HasLen, 2)
-	c.Assert(snaps[0].Name, Equals, "app1")
-	c.Assert(snaps[1].Name, Equals, "app2")
+	// Not sorted, presented as is
+	c.Assert(snaps[0].Name, Equals, "app2")
+	c.Assert(snaps[1].Name, Equals, "app1")
 }
 
 func (s *AllPackagesSuite) TestFormatInstallDate(c *C) {
