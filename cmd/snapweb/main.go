@@ -29,13 +29,21 @@ import (
 
 var logger *log.Logger
 
-const (
-	httpAddr  string = ":4200"
-	httpsAddr string = ":4201"
-)
+var httpAddr  string = ":4200"
+var httpsAddr string = ":4201"
 
 func init() {
 	logger = log.New(os.Stderr, "Snapweb: ", log.Ldate|log.Ltime|log.Lshortfile)
+	var httpAddrEnv = os.Getenv("SNAPWEB_HTTP")
+	var httpsAddrEnv = os.Getenv("SNAPWEB_HTTPS")
+	if (httpAddrEnv != "") {
+		httpAddr = httpAddrEnv
+		logger.Println("Snapweb http set to ", httpAddr)
+	}
+	if (httpsAddrEnv != "") {
+		httpsAddr = httpsAddrEnv
+		logger.Println("Snapweb https set to ", httpsAddr)
+	}
 }
 
 func redir(w http.ResponseWriter, req *http.Request) {
