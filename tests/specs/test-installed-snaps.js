@@ -89,7 +89,7 @@ describe('Installed Snaps Page - Verify that', function() {
         snap.click();
         browser.waitForVisible(snapDetailsPage.snapTitleElement);
         expect(snapDetailsPage.snap.getText(), "Failed to open snap's about page").to.equal(snap_name);
-        assert.isNotNull(snapDetailsPage.snapDetail(4).value, "Snap has no update date");
+        assert.isNotNull(snapDetailsPage.snapDetail(3).value, "Snap has no update date");
     });
 
     xit('snapweb updates the page when snap is installed/removed direclty on the device', function() {
