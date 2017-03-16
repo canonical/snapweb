@@ -216,7 +216,7 @@ func (s *HandlersSuite) TestModelInfoHandler(c *C) {
 	err = json.Unmarshal([]byte(body), &deviceInfos)
 	c.Assert(err, IsNil)
 
-	c.Assert(deviceInfos["deviceName"], Equals, "Device Name")
+	c.Assert(deviceInfos["deviceName"], Equals, "")
 	c.Assert(deviceInfos["brand"], Equals, "Unknown")
 	c.Assert(deviceInfos["model"], Equals, "Unknown")
 	c.Assert(deviceInfos["serial"], Equals, "Unknown")

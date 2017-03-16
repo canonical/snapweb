@@ -30,12 +30,10 @@ module.exports = Backbone.Marionette.LayoutView.extend({
            .done(showSearchHeaderView)
            .fail(showSearchHeaderView);
 
-    if (this.collection && this.collection.length >= 1) {
-      this.showChildView('resultsRegion', new BaskView({
-        model: this.model,
-        collection: this.collection
-      }));
-    }
+    this.showChildView('resultsRegion', new BaskView({
+      model: this.model,
+      collection: this.collection
+    }));
   },
 
   regions: {
