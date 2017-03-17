@@ -1,5 +1,5 @@
 <div class="p-strip--light">
-    <div class="row">
+    <div class="row" style="padding-bottom: 0">
       <div class="col-2">
         <div class="b-icon-wrapper">
           <img class="b-icon" src="{{ icon }}" width="125" height="125">
@@ -7,18 +7,19 @@
       </div>
       <div class="col-6">
         <h1 class="b-snap__title">{{ name }}</h1>
-        <div class="b-snap__developer">By {{ developer }}</div>
+        <div class="b-snap__developer">{{ developer }}</div>
       </div>
     </div>
 
-    <div class="row">
+    <div class="row" style="padding: 0; padding-bottom: 0.5em">
       <div class="col-7"></div>
 
-      <div id="enabler-button" class="col-2" style="display: {{#if isInstalled}}block{{else}}none{{/if}}">
-        {{> enabler}}
-      </div>
-
-      <div id="installer-button" class="{{#if isInstalled}}col-2{{else}}col-5{{/if}}">
+<!-- Disabled for now, design needs fixing
+        <div id="enabler-button" class="col-2" style="display: {{#if isInstalled}}block{{else}}none{{/if}}">
+          {{> enabler}}
+        </div>
+-->
+      <div id="installer-button" class="col-5">
         {{> installer}}
 
         <div id="progressbarwrapper" style="border: 1px; border-radius: 10px; margin-top: 1em; width: 100%; height: 0.5em">
@@ -51,10 +52,13 @@
           <span class="b-snap__version u-float--right">{{ version }}</span>
       </li>
 
+{{#if channel}}
       <li class="p-list__item">
           Channel
           <span class="b-snap__version u-float--right">{{ channel }}</span>
       </li>
+{{/if}}
+
 {{#if install_date}}
       <li class="p-list__item">
           Updated
@@ -65,11 +69,11 @@
 
   </div>
 
-  <div class="col-5" style="border: 1px dotted #cdcdcd; padding: 1em 1em; height: 15em; overflow-x: hidden; overflow-y: hidden;">
-    <h3 class="">Interfaces</h3>
-    <div id="interface-list">
-      <li>N/A</li>
-    </div>
+  <div class="col-4">
+    <ul class="p-list--divided">
+      <li class="p-list__item">Interfaces</li>
+      <li class="p-list__item" id="interface-list">N/A</li>
+    </ul>
   </div>
 
 </div>
@@ -79,6 +83,8 @@
     <h3>About</h3>
       {{#if description}}
       <p>{{{ description }}}</p>
+      {{else}}
+      <p><i>No description</i></p>
       {{/if}}
     </div>
 </div>

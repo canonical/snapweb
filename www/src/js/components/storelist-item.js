@@ -21,7 +21,7 @@ module.exports = React.createBackboneClass({
       <div className={rootDivClass}>
         <a href={SnapTools.getShowSnapUrlFor(model)}>
           <img className="p-card__icon" src={model.get('icon')} width="125" height="125" />
-          <h3 id="js-snap-title" className="p-card__title">{model.get('name')}</h3>
+        <h3 id="js-snap-title" style={{whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis"}} className="p-card__title">{model.get('name')}</h3>
           <ul className="p-list">
             {version &&
               <li className="p-list__item">Version: {version}</li>}

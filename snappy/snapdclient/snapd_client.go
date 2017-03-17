@@ -47,6 +47,7 @@ type SnapdClient interface {
 	Change(id string) (*client.Change, error)
 	Enable(id string, options *client.SnapOptions) (string, error)
 	Disable(id string, options *client.SnapOptions) (string, error)
+	Abort(id string) (*client.Change, error)
 }
 
 // ClientAdapter adapts our expectations to the snapd client API.
@@ -136,6 +137,11 @@ func (a *ClientAdapter) Disable(name string, options *client.SnapOptions) (strin
 	return a.snapdClient.Disable(name, options)
 }
 
+// Abort attempts to abort a change that is in not yet ready.
+func (a *ClientAdapter) Abort(id string) (*client.Change, error) {
+	return a.snapdClient.Abort(id)
+}
+
 // internal
 func readNTPServer() string {
 	timesyncd, err := ini.Load(timesyncdConfigurationFilePath)
@@ -188,8 +194,6 @@ func GetModelInfo(c SnapdClient) (map[string]interface{}, error) {
 		allInterfaces = append(allInterfaces, slot.Name)
 	}
 
-	deviceName := "Device Name"
-
 	// Model Info
 	brandName := "Unknown"
 	modelName := "Unknown"
@@ -216,7 +220,6 @@ func GetModelInfo(c SnapdClient) (map[string]interface{}, error) {
 	}
 
 	return map[string]interface{}{
-		"DeviceName": deviceName,
 		"Brand":      brandName,
 		"Model":      modelName,
 		"Serial":     serialNumber,

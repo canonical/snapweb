@@ -67,7 +67,7 @@ var fetchSnapList = function(title, options) {
 
 module.exports = {
   index: function() {
-    fetchSnapList('Featured snaps')
+    fetchSnapList('Featured snaps', {data: $.param({'section': 'featured'})})
   },
   section: function(s) {
     // Special case for private section which is not a section

@@ -5,10 +5,12 @@
 # Arguments:
 #   [arch ...]: The architectures to build for. By default it will build for
 #               amd64, arm64, armhf and i386.
+#
+#   [--ups]:    Build the ubuntu-personal-store snap as well.
 
 set -e
 
-if [ "$#" -eq 0 ]; then
+if [ "$#" -eq 0 ] || ([ "$#" -eq 1 ] && [ "$1" = "--ups" ]); then
     architectures=( amd64 arm64 armhf i386 )
 else
     architectures=( "$@" )
@@ -44,6 +46,8 @@ get_platform_abi() {
 
 gobuild() {
     arch=$1
+    httpAddr=$2
+    httpsAddr=$3
 
     plat_abi=$(get_platform_abi $arch)
 
@@ -55,7 +59,7 @@ gobuild() {
 
     mkdir -p $output_dir
     cd $output_dir
-    GOARCH=$arch GOARM=7 CGO_ENABLED=1 CC=${plat_abi}-gcc go build -ldflags "-extld=${plat_abi}-gcc" github.com/snapcore/snapweb/cmd/snapweb
+    GOARCH=$arch GOARM=7 CGO_ENABLED=1 CC=${plat_abi}-gcc go build -ldflags "-extld=${plat_abi}-gcc -X main.httpAddr=${httpAddr} -X main.httpsAddr=${httpsAddr}" github.com/snapcore/snapweb/cmd/snapweb
     GOARCH=$arch GOARM=7 CGO_ENABLED=1 CC=${plat_abi}-gcc go build -o generate-token -ldflags "-extld=${plat_abi}-gcc" $srcdir/cmd/generate-token/main.go
     cp generate-token ../../
     cd - > /dev/null
@@ -75,6 +79,10 @@ godeps -u dependencies.tsv
 
 # build one snap per arch
 for ARCH in "${architectures[@]}"; do
+    if [ $ARCH = "--ups" ]; then
+        continue
+    fi
+
     echo "Building for ${ARCH}..."
     builddir="${top_builddir}/${ARCH}"
     mkdir -p "$builddir"
@@ -90,24 +98,37 @@ for ARCH in "${architectures[@]}"; do
 
     # *sigh* armhf in snappy is the go arm arch
     if [ $ARCH = armhf ]; then
-        gobuild arm
+        BUILD_ARCH="arm"
     # and 386 vs i386
     elif [ $ARCH = i386 ]; then
-        gobuild 386
+        BUILD_ARCH="386"
     else
-        gobuild $ARCH
+        BUILD_ARCH=$ARCH
     fi
+
+    gobuild $BUILD_ARCH
 
     cd "$orig_pwd"
     snapcraft snap $builddir
 
-    if [[ $* == *--ups* ]]; then
+    # TODO: We only support amd64 ups builds for now -Need a cross-compile fix for "after: [desktop-qt5]"
+    if [[ $* == *--ups* ]] && [ $ARCH = amd64 ]; then
+        HTTP_ADDR="127.0.0.1:5200"
+        HTTPS_ADDR="127.0.0.1:5201"
+
         # now build ubuntu-personal-store
+        cd $builddir
+        gobuild $BUILD_ARCH $HTTP_ADDR $HTTPS_ADDR
+
         cd $orig_pwd/ubuntu-personal-store
 
         cp snapcraft.yaml.in snapcraft.yaml
         sed -i "s/\(:\)UNKNOWN_ARCH/\1$ARCH/" snapcraft.yaml
 
+        cp ubuntu-personal-store.qml.in ubuntu-personal-store.qml
+        sed -i "s/\(\" + \"\)HTTPS_ADDR/\1$HTTPS_ADDR/" ubuntu-personal-store.qml
+
+        snapcraft clean
         snapcraft prime
 
         cp -r $orig_pwd/ubuntu-personal-store/prime/* $builddir

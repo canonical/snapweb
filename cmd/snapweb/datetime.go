@@ -183,9 +183,18 @@ func getTimeInfo() (map[string]interface{}, error) {
 		return map[string]interface{}{}, err
 	}
 
+	location, err := time.LoadLocation(timezone.Value().(string))
+	if err != nil {
+		return map[string]interface{}{}, err
+	}
+
+	now := time.Now().In(location) // Pick up changes in timezone
+	_, offset := now.Zone()
+
 	return map[string]interface{}{
-		"DateTime":  time.Now().Unix(),
+		"DateTime":  now.Unix(),
 		"Timezone":  timezone.Value().(string),
+		"Offset":    offset,
 		"NTP":       ntp.Value().(bool),
 		"NTPServer": readNTPServer(),
 	}, nil

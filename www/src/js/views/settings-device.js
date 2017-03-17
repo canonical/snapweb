@@ -14,6 +14,12 @@ const DeviceInfoLine = ({id, name, value}) =>
     <div className="col-6" id={id}>{value}</div>
   </div>;
 
+function DeviceName(props) {
+  return props && props.deviceName ?
+    <DeviceInfoLine id="info-device-name" name="Device name" value={props.deviceName} />
+    : null;
+}
+
 function DeviceInfo({model}) {
   var interfaces = model.get('interfaces') || [];
   var interfacesText = '';
@@ -23,13 +29,13 @@ function DeviceInfo({model}) {
     interfacesText = interfaces.join(', ');
   }
 
+  var deviceName = model.get('deviceName');
   return (
     <div>
       <div className="row">
           <h2>Device information</h2>
       </div>
-      <DeviceInfoLine id="info-device-name"
-          name="Device name" value={model.get('deviceName')} />
+      <DeviceName deviceName={deviceName} />
       <DeviceInfoLine id="info-brand"
           name="Brand" value={model.get('brand')} />
       <DeviceInfoLine id="info-model"
@@ -139,20 +145,21 @@ module.exports = React.createBackboneClass({
   render: function() {
     var model = this.props.model;
 
-    return (
-      <div>
-        <DeviceInfo model={model} />
+    // Disable the power & factory settings for now
+    /**
         <hr />
-
         <PowerInfo
           model={model}
           restart={() => this.restart()}
           powerOff={() => this.powerOff()}
          />
         <hr />
+        <FactorySettings model={model} /> <hr />
+    */
 
-        <FactorySettings model={model} />
-        <hr />
+    return (
+      <div>
+        <DeviceInfo model={model} />
 
         {this.state.confirmAction &&
           <ConfirmationDialog

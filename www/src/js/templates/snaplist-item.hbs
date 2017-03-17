@@ -10,12 +10,12 @@
 </a>
 {{/if}}
 
-<h3 id="js-snap-title" class="p-card__title js-snap-title">{{ name }}</h3>
+<h3 id="js-snap-title" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis" class="p-card__title js-snap-title">{{ name }}</h3>
 
 <ul class="p-list--divided">
     {{#unless addSnapItem}}
         {{#if developer}}
-          <li class="p-list__item">By {{ developer }}</li>
+          <li class="p-list__item">{{ developer }}</li>
         {{/if}}
     {{/unless}}
 

@@ -47,6 +47,7 @@ func (s *StateTrackerSuite) TestTranslateStatus(c *C) {
 		{client.StatusActive, StatusActive},
 		{client.StatusAvailable, StatusUninstalled},
 		{client.StatusRemoved, StatusUninstalled},
+		{"priced", StatusPriced},
 	}
 
 	for _, tt := range tests {
@@ -150,4 +151,19 @@ func (s *StateTrackerSuite) TestTrackDisable(c *C) {
 	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusDisabling})
 	snap.Status = client.StatusInstalled
 	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusInstalled})
+}
+
+func (s *StateTrackerSuite) TestCancelTrackingRunningOperation(c *C) {
+	snap := &client.Snap{Name: "name", Status: client.StatusActive}
+	s.t.TrackDisable("", snap)
+	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusDisabling})
+	s.t.CancelTrackingFor("name")
+	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusActive})
+}
+
+func (s *StateTrackerSuite) TestCancelTrackingNonRunningOperation(c *C) {
+	snap := &client.Snap{Name: "name", Status: client.StatusActive}
+	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusActive})
+	s.t.CancelTrackingFor("name")
+	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusActive})
 }

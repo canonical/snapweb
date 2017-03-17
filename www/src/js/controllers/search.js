@@ -22,8 +22,6 @@ module.exports = {
         'q': q
       }),
       success: function(snaplist) {
-        var match = snaplist.where({'name': q})
-
         snaplist = SnaplistTools.updateInstalledStates(snaplist)
         var view =  new SearchLayoutView({
           model: new Backbone.Model({
@@ -37,8 +35,7 @@ module.exports = {
             sections: sections,
           }),
           sectionsPromise: sp,
-          collection: match.length === 1 ? null : snaplist,
-          matchedSnap: match.length === 1 ? match[0] : null,
+          collection: snaplist,
         });
         chan.command('set:content', {backboneView: view});
       }

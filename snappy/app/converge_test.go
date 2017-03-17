@@ -294,8 +294,9 @@ func (s *AllPackagesSuite) TestHasSnaps(c *C) {
 	snaps, err := s.h.allPackages(availableSnaps, "", false, "")
 	c.Assert(err, IsNil)
 	c.Assert(snaps, HasLen, 2)
-	c.Assert(snaps[0].Name, Equals, "app1")
-	c.Assert(snaps[1].Name, Equals, "app2")
+	// Not sorted, presented as is
+	c.Assert(snaps[0].Name, Equals, "app2")
+	c.Assert(snaps[1].Name, Equals, "app1")
 }
 
 func (s *AllPackagesSuite) TestFormatInstallDate(c *C) {
@@ -378,4 +379,34 @@ func (s *SnapOperationTrackingSuite) TestEnableDisableNonLocalSnapsWithErr(c *C)
 
 	err = s.h.disable(fakeSnap.Name)
 	c.Assert(err, NotNil)
+}
+
+func (s *SnapOperationTrackingSuite) TestAbortOperation(c *C) {
+	fakeSnap := common.NewDefaultSnap()
+
+	fakeSnap.Status = "available"
+	s.c.Snaps = []*client.Snap{fakeSnap}
+
+	s.c.ChangeID = "changeid"
+	err := s.h.installPackage(fakeSnap.Name)
+	c.Assert(err, IsNil)
+
+	err = s.h.abortRunningOperation(fakeSnap.Name)
+	c.Assert(err, IsNil)
+	c.Assert(s.c.AbortedChangeID, Equals, "changeid")
+}
+
+func (s *SnapOperationTrackingSuite) TestAbortOperationWithErr(c *C) {
+	fakeSnap := common.NewDefaultSnap()
+
+	fakeSnap.Status = "available"
+	s.c.Snaps = []*client.Snap{}
+
+	err := s.h.abortRunningOperation(fakeSnap.Name)
+	c.Assert(err, NotNil)
+
+	s.c.Snaps = []*client.Snap{fakeSnap}
+	err = s.h.abortRunningOperation(fakeSnap.Name)
+	c.Assert(err, NotNil)
+	c.Assert(s.c.AbortedChangeID, Equals, "")
 }

@@ -10,4 +10,4 @@ export APP_ID=ubuntu-personal-store
 # Remove problematic environment variable
 unset QT_QPA_PLATFORM
 
-exec "$SNAP/bin/desktop-launch" "qmlscene" "$SNAP/ubuntu-personal-store.qml"
+exec "$SNAP/bin/desktop-launch" "qmlscene" "--cookie_path=$SNAP_USER_DATA" "$SNAP/ubuntu-personal-store.qml"

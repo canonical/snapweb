@@ -107,7 +107,6 @@ func (h *Handler) allPackages(snapCondition int, query string, private bool, sec
 	} else {
 		opts := &client.FindOptions{
 			Query:   url.QueryEscape(query),
-			Prefix:  !private,
 			Private: private,
 			Section: section,
 		}
@@ -124,8 +123,6 @@ func (h *Handler) allPackages(snapCondition int, query string, private bool, sec
 			snapPkgs,
 			h.snapToPayload(snap))
 	}
-
-	sort.Sort(snapPkgsByName(snapPkgs))
 
 	return snapPkgs, nil
 }
@@ -156,6 +153,28 @@ func (h *Handler) installPackage(name string) error {
 	changeID, err = h.snapdClient.Install(name, nil)
 
 	h.stateTracker.TrackInstall(changeID, snap)
+
+	return err
+}
+
+func (h *Handler) abortRunningOperation(name string) error {
+	snap, err := h.getSnap(name)
+	if err != nil {
+		return err
+	}
+	if snap == nil {
+		return errors.New("Invalid snap name")
+	}
+
+	tracked, changeID := h.stateTracker.IsTrackedForRunningOperation(snap)
+	if !tracked {
+		return fmt.Errorf("No operation to abort for snap %s", name)
+	}
+
+	_, err = h.snapdClient.Abort(changeID)
+	if err == nil {
+		h.stateTracker.CancelTrackingFor(name)
+	}
 
 	return err
 }
