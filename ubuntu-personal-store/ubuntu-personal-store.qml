@@ -29,7 +29,7 @@ Window {
     id: webView
     focus: true
 
-    url: "http://127.0.0.1:4200"
+    url: "http://127.0.0.1:5200"
 
     function isNewForegroundWebViewDisposition(disposition) {
         return disposition === Oxide.NavigationRequest.DispositionNewPopup ||
