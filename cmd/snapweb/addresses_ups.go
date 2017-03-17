@@ -19,5 +19,5 @@
 
 package main
 
-var httpAddr  string = ":5200"
-var httpsAddr string = ":5200"
+var httpAddr  string = "127.0.0.1:5200"
+var httpsAddr string = "127.0.0.1:5201"
