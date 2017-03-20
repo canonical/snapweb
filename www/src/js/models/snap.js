@@ -30,7 +30,7 @@ module.exports = Backbone.Model.extend({
 
   urlRoot: CONF.PACKAGES,
 
-  initialize: function() {
+  initialize: function(params) {
     this.on('add sync', function(model, response, opts) {
       var status = model.get('status') || opts.xhr.status;
 
@@ -41,17 +41,40 @@ module.exports = Backbone.Model.extend({
         status === CONF.INSTALL_STATE.ENABLING
       ) {
         _.delay(function(model) {
-          model.fetch();
+          model.fetch({
+            error: function(model, response, opts) {
+              if (response && response.status === 404
+                  && model.get('status') === CONF.INSTALL_STATE.REMOVING) {
+                // Local snaps that dont have store equivalent
+                // meet a 404 when trying to fetch them. Although this
+                // is not a reliable heuristic and we dont have much context
+                // we relay the info that the snap might have been removed
+                // (it could be a real 404).
+                chan.command('snap:removed', model);
+                return;
+              }
+            }
+          });
         }, CONF.INSTALL_POLL_WAIT, model);
       }
 
     });
 
     this.on('error', function(model, response, opts) {
+      // Very special case, fetching results on an uninstalling snap with a 404 response
+      // are not considered errors.
+      if (response && response.status === 404
+          && model.get('status') === CONF.INSTALL_STATE.REMOVING) {
+        return;
+      }
+
       var json = {}
       try {
         json = JSON.parse(response.responseText);
-      } catch(e) {}
+      } catch(e) {
+        // defaults to content
+        json.message = response.responseText;
+      }
       var previous = model.previousAttributes();
       var message;
       if (json && json.message) {

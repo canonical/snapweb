@@ -122,15 +122,14 @@ describe('Installed Snaps Page - Verify that', function() {
         snap.waitForVisible();
         expect(snap.getText()).to.equal(snap_name);
 
-        //Remove the snap and refresh page
+        //Remove the snap and DO NOT refresh the page
         browser.call(function() {
             return snaputil.removeSnap(snap_name).then(function(res) {
                 expect(res).to.match(re_removed, res);
             });
         });
-        browser.refresh();
 
-        //Check if snap removed is disappeared from the page
+        // The page should have been udpated
         snapslist_snapweb = snapsPage.installedsnaps;
         snapslist_snapweb.value.forEach(function(snap) {
             expect(snap.getText()).to.not.equal(snap_name);
