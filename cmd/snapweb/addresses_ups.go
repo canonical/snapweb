@@ -19,5 +19,7 @@
 
 package main
 
-var httpAddr  string = "127.0.0.1:5200"
-var httpsAddr string = "127.0.0.1:5201"
+const (
+	httpAddr  string = "127.0.0.1:5200"
+	httpsAddr string = "127.0.0.1:5201"
+)
