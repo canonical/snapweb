@@ -1,5 +1,5 @@
 name: ubuntu-personal-store
-version: "0.26"
+version: "0.26.9"
 summary: A beautiful and functional interface for snap management.
 description: This application allows you to browse and install snap packages on your Ubuntu Personal device.
 type: app
