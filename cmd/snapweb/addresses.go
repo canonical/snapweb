@@ -19,7 +19,7 @@
 
 package main
 
-const(
-	 httpAddr  string = ":4200"
-     httpsAddr string = ":4201"
+const (
+	httpAddr  string = ":4200"
+	httpsAddr string = ":4201"
 )
