@@ -21,7 +21,7 @@ import com.canonical.Oxide 1.15 as Oxide
 
 ApplicationWindow {
   id: main
-  property string url: "https://" + "HTTPS_ADDR" // set from build.sh
+  property string url: "https://127.0.0.1:5201"
 
   property string cookiePath: {
       var arg = "--cookie_path="

@@ -46,8 +46,7 @@ get_platform_abi() {
 
 gobuild() {
     arch=$1
-    httpAddr=$2
-    httpsAddr=$3
+    build_mode=$2
 
     plat_abi=$(get_platform_abi $arch)
 
@@ -57,9 +56,14 @@ gobuild() {
         output_dir="bin/$plat_abi"
     fi
 
+    build_tags=""
+    if [ "${build_mode}" = "ubuntu_personal_store" ]; then
+        build_tags="-tags ubuntu_personal_store"
+    fi
+
     mkdir -p $output_dir
     cd $output_dir
-    GOARCH=$arch GOARM=7 CGO_ENABLED=1 CC=${plat_abi}-gcc go build -ldflags "-extld=${plat_abi}-gcc -X main.httpAddr=${httpAddr} -X main.httpsAddr=${httpsAddr}" github.com/snapcore/snapweb/cmd/snapweb
+    GOARCH=$arch GOARM=7 CGO_ENABLED=1 CC=${plat_abi}-gcc go build ${build_tags} github.com/snapcore/snapweb/cmd/snapweb
     GOARCH=$arch GOARM=7 CGO_ENABLED=1 CC=${plat_abi}-gcc go build -o generate-token -ldflags "-extld=${plat_abi}-gcc" $srcdir/cmd/generate-token/main.go
     cp generate-token ../../
     cd - > /dev/null
@@ -113,20 +117,14 @@ for ARCH in "${architectures[@]}"; do
 
     # TODO: We only support amd64 ups builds for now -Need a cross-compile fix for "after: [desktop-qt5]"
     if [[ $* == *--ups* ]] && [ $ARCH = amd64 ]; then
-        HTTP_ADDR="127.0.0.1:5200"
-        HTTPS_ADDR="127.0.0.1:5201"
-
         # now build ubuntu-personal-store
         cd $builddir
-        gobuild $BUILD_ARCH $HTTP_ADDR $HTTPS_ADDR
+        gobuild $BUILD_ARCH "ubuntu_personal_store"
 
         cd $orig_pwd/ubuntu-personal-store
 
         cp snapcraft.yaml.in snapcraft.yaml
         sed -i "s/\(:\)UNKNOWN_ARCH/\1$ARCH/" snapcraft.yaml
-
-        cp ubuntu-personal-store.qml.in ubuntu-personal-store.qml
-        sed -i "s/\(\" + \"\)HTTPS_ADDR/\1$HTTPS_ADDR/" ubuntu-personal-store.qml
 
         snapcraft clean
         snapcraft prime

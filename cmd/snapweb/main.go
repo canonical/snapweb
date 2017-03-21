@@ -29,18 +29,8 @@ import (
 
 var logger *log.Logger
 
-var httpAddr string  // set from go build ldflags
-var httpsAddr string // set from go build ldflags
-
 func init() {
 	logger = log.New(os.Stderr, "Snapweb: ", log.Ldate|log.Ltime|log.Lshortfile)
-
-	if len(httpAddr) == 0 {
-		httpAddr = ":4200"
-	}
-	if len(httpsAddr) == 0 {
-		httpsAddr = ":4201"
-	}
 }
 
 func main() {
