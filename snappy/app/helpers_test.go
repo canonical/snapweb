@@ -27,35 +27,16 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"testing"
 	"time"
 
 	. "gopkg.in/check.v1"
-
-	"github.com/snapcore/snapweb/snappy/app"
 )
 
-func Test(t *testing.T) { TestingT(t) }
+type HelpersSuite struct {}
 
-type HandlersSuite struct {
-	c *snappy.FakeSnapdClient
-}
+var _ = Suite(&HelpersSuite{})
 
-var _ = Suite(&HandlersSuite{})
-
-func (s *HandlersSuite) SetUpTest(c *C) {
-	s.c = &snappy.FakeSnapdClient{}
-
-	s.c.Version.Version = "1000"
-	s.c.Version.Series = "16"
-
-	s.c.Err = nil
-}
-
-func (s *HandlersSuite) TearDownTest(c *C) {
-}
-
-func (s *HandlersSuite) TestLoggingHandler(c *C) {
+func (s *HelpersSuite) TestLoggingHandler(c *C) {
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {})
 	logged := LoggingHandler(handler)
 
@@ -74,7 +55,7 @@ func (s *HandlersSuite) TestLoggingHandler(c *C) {
 	c.Assert(output.String(), Matches, ".*GET /foo\n")
 }
 
-func (s *HandlersSuite) TestPassthroughHandler(c *C) {
+func (s *HelpersSuite) TestPassthroughHandler(c *C) {
 	socketPath := "/tmp/snapd-test.socket"
 	c.Assert(os.MkdirAll(filepath.Dir(socketPath), 0755), IsNil)
 	l, err := net.Listen("unix", socketPath)
@@ -111,7 +92,7 @@ func (s *HandlersSuite) TestPassthroughHandler(c *C) {
 	// TODO: check that we receive Content-Type: json/application
 }
 
-func (s *HandlersSuite) TestSnapwebSignaling(c *C) {
+func (s *HelpersSuite) TestSnapwebSignaling(c *C) {
 	os.Setenv("SNAP_DATA", c.MkDir())
 
 	WritePidFile()

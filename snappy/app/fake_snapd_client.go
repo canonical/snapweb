@@ -156,6 +156,7 @@ func (f *FakeSnapdClient) Disable(name string, options *client.SnapOptions) (str
 func (f *FakeSnapdClient) Abort(id string) (*client.Change, error) {
 	f.AbortedChangeID = id
 	return nil, nil
+}
 
 // SysInfo returns system information
 func (f *FakeSnapdClient) SysInfo() (*client.SysInfo, error) {

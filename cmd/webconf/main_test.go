@@ -31,7 +31,7 @@ import (
 
 	. "gopkg.in/check.v1"
 
-	"github.com/snapcore/snapweb/snappy"
+	"github.com/snapcore/snapweb/snappy/app"
 )
 
 func Test(t *testing.T) { TestingT(t) }

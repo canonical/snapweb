@@ -21,7 +21,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/snapcore/snapweb/snappy"
+	"github.com/snapcore/snapweb/snappy/app"
 
 	. "gopkg.in/check.v1"
 )

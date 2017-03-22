@@ -29,7 +29,7 @@ import (
 	"github.com/snapcore/snapd/dirs"
 
 	"github.com/snapcore/snapweb/avahi"
-	"github.com/snapcore/snapweb/snappy"
+	"github.com/snapcore/snapweb/snappy/app"
 )
 
 var logger *log.Logger
