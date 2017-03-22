@@ -250,7 +250,7 @@ func initURLHandlers(log *log.Logger, config snappy.Config) http.Handler {
 
 	handler.HandleFunc("/", makeMainPageHandler())
 
-	return NewFilterHandlerFromConfig(handler, config)
+	return snappy.NewFilterHandlerFromConfig(handler, config)
 }
 
 // Name of the cookie transporting the access token
@@ -341,31 +341,5 @@ func redirHandler(config snappy.Config) http.Handler {
 			http.StatusSeeOther)
 	})
 
-	return NewFilterHandlerFromConfig(redir, config)
-}
-
-// NewFilterHandlerFromConfig creates a new http.Handler with an integrated NetFilter
-func NewFilterHandlerFromConfig(handler http.Handler, config snappy.Config) http.Handler {
-	if config.DisableIPFilter {
-		return handler
-	}
-
-	f := snappy.NewFilter()
-
-	for _, net := range config.AllowNetworks {
-		f.AllowNetwork(net)
-	}
-
-	for _, ifname := range config.AllowInterfaces {
-		f.AddLocalNetworkForInterface(ifname)
-	}
-
-	// if nothing was specified, default to allowing all local networks
-	if (len(config.AllowNetworks) == 0) &&
-		(len(config.AllowInterfaces) == 0) {
-		logger.Println("Allowing local network access by default")
-		f.AddLocalNetworks()
-	}
-
-	return f.FilterHandler(handler)
+	return snappy.NewFilterHandlerFromConfig(redir, config)
 }
