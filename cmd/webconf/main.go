@@ -106,7 +106,7 @@ func initURLHandlers(log *log.Logger, server net.Listener) http.Handler {
 	if err != nil {
 		logger.Fatal("Configuration error", err)
 	}
-	
+
 	return snappy.NewFilterHandlerFromConfig(handler, config)
 }
 
