@@ -19,6 +19,7 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -95,51 +96,36 @@ func writeNTPServer(ntpServer string) error {
 	return saveTimeSyncd(timesyncd)
 }
 
+var callDbusEndpoint = func(o dbus.BusObject, target string, v interface{}) error {
+	return o.Call(target, 0, v, false, false).Err
+}
+
+func updateTimeDate(verb string, v interface{}) error {
+	bus, err := dbus.SystemBus()
+	if err != nil {
+		return err
+	}
+	timedatectl := bus.Object("org.freedesktop.timedate1", "/org/freedesktop/timedate1")
+	target := fmt.Sprintf("org.freedesktop.timedate1.%s", verb)
+	return callDbusEndpoint(timedatectl, target, v)
+}
+
 func setTimeInfo(patch map[string]interface{}) error {
 	for k, v := range patch {
 		if k == "ntp" {
 			ntp := v.(bool)
-
-			bus, err := dbus.SystemBus()
-			if err != nil {
-				return err
-			}
-
-			timedatectl := bus.Object("org.freedesktop.timedate1", "/org/freedesktop/timedate1")
-			call := timedatectl.Call("org.freedesktop.timedate1.SetNTP", 0, ntp, false)
-			if call.Err != nil {
-				return call.Err
-			}
+			return updateTimeDate("SetNTP", ntp)
 		} else if k == "ntpServer" {
 			if err := writeNTPServer(v.(string)); err != nil {
 				return err
 			}
 		} else if k == "dateTime" {
 			dateTime := v.(float64) * 1000000
+			return updateTimeDate("SetTime", int64(dateTime))
 
-			bus, err := dbus.SystemBus()
-			if err != nil {
-				return err
-			}
-
-			timedatectl := bus.Object("org.freedesktop.timedate1", "/org/freedesktop/timedate1")
-			call := timedatectl.Call("org.freedesktop.timedate1.SetTime", 0, int64(dateTime), false, false)
-			if call.Err != nil {
-				return call.Err
-			}
 		} else if k == "timezone" {
 			timezone := v.(string)
-
-			bus, err := dbus.SystemBus()
-			if err != nil {
-				return err
-			}
-
-			timedatectl := bus.Object("org.freedesktop.timedate1", "/org/freedesktop/timedate1")
-			call := timedatectl.Call("org.freedesktop.timedate1.SetTimezone", 0, timezone, false)
-			if call.Err != nil {
-				return call.Err
-			}
+			return updateTimeDate("SetTimezone", timezone)
 		}
 	}
 
