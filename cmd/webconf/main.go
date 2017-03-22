@@ -104,6 +104,7 @@ func initURLHandlers(log *log.Logger, server net.Listener) {
 func main() {
 	if snappy.IsDeviceManaged() {
 		log.Println("webconf does not run on managed devices")
+		// this tells systemd to not restart this service
 		os.Exit(0)
 	}
 

@@ -18,6 +18,7 @@ apps:
     plugs: [network, network-bind, snapd-control, timeserver-control, timezone-control]
   webconf:
     daemon: simple
+    restart-condition: never
     command: webconf
     plugs: [network, network-bind, snapd-control, timeserver-control]
   generate-token:
