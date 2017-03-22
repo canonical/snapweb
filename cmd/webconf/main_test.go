@@ -47,16 +47,17 @@ func (s *WebconfSuite) SetUpTest(c *C) {
 }
 
 func (s *WebconfSuite) TestURLHandlers(c *C) {
-	initURLHandlers(log.New(os.Stdout, "", 0), nil)
+	handler := initURLHandlers(log.New(os.Stdout, "", 0), nil)
 	defer func() {
 		http.DefaultServeMux = http.NewServeMux()
 	}()
 
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest("GET", "/", nil)
+	req.RemoteAddr = "127.0.0.1:80"
 	c.Assert(err, IsNil)
 
-	http.DefaultServeMux.ServeHTTP(rec, req)
+	handler.ServeHTTP(rec, req)
 	c.Assert(rec.Code, Equals, http.StatusOK)
 
 	body := rec.Body.String()
@@ -77,6 +78,7 @@ func (s *WebconfSuite) TestDoneHandler(c *C) {
 	handler := doneHandler(server)
 
 	req, _ := http.NewRequest("GET", "/done", nil)
+	req.RemoteAddr = "127.0.0.1:80"
 	rec := httptest.NewRecorder()
 
 	handler.ServeHTTP(rec, req)

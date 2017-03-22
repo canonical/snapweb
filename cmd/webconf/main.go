@@ -89,16 +89,25 @@ func doneHandler(server net.Listener) http.HandlerFunc {
 	}
 }
 
-func initURLHandlers(log *log.Logger, server net.Listener) {
+func initURLHandlers(log *log.Logger, server net.Listener) http.Handler {
+	handler := http.NewServeMux()
+
 	// API
-	http.Handle("/api/v2/create-user",
+	handler.Handle("/api/v2/create-user",
 		snappy.MakePassthroughHandler(dirs.SnapdSocket, "/api/v2/create-user"))
-	http.HandleFunc("/done", doneHandler(server))
+	handler.HandleFunc("/done", doneHandler(server))
 
 	// Resources
-	http.Handle("/public/", snappy.LoggingHandler(http.FileServer(http.Dir(filepath.Join(os.Getenv("SNAP"), "www")))))
+	handler.Handle("/public/", snappy.LoggingHandler(http.FileServer(http.Dir(filepath.Join(os.Getenv("SNAP"), "www")))))
 
-	http.HandleFunc("/", makeMainPageHandler())
+	handler.HandleFunc("/", makeMainPageHandler())
+
+	config, err := snappy.ReadConfig()
+	if err != nil {
+		logger.Fatal("Configuration error", err)
+	}
+	
+	return snappy.NewFilterHandlerFromConfig(handler, config)
 }
 
 func main() {
@@ -116,9 +125,9 @@ func main() {
 		logger.Fatalf("%v", err)
 	}
 
-	initURLHandlers(logger, server)
+	handler := initURLHandlers(logger, server)
 
-	http.Serve(server, nil)
+	http.Serve(server, handler)
 
 	// prepare to exit, but let snapweb start before that
 	time.Sleep(2 * time.Second)
