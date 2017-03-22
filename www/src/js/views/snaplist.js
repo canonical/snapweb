@@ -9,6 +9,8 @@ var EmptySnaplistView = require('./empty-snaplist.js');
 var template = require('../templates/snaplist.hbs');
 var CONF = require('../config.js');
 var SnapTools = require('../common/snaps.js')
+var Radio = require('backbone.radio');
+var chan = Radio.channel('root');
 
 module.exports = Marionette.CompositeView.extend({
 
@@ -22,6 +24,12 @@ module.exports = Marionette.CompositeView.extend({
     this.collection.each(function(snap) {
       snap.set('targetSnapUri', SnapTools.getShowSnapUrlFor(snap))
     });
+    chan.comply('snap:removed', this.snapRemoved, this);
+  },
+
+  snapRemoved: function(model) {
+    this.collection.remove(this.collection.get(model.get('id')));
+    this.render()
   },
 
   template : function(model) {
