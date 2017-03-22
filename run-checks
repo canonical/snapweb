@@ -78,7 +78,10 @@ if [ ! -z "$STATIC_GO" ]; then
 
     if [ -n "$fmt" ]; then
         echo "Formatting wrong in following files"
-        echo $fmt
+        echo "$fmt"
+        echo "Getting formating diff..."
+        fmt_diff=$(gofmt -d .)
+        echo "$fmt_diff"
         exit 1
     fi
 
