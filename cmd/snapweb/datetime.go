@@ -19,6 +19,7 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -113,18 +114,30 @@ func updateTimeDate(verb string, v interface{}) error {
 func setTimeInfo(patch map[string]interface{}) error {
 	for k, v := range patch {
 		if k == "ntp" {
-			ntp := v.(bool)
+			var ntp, ok bool
+			if ntp, ok = v.(bool); !ok {
+				return errors.New("Invalid NTP flag value type")
+			}
 			return updateTimeDate("SetNTP", ntp)
 		} else if k == "ntpServer" {
 			if err := writeNTPServer(v.(string)); err != nil {
 				return err
 			}
 		} else if k == "dateTime" {
-			dateTime := v.(float64) * 1000000
+			var dateTime float64
+			var ok bool
+			if dateTime, ok = v.(float64); !ok {
+				return errors.New("Invalid date time option value type")
+			}
+			dateTime *= 1000000
 			return updateTimeDate("SetTime", int64(dateTime))
 
 		} else if k == "timezone" {
-			timezone := v.(string)
+			var timezone string
+			var ok bool
+			if timezone, ok = v.(string); !ok {
+				return errors.New("Invalid timezone option value type")
+			}
 			return updateTimeDate("SetTimezone", timezone)
 		}
 	}

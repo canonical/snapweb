@@ -23,6 +23,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/godbus/dbus"
 	. "gopkg.in/check.v1"
 )
 
@@ -102,4 +103,43 @@ func (s *ReadNtpSuite) TestWriteValidNTP(c *C) {
 
 	c.Assert(setTimeInfo(map[string]interface{}{"ntpServer": "1.1.1.1"}), IsNil)
 	c.Check(readNTPServer(), Equals, "1.1.1.1")
+}
+
+func (s *ReadNtpSuite) TestUpdateTimeZone(c *C) {
+	oldCallDbusEndpoint := callDbusEndpoint
+	callDbusEndpoint = func(o dbus.BusObject, target string, v interface{}) error {
+		return nil
+	}
+	defer func() {
+		callDbusEndpoint = oldCallDbusEndpoint
+	}()
+
+	c.Assert(setTimeInfo(map[string]interface{}{"timezone": "America/Toronto"}), IsNil)
+	c.Assert(setTimeInfo(map[string]interface{}{"timezone": 1}), NotNil)
+}
+
+func (s *ReadNtpSuite) TestUpdateTime(c *C) {
+	oldCallDbusEndpoint := callDbusEndpoint
+	callDbusEndpoint = func(o dbus.BusObject, target string, v interface{}) error {
+		return nil
+	}
+	defer func() {
+		callDbusEndpoint = oldCallDbusEndpoint
+	}()
+
+	c.Assert(setTimeInfo(map[string]interface{}{"dateTime": 1555001.0}), IsNil)
+	c.Assert(setTimeInfo(map[string]interface{}{"dateTime": ""}), NotNil)
+}
+
+func (s *ReadNtpSuite) TestUpdateNtpFlag(c *C) {
+	oldCallDbusEndpoint := callDbusEndpoint
+	callDbusEndpoint = func(o dbus.BusObject, target string, v interface{}) error {
+		return nil
+	}
+	defer func() {
+		callDbusEndpoint = oldCallDbusEndpoint
+	}()
+
+	c.Assert(setTimeInfo(map[string]interface{}{"ntp": false}), IsNil)
+	c.Assert(setTimeInfo(map[string]interface{}{"ntp": ""}), NotNil)
 }
