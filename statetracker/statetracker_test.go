@@ -22,6 +22,9 @@ import (
 	"time"
 
 	"github.com/snapcore/snapd/client"
+	"github.com/snapcore/snapd/overlord/state"
+
+	"github.com/snapcore/snapweb/snappy/snapdclient"
 
 	. "gopkg.in/check.v1"
 )
@@ -30,12 +33,15 @@ func Test(t *testing.T) { TestingT(t) }
 
 type StateTrackerSuite struct {
 	t *StateTracker
+	c *snapdclient.FakeSnapdClient
 }
 
 var _ = Suite(&StateTrackerSuite{})
 
 func (s *StateTrackerSuite) SetUpTest(c *C) {
 	s.t = New()
+
+	s.c = &snapdclient.FakeSnapdClient{}
 }
 
 func (s *StateTrackerSuite) TestTranslateStatus(c *C) {
@@ -166,4 +172,36 @@ func (s *StateTrackerSuite) TestCancelTrackingNonRunningOperation(c *C) {
 	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusActive})
 	s.t.CancelTrackingFor("name")
 	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusActive})
+}
+
+func (s *StateTrackerSuite) TestTrackInstallingChange(c *C) {
+	snap := &client.Snap{Status: client.StatusAvailable}
+
+	changeID := "ID"
+
+	s.c.CurrentChange = &client.Change{
+		ID: changeID,
+		Tasks: []*client.Task{
+			&client.Task{
+				Progress: client.TaskProgress{
+					Done: 2,
+				},
+				Status:  state.DoingStatus.String(),
+				Summary: "summary",
+			},
+			&client.Task{
+				Progress: client.TaskProgress{
+					Done: 5,
+				},
+				Status:  "dummy",
+				Summary: "summary2",
+			},
+		},
+	}
+
+	s.t.TrackInstall(changeID, snap)
+
+	c.Assert(s.t.State(s.c, snap),
+		DeepEquals,
+		&SnapState{Status: StatusInstalling, ChangeID: changeID, LocalSize: 2, TaskSummary: "summary"})
 }

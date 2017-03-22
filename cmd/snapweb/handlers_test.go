@@ -39,7 +39,7 @@ import (
 func Test(t *testing.T) { TestingT(t) }
 
 type HandlersSuite struct {
-	c *snappy.FakeSnapdClient
+	c *snapdclient.FakeSnapdClient
 }
 
 var _ = Suite(&HandlersSuite{})
@@ -54,7 +54,7 @@ func (s *HandlersSuite) createAndSaveTestToken(c *C) string {
 }
 
 func (s *HandlersSuite) SetUpTest(c *C) {
-	s.c = &snappy.FakeSnapdClient{}
+	s.c = &snapdclient.FakeSnapdClient{}
 
 	newSnapdClient = func() snapdclient.SnapdClient {
 		return s.c
