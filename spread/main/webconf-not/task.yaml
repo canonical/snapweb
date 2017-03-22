@@ -12,11 +12,11 @@ execute: |
     echo "assertions from the $SEED_DIR/assertions subdirectory."
     systemctl start snapd.service
 
-    echo "The system should be managed by now"
+    echo "The system should be managed already"
     test `snap managed`
 
-    echo "Verifying that firstboot is NOT running"
-    test `ps axu | grep snapweb.firstboot | grep -v grep | wc -l` -eq 0
+    echo "Verifying that webconf is NOT running"
+    test -z "`ps h -C webconf`"
 
     echo "Verifying that snapweb is running as normal"
-    test `ps axu | grep snapweb | grep -v grep | wc -l` -eq 1
+    test -n "`ps h -C snapweb`"

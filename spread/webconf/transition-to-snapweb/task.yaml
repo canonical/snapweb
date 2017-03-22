@@ -15,3 +15,6 @@ execute: |
 
     echo "The system should be managed now"
     test `snap managed` = 'true'
+
+    echo "And webconf does not run anymore"
+    test -z "`ps h -C webconf`"
