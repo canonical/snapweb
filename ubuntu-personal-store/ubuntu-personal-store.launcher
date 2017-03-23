@@ -10,4 +10,8 @@ export APP_ID=ubuntu-personal-store
 # Remove problematic environment variable
 unset QT_QPA_PLATFORM
 
+if [ ! -f "$SNAP_USER_DATA/token.txt" ]; then
+    gksudo $SNAP/gen_token
+fi
+
 exec "$SNAP/bin/desktop-launch" "qmlscene" "--cookie_path=$SNAP_USER_DATA" "$SNAP/ubuntu-personal-store.qml"

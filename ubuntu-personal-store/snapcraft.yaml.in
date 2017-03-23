@@ -4,7 +4,7 @@ summary: Snapweb in a WebView
 description: Snapweb in a WebView
 
 grade: devel
-confinement: strict
+confinement: devmode
 
 apps:
   ubuntu-personal-store:
@@ -20,6 +20,7 @@ parts:
     plugin: dump
     source: .
     stage-packages:
+      - gksu:UNKNOWN_ARCH
       - qmlscene:UNKNOWN_ARCH
       - qml-module-qtquick2:UNKNOWN_ARCH
       - qml-module-qtquick-controls:UNKNOWN_ARCH

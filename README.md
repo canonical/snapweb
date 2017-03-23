@@ -22,7 +22,7 @@ Install global npm modules without sudo:
 Setup the environment:
 
     mkdir ~/node
-    export PATH=$PATH:$HOME/node/bin
+    export PATH=$PATH:$HOME/node/bin:$GOPATH/bin
     export NODE_PATH=$HOME/node/lib/node_modules
 
 Branch:
