@@ -36,13 +36,13 @@ func Test(t *testing.T) { TestingT(t) }
 
 type GetSnapSuite struct {
 	h Handler
-	c *FakeSnapdClient
+	c *snapdclient.FakeSnapdClient
 }
 
 var _ = Suite(&GetSnapSuite{})
 
 func (s *GetSnapSuite) SetUpTest(c *C) {
-	s.c = &FakeSnapdClient{}
+	s.c = &snapdclient.FakeSnapdClient{}
 	s.h.setClient(s.c)
 }
 
@@ -93,7 +93,7 @@ func (s *GetSnapSuite) TestGetSnap(c *C) {
 
 type PackagePayloadSuite struct {
 	h Handler
-	c *FakeSnapdClient
+	c *snapdclient.FakeSnapdClient
 }
 
 var _ = Suite(&PackagePayloadSuite{})
@@ -101,7 +101,7 @@ var _ = Suite(&PackagePayloadSuite{})
 func (s *PackagePayloadSuite) SetUpTest(c *C) {
 	os.Setenv("SNAP_DATA", c.MkDir())
 	s.h.stateTracker = statetracker.New()
-	s.c = &FakeSnapdClient{}
+	s.c = &snapdclient.FakeSnapdClient{}
 	s.h.setClient(s.c)
 }
 
@@ -142,7 +142,7 @@ var _ = Suite(&PayloadSuite{})
 func (s *PayloadSuite) SetUpTest(c *C) {
 	os.Setenv("SNAP_DATA", c.MkDir())
 	s.h.stateTracker = statetracker.New()
-	s.h.setClient(&FakeSnapdClient{})
+	s.h.setClient(&snapdclient.FakeSnapdClient{})
 }
 
 func (s *PayloadSuite) TestPayload(c *C) {
@@ -248,7 +248,7 @@ func (s *PayloadSuite) TestPayloadInstalledSnapBeingRemoved(c *C) {
 }
 
 type AllPackagesSuite struct {
-	c *FakeSnapdClient
+	c *snapdclient.FakeSnapdClient
 	h Handler
 }
 
@@ -257,7 +257,7 @@ var _ = Suite(&AllPackagesSuite{})
 func (s *AllPackagesSuite) SetUpTest(c *C) {
 	os.Setenv("SNAP_DATA", c.MkDir())
 	s.h.stateTracker = statetracker.New()
-	s.c = &FakeSnapdClient{}
+	s.c = &snapdclient.FakeSnapdClient{}
 	s.h.setClient(s.c)
 }
 
@@ -319,14 +319,14 @@ func (s *AllPackagesSuite) TestSnapPrices(c *C) {
 
 type SnapOperationTrackingSuite struct {
 	h Handler
-	c *FakeSnapdClient
+	c *snapdclient.FakeSnapdClient
 }
 
 var _ = Suite(&SnapOperationTrackingSuite{})
 
 func (s *SnapOperationTrackingSuite) SetUpTest(c *C) {
 	os.Setenv("SNAP_DATA", c.MkDir())
-	s.c = &FakeSnapdClient{}
+	s.c = &snapdclient.FakeSnapdClient{}
 	s.h.stateTracker = statetracker.New()
 	s.h.setClient(s.c)
 }

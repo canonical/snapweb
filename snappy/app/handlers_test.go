@@ -31,13 +31,14 @@ import (
 
 	"github.com/snapcore/snapd/client"
 	"github.com/snapcore/snapweb/snappy/common"
+	"github.com/snapcore/snapweb/snappy/snapdclient"
 	"github.com/snapcore/snapweb/statetracker"
 
 	. "gopkg.in/check.v1"
 )
 
 type HandlersSuite struct {
-	c *FakeSnapdClient
+	c *snapdclient.FakeSnapdClient
 	h Handler
 }
 
@@ -51,7 +52,7 @@ func (s *HandlersSuite) SetUpTest(c *C) {
 }
 
 func (s *HandlersSuite) resetFakeSnapdClient() {
-	s.c = &FakeSnapdClient{}
+	s.c = &snapdclient.FakeSnapdClient{}
 	s.h.setClient(s.c)
 	s.h.stateTracker = statetracker.New()
 }

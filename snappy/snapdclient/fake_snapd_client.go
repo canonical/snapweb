@@ -15,13 +15,11 @@
  *
  */
 
-package snappy
+package snapdclient
 
 import (
 	"github.com/snapcore/snapd/asserts"
 	"github.com/snapcore/snapd/client"
-
-	"github.com/snapcore/snapweb/snappy/snapdclient"
 )
 
 // FakeSnapdClient is a fake SnapdClient for testing purposes
@@ -41,6 +39,7 @@ type FakeSnapdClient struct {
 	SnapSections    []string
 	AbortedChangeID string
 	ChangeID        string
+	CurrentChange   *client.Change
 }
 
 // Icon returns the icon of an installed snap
@@ -139,7 +138,7 @@ func (f *FakeSnapdClient) FindOne(name string) (*client.Snap, *client.ResultInfo
 
 // Change returns the list of ongoing changes for a given snap and changeid
 func (f *FakeSnapdClient) Change(id string) (*client.Change, error) {
-	return nil, nil
+	return f.CurrentChange, nil
 }
 
 // Enable enables the snap
@@ -158,4 +157,4 @@ func (f *FakeSnapdClient) Abort(id string) (*client.Change, error) {
 	return nil, nil
 }
 
-var _ snapdclient.SnapdClient = (*FakeSnapdClient)(nil)
+var _ SnapdClient = (*FakeSnapdClient)(nil)
