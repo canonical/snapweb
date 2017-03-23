@@ -1,0 +1,25 @@
+summary: Control that remote IP connections are not accepted
+execute: |
+  echo "setting up test interface"
+  modprobe dummy
+  sleep 1
+  
+  echo "add a network filter to the configuration"
+  ip link set name eth10 dev dummy0
+  sleep 1
+  ip address add 192.168.100.199/24 dev eth10
+  ip link set eth10 up
+  
+  echo "Verifying that a remote request is not accepted"
+  echo "{ \"allowNetworks\": [\"127.0.0.1/24\"] }" > /var/snap/snapweb/common/settings.json
+  systemctl restart snap.snapweb.snapweb.service
+  sleep 1
+  RES=`printf "GET / HTTP/1.1\nHost:localhost\nUser-Agent:nc\n\n" | nc -s 192.168.100.199 127.0.0.1 4200 | grep "HTTP/1.1 403 Forbidden"`
+  test -n "$RES"
+  
+  echo "cleanup"
+  ip address del 192.168.100.199/24 dev eth10
+  ip link set eth10 down
+  rm /var/snap/snapweb/common/settings.json
+  systemctl restart snap.snapweb.snapweb.service
+  
