@@ -1,12 +1,21 @@
 name: ubuntu-personal-store
-version: '0.1'
-summary: Snapweb in a WebView
-description: Snapweb in a WebView
+version: "0.26.9"
+summary: A beautiful and functional interface for snap management.
+description: This application allows you to browse and install snap packages on your Ubuntu Personal device.
+type: app
+apps:
 
 grade: devel
-confinement: devmode
+confinement: strict
 
 apps:
+  snapweb:
+    daemon: simple
+    command: snapweb
+    plugs: [network, network-bind, snapd-control, timeserver-control, timezone-control]
+  generate-token:
+    command: generate-token
+
   ubuntu-personal-store:
     command: ubuntu-personal-store.launcher
     plugs:
@@ -18,17 +27,49 @@ apps:
 parts:
   ubuntu-personal-store-qml:
     plugin: dump
-    source: .
+    source: https://github.com/snapcore/snapweb
+    source-type: git
     stage-packages:
-      - gksu:amd64
-      - qmlscene:amd64
-      - qml-module-qtquick2:amd64
-      - qml-module-qtquick-controls:amd64
-      - qml-module-ubuntu-web:amd64
+      - qmlscene
+      - qml-module-qtquick2
+      - qml-module-qtquick-controls
+      - qml-module-ubuntu-web
     after: [desktop-qt5]
+    organize:
+      ubuntu-personal-store/ubuntu-personal-store.qml: ubuntu-personal-store.qml
+      ubuntu-personal-store/pkg: pkg
+      ubuntu-personal-store/setup: setup
+    stage:
+      - ubuntu-personal-store.qml
+      - pkg/*
+      - setup/*
+      - usr/*
+      - lib/*
+      - etc/*
 
   launcher:
     plugin: dump
-    source: .
+    source: https://github.com/snapcore/snapweb
+    source-type: git
     organize:
-      ubuntu-personal-store.launcher: bin/ubuntu-personal-store.launcher
+      ubuntu-personal-store/ubuntu-personal-store.launcher: bin/ubuntu-personal-store.launcher
+    stage:
+       - bin/ubuntu-personal-store.launcher
+
+  snapweb:
+    plugin: go
+    source: https://github.com/snapcore/snapweb
+    source-type: git
+    go-importpath: github.com/snapcore/snapweb
+    go-buildtags: [ubuntu_personal_store]
+    build-packages: [gcc]
+
+  snapweb-ui:
+    plugin: gulp
+    node-engine: 4.2.6
+    gulp-tasks: ['install']
+    source: https://github.com/snapcore/snapweb
+    source-type: git
+    build-packages:
+       - git
+
