@@ -28,6 +28,7 @@ import (
 	"strings"
 	"syscall"
 	"testing"
+	"time"
 
 	. "gopkg.in/check.v1"
 
@@ -47,10 +48,8 @@ func (s *WebconfSuite) SetUpTest(c *C) {
 }
 
 func (s *WebconfSuite) TestURLHandlers(c *C) {
-	handler := initURLHandlers(log.New(os.Stdout, "", 0), nil)
-	defer func() {
-		http.DefaultServeMux = http.NewServeMux()
-	}()
+	timer = time.NewTimer(time.Second * 120)
+	handler := initURLHandlers(log.New(os.Stdout, "", 0), nil, snappy.Config{})
 
 	rec := httptest.NewRecorder()
 	req, err := http.NewRequest("GET", "/", nil)

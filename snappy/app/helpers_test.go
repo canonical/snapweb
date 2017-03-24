@@ -32,7 +32,7 @@ import (
 	. "gopkg.in/check.v1"
 )
 
-type HelpersSuite struct {}
+type HelpersSuite struct{}
 
 var _ = Suite(&HelpersSuite{})
 

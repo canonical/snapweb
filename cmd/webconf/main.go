@@ -33,6 +33,7 @@ import (
 )
 
 var logger *log.Logger
+var timer *time.Timer
 
 const (
 	httpAddr string = ":4200"
@@ -70,6 +71,9 @@ func makeMainPageHandler() http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 
+		// reset the timer, and give 3 minutes to complete the setup process
+		timer.Reset(time.Second * 180)
+
 		err = t.Execute(w, &data)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -89,7 +93,7 @@ func doneHandler(server net.Listener) http.HandlerFunc {
 	}
 }
 
-func initURLHandlers(log *log.Logger, server net.Listener) http.Handler {
+func initURLHandlers(log *log.Logger, server net.Listener, config snappy.Config) http.Handler {
 	handler := http.NewServeMux()
 
 	// API
@@ -102,11 +106,6 @@ func initURLHandlers(log *log.Logger, server net.Listener) http.Handler {
 
 	handler.HandleFunc("/", makeMainPageHandler())
 
-	config, err := snappy.ReadConfig()
-	if err != nil {
-		logger.Fatal("Configuration error", err)
-	}
-
 	return snappy.NewFilterHandlerFromConfig(handler, config)
 }
 
@@ -117,6 +116,11 @@ func main() {
 		os.Exit(0)
 	}
 
+	config, err := snappy.ReadConfig()
+	if err != nil {
+		logger.Fatal("Configuration error", err)
+	}
+
 	go avahi.InitMDNS(logger)
 
 	// open a plain HTTP end-point on the "usual" 4200 port
@@ -125,7 +129,15 @@ func main() {
 		logger.Fatalf("%v", err)
 	}
 
-	handler := initURLHandlers(logger, server)
+	handler := initURLHandlers(logger, server, config)
+
+	timer = time.NewTimer(time.Second * 120)
+	go func() {
+		<-timer.C
+		logger.Println("disabling webconf automatically after 2 minutes")
+		server.Close()
+		os.Exit(0)
+	}()
 
 	http.Serve(server, handler)
 
