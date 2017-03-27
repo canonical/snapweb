@@ -26,11 +26,11 @@ import (
 	"net"
 	"net/http"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
 	"text/template"
 
+	"github.com/godbus/dbus"
 	"github.com/snapcore/snapweb/snappy/app"
 	"github.com/snapcore/snapweb/snappy/snapdclient"
 )
@@ -210,24 +210,32 @@ func handleDeviceAction(w http.ResponseWriter, r *http.Request) {
 	if err := dec.Decode(&action); err != nil {
 		log.Printf("handleDeviceAction: failed to decode json: %v", err)
 		w.WriteHeader(http.StatusBadRequest)
+		return
 	}
 
-	// XXX: user valid and user has permission
+	bus, err := dbus.SystemBus()
+	if err != nil {
+		log.Printf("handleDeviceAction: failed to access system dbus: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	systemd1 := bus.Object("org.freedesktop.systemd1", "/org/freedesktop/systemd1")
+	var call *dbus.Call
+
 	if action.ActionType == "restart" {
-		cmd := exec.Command("reboot")
-		if err := cmd.Run(); err != nil {
-			log.Printf("handleDeviceAction: failed to reboot: %v", err)
-			w.WriteHeader(http.StatusInternalServerError)
-		}
+		call = systemd1.Call("org.freedesktop.systemd1.Manager.Reboot", 0)
 	} else if action.ActionType == "power-off" {
-		cmd := exec.Command("poweroff")
-		if err := cmd.Run(); err != nil {
-			log.Printf("handleDeviceAction: failed to reboot: %v", err)
-			w.WriteHeader(http.StatusInternalServerError)
-		}
+		call = systemd1.Call("org.freedesktop.systemd1.Manager.PowerOff", 0)
 	} else {
 		log.Printf("handleDeviceAction: invalid device action type: %s", action.ActionType)
 		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if call.Err != nil {
+		log.Printf("handleDeviceAction: failed to invoke device action: %v", call.Err)
+		w.WriteHeader(http.StatusInternalServerError)
 	}
 }
 
