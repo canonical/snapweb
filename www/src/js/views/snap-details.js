@@ -3,7 +3,7 @@ var React = require('react');
 var ReactBackbone = require('react.backbone');
 var CONF = require('../config.js');
 
-var Installer = require('./installer.js');
+var Installer = require('../components/installer.js');
 
 function SnapSize(props) {
   var model = props.model;
@@ -127,12 +127,20 @@ function SnapActions(props) {
   var progressBarBorderRadius = "10%";
   var progressBarBackgroundColor = "#003399";
 
+  var installerClass = "b-installer_small";
+
   if (status !== CONF.INSTALL_STATE.INSTALLING) {
     progressBarBorder = "0px";
     progressBarBorderRadius = "initial";
     progressBarBackgroundColor = "";
   }
 
+  if (status === CONF.INSTALL_STATE.INSTALLING ||
+      status === CONF.INSTALL_STATE.REMOVING) {
+    installerClass += " b-installer_thinking";
+  }
+
+  console.log(status, installerClass)
   var installerButtonClassName = "col-5";
   if (status === CONF.INSTALL_STATE.INSTALLED ||
       status === CONF.INSTALL_STATE.ACTIVE) {
@@ -145,8 +153,8 @@ function SnapActions(props) {
   return (
     <div id="installer-button" className={installerButtonClassName}>
       <Installer
-        installerClass="b-installer_small"
-        model={model} />
+         installerClass={installerClass}
+         model={model} />
 
       <div id="progressbarwrapper"
            style={{border: {progressBarBorder}, borderRadius: {progressBarBorderRadius}, marginTop: "1em", width: "100%", height: "0.5em"}}>
@@ -173,6 +181,7 @@ module.exports = React.createBackboneClass({
       self.setState({taskSummary: model.get('task_summary')});
     });
     model.on('change:status', function() {
+      console.log('status ', model.get('status'))
       self.setState({status: model.get('status')});
     });
   },

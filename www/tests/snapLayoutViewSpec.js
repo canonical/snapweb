@@ -1,6 +1,9 @@
+var $ = require('jquery');
 var Backbone = require('backbone');
 var Snap = require('../src/js/models/snap.js');
-var SnapLayoutView = require('../src/js/views/snap-layout.js');
+var SnapDetailsView = require('../src/js/views/snap-details.js');
+var React = require('react');
+var ReactDOMServer = require('react-dom/server');
 var CONF = require('../src/js/config.js');
 
 describe('SnapLayoutView', function() {
@@ -19,25 +22,21 @@ describe('SnapLayoutView', function() {
       return self.mockModelFetchResponse;
     }
 
-    this.view = new SnapLayoutView({
-      model: this.model
-    });
-    this.view.render();
+    this.view = ReactDOMServer.renderToStaticMarkup(
+      React.createElement(SnapDetailsView, {
+        model: this.model
+      }));
 
-    this.uiInstaller = this.view.$el.find('.b-installer'); 
-    this.uiEnabler = this.view.$el.find('.b-enabler');
+    this.uiInstaller = $(this.elementHtml).find('.b-installer'); 
   });
 
   afterEach(function() {
-    this.view.remove();
     delete this.model;
-    delete this.view;
     delete this.mockModelFetchResponse;
   });
 
   it('should be an instance of Backbone.View', function() {
-    expect(SnapLayoutView).toBeDefined();
-    expect(this.view).toEqual(jasmine.any(Backbone.View));
+    expect(SnapDetailsView).toBeDefined();
   });
 
   it('should be thinking when installing', function() {
@@ -63,17 +62,16 @@ describe('SnapLayoutView', function() {
   it('should deactivate install button if model has unrecognised status', function() {
     this.model.set('status', '');
     expect(this.uiInstaller).not.toBe();
-    expect(this.uiEnabler).not.toBe();
   });
 
   it('should not show enable/disable button for non removable snaps', function() {
     for (var i in CONF.NON_REMOVABLE_SNAP_TYPES) {
       this.mockModelFetchResponse.type = CONF.NON_REMOVABLE_SNAP_TYPES[i];
-      var view = new SnapLayoutView({
-        model: new Snap(this.model.parse(this.mockModelFetchResponse))
-      });
-      view.render();
-      var uiEnabler = view.$el.find('.b-enabler');
+      var view = ReactDOMServer.renderToStaticMarkup(
+        React.createElement(SnapDetailsView, {
+          model: new Snap(this.model.parse(this.mockModelFetchResponse))
+        }));
+      var uiEnabler = $(view).find('.b-enabler');
       expect(uiEnabler.length).toBe(0);
     }
   });
