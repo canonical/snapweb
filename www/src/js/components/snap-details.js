@@ -167,13 +167,13 @@ module.exports = React.createBackboneClass({
 
     var self = this;
     model.on('change:download_progress', function() {
-      self.setState({downloadProgress: mode.get('download_progress')});
+      self.setState({downloadProgress: model.get('download_progress')});
     });
     model.on('change:task_summary', function() {
-      self.setState({taskSummary: mode.get('task_summary')});
+      self.setState({taskSummary: model.get('task_summary')});
     });
     model.on('change:status', function() {
-      self.setState({status: self.model.get('status')});
+      self.setState({status: model.get('status')});
     });
   },
 
