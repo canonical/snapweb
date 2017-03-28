@@ -12,4 +12,9 @@ unset QT_QPA_PLATFORM
 
 gksudo --preserve-env -m "The Ubuntu Personal Store requires administrative privileges:" $SNAP/authenticate
 
-exec "$SNAP/bin/desktop-launch" "qmlscene" "--cookie_path=$SNAP_USER_DATA" "$SNAP/ubuntu-personal-store.qml"
+if [ $? -eq 0 ]
+then
+  exec "$SNAP/bin/desktop-launch" "qmlscene" "--cookie_path=$SNAP_USER_DATA" "$SNAP/ubuntu-personal-store.qml"
+else
+  echo "Authentication failed."
+fi
