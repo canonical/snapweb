@@ -65,7 +65,6 @@ ApplicationWindow {
 
     context: WebContext {
         dataPath: main.cookiePath
-        sessionCookieMode: WebContext.SessionCookieModeRestored
     }
 
     Component.onCompleted: {
