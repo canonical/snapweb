@@ -10,8 +10,6 @@ export APP_ID=ubuntu-personal-store
 # Remove problematic environment variable
 unset QT_QPA_PLATFORM
 
-if [ ! -f "$SNAP_USER_DATA/token.txt" ]; then
-    gksudo --preserve-env $SNAP/gen_token
-fi
+gksudo --preserve-env -m "The Ubuntu Personal Store requires administrative privileges:" $SNAP/authenticate
 
 exec "$SNAP/bin/desktop-launch" "qmlscene" "--cookie_path=$SNAP_USER_DATA" "$SNAP/ubuntu-personal-store.qml"
