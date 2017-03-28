@@ -10,7 +10,7 @@ export APP_ID=ubuntu-personal-store
 # Remove problematic environment variable
 unset QT_QPA_PLATFORM
 
-gksudo --preserve-env -m "The Ubuntu Personal Store requires administrative privileges:" $SNAP/authenticate
+"$SNAP/bin/desktop-launch" "gksudo" "--preserve-env" "-m Ubuntu Personal Store requires administrative privileges:" "$SNAP/authenticate"
 
 if [ $? -eq 0 ]
 then
