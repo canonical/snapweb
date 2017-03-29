@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Snapweb</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="/public/images/favicon.ico">
+    <link rel="stylesheet" href="/public/css/styles.css">
+  </head>
+  <body>
+    <div id="snapweb"></div>
+    <script>
+      var SNAPWEB = SNAPWEB || {};
+      SNAPWEB.NAME = '{{ .Branding.Name }}';
+      SNAPWEB.SUBNAME = '{{ .Branding.Subname }}';
+      SNAPWEB.SNAPD_VERSION = '{{ .SnapdVersion }}';
+    </script>
+    <script src="/public/js/snapweb.js"></script>
+  </body>
+</html>
+

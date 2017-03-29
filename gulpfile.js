@@ -19,9 +19,12 @@ var uglify = require('gulp-uglify');
 var watchify = require('watchify');
 
 gulp.task('js:build', ['js:clean', 'js:lint'], function() {
-  const envs = env.set({
-    NODE_ENV: 'development'
-  });
+  if (!process.env.NODE_ENV) {
+    // Default to development build for various tools.
+    env.set({
+      NODE_ENV: 'development'
+    });
+  }
   return createBundler();
 });
 
@@ -30,7 +33,7 @@ gulp.task('js:clean', function(cb) {
 });
 
 function createBundler(watch) {
-  var bundler = browserify('./www/src/js/app.js', {
+  var bundler = browserify('./www/src/js/index.js', {
     cache: {},
     packageCache: {}
   });

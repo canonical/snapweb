@@ -1,8 +1,6 @@
 var Backbone = require('backbone');
-var Marionette = require('backbone.marionette');
 var React = require('react');
 var ReactBackbone = require('react.backbone');
-
 var SearchField = require('../components/search-field.js');
 var DeckStyler = require('../components/deck-styler.js');
 var StoreHeaderView = require('../components/store-header.js');

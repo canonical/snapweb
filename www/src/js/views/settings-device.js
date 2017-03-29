@@ -1,18 +1,16 @@
-
-var Backbone = require('backbone');
 var React = require('react');
+var Backbone = require('backbone');
 var ReactBackbone = require('react.backbone');
+var Config = require("../config.js");
 
-var Config = require('../config.js');
+import { ConfirmationDialog } from "snapweb-toolkit";
 
-var ConfirmationDialog = require('../components/confirmation-dialog.js');
-
-
-const DeviceInfoLine = ({id, name, value}) =>
+const DeviceInfoLine = ({ id, name, value }) => (
   <div className="row">
     <div className="col-2"><strong>{name}</strong></div>
     <div className="col-6" id={id}>{value}</div>
-  </div>;
+  </div>
+);
 
 function DeviceName(props) {
   return props && props.deviceName ?
@@ -24,16 +22,16 @@ function DeviceInfo({model}) {
   var interfaces = model.get('interfaces') || [];
   var interfacesText = '';
   if (interfaces.length == 0) {
-      interfacesText = 'No interfaces found';
+    interfacesText = "No interfaces found";
   } else {
-    interfacesText = interfaces.join(', ');
+    interfacesText = interfaces.join(", ");
   }
 
   var deviceName = model.get('deviceName');
   return (
     <div>
       <div className="row">
-          <h2>Device information</h2>
+        <h2>Device information</h2>
       </div>
       <DeviceName deviceName={deviceName} />
       <DeviceInfoLine id="info-brand"
@@ -52,21 +50,22 @@ function DeviceInfo({model}) {
   );
 }
 
-function PowerInfo({model, restart, powerOff}) {
+function PowerInfo({ model, restart, powerOff }) {
   return (
     <div>
       <h2>Power</h2>
       <div className="row">
         <div className="col-2">
-            <p>
-              <button
-                id="restart-button"
-                type="p-button--neutral"
-                name=""
-                onClick={restart}>
-                Restart
-              </button>
-            </p>
+          <p>
+            <button
+              id="restart-button"
+              type="p-button--neutral"
+              name=""
+              onClick={restart}
+            >
+              Restart
+            </button>
+          </p>
         </div>
         <div className="col-2">
           <p>
@@ -74,8 +73,9 @@ function PowerInfo({model, restart, powerOff}) {
               id="power-off-bytton"
               type="p-button--neutral"
               name=""
-              onClick={powerOff}>
-                Power off
+              onClick={powerOff}
+            >
+              Power off
             </button>
           </p>
         </div>
@@ -84,16 +84,14 @@ function PowerInfo({model, restart, powerOff}) {
   );
 }
 
-function FactorySettings({model}) {
+function FactorySettings({ model }) {
   return (
     <div>
       <h2>Factory settings</h2>
       <div className="row">
         <div className="col-3">
-          <button
-            type="p-button--neutral"
-            disabled={true}>
-              Reset to factory settings
+          <button type="p-button--neutral" disabled={true}>
+            Reset to factory settings
           </button>
         </div>
       </div>
@@ -101,73 +99,82 @@ function FactorySettings({model}) {
   );
 }
 
-
 module.exports = React.createBackboneClass({
   getInitialState: function() {
     return {
-      confirmAction: null
-    }
+      confirmInfo: null
+    };
   },
 
   restart: function() {
     this.setState({
-      confirmMessageText: "Are you sure you want to restart the device?", 
-      confirmActionText: "Restart",
-      confirmAction: () => this.sendAction("restart")
+      confirmInfo: {
+        titleText: "Are you sure you want to restart the device?",
+        confirmActionText: "Restart",
+        confirmAction: () => this.sendAction("restart")
+      }
     });
   },
 
   powerOff: function() {
     this.setState({
-      confirmMessageText:"<div class=\"p-confirmation__dialog__icon\">" +
-                    "Choosing to power off will disconnect" +
-                    " from snapweb instantly.<br/>Do you want to proceed?</div>",
-      confirmActionText: "Power Off",
-      confirmAction: () => this.sendAction("power-off")
+      confirmInfo: {
+        icon: "/public/images/icons/warning.svg",
+        titleText: "Choosing to power off will disconnect from snapweb instantly.",
+        messageText: "Do you want to proceed?",
+        confirmActionText: "Power Off",
+        confirmAction: () => this.sendAction("power-off")
+      }
     });
   },
 
   sendAction: function(actionType) {
     Backbone.ajax({
-                url: Config.DEVICE_ACTION,
-                contentType: 'application/json',
-                type: 'POST',
-                data: '{ "actionType":"' + actionType + '"}',
-                processData: false,
-                async: true,
-                error: function(jqXHR, textStatus, errorThrown) {
-                  chan.command('alert:error',
-                               new Backbone.Model({message: errorThrown}));
-                }
-              });
+      url: Config.DEVICE_ACTION,
+      contentType: "application/json",
+      type: "POST",
+      data: '{ "actionType":"' + actionType + '"}',
+      processData: false,
+      async: true,
+      error: function(jqXHR, textStatus, errorThrown) {
+        chan.command(
+          "alert:error",
+          new Backbone.Model({ message: errorThrown })
+        );
+      }
+    });
   },
 
   render: function() {
     var model = this.props.model;
 
-    // Disable the power & factory settings for now
-    /**
-        <hr />
-        <PowerInfo
-          model={model}
-          restart={() => this.restart()}
-          powerOff={() => this.powerOff()}
-         />
-        <hr />
-        <FactorySettings model={model} /> <hr />
-    */
-
     return (
       <div>
         <DeviceInfo model={model} />
 
-        {this.state.confirmAction &&
+{/*
+        // Disable the power & factory settings for now
+        <hr />
+
+        <PowerInfo
+          model={model}
+          restart={() => this.restart()}
+          powerOff={() => this.powerOff()}
+        />
+        <hr />
+
+        <FactorySettings model={model} /> <hr />
+*/}
+
+        {this.state.confirmInfo != null &&
           <ConfirmationDialog
-            messageText={this.state.confirmMessageText}
-            confirmText={this.state.confirmActionText}
-            confirmAction={() => { this.state.confirmAction(); this.setState({confirmAction: null})}}
-            cancelAction={() => this.setState({confirmAction: null})}
-            />}
+            {...this.state.confirmInfo}
+            cancelAction={() => this.setState({ confirmInfo: null })}
+            confirmAction={() => {
+              this.state.confirmInfo.confirmAction();
+              this.setState({ confirmInfo: null });
+            }}
+          />}
       </div>
     );
   }
