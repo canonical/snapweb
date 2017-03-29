@@ -24,8 +24,10 @@ module.exports = {
         dataType : 'json',
         silent: true
       });
+
       if (onchange) {
         model.on("change:status", onchange)
+        model.on("change:download_progress", onchange)
       }
     } else if (status === Config.INSTALL_STATE.REMOVED) {
       // install

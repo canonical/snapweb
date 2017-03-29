@@ -1,7 +1,6 @@
 var $ = require('jquery');
 var Backbone = require('backbone');
 Backbone.$ = $;
-var Marionette = require('backbone.marionette');
 var Radio = require('backbone.radio');
 var Snap = require('../models/snap.js');
 var HomeLayoutView = require('../views/home.js');

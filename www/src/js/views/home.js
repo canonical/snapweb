@@ -5,7 +5,6 @@ import {
 
 var _ = require('lodash')
 var Backbone = require('backbone');
-var Marionette = require('backbone.marionette');
 var React = require('react');
 var ReactBackbone = require('react.backbone');
 
@@ -32,6 +31,12 @@ function snapToCard(snap) {
 }
 
 module.exports = React.createBackboneClass({
+  componentWillMount: function() {
+  },
+
+  componentWillUnmount: function() {
+  },
+
   getInitialState: function() {
     return {
       snaps: this.props.collection
@@ -68,19 +73,30 @@ module.exports = React.createBackboneClass({
           });
 
     var self = this;
-    var handleSnapClick = function(id) {
+    var handleSnapClick = function(id, props, component) {
+      // TODO handle navigation
+    };
+    var handleActionClick = function(id, props, component) {
+      var name = props.name;
+      var snap = collection.findWhere({ id: name });
+      if (! snap) {
+        return;
+      }
       Common.handleInstallEvent(
         null,
-        collection.where({ id: id })[0],
-        function(model) {
-          if (model.status === Config.INSTALL_STATE.REMOVING) {
-            self.setState({ snaps: self.props.collection })
+        snap,
+        function() {
+          // only status sound here is "removing"
+          if (snap.get('status') === Config.INSTALL_STATE.REMOVING) {
+            component.setState({ installProgress: snap.get('download_progress') })
           } else {
-            // TODO reset even handler
+            // TODO beware very hackych
+            snap.off();
+            component.setState({ installProgress: -1 })
           }
         }
       )
-    }
+    };
 
     return (
     <div className="b-grey-wrapper">
@@ -95,6 +111,7 @@ module.exports = React.createBackboneClass({
                 title=''
                 cards={cards}
                 onCardClick={handleSnapClick}
+                onActionClick={handleActionClick}
               />
           </div>
 

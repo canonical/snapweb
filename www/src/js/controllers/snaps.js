@@ -2,7 +2,6 @@ var $ = require('jquery');
 var Backbone = require('backbone');
 Backbone.$ = $;
 var _ = require('lodash');
-var Marionette = require('backbone.marionette');
 var Radio = require('backbone.radio');
 var SnapLayoutView = require('../views/snap-layout.js');
 var DeviceInfo = require('../models/device-info.js');
@@ -11,7 +10,6 @@ var SnapTools = require('../common/snaps.js')
 
 var snapChannel = Radio.channel('snap');
 var rootChannel = Radio.channel('root');
-
 
 var byteSizeToString = function(s) {
   var suffixes = ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB'];

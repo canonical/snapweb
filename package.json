@@ -26,7 +26,7 @@
     "react-dom": "^15.4.2",
     "react-router": "^3.0.2",
     "react.backbone": "^0.9.0",
-    "snapweb-toolkit": "https://github.com/ubuntudesign/snapweb-toolkit.git#master",
+    "snapweb-toolkit": "https://github.com/ubuntudesign/snapweb-toolkit.git#updates",
     "vanilla-framework": "1.0.1"
   },
   "devDependencies": {
