@@ -74,6 +74,7 @@ ApplicationWindow {
           if (request.readyState == XMLHttpRequest.DONE) {
               var token = request.responseText
               context.cookieManager.setCookies(main.url, [{"name": "SM", "value": token}]);
+              webView.reload()
           }
       }
       request.send()
