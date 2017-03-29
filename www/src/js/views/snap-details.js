@@ -6,57 +6,49 @@ var CONF = require('../config.js');
 var Installer = require('../components/installer.js');
 
 function SnapSize(props) {
-  var model = props.model;
-  var size = model.get('size');
-  if (!size) {
-    return null;
+  if (!props || !props.size) {
+    return null
   }
   return (
     <li className="p-list__item">
       Size
-      <span className="b-snap__size u-float--right">{size}</span>
+      <span className="b-snap__size u-float--right">{props.size}</span>
     </li>
   );
 }
 
 function SnapVersion(props) {
-  var model = props.model;
-  var version = model.get('version');
-  if (!version) {
-    return null;
+  if (!props || !props.version) {
+    return null
   }
   return (
     <li className="p-list__item">
       Version
-      <span className="b-snap__version u-float--right">{version}</span>
+      <span className="b-snap__version u-float--right">{props.version}</span>
     </li>
   );
 }
 
 function SnapChannel(props) {
-  var model = props.model;
-  var channel = model.get('channel');
-  if (!channel) {
-    return null;
+  if (!props || !props.channel) {
+    return null
   }
   return (
     <li className="p-list__item">
       Channel
-      <span className="b-snap__version u-float--right">{channel}</span>
+      <span className="b-snap__version u-float--right">{props.channel}</span>
     </li>
   );
 }
 
 function SnapInstallDate(props) {
-  var model = props.model;
-  var installDate = model.get('install_date');
-  if (!installDate) {
-    return null;
+  if (!props || !props.install_date) {
+    return null
   }
   return (
     <li className="p-list__item">
       Updated
-      <span className="b-snap__version u-float--right">{installDate}</span>
+      <span className="b-snap__version u-float--right">{props.install_date}</span>
     </li>
   );
 }
@@ -64,10 +56,10 @@ function SnapInstallDate(props) {
 function SnapInfoDetails(props) {
   return (
     <ul className="p-list--divided" style={{marginRight: "3em"}}>
-      <SnapSize model={props.model} />
-      <SnapVersion model={props.model} />
-      <SnapChannel model={props.model} />
-      <SnapInstallDate model={props.model} />
+      <SnapSize {...props.model.attributes} />
+      <SnapVersion {...props.model.attributes} />
+      <SnapChannel {...props.model.attributes} />
+      <SnapInstallDate {...props.model.attributes} />
     </ul>
   );
 }
@@ -140,7 +132,6 @@ function SnapActions(props) {
     installerClass += " b-installer_thinking";
   }
 
-  console.log(status, installerClass)
   var installerButtonClassName = "col-5";
   if (status === CONF.INSTALL_STATE.INSTALLED ||
       status === CONF.INSTALL_STATE.ACTIVE) {
@@ -172,18 +163,50 @@ function SnapActions(props) {
 module.exports = React.createBackboneClass({
   componentWillMount: function() {
     var model = this.props.model;
+    if (! model) {
+      console.log('Invalid model in snap details view');
+      return;
+    }
 
     var self = this;
-    model.on('change:download_progress', function() {
-      self.setState({downloadProgress: model.get('download_progress')});
-    });
-    model.on('change:task_summary', function() {
-      self.setState({taskSummary: model.get('task_summary')});
-    });
-    model.on('change:status', function() {
-      console.log('status ', model.get('status'))
-      self.setState({status: model.get('status')});
-    });
+    model.on('change:download_progress', this.onDownloadProgressChanged.bind(this, null), this);
+    model.on('change:task_summary', this.onTaskSummaryChanged.bind(this, null), this);
+    model.on('change:status', this.onStatusChanged.bind(this, null), this);
+  },
+
+  onDownloadProgressChanged: function() {
+    var model = this.props.model;
+    if (! model) {
+      console.log('Invalid model in snap details view');
+      return;
+    }
+    this.setState({downloadProgress: model.get('download_progress')});
+  },
+
+  onTaskSummaryChanged: function() {
+    var model = this.props.model;
+    if (! model) {
+      console.log('Invalid model in snap details view');
+      return;
+    }
+    this.setState({taskSummary: model.get('task_summary')});
+  },
+
+  onStatusChanged: function() {
+    var model = this.props.model;
+    if (! model) {
+      console.log('Invalid model in snap details view');
+      return;
+    }
+    this.setState({status: model.get('status')});
+  },
+
+  componentWillUnmount: function() {
+    var model = this.props.model;
+    if (! model) {
+      return;
+    }
+    model.off(null, null, this);
   },
 
   getInitialState: function() {

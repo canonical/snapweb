@@ -22,12 +22,12 @@ describe('SnapLayoutView', function() {
       return self.mockModelFetchResponse;
     }
 
-    this.view = ReactDOMServer.renderToStaticMarkup(
-      React.createElement(SnapDetailsView, {
-        model: this.model
-      }));
+    this.view = React.createElement(SnapDetailsView, {
+      model: this.model
+    });
 
-    this.uiInstaller = $(this.elementHtml).find('.b-installer'); 
+    this.viewHtml = ReactDOMServer.renderToStaticMarkup(this.view);
+    this.uiInstaller = $(this.viewHtml).find('.b-installer'); 
   });
 
   afterEach(function() {
@@ -41,11 +41,15 @@ describe('SnapLayoutView', function() {
 
   it('should be thinking when installing', function() {
     this.model.set('status', CONF.INSTALL_STATE.INSTALLING);
+    this.viewHtml = ReactDOMServer.renderToStaticMarkup(this.view);
+    this.uiInstaller = $(this.viewHtml).find('.b-installer'); 
     expect(this.uiInstaller.hasClass('b-installer_thinking')).toBeTruthy();
   });
 
   it('should be thinking when removing', function() {
     this.model.set('status', CONF.INSTALL_STATE.REMOVING);
+    this.viewHtml = ReactDOMServer.renderToStaticMarkup(this.view);
+    this.uiInstaller = $(this.viewHtml).find('.b-installer'); 
     expect(this.uiInstaller.hasClass('b-installer_thinking')).toBeTruthy();
   });
 
