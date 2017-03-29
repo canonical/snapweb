@@ -1,42 +1,58 @@
-// search layout view
 var Backbone = require('backbone');
-var BaskView = require('./storelist.js');
-var SearchBarView = require('./search-bar.js');
-var template = require('../templates/search.hbs');
+var React = require('react');
+var ReactBackbone = require('react.backbone');
+var SearchField = require('../components/search-field.js');
+var DeckStyler = require('../components/deck-styler.js');
+var StoreHeaderView = require('../components/store-header.js');
+var StorelistView = require('../components/storelist.js');
 
-module.exports = Backbone.Marionette.LayoutView.extend({
-
-  className: 'b-store',
-
-  initialize: function(options) {
-    this.sectionsPromise = options.sectionsPromise;
+module.exports = React.createBackboneClass({
+  getInitialState: function() {
+    return {
+      deckStyle: 'grid'
+    }
   },
 
-  template : function(model) {
-    return template(model);
+  deckStyleChanged: function(deckStyle) {
+    this.setState({deckStyle: deckStyle});
   },
 
-  onBeforeShow: function() {
-    // TODO refactor with store.js
-    var self = this;
-    var showSearchHeaderView = function() {
-      self.showChildView('searchBarRegion', new SearchBarView({
-        model: self.model,
-        collection: self.model.get('sections')
-      }));
-    };
-    this.sectionsPromise
-           .done(showSearchHeaderView)
-           .fail(showSearchHeaderView);
+  render: function() {
+    var model = this.props.model;
+    var collection = this.props.collection;
 
-    this.showChildView('resultsRegion', new BaskView({
-      model: this.model,
-      collection: this.collection
-    }));
-  },
+    return (
+      <div className="b-grey-wrapper">
+        <div className="inner-wrapper">
+          <div
+            style={{display: "inline-block", width: "100%", marginTop: "20px"}}>
+            <div className="row">
+              <SearchField query={model.get('query')} />
+              <DeckStyler
+                deckStyle={this.state.deckStyle}
+                styleChanged={this.deckStyleChanged}
+              />
+            </div>
+          </div>
 
-  regions: {
-    searchBarRegion: '.region-search-bar',
-    resultsRegion: '.region-results',
+          <div className="row">
+            <StoreHeaderView
+              title={model.get('title')}
+              sections={model.get('sections')}
+            />
+          </div>
+
+          <div className="p-strip--light">
+            <div className="row">
+              <StorelistView
+                deckStyle={this.state.deckStyle}
+                model={model}
+                collection={this.props.collection.all()}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 });

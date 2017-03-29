@@ -1,4 +1,3 @@
-
 var Backbone = require('backbone');
 var React = require('react')
 var ReactBackbone = require('react.backbone');

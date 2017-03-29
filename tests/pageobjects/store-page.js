@@ -54,12 +54,6 @@ var storePage = Object.create(basepage, {
         }
     },
 
-    searchResultSnapListSelector: {
-        get: function() {
-            return '#js-snaplist .p-card'
-        }
-    },
-
     sectionSnapListSelector: {
         get: function() {
             return '.p-card-deck .p-card'
@@ -68,7 +62,7 @@ var storePage = Object.create(basepage, {
 
     snaps: {
         get: function() {
-            return browser.elements(this.searchResultSnapListSelector);
+            return browser.elements(this.sectionSnapListSelector);
         }
     },
 
