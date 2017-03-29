@@ -59,14 +59,14 @@ describe('Store Page - Verify that', function() {
 
     it('search non exact match', function() {
         storePage.search('hello-w');
-        browser.waitForVisible(storePage.searchResultSnapListSelector);
+        browser.waitForVisible(storePage.sectionSnapListSelector);
         snaps = storePage.snaps;
         assert.isAbove(snaps.value.length, 0, "No snaps found");
     });
 
     it('search non exact match and check snap details', function() {
         storePage.search('hello-w');
-        browser.waitForVisible(storePage.searchResultSnapListSelector);
+        browser.waitForVisible(storePage.sectionSnapListSelector);
         storePage.snaps.value[0].click();
         browser.waitForVisible(snapDetailsPage.snapTitleElement);
         assert.isNotNull(snapDetailsPage.snap.value, "Snap details not found");

@@ -65,7 +65,19 @@ ApplicationWindow {
 
     context: WebContext {
         dataPath: main.cookiePath
-        sessionCookieMode: WebContext.SessionCookieModeRestored
+    }
+
+    Component.onCompleted: {
+      var request = new XMLHttpRequest()
+      request.open('GET', context.dataPath + '/token.txt')
+      request.onreadystatechange = function(event) {
+          if (request.readyState == XMLHttpRequest.DONE) {
+              var token = request.responseText
+              context.cookieManager.setCookies(main.url, [{"name": "SM", "value": token}]);
+              webView.reload()
+          }
+      }
+      request.send()
     }
 
     url: main.url + "/store"
