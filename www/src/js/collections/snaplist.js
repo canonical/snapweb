@@ -19,9 +19,6 @@ module.exports = Backbone.Collection.extend({
     return new this.constructor(
       this.slice(0, this.limits.installedSnapListMaxItems));
   },
-  comparator: function(model) {
-    return model.get('name');
-  },
   limits: {
     installedSnapListMaxItems: 20
   },

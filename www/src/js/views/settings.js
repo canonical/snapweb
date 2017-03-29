@@ -1,80 +1,101 @@
-// settings view
-var $ = require('jquery');
-var Backbone = require('backbone');
-Backbone.$ = $;
-var Marionette = require('backbone.marionette');
-var React = require('react');
-var ReactDOM = require('react-dom');
-var template = require('../templates/settings.hbs');
-var SettingsDeviceView = require('./settings-device.js');
-var SettingsProfileView = require('./settings-profile.js');
-var SettingsUsersView = require('./settings-users.js');
-var SettingsUpdatesView = require('./settings-updates.js');
-var SettingsTimeView = require('./settings-time.js');
 
-var TimeInfo = require('../models/time-info.js');
+import React from 'react'
 
-module.exports = Backbone.Marionette.LayoutView.extend({
-  initialize: function(options) {
-    this.timeInfo = options.timeInfo;
-    this.deviceInfo = options.deviceInfo;
+import SettingsTimeView from './settings-time'
+import SettingsDeviceView from './settings-device'
+import SettingsProfileView from './settings-profile'
+import SettingsUsersView from './settings-users'
+import SettingsUpdatesView from './settings-updates'
+
+import DeviceInfo from '../models/device-info'
+import TimeInfo from '../models/time-info'
+
+
+const iconPath = "/public/images/icons/";
+const SettingsViews = [{
+   view: SettingsDeviceView,
+   icon: iconPath + 'deviceinfo-icon.svg',
+   text: 'Device Information',
+   model: DeviceInfo
   },
-
-  template: function(model) {
-    return template(model);
+  /* {
+    view: SettingsProfileView,
+    icon: iconPath + 'profile-icon.svg',
+    text: 'Profile'
+    },
+  {
+    view: SettingsUsersView,
+    icon: iconPath + 'users-icon.svg',
+    text: 'Users'
+  }, {
+    view: SettingsUpdatesView,
+    icon: iconPath + 'updates-icon.svg',
+    text: 'Updates'
+  }, */
+  {
+    view: SettingsTimeView,
+    icon: iconPath + 'datetime-icon.svg',
+    text: 'Date and time',
+    model: TimeInfo
   },
+];
 
-  ui: {
-    'row': '.js-list-item'
-  },
+const MenuItem = ({icon, text, onClick, active = false}) =>
+  <li
+    className={`p-list__item js-list-item ${active ? "is-active" : ""}`}
+    onClick={onClick}> 
+    <img 
+      className="p-list__icon"
+      src={icon}
+      width="24"
+      height="24" />
+    {text}
+  </li>;
 
-  events: {
-    'click @ui.row': 'setActive'
-  },
-
-  regions: {
-    contentRegion: '.b-settings__content'
-  },
-
-  showContent: function(id) {
-    var view;
-    switch (id) {
-      case 'profile':
-        view = new SettingsProfileView();
-        break;
-      case 'users':
-        view = new SettingsUsersView();
-        break;
-      case 'updates':
-        view = new SettingsUpdatesView();
-        break;
-      case 'time': {
-        timeInfo = new TimeInfo;
-        timeInfo.fetch();
-        this.timeElement = this.timeElement || React.createElement(SettingsTimeView, {
-            model: timeInfo
-          });
-        ReactDOM.render(this.timeElement, this.$('.b-settings__content').get(0));
-        return;
-      }
-      case 'device':
-      default:
-        view = new SettingsDeviceView({
-            model: this.deviceInfo
-          });
-    }
-
-    this.showChildView('contentRegion', view);
-  },
-
-  setActive: function(e) {
-    var id = e.target.getAttribute('id');
-    this.showContent(id);
-    this.$('.js-list-item').removeClass('is-active');
-    this.$('#' + id).addClass('is-active');
-  },
-
-  onBeforeShow: function() {
-    this.showContent('device');
+const SettingsView = ({index}) => {
+  var modelClass = SettingsViews[index].model;
+  if (modelClass != null) {
+    var model = new modelClass;
+    model.fetch();
+    return React.createElement(SettingsViews[index].view, {model: model});
   }
-});
+  return React.createElement(SettingsViews[index].view);
+};
+
+class SettingsLayoutView extends React.Component {
+  state = {
+    activeViewIndex: 0
+  };
+
+  menuItemClick = (index) => {
+    if (this.state.activeViewIndex != index)
+      this.setState({activeViewIndex: index})
+  };
+
+  render() {
+    const menuItems = SettingsViews.map((info, index) => 
+      <MenuItem
+        key={index}
+        icon={info.icon}
+        text={info.text}
+        active={this.state.activeViewIndex == index}
+        onClick={() => this.menuItemClick(index)}
+      />);
+
+    return (
+      <div className="row">
+        <div className="col-4 suffix-1">
+          <ul className="p-list--menu">
+            {menuItems}
+          </ul>
+        </div>
+
+        <div className="col-8">
+          <SettingsView index={this.state.activeViewIndex} />
+        </div>
+      </div>
+    );
+  }
+};
+
+module.exports = SettingsLayoutView;

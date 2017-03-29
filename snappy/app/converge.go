@@ -21,6 +21,7 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
+	"regexp"
 	"sort"
 	"strconv"
 	"time"
@@ -106,7 +107,6 @@ func (h *Handler) allPackages(snapCondition int, query string, private bool, sec
 	} else {
 		opts := &client.FindOptions{
 			Query:   url.QueryEscape(query),
-			Prefix:  !private,
 			Private: private,
 			Section: section,
 		}
@@ -123,8 +123,6 @@ func (h *Handler) allPackages(snapCondition int, query string, private bool, sec
 			snapPkgs,
 			h.snapToPayload(snap))
 	}
-
-	sort.Sort(snapPkgsByName(snapPkgs))
 
 	return snapPkgs, nil
 }
@@ -159,10 +157,35 @@ func (h *Handler) installPackage(name string) error {
 	return err
 }
 
+func (h *Handler) abortRunningOperation(name string) error {
+	snap, err := h.getSnap(name)
+	if err != nil {
+		return err
+	}
+	if snap == nil {
+		return errors.New("Invalid snap name")
+	}
+
+	tracked, changeID := h.stateTracker.IsTrackedForRunningOperation(snap)
+	if !tracked {
+		return fmt.Errorf("No operation to abort for snap %s", name)
+	}
+
+	_, err = h.snapdClient.Abort(changeID)
+	if err == nil {
+		h.stateTracker.CancelTrackingFor(name)
+	}
+
+	return err
+}
+
 func (h *Handler) enable(name string) error {
 	snap, err := h.getSnap(name)
-	if err != nil && snap != nil {
+	if err != nil {
 		return err
+	}
+	if snap == nil {
+		return fmt.Errorf("Snap not found %s", name)
 	}
 
 	if snap.Status != statetracker.StatusInstalled {
@@ -181,8 +204,11 @@ func (h *Handler) enable(name string) error {
 
 func (h *Handler) disable(name string) error {
 	snap, err := h.getSnap(name)
-	if err != nil && snap != nil {
+	if err != nil {
 		return err
+	}
+	if snap == nil {
+		return fmt.Errorf("Snap not found %s", name)
 	}
 
 	if snap.Status != statetracker.StatusActive {
@@ -256,14 +282,37 @@ func (h *Handler) snapToPayload(snapQ *client.Snap) snapPkg {
 	if isInstalled {
 		iconPath, err := localIconPath(h.snapdClient, snap.Name)
 		if err != nil {
-			log.Println("Icon path for installed package cannot be set", err)
-			iconPath = ""
+			if err == ErrIconNotExist {
+				// We have an installed snap, but no icon found,
+				// this could happen during an uninstall process.
+				var p string
+				p, err = tryLocateCachedIconForSnap(snap.Name)
+				if err == nil {
+					iconPath = p
+				} else {
+					iconPath = ""
+				}
+			} else {
+				log.Println("Icon path for installed package cannot be set:", err)
+				iconPath = ""
+			}
 		}
 
 		snap.Icon = iconPath
 		snap.InstalledSize = snapQ.InstalledSize
 	} else {
-		snap.Icon = snapQ.Icon
+		// quick fix for the icon problem (LP:#1668193)
+		r := regexp.MustCompile("^/v2/icons/(.*)")
+		match := r.Match([]byte(snapQ.Icon))
+		if match {
+			iconPath, err := localIconPath(h.snapdClient, snap.Name)
+			if err != nil {
+				iconPath = ""
+			}
+			snap.Icon = iconPath
+		} else {
+			snap.Icon = snapQ.Icon
+		}
 		snap.DownloadSize = snapQ.DownloadSize
 	}
 

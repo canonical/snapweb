@@ -34,6 +34,13 @@ module.exports = {
       }, {
         dataType : 'json'
       });
+    } else if (status === Config.INSTALL_STATE.INSTALLING) {
+      model.save({
+        status: "cancel"
+      }, {
+        dataType : 'json',
+        type: 'post'
+      });
     }
 
     return false;

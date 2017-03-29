@@ -28,6 +28,7 @@ import (
 	. "gopkg.in/check.v1"
 
 	"github.com/snapcore/snapweb/snappy/common"
+	"github.com/snapcore/snapweb/snappy/snapdclient"
 	"github.com/snapcore/snapweb/statetracker"
 )
 
@@ -35,13 +36,13 @@ func Test(t *testing.T) { TestingT(t) }
 
 type GetSnapSuite struct {
 	h Handler
-	c *FakeSnapdClient
+	c *snapdclient.FakeSnapdClient
 }
 
 var _ = Suite(&GetSnapSuite{})
 
 func (s *GetSnapSuite) SetUpTest(c *C) {
-	s.c = &FakeSnapdClient{}
+	s.c = &snapdclient.FakeSnapdClient{}
 	s.h.setClient(s.c)
 }
 
@@ -92,7 +93,7 @@ func (s *GetSnapSuite) TestGetSnap(c *C) {
 
 type PackagePayloadSuite struct {
 	h Handler
-	c *FakeSnapdClient
+	c *snapdclient.FakeSnapdClient
 }
 
 var _ = Suite(&PackagePayloadSuite{})
@@ -100,7 +101,7 @@ var _ = Suite(&PackagePayloadSuite{})
 func (s *PackagePayloadSuite) SetUpTest(c *C) {
 	os.Setenv("SNAP_DATA", c.MkDir())
 	s.h.stateTracker = statetracker.New()
-	s.c = &FakeSnapdClient{}
+	s.c = &snapdclient.FakeSnapdClient{}
 	s.h.setClient(s.c)
 }
 
@@ -141,7 +142,7 @@ var _ = Suite(&PayloadSuite{})
 func (s *PayloadSuite) SetUpTest(c *C) {
 	os.Setenv("SNAP_DATA", c.MkDir())
 	s.h.stateTracker = statetracker.New()
-	s.h.setClient(&FakeSnapdClient{})
+	s.h.setClient(&snapdclient.FakeSnapdClient{})
 }
 
 func (s *PayloadSuite) TestPayload(c *C) {
@@ -166,8 +167,88 @@ func (s *PayloadSuite) TestPayloadSnapInstalling(c *C) {
 	c.Assert(payload.State, DeepEquals, SnapState{Status: statetracker.StatusInstalling})
 }
 
+func (s *PayloadSuite) TestPayloadEmptyIconPath(c *C) {
+	fakeSnap := common.NewDefaultSnap()
+
+	previousLocalIconPath := localIconPath
+	defer func() {
+		localIconPath = previousLocalIconPath
+	}()
+
+	localIconPath = func(c snapdclient.SnapdClient, name string) (relativePath string, err error) {
+		return "", errors.New("error")
+	}
+
+	q := s.h.snapToPayload(fakeSnap)
+	c.Check(q.Icon, Equals, "")
+}
+
+func (s *PayloadSuite) TestPayloadStoreSnapWrongIconPathWithErr(c *C) {
+	fakeSnap := common.NewDefaultSnap()
+	fakeSnap.Status = client.StatusAvailable
+	fakeSnap.Icon = "/v2/icons/chatroom/icon"
+
+	previousLocalIconPath := localIconPath
+	defer func() {
+		localIconPath = previousLocalIconPath
+	}()
+
+	localIconPath = func(c snapdclient.SnapdClient, name string) (relativePath string, err error) {
+		return "", errors.New("error")
+	}
+
+	q := s.h.snapToPayload(fakeSnap)
+	c.Check(q.Icon, Equals, "")
+}
+
+func (s *PayloadSuite) TestPayloadStoreSnapWrongIconPathNoErr(c *C) {
+	fakeSnap := common.NewDefaultSnap()
+	fakeSnap.Status = client.StatusAvailable
+	fakeSnap.Icon = "/v2/icons/chatroom/icon"
+
+	previousLocalIconPath := localIconPath
+	defer func() {
+		localIconPath = previousLocalIconPath
+	}()
+
+	localIconPath = func(c snapdclient.SnapdClient, name string) (relativePath string, err error) {
+		return "iconpath", nil
+	}
+
+	q := s.h.snapToPayload(fakeSnap)
+	c.Check(q.Icon, Equals, "iconpath")
+}
+
+func (s *PayloadSuite) TestPayloadInstalledSnapBeingRemoved(c *C) {
+	fakeSnap := common.NewDefaultSnap()
+
+	previousTryLocateCachedIconForSnap := tryLocateCachedIconForSnap
+	previousLocalIconPath := localIconPath
+	defer func() {
+		localIconPath = previousLocalIconPath
+		tryLocateCachedIconForSnap = previousTryLocateCachedIconForSnap
+	}()
+
+	localIconPath = func(c snapdclient.SnapdClient, name string) (relativePath string, err error) {
+		return "", ErrIconNotExist
+	}
+	tryLocateCachedIconForSnap = func(snapName string) (string, error) {
+		return "", ErrIconNotExist
+	}
+
+	q := s.h.snapToPayload(fakeSnap)
+	c.Check(q.Icon, Equals, "")
+
+	tryLocateCachedIconForSnap = func(snapName string) (string, error) {
+		return "myicon", nil
+	}
+
+	q = s.h.snapToPayload(fakeSnap)
+	c.Check(q.Icon, Equals, "myicon")
+}
+
 type AllPackagesSuite struct {
-	c *FakeSnapdClient
+	c *snapdclient.FakeSnapdClient
 	h Handler
 }
 
@@ -176,7 +257,7 @@ var _ = Suite(&AllPackagesSuite{})
 func (s *AllPackagesSuite) SetUpTest(c *C) {
 	os.Setenv("SNAP_DATA", c.MkDir())
 	s.h.stateTracker = statetracker.New()
-	s.c = &FakeSnapdClient{}
+	s.c = &snapdclient.FakeSnapdClient{}
 	s.h.setClient(s.c)
 }
 
@@ -213,8 +294,9 @@ func (s *AllPackagesSuite) TestHasSnaps(c *C) {
 	snaps, err := s.h.allPackages(availableSnaps, "", false, "")
 	c.Assert(err, IsNil)
 	c.Assert(snaps, HasLen, 2)
-	c.Assert(snaps[0].Name, Equals, "app1")
-	c.Assert(snaps[1].Name, Equals, "app2")
+	// Not sorted, presented as is
+	c.Assert(snaps[0].Name, Equals, "app2")
+	c.Assert(snaps[1].Name, Equals, "app1")
 }
 
 func (s *AllPackagesSuite) TestFormatInstallDate(c *C) {
@@ -237,14 +319,14 @@ func (s *AllPackagesSuite) TestSnapPrices(c *C) {
 
 type SnapOperationTrackingSuite struct {
 	h Handler
-	c *FakeSnapdClient
+	c *snapdclient.FakeSnapdClient
 }
 
 var _ = Suite(&SnapOperationTrackingSuite{})
 
 func (s *SnapOperationTrackingSuite) SetUpTest(c *C) {
 	os.Setenv("SNAP_DATA", c.MkDir())
-	s.c = &FakeSnapdClient{}
+	s.c = &snapdclient.FakeSnapdClient{}
 	s.h.stateTracker = statetracker.New()
 	s.h.setClient(s.c)
 }
@@ -260,4 +342,71 @@ func (s *SnapOperationTrackingSuite) TestEnableDisableNonLocalSnaps(c *C) {
 
 	err = s.h.disable(fakeSnap.Name)
 	c.Assert(err, NotNil)
+}
+
+func (s *SnapOperationTrackingSuite) TestEnableDisableNonLocalSnapsWithErr(c *C) {
+	fakeSnap := common.NewDefaultSnap()
+
+	// Non local snaps
+
+	fakeSnap.Status = "available"
+	s.c.Snaps = []*client.Snap{fakeSnap}
+
+	err := s.h.enable(fakeSnap.Name)
+	c.Assert(err, NotNil)
+
+	err = s.h.disable(fakeSnap.Name)
+	c.Assert(err, NotNil)
+
+	// Various error paths, getSnap error
+
+	fakeSnap.Status = "installed"
+	s.c.Err = errors.New("error")
+
+	err = s.h.enable(fakeSnap.Name)
+	c.Assert(err, NotNil)
+
+	err = s.h.disable(fakeSnap.Name)
+	c.Assert(err, NotNil)
+
+	// Various error paths, getSnap snap not there
+
+	s.c.Snaps = []*client.Snap{}
+	s.c.Err = nil
+
+	err = s.h.enable(fakeSnap.Name)
+	c.Assert(err, NotNil)
+
+	err = s.h.disable(fakeSnap.Name)
+	c.Assert(err, NotNil)
+}
+
+func (s *SnapOperationTrackingSuite) TestAbortOperation(c *C) {
+	fakeSnap := common.NewDefaultSnap()
+
+	fakeSnap.Status = "available"
+	s.c.Snaps = []*client.Snap{fakeSnap}
+
+	s.c.ChangeID = "changeid"
+	err := s.h.installPackage(fakeSnap.Name)
+	c.Assert(err, IsNil)
+
+	err = s.h.abortRunningOperation(fakeSnap.Name)
+	c.Assert(err, IsNil)
+	c.Assert(s.c.AbortedChangeID, Equals, "changeid")
+}
+
+func (s *SnapOperationTrackingSuite) TestAbortOperationWithErr(c *C) {
+	fakeSnap := common.NewDefaultSnap()
+
+	fakeSnap.Status = "available"
+	s.c.Snaps = []*client.Snap{}
+
+	err := s.h.abortRunningOperation(fakeSnap.Name)
+	c.Assert(err, NotNil)
+
+	s.c.Snaps = []*client.Snap{fakeSnap}
+	err = s.h.abortRunningOperation(fakeSnap.Name)
+	c.Assert(err, NotNil)
+	c.Assert(s.c.AbortedChangeID, Equals, "")
 }

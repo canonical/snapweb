@@ -1,5 +1,7 @@
+// +build ubuntu_personal_store
+
 /*
- * Copyright (C) 2014-2015 Canonical Ltd
+ * Copyright (C) 2014-2017 Canonical Ltd
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -15,10 +17,9 @@
  *
  */
 
-package snappy
+package main
 
-type snapPkgsByName []snapPkg
-
-func (s snapPkgsByName) Len() int           { return len(s) }
-func (s snapPkgsByName) Swap(i, j int)      { s[i], s[j] = s[j], s[i] }
-func (s snapPkgsByName) Less(i, j int) bool { return s[i].Name < s[j].Name }
+const (
+	httpAddr  string = "127.0.0.1:5200"
+	httpsAddr string = "127.0.0.1:5201"
+)

@@ -21,7 +21,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"log"
 	"net"
@@ -32,7 +31,6 @@ import (
 	"strings"
 	"text/template"
 
-	// most other handlers use the ClientAdapter for now
 	"github.com/snapcore/snapweb/snappy/app"
 	"github.com/snapcore/snapweb/snappy/snapdclient"
 )
@@ -78,6 +76,7 @@ func getSnappyVersion() string {
 type timeInfoResponse struct {
 	DateTime  int64  `json:"dateTime,omitempty"`
 	Timezone  string `json:"timezone,omitempty"`
+	Offset    int    `json:"offset,omitempty"`
 	NTP       bool   `json:"ntp,omitempty"`
 	NTPServer string `json:"ntpServer,omitempty"`
 }
@@ -94,6 +93,7 @@ func handleTimeInfo(w http.ResponseWriter, r *http.Request) {
 		info := timeInfoResponse{
 			DateTime:  values["DateTime"].(int64),
 			Timezone:  values["Timezone"].(string),
+			Offset:    values["Offset"].(int),
 			NTP:       values["NTP"].(bool),
 			NTPServer: values["NTPServer"].(string),
 		}
@@ -156,7 +156,6 @@ func handleDeviceInfo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var info deviceInfoResponse
-	info.DeviceName = modelInfo["DeviceName"].(string)
 	info.Brand = modelInfo["Brand"].(string)
 	info.Model = modelInfo["Model"].(string)
 	info.Serial = modelInfo["Serial"].(string)
@@ -232,22 +231,26 @@ func handleDeviceAction(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func initURLHandlers(log *log.Logger, config Config) {
+func initURLHandlers(log *log.Logger, config snappy.Config) http.Handler {
 	log.Println("Initializing HTTP handlers...")
 
+	handler := http.NewServeMux()
+
 	// API
-	http.Handle("/api/", makeAPIHandler("/api/", config))
+	handler.Handle("/api/", makeAPIHandler("/api/", config))
 
 	// Resources
-	http.Handle("/public/", loggingHandler(http.FileServer(http.Dir(filepath.Join(os.Getenv("SNAP"), "www")))))
+	handler.Handle("/public/", loggingHandler(http.FileServer(http.Dir(filepath.Join(os.Getenv("SNAP"), "www")))))
 
 	if iconDir, relativePath, err := snappy.IconDir(); err == nil {
-		http.Handle(fmt.Sprintf("/%s/", relativePath), loggingHandler(http.FileServer(http.Dir(filepath.Join(iconDir, "..")))))
+		handler.Handle(fmt.Sprintf("/%s/", relativePath), loggingHandler(http.FileServer(http.Dir(filepath.Join(iconDir, "..")))))
 	} else {
 		log.Println("Issues while getting icon dir:", err)
 	}
 
-	http.HandleFunc("/", makeMainPageHandler())
+	handler.HandleFunc("/", makeMainPageHandler())
+
+	return NewFilterHandlerFromConfig(handler, config)
 }
 
 // Name of the cookie transporting the access token
@@ -282,43 +285,6 @@ func validateToken(w http.ResponseWriter, r *http.Request) {
 	hdr.Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, "{}")
-}
-
-func makePassthroughHandler(socketPath string, prefix string) http.HandlerFunc {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		c := &http.Client{
-			Transport: &http.Transport{Dial: unixDialer(socketPath)},
-		}
-
-		log.Println(r.Method, r.URL.Path)
-
-		// need to remove the RequestURI field
-		// and remove the /api prefix from snapweb URLs
-		r.URL.Scheme = "http"
-		r.URL.Host = "localhost"
-		r.URL.Path = strings.TrimPrefix(r.URL.Path, prefix)
-
-		outreq, err := http.NewRequest(r.Method, r.URL.String(), r.Body)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		resp, err := c.Do(outreq)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		// Note: the client.Do method above only returns JSON responses
-		//       even if it doesn't say so
-		hdr := w.Header()
-		hdr.Set("Content-Type", "application/json")
-		w.WriteHeader(resp.StatusCode)
-
-		io.Copy(w, resp.Body)
-
-	})
 }
 
 func loggingHandler(h http.Handler) http.Handler {
@@ -358,12 +324,47 @@ func renderLayout(html string, data *templateData, w http.ResponseWriter) error 
 		return err
 	}
 
-	layoutPath := filepath.Join(os.Getenv("SNAP"), "www", "templates", "base.html")
-	t, err := template.ParseFiles(layoutPath, htmlPath)
+	t, err := template.ParseFiles(htmlPath)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return err
 	}
 
 	return t.Execute(w, *data)
+}
+
+func redirHandler(config snappy.Config) http.Handler {
+	redir := http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		http.Redirect(w, req,
+			"https://"+strings.Replace(req.Host, httpAddr, httpsAddr, -1),
+			http.StatusSeeOther)
+	})
+
+	return NewFilterHandlerFromConfig(redir, config)
+}
+
+// NewFilterHandlerFromConfig creates a new http.Handler with an integrated NetFilter
+func NewFilterHandlerFromConfig(handler http.Handler, config snappy.Config) http.Handler {
+	if config.DisableIPFilter {
+		return handler
+	}
+
+	f := snappy.NewFilter()
+
+	for _, net := range config.AllowNetworks {
+		f.AllowNetwork(net)
+	}
+
+	for _, ifname := range config.AllowInterfaces {
+		f.AddLocalNetworkForInterface(ifname)
+	}
+
+	// if nothing was specified, default to allowing all local networks
+	if (len(config.AllowNetworks) == 0) &&
+		(len(config.AllowInterfaces) == 0) {
+		logger.Println("Allowing local network access by default")
+		f.AddLocalNetworks()
+	}
+
+	return f.FilterHandler(handler)
 }

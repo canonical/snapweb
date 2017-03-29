@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Canonical Ltd
+ * Copyright (C) 2016-2017 Canonical Ltd
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -15,13 +15,11 @@
  *
  */
 
-package snappy
+package snapdclient
 
 import (
 	"github.com/snapcore/snapd/asserts"
 	"github.com/snapcore/snapd/client"
-
-	"github.com/snapcore/snapweb/snappy/snapdclient"
 )
 
 // FakeSnapdClient is a fake SnapdClient for testing purposes
@@ -38,6 +36,10 @@ type FakeSnapdClient struct {
 	Removed         string
 	CrUser          client.CreateUserResult
 	Name            string
+	SnapSections    []string
+	AbortedChangeID string
+	ChangeID        string
+	CurrentChange   *client.Change
 }
 
 // Icon returns the icon of an installed snap
@@ -76,14 +78,14 @@ func (f *FakeSnapdClient) Find(opts *client.FindOptions) ([]*client.Snap, *clien
 func (f *FakeSnapdClient) Install(name string, options *client.SnapOptions) (string, error) {
 	f.Installed = name
 
-	return "", nil
+	return f.ChangeID, nil
 }
 
 // Remove removes the names snap from the system
 func (f *FakeSnapdClient) Remove(name string, options *client.SnapOptions) (string, error) {
 	f.Removed = name
 
-	return "", nil
+	return f.ChangeID, nil
 }
 
 // ServerVersion returns the version of the running `snapd` daemon
@@ -118,7 +120,7 @@ func (f *FakeSnapdClient) Known(assertTypeName string, headers map[string]string
 
 // Sections returns the list of existing sections in the store.
 func (f *FakeSnapdClient) Sections() ([]string, error) {
-	return nil, nil
+	return f.SnapSections, f.Err
 }
 
 // FindOne returns a list of snaps available for install from the
@@ -136,7 +138,7 @@ func (f *FakeSnapdClient) FindOne(name string) (*client.Snap, *client.ResultInfo
 
 // Change returns the list of ongoing changes for a given snap and changeid
 func (f *FakeSnapdClient) Change(id string) (*client.Change, error) {
-	return nil, nil
+	return f.CurrentChange, nil
 }
 
 // Enable enables the snap
@@ -149,4 +151,10 @@ func (f *FakeSnapdClient) Disable(name string, options *client.SnapOptions) (str
 	return "Disabling", nil
 }
 
-var _ snapdclient.SnapdClient = (*FakeSnapdClient)(nil)
+// Abort attempts to abort a change that is in not yet ready.
+func (f *FakeSnapdClient) Abort(id string) (*client.Change, error) {
+	f.AbortedChangeID = id
+	return nil, nil
+}
+
+var _ SnapdClient = (*FakeSnapdClient)(nil)

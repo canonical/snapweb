@@ -101,7 +101,6 @@ func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Error: %s", err)
 		return
 	}
-
 	h.jsonResponseOrError(payload, w)
 }
 
@@ -152,6 +151,10 @@ func (h *Handler) update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// For now only deal with enable/disable updates
+	if _, ok := snap["status"]; !ok {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
 	var status string
 	err = json.Unmarshal(*snap["status"], &status)
@@ -164,6 +167,8 @@ func (h *Handler) update(w http.ResponseWriter, r *http.Request) {
 		err = h.enable(snapName)
 	} else if status == statetracker.StatusDisabling {
 		err = h.disable(snapName)
+	} else if status == "cancel" {
+		err = h.abortRunningOperation(snapName)
 	}
 
 	if err != nil {

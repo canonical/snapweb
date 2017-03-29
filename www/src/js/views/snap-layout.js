@@ -44,11 +44,11 @@ module.exports = Marionette.LayoutView.extend({
       }
       if (status === CONF.INSTALL_STATE.INSTALLED ||
           status === CONF.INSTALL_STATE.ACTIVE) {
-        $("#enabler-button").css({'display': 'block'});
+//        $("#enabler-button").css({'display': 'block'});
         $("#installer-button").removeClass('col-5').addClass('col-2');
       }
       if (status === CONF.INSTALL_STATE.REMOVED) {
-        $("#enabler-button").css({'display': 'none'});
+//        $("#enabler-button").css({'display': 'none'});
         $("#installer-button").removeClass('col-2').addClass('col-5');
       }
     })
@@ -74,13 +74,17 @@ module.exports = Marionette.LayoutView.extend({
   },
 
   onBeforeShow: function() {
-    this.showChildView(
+    // disabled for now until https://bugs.launchpad.net/snapweb/+bug/1668390
+    // is fixed
+    /*
+this.showChildView(
         'interfacesRegion',
         new SnapInterfaceCollectionView({
           model: this.model,
           collection: this.collection
         })
     );
+*/
   },
 
   onShow: function() {

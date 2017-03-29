@@ -31,7 +31,6 @@ describe('SnapListView', function() {
     var l = view.$el.find('.p-card')
     expect(l.length).not.toBeLessThan(2);
     view.remove();
-    delete view;
   });
 
   it('should not display message for empty collection if requested', function() {
@@ -45,7 +44,6 @@ describe('SnapListView', function() {
     expect(l.length).toBe(0);
     expect(view.$el.html().indexOf('No results')).toBe(-1);
     view.remove();
-    delete view;
   });
 
   it('should not display message for empty collection by default', function() {
@@ -58,6 +56,5 @@ describe('SnapListView', function() {
     expect(l.length).toBe(0);
     expect(view.$el.html().indexOf('No results')).not.toBe(-1);
     view.remove();
-    delete view;
   });
 });

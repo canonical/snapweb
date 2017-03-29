@@ -1,0 +1,75 @@
+name: ubuntu-personal-store
+version: "0.26.9"
+summary: A beautiful and functional interface for snap management.
+description: This application allows you to browse and install snap packages on your Ubuntu Personal device.
+type: app
+apps:
+
+grade: devel
+confinement: strict
+
+apps:
+  snapweb:
+    daemon: simple
+    command: snapweb
+    plugs: [network, network-bind, snapd-control, timeserver-control, timezone-control]
+  generate-token:
+    command: generate-token
+
+  ubuntu-personal-store:
+    command: ubuntu-personal-store.launcher
+    plugs:
+      - browser-support
+      - network
+      - opengl
+      - unity7
+
+parts:
+  ubuntu-personal-store-qml:
+    plugin: dump
+    source: https://github.com/snapcore/snapweb
+    source-type: git
+    stage-packages:
+      - qmlscene
+      - qml-module-qtquick2
+      - qml-module-qtquick-controls
+      - qml-module-ubuntu-web
+    after: [desktop-qt5]
+    organize:
+      ubuntu-personal-store/ubuntu-personal-store.qml: ubuntu-personal-store.qml
+      ubuntu-personal-store/pkg: pkg
+      ubuntu-personal-store/setup: setup
+    stage:
+      - ubuntu-personal-store.qml
+      - pkg/*
+      - setup/*
+      - usr/*
+      - lib/*
+      - etc/*
+
+  launcher:
+    plugin: dump
+    source: https://github.com/snapcore/snapweb
+    source-type: git
+    organize:
+      ubuntu-personal-store/ubuntu-personal-store.launcher: bin/ubuntu-personal-store.launcher
+    stage:
+       - bin/ubuntu-personal-store.launcher
+
+  snapweb:
+    plugin: go
+    source: https://github.com/snapcore/snapweb
+    source-type: git
+    go-importpath: github.com/snapcore/snapweb
+    go-buildtags: [ubuntu_personal_store]
+    build-packages: [gcc]
+
+  snapweb-ui:
+    plugin: gulp
+    node-engine: 4.2.6
+    gulp-tasks: ['install']
+    source: https://github.com/snapcore/snapweb
+    source-type: git
+    build-packages:
+       - git
+

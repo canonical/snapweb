@@ -19,6 +19,8 @@ package main
 
 import (
 	"bufio"
+	"errors"
+	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -95,51 +97,48 @@ func writeNTPServer(ntpServer string) error {
 	return saveTimeSyncd(timesyncd)
 }
 
+var callDbusEndpoint = func(o dbus.BusObject, target string, v interface{}) error {
+	return o.Call(target, 0, v, false, false).Err
+}
+
+func updateTimeDate(verb string, v interface{}) error {
+	bus, err := dbus.SystemBus()
+	if err != nil {
+		return err
+	}
+	timedatectl := bus.Object("org.freedesktop.timedate1", "/org/freedesktop/timedate1")
+	target := fmt.Sprintf("org.freedesktop.timedate1.%s", verb)
+	return callDbusEndpoint(timedatectl, target, v)
+}
+
 func setTimeInfo(patch map[string]interface{}) error {
 	for k, v := range patch {
 		if k == "ntp" {
-			ntp := v.(bool)
-
-			bus, err := dbus.SystemBus()
-			if err != nil {
-				return err
+			var ntp, ok bool
+			if ntp, ok = v.(bool); !ok {
+				return errors.New("Invalid NTP flag value type")
 			}
-
-			timedatectl := bus.Object("org.freedesktop.timedate1", "/org/freedesktop/timedate1")
-			call := timedatectl.Call("org.freedesktop.timedate1.SetNTP", 0, ntp, false)
-			if call.Err != nil {
-				return call.Err
-			}
+			return updateTimeDate("SetNTP", ntp)
 		} else if k == "ntpServer" {
 			if err := writeNTPServer(v.(string)); err != nil {
 				return err
 			}
 		} else if k == "dateTime" {
-			dateTime := v.(float64) * 1000000
-
-			bus, err := dbus.SystemBus()
-			if err != nil {
-				return err
+			var dateTime float64
+			var ok bool
+			if dateTime, ok = v.(float64); !ok {
+				return errors.New("Invalid date time option value type")
 			}
+			dateTime *= 1000000
+			return updateTimeDate("SetTime", int64(dateTime))
 
-			timedatectl := bus.Object("org.freedesktop.timedate1", "/org/freedesktop/timedate1")
-			call := timedatectl.Call("org.freedesktop.timedate1.SetTime", 0, int64(dateTime), false, false)
-			if call.Err != nil {
-				return call.Err
-			}
 		} else if k == "timezone" {
-			timezone := v.(string)
-
-			bus, err := dbus.SystemBus()
-			if err != nil {
-				return err
+			var timezone string
+			var ok bool
+			if timezone, ok = v.(string); !ok {
+				return errors.New("Invalid timezone option value type")
 			}
-
-			timedatectl := bus.Object("org.freedesktop.timedate1", "/org/freedesktop/timedate1")
-			call := timedatectl.Call("org.freedesktop.timedate1.SetTimezone", 0, timezone, false)
-			if call.Err != nil {
-				return call.Err
-			}
+			return updateTimeDate("SetTimezone", timezone)
 		}
 	}
 
@@ -183,9 +182,18 @@ func getTimeInfo() (map[string]interface{}, error) {
 		return map[string]interface{}{}, err
 	}
 
+	location, err := time.LoadLocation(timezone.Value().(string))
+	if err != nil {
+		return map[string]interface{}{}, err
+	}
+
+	now := time.Now().In(location) // Pick up changes in timezone
+	_, offset := now.Zone()
+
 	return map[string]interface{}{
-		"DateTime":  time.Now().Unix(),
+		"DateTime":  now.Unix(),
 		"Timezone":  timezone.Value().(string),
+		"Offset":    offset,
 		"NTP":       ntp.Value().(bool),
 		"NTPServer": readNTPServer(),
 	}, nil

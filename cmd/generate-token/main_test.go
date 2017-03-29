@@ -28,12 +28,18 @@ import (
 func Test(t *testing.T) { TestingT(t) }
 
 type GenerateTokenSuite struct {
+	snapdata string
 }
 
 var _ = Suite(&GenerateTokenSuite{})
 
 func (s *GenerateTokenSuite) SetUpTest(c *C) {
-	os.Setenv("SNAP_DATA", c.MkDir())
+	s.snapdata = c.MkDir()
+	os.Setenv("SNAP_DATA", s.snapdata)
+}
+
+func (s *GenerateTokenSuite) TearDownTest(c *C) {
+	os.RemoveAll(s.snapdata)
 }
 
 func (s *GenerateTokenSuite) TestCreateDifferentTokens(c *C) {
@@ -51,4 +57,22 @@ func (s *GenerateTokenSuite) TestSaveToken(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(string(t), Equals, token)
 	c.Assert(len(string(t)), Equals, 64)
+}
+
+func (s *GenerateTokenSuite) TestCheckout(c *C) {
+	exitCalled := false
+	exit = func(v int) {
+		exitCalled = true
+	}
+	userID := 1000
+	getUserID = func() int {
+		return userID
+	}
+	checkUser()
+	c.Assert(exitCalled, Equals, true)
+}
+
+func (s *GenerateTokenSuite) TestDisplayToken(c *C) {
+	token := displayToken()
+	c.Assert(len(token), Not(Equals), 0)
 }

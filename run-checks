@@ -78,7 +78,10 @@ if [ ! -z "$STATIC_GO" ]; then
 
     if [ -n "$fmt" ]; then
         echo "Formatting wrong in following files"
-        echo $fmt
+        echo "$fmt"
+        echo "Getting formating diff..."
+        fmt_diff=$(gofmt -d .)
+        echo "$fmt_diff"
         exit 1
     fi
 
@@ -124,7 +127,7 @@ if [ ! -z "$UNIT_JS" ]; then
 
     # js unit tests
     echo "Running js unit tests (set JS_TESTER to override)"
-    ${JS_TESTER:- ./node_modules/karma/bin/karma start --single-run}
+    NODE_ENV=test ${JS_TESTER:- ./node_modules/karma/bin/karma start --single-run}
 
     cat .coverage-js/text-summary.txt
 

@@ -38,19 +38,32 @@ var (
 	ErrIconNotExist = errors.New("the icon does not exist")
 )
 
-// TODO there is a lot of dup work there since
-// we do snapd requests everytime even for icons
-// that we got already (just to get the name, we should
-// locally cache it)
-func localIconPath(c snapdclient.SnapdClient, name string) (relativePath string, err error) {
+var tryLocateCachedIconForSnap = func(snapName string) (string, error) {
 	dataPath, relativePath, err := IconDir()
 	if err != nil {
 		return "", err
 	}
 
+	found, _ := filepath.Glob(filepath.Join(dataPath, fmt.Sprintf("%s_*.*", snapName)))
+	if len(found) == 0 {
+		return "", ErrIconNotExist
+	}
+	return filepath.Join("/", relativePath, filepath.Base(found[0])), nil
+}
+
+// TODO there is a lot of dup work there since
+// we do snapd requests everytime even for icons
+// that we got already (just to get the name, we should
+// locally cache it)
+var localIconPath = func(c snapdclient.SnapdClient, name string) (relativePath string, err error) {
 	icon, err := c.Icon(name)
 	if err != nil {
 		return err.Error(), ErrIconNotExist
+	}
+
+	dataPath, relativePath, err := IconDir()
+	if err != nil {
+		return "", err
 	}
 
 	// TODO escape names?
@@ -76,7 +89,7 @@ func localIconPath(c snapdclient.SnapdClient, name string) (relativePath string,
 func IconDir() (dataPath, relativeBasePath string, err error) {
 	dataPath = os.Getenv("SNAP_DATA")
 	if dataPath == "" {
-		return "", "", ErrDataPathNotSet
+		dataPath = "."
 	}
 
 	dataPath = filepath.Join(dataPath, "icons")

@@ -1,7 +1,9 @@
-var Backbone = require('backbone');
-var Marionette = require('backbone.marionette');
+
 var React = require('react');
+var Backbone = require('backbone');
 var ReactBackbone = require('react.backbone');
+
+var TimeTools = require('../common/time.js');
 
 var _ = require('lodash');
 var moment = require('moment');
@@ -22,9 +24,9 @@ module.exports = React.createBackboneClass({
   },
 
   dateChanged: function(event) {
-    var model = this.props.model; 
-    var dateTime = moment.unix(model.get('dateTime'));
-    var newDate = _.map(event.target.value.split('-'), 
+    var model = this.props.model;
+    var dateTime = moment(model.get('dateTime')).utcOffset(model.get('offset') / 60);
+    var newDate = _.map(event.target.value.split('-'),
                         function(v) { return parseInt(v); });
 
     dateTime.year(newDate[0]);
@@ -35,8 +37,8 @@ module.exports = React.createBackboneClass({
   },
 
   timeChanged: function(event) {
-    var model = this.props.model; 
-    var dateTime = moment.unix(model.get('dateTime'));
+    var model = this.props.model;
+    var dateTime = moment(model.get('dateTime')).utcOffset(model.get('offset') / 60);
     var newTime = _.map(event.target.value.split(':'),
                         function(v) { return parseInt(v); });
 
@@ -77,7 +79,27 @@ module.exports = React.createBackboneClass({
       }
     }
 
-    var dateTime = moment.unix(model.get('dateTime') || moment().unix());
+    var dateTime = moment.unix(model.get('dateTime') || moment.unix());
+    dateTime = dateTime.utcOffset((model.get('offset') / 60) || 0);
+
+    var timezoneName = model.get('timezone');
+    var candidateTZ = TimeTools.TimeZones.filter(function(tz) {
+      return tz.name === timezoneName;
+    });
+
+    var timezone;
+    if (candidateTZ.length === 0) {
+      // Select timezone based on "closer to" offset heuristic
+      //  rather than explicit name
+      var offset = model.get('offset') || 0;
+      timezone = TimeTools.pickTimeZoneFromOffset(offset);
+    } else {
+      timezone = candidateTZ[0];
+    }
+
+    function formatTimeZoneSelectorValue(tz) {
+      return  "(UTC" + tz.offset + ") " + tz.value;
+    }
 
     return (
       <div>
@@ -104,7 +126,7 @@ module.exports = React.createBackboneClass({
           <label htmlFor="custom-ntp-radio">
             <strong>Use custom NTP server</strong>
           </label>
-          
+
           <input
             type="radio"
             id="manual-time-source"
@@ -144,69 +166,21 @@ module.exports = React.createBackboneClass({
           <label className="col-3 u-float--left" htmlFor="time-zone-select">
             <strong>Timezone</strong>
           </label>
+
           <select
             className="col-5 u-float--right"
             id="time-zone-select"
-            value={model.get('timezone')}
+            value={timezone.name}
             onChange={this.timezoneSelectChanged}>
-            <option value="Pacific/Midway">Midway Island, Samoa</option>
-            <option value="Pacific/Honolulu">Hawaii</option>
-            <option value="America/Anchorage">Alaska (most areas)</option>
-            <option value="American/Tijuana">Pacific Time US - Baja California</option>
-            <option value="America/Phoenix">MST - Arizona (except Navajo)</option>
-            <option value="America/Chihuahua">Mountain Time - Chihuahua (most areas)</option>
-            <option value="America/Chicago">America Central (most area)</option>
-            <option value="America/Mexico_City">Mexico City</option>
-            <option value="America/Bogota">Bogota</option>
-            <option value="America/New_York">Eastern Time (US & Canada)</option>
-            <option value="America/Indiana/Indianapolis">Indiana (East)</option>
-            <option value="America/Santiago">Santiago</option>
-            <option value="America/St_Johns">Newfoundland; Labrador (southeast)</option>
-            <option value="America/Argentina/Buenos_Aires">Buenos Aires (BA, CF)</option>
-            <option value="American/Godthab">Greenland (most areas)</option>
-            <option value="Atlantic/Cape_Verde">Cape Verde Is.</option>
-            <option value="Atlantic/Azores">Azores</option>
-            <option value="Africa/Casablanca">Casablanca</option>
-            <option value="Europe/Dublin">Dublin</option>
-            <option value="Europe/Amsterdam">Amsterdam</option>
-            <option value="Europe/Budapest">Budapest</option>
-            <option value="Europe/Brussels">Brussels</option>
-            <option value="Europe/Paris">Paris</option>
-            <option value="Europe/Madrid">Spain (mainland)</option>
-            <option value="Europe/Warsaw">Warsaw</option>
-            <option value="Europe/Athens">Athens</option>
-            <option value="Asia/Beirut">Beirut</option>
-            <option value="Africa/Johannesburg">Johannesburg</option>
-            <option value="Europe/Helsinki">Helsinki</option>
-            <option value="Europe/Minsk">Minsk</option>
-            <option value="Africa/Windhoek">Windhoek</option>
-            <option value="Asia/Kuwait">Kuwait</option>
-            <option value="Europe/Moscow">MSK+00 - Moscow area</option>
-            <option value="Africa/Nairobi">Nairobi</option>
-            <option value="Asia/Baku">Baku</option>
-            <option value="Asia/Yerevan">Yerevan</option>
-            <option value="Asia/Kabul">Kabul</option>
-            <option value="Asia/Yekaterinburg">MSK+02 - Urals</option>
-            <option value="Asia/Karachi">Karachi</option>
-            <option value="Asia/Kathmandu">Kathmandu</option>
-            <option value="Asia/Dhaka">Dhaka</option>
-            <option value="Asia/Bangkok">Bangkok</option>
-            <option value="Asia/Shanghai">Beijing Time</option>
-            <option value="Asia/Kuala_Lumpur">Malaysia (peninsula)</option>
-            <option value="Asia/Irkutsk">MSK+05 - Irkutsk, Buryatia</option>
-            <option value="Australia/Perth">Western Australia (most areas)</option>
-            <option value="Asia/Taipei">Taipei</option>
-            <option value="Asia/Tokyo">Tokyo</option>
-            <option value="Asia/Seoul">Seoul</option>
-            <option value="Australia/Brisbane">Queensland (most areas)</option>
-            <option value="Australia/Sydney">New South Wales (most areas)</option>
-            <option value="Pacific/Guam">Guam</option>
-            <option value="Asia/Vladivostok">MSK+07 - Amur River</option>
-            <option value="Asia/Magadan">Magadan</option>
-            <option value="Pacific/Auckland">New Zealand (most areas)</option>
-            <option value="Pacific/Fiji">Fiji</option>
+
+            {TimeTools.TimeZones.map(function(tz) {
+              return (
+                  <option key={tz.name} value={tz.name}> {formatTimeZoneSelectorValue(tz)} </option>
+              );
+            })}
+
           </select>
-        </div>
+      </div>
 
         <div className="row u-vertically-center">
           <label className="col-3 u-float--left" htmlFor="ntp-server-name">

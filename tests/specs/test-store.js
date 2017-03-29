@@ -29,45 +29,44 @@ describe('Store Page - Verify that', function() {
         privatepage = browser.element('h2=Private snaps')
         privatepage.waitForVisible();
         expect(privatepage.getText(), "Failed to load private section page").to.contain('Private snaps');
-
     });
 
     it('click section brings up associated filtered list', function() {
         browser.waitForVisible(storePage.sectionSelector('featured'));
         storePage.section('featured').click();
-        privatepage = browser.element('h2=featured')
-        privatepage.waitForVisible();
-        expect(privatepage.getText(), "Failed to load featured section page").to.contain('featured');
+        featuredpage = browser.element('h2=featured')
+        featuredpage.waitForVisible();
+        expect(featuredpage.getText(), "Failed to load featured section page").to.contain('featured');
+    });
 
+    it('default store page should display featured snaps', function() {
+        // Rely on displayed snap count for now for the heuristic
+        browser.waitForVisible(storePage.sectionSnapListSelector);
+        defaultSnapListCount = storePage.sectionSnaps.value.length
+ 
+        browser.waitForVisible(storePage.sectionSelector('featured'));
+        storePage.section('featured').click();
+        featuredpage = browser.element('h2=featured')
+        featuredpage.waitForVisible();
+
+        browser.waitForVisible(storePage.sectionSnapListSelector);
+        assert.equal(
+          storePage.sectionSnaps.value.length,
+          defaultSnapListCount,
+          "Default store page does not correspond to featured snap list"
+        );
     });
 
     it('search non exact match', function() {
         storePage.search('hello-w');
-        browser.waitForVisible(storePage.snapListSelector);
+        browser.waitForVisible(storePage.sectionSnapListSelector);
         snaps = storePage.snaps;
         assert.isAbove(snaps.value.length, 0, "No snaps found");
-        assert.isNull(storePage.exactMatch.value, "Exact match list not empty found");
-    });
-
-    it('search exact match', function() {
-        storePage.search('hello-world');
-        browser.waitForVisible(storePage.exactSnapMatchSelector);
-        assert.isNotNull(storePage.exactMatch.value, "No exact match found");
-        assert.equal(storePage.snaps.value.length, 0, "Snap list not empty");
-    });
-
-    it('search exact match and see snap details', function() {
-        storePage.search('hello-world');
-        browser.waitForVisible(storePage.exactSnapMatchSelector);
-        browser.waitForVisible(".p-card__icon");
-        browser.click('.p-card__icon');
-        browser.waitForVisible(snapDetailsPage.snapDetailListElements);
-        assert.isNotNull(snapDetailsPage.snap.value, "Snap details not found");
     });
 
     it('search non exact match and check snap details', function() {
         storePage.search('hello-w');
-        browser.waitForVisible(storePage.snapListSelector);
+        browser.waitForVisible(storePage.sectionSnapListSelector);
         storePage.snaps.value[0].click();
         browser.waitForVisible(snapDetailsPage.snapTitleElement);
         assert.isNotNull(snapDetailsPage.snap.value, "Snap details not found");

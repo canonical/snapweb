@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Canonical Ltd
+ * Copyright (C) 2016-2017 Canonical Ltd
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -31,13 +31,14 @@ import (
 
 	"github.com/snapcore/snapd/client"
 	"github.com/snapcore/snapweb/snappy/common"
+	"github.com/snapcore/snapweb/snappy/snapdclient"
 	"github.com/snapcore/snapweb/statetracker"
 
 	. "gopkg.in/check.v1"
 )
 
 type HandlersSuite struct {
-	c *FakeSnapdClient
+	c *snapdclient.FakeSnapdClient
 	h Handler
 }
 
@@ -51,7 +52,7 @@ func (s *HandlersSuite) SetUpTest(c *C) {
 }
 
 func (s *HandlersSuite) resetFakeSnapdClient() {
-	s.c = &FakeSnapdClient{}
+	s.c = &snapdclient.FakeSnapdClient{}
 	s.h.setClient(s.c)
 	s.h.stateTracker = statetracker.New()
 }
@@ -153,12 +154,26 @@ func (s *HandlersSuite) TestRemove(c *C) {
 	c.Assert(s.c.Removed, Equals, "chatroom")
 }
 
-func (s *HandlersSuite) TestUpdate(c *C) {
+func (s *HandlersSuite) TestUpdateInvalidStatus(c *C) {
 	s.c.Snaps = []*client.Snap{common.NewDefaultSnap()}
 	s.c.Snaps[0].Status = "StatusInstalled"
 
 	rec := httptest.NewRecorder()
-	status := []byte(`{"status": "StatusEnabling"}`)
+	status := []byte(`{"statusd": "StatusEnabling"}`)
+	req, err := http.NewRequest("POST", "/chatroom", bytes.NewBuffer(status))
+	req.Header.Set("Content-Type", "application/json")
+	c.Assert(err, IsNil)
+
+	s.h.MakeMuxer("", mux.NewRouter()).ServeHTTP(rec, req)
+	c.Assert(rec.Code, Equals, http.StatusInternalServerError)
+}
+
+func (s *HandlersSuite) TestUpdateEnabling(c *C) {
+	s.c.Snaps = []*client.Snap{common.NewDefaultSnap()}
+	s.c.Snaps[0].Status = "installed"
+
+	rec := httptest.NewRecorder()
+	status := []byte(`{"status": "enabling"}`)
 	req, err := http.NewRequest("POST", "/chatroom", bytes.NewBuffer(status))
 	req.Header.Set("Content-Type", "application/json")
 	c.Assert(err, IsNil)
@@ -167,7 +182,21 @@ func (s *HandlersSuite) TestUpdate(c *C) {
 	c.Assert(rec.Code, Equals, http.StatusAccepted)
 }
 
-func (s *HandlersSuite) TestJsonResponseOrError(c *C) {
+func (s *HandlersSuite) TestUpdateDisabling(c *C) {
+	s.c.Snaps = []*client.Snap{common.NewDefaultSnap()}
+	s.c.Snaps[0].Status = "active"
+
+	rec := httptest.NewRecorder()
+	status := []byte(`{"status": "disabling"}`)
+	req, err := http.NewRequest("POST", "/chatroom", bytes.NewBuffer(status))
+	req.Header.Set("Content-Type", "application/json")
+	c.Assert(err, IsNil)
+
+	s.h.MakeMuxer("", mux.NewRouter()).ServeHTTP(rec, req)
+	c.Assert(rec.Code, Equals, http.StatusAccepted)
+}
+
+func (s *HandlersSuite) TestJsonResponseOrErrorValid(c *C) {
 	type foo struct {
 		S string
 	}
@@ -184,6 +213,16 @@ func (s *HandlersSuite) TestJsonResponseOrError(c *C) {
 	err := json.Unmarshal(rec.Body.Bytes(), &r)
 	c.Assert(err, IsNil)
 	c.Assert(r, Equals, response)
+}
+
+func (s *HandlersSuite) TestJsonResponseOrErrorInvalid(c *C) {
+	response := interface{}(func() {})
+	rec := httptest.NewRecorder()
+
+	s.h.jsonResponseOrError(response, rec)
+
+	c.Assert(rec.Code, Equals, http.StatusInternalServerError)
+	c.Assert(rec.HeaderMap["Content-Type"][0], Equals, "application/json")
 }
 
 func (s *HandlersSuite) TestSnapOperationResponseError(c *C) {

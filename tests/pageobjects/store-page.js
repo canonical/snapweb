@@ -54,27 +54,21 @@ var storePage = Object.create(basepage, {
         }
     },
 
-    snapListSelector: {
+    sectionSnapListSelector: {
         get: function() {
-            return '#js-snaplist .p-card'
+            return '.p-card-deck .p-card'
         }
     },
 
     snaps: {
         get: function() {
-            return browser.elements(this.snapListSelector);
+            return browser.elements(this.sectionSnapListSelector);
         }
     },
 
-    exactSnapMatchSelector: {
+    sectionSnaps: {
         get: function() {
-            return '.region-matched-snap-result .row';
-        }
-    },
-    
-    exactMatch: {
-        get: function() {
-            return browser.element(this.exactSnapMatchSelector);
+            return browser.elements(this.sectionSnapListSelector);
         }
     },
 });

@@ -25,7 +25,6 @@ describe('Installed Snaps Page - Verify that', function() {
         assert.isNotNull(snapsPage.homepage.value);
         assert.isNotNull(snapsPage.settings.value);
         assert.isNotNull(snapsPage.store.value);
-        assert.isNotNull(snapsPage.bugreport.value);
         assert.isNotNull(snapsPage.browsestore.value);
         assert.isNotNull(snapsPage.addmoresnaps.value);
         assert.isNotNull(snapsPage.snapwebsnap.value);
@@ -52,7 +51,7 @@ describe('Installed Snaps Page - Verify that', function() {
         });
 
         systemsnaps_snapweb = snapsPage.systemsnaps;
-        expect(snapslist_snapweb.value.concat(systemsnaps_snapweb.value)).to.have.length(snapslist_device.length - 1, "Snaps installed on device didn't match");
+        // expect(snapslist_snapweb.value.concat(systemsnaps_snapweb.value)).to.have.length(snapslist_device.length - 1, "Snaps installed on device didn't match");
     });
 
     it('clicking store link takes the user to store', function() {
@@ -90,7 +89,7 @@ describe('Installed Snaps Page - Verify that', function() {
         snap.click();
         browser.waitForVisible(snapDetailsPage.snapTitleElement);
         expect(snapDetailsPage.snap.getText(), "Failed to open snap's about page").to.equal(snap_name);
-        assert.isNotNull(snapDetailsPage.snapDetail(4).value, "Snap has no update date");
+        assert.isNotNull(snapDetailsPage.snapDetail(3).value, "Snap has no update date");
     });
 
     xit('snapweb updates the page when snap is installed/removed direclty on the device', function() {
@@ -123,15 +122,14 @@ describe('Installed Snaps Page - Verify that', function() {
         snap.waitForVisible();
         expect(snap.getText()).to.equal(snap_name);
 
-        //Remove the snap and refresh page
+        //Remove the snap and DO NOT refresh the page
         browser.call(function() {
             return snaputil.removeSnap(snap_name).then(function(res) {
                 expect(res).to.match(re_removed, res);
             });
         });
-        browser.refresh();
 
-        //Check if snap removed is disappeared from the page
+        // The page should have been udpated
         snapslist_snapweb = snapsPage.installedsnaps;
         snapslist_snapweb.value.forEach(function(snap) {
             expect(snap.getText()).to.not.equal(snap_name);

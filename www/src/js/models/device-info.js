@@ -8,13 +8,8 @@ module.exports = Backbone.Model.extend({
   urlRoot: CONF.DEVICE_INFO,
 
   parse: function(response) {
-    if (response.interfaces === null ||
-        response.interfaces.length === 0) {
-      response.interfaces = 'No interfaces found';
-    } else {
-      response.interfaces = response.interfaces.join(', ');
-    }
-
+    if (response.interfaces == null)
+      response.interfaces = [];
     return response;
   }
 

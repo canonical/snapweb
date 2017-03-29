@@ -22,6 +22,9 @@ import (
 	"time"
 
 	"github.com/snapcore/snapd/client"
+	"github.com/snapcore/snapd/overlord/state"
+
+	"github.com/snapcore/snapweb/snappy/snapdclient"
 
 	. "gopkg.in/check.v1"
 )
@@ -30,12 +33,15 @@ func Test(t *testing.T) { TestingT(t) }
 
 type StateTrackerSuite struct {
 	t *StateTracker
+	c *snapdclient.FakeSnapdClient
 }
 
 var _ = Suite(&StateTrackerSuite{})
 
 func (s *StateTrackerSuite) SetUpTest(c *C) {
 	s.t = New()
+
+	s.c = &snapdclient.FakeSnapdClient{}
 }
 
 func (s *StateTrackerSuite) TestTranslateStatus(c *C) {
@@ -47,6 +53,7 @@ func (s *StateTrackerSuite) TestTranslateStatus(c *C) {
 		{client.StatusActive, StatusActive},
 		{client.StatusAvailable, StatusUninstalled},
 		{client.StatusRemoved, StatusUninstalled},
+		{"priced", StatusPriced},
 	}
 
 	for _, tt := range tests {
@@ -80,6 +87,9 @@ func (s *StateTrackerSuite) TestHasCompleted(c *C) {
 func (s *StateTrackerSuite) TestUntrackedSnap(c *C) {
 	snap := &client.Snap{Status: client.StatusInstalled}
 	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusInstalled})
+	tracked, changeID := s.t.IsTrackedForRunningOperation(snap)
+	c.Assert(tracked, Equals, false)
+	c.Assert(changeID, Equals, "")
 }
 
 func (s *StateTrackerSuite) TestTrackInstallAlreadyInstalled(c *C) {
@@ -90,6 +100,9 @@ func (s *StateTrackerSuite) TestTrackInstallAlreadyInstalled(c *C) {
 
 func (s *StateTrackerSuite) TestTrackInstall(c *C) {
 	snap := &client.Snap{Status: client.StatusAvailable}
+	s.t.TrackInstall("", snap)
+	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusInstalling})
+	// Make sure that recalling install is a no-op
 	s.t.TrackInstall("", snap)
 	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusInstalling})
 	// installation completes
@@ -119,6 +132,9 @@ func (s *StateTrackerSuite) TestTrackUninstall(c *C) {
 	snap := &client.Snap{Status: client.StatusInstalled}
 	s.t.TrackUninstall("", snap)
 	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusUninstalling})
+	// Make sure that recalling uninstall is a no-op
+	s.t.TrackUninstall("", snap)
+	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusUninstalling})
 	// uninstallation completes
 	snap.Status = client.StatusRemoved
 	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusUninstalled})
@@ -128,8 +144,17 @@ func (s *StateTrackerSuite) TestTrackEnable(c *C) {
 	snap := &client.Snap{Status: client.StatusInstalled}
 	s.t.TrackEnable("", snap)
 	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusEnabling})
+	// Check that enabling a snap already being enabled is a no-op
+	s.t.TrackEnable("", snap)
+	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusEnabling})
 	snap.Status = client.StatusActive
 	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusActive})
+}
+
+func (s *StateTrackerSuite) TestTrackEnableUinstalled(c *C) {
+	snap := &client.Snap{Status: client.StatusAvailable}
+	s.t.TrackEnable("", snap)
+	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusUninstalled})
 }
 
 func (s *StateTrackerSuite) TestTrackEnableExpiry(c *C) {
@@ -144,10 +169,66 @@ func (s *StateTrackerSuite) TestTrackEnableExpiry(c *C) {
 	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusInstalled})
 }
 
+func (s *StateTrackerSuite) TestTrackDisableUinstalled(c *C) {
+	snap := &client.Snap{Status: client.StatusAvailable}
+	s.t.TrackDisable("", snap)
+	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusUninstalled})
+}
+
 func (s *StateTrackerSuite) TestTrackDisable(c *C) {
 	snap := &client.Snap{Status: client.StatusActive}
 	s.t.TrackDisable("", snap)
 	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusDisabling})
+	// Check that disabling a snap already being disabled is a no-op
+	s.t.TrackDisable("", snap)
+	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusDisabling})
 	snap.Status = client.StatusInstalled
 	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusInstalled})
+}
+
+func (s *StateTrackerSuite) TestCancelTrackingRunningOperation(c *C) {
+	snap := &client.Snap{Name: "name", Status: client.StatusActive}
+	s.t.TrackDisable("", snap)
+	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusDisabling})
+	s.t.CancelTrackingFor("name")
+	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusActive})
+}
+
+func (s *StateTrackerSuite) TestCancelTrackingNonRunningOperation(c *C) {
+	snap := &client.Snap{Name: "name", Status: client.StatusActive}
+	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusActive})
+	s.t.CancelTrackingFor("name")
+	c.Assert(s.t.State(nil, snap), DeepEquals, &SnapState{Status: StatusActive})
+}
+
+func (s *StateTrackerSuite) TestTrackInstallingChange(c *C) {
+	snap := &client.Snap{Status: client.StatusAvailable}
+
+	changeID := "ID"
+
+	s.c.CurrentChange = &client.Change{
+		ID: changeID,
+		Tasks: []*client.Task{
+			&client.Task{
+				Progress: client.TaskProgress{
+					Done: 2,
+				},
+				Status:  state.DoingStatus.String(),
+				Summary: "summary",
+			},
+			&client.Task{
+				Progress: client.TaskProgress{
+					Done: 5,
+				},
+				Status:  "dummy",
+				Summary: "summary2",
+			},
+		},
+	}
+
+	s.t.TrackInstall(changeID, snap)
+
+	c.Assert(s.t.State(s.c, snap),
+		DeepEquals,
+		&SnapState{Status: StatusInstalling, ChangeID: changeID, LocalSize: 2, TaskSummary: "summary"})
 }

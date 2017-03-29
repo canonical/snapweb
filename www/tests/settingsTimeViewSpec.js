@@ -14,7 +14,8 @@ describe('SettingsTimeView', function() {
     this.model = new Backbone.Model({
           dateTime: this.testTime,
           ntp: true,
-          timezone: "Pacific/Midway",
+          offset: 0,
+          timezone: "America/New_York",
           ntpServer: "example.com"
         });
 
@@ -38,7 +39,7 @@ describe('SettingsTimeView', function() {
   });
 
   it('should display the time as provided by model', function() {
-    var matchTime = moment.unix(this.testTime).format('HH:mm:SS');
+    var matchTime = moment.unix(this.testTime).utcOffset(0).format('HH:mm:SS');
      expect($(this.elementHtml).find('#time-picker').val()).toMatch(matchTime);
   });
 

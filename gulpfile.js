@@ -12,6 +12,7 @@ var gutil = require('gulp-util');
 var jscs = require('gulp-jscs');
 var jshint = require('gulp-jshint');
 var sass = require('gulp-sass');
+var env = require('gulp-env');
 var sourcemaps = require('gulp-sourcemaps');
 var source = require('vinyl-source-stream');
 var uglify = require('gulp-uglify');
@@ -20,6 +21,12 @@ var insert = require("gulp-insert");
 var fs = require("fs");
 
 gulp.task('js:build', ['js:clean', 'js:lint'], function() {
+  if (!process.env.NODE_ENV) {
+    // Default to development build for various tools.
+    env.set({
+      NODE_ENV: 'development'
+    });
+  }
   return createBundler();
 });
 
@@ -28,13 +35,13 @@ gulp.task('js:clean', function(cb) {
 });
 
 function createBundler(watch) {
-  var bundler = browserify('./www/src/js/app.js', {
+  var bundler = browserify('./www/src/js/index.js', {
     cache: {},
     packageCache: {}
   });
   bundler.transform('hbsfy');
   bundler.transform({global: true}, 'aliasify');
-  bundler.transform('babelify', {presets: ["es2015", "react"]});
+  bundler.transform('babelify', {presets: ["react-app"]});
 
   if (watch) {
     bundler = watchify(bundler);
@@ -50,7 +57,11 @@ function createBundler(watch) {
 
 function bundleShared(bundler) {
   return bundler.bundle()
-    .on('error', gutil.log.bind(gutil, 'Browserify Error'))
+    .on('error', function(err) {
+      gutil.log(gutil.colors.green('Browserify Error: ' + err));
+      this.emit('end');
+      process.exit(1);
+    })
     .pipe(source('snapweb.js'))
       .pipe(buffer())
       .pipe(sourcemaps.init({loadMaps: true})) // loads map from browserify file
