@@ -19,6 +19,7 @@ function snapToCard(snap) {
     author: snap.get('developer'),
     type: snap.get('type') === 'app'? '' : snap.get('type'),
     action: snap.get('installActionString'),
+    actions: [snap.get('installActionString')],
     image: snap.get('id'),
     installProgress: (
       snap.get('status') === Config.INSTALL_STATE.INSTALLING
@@ -92,7 +93,15 @@ module.exports = React.createBackboneClass({
           } else {
             // TODO beware very hackych
             snap.off();
+
             component.setState({ installProgress: -1 })
+
+            if (snap.get('status') === Config.INSTALL_STATE.REMOVED) {
+              var updatesSnaps = self.state.snaps.filter(function(s) {
+                return s.get('name') !== snap.get('name');
+              });
+              self.setState({snaps: updatesSnaps});
+            }
           }
         }
       )
