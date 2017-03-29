@@ -10,4 +10,11 @@ export APP_ID=ubuntu-personal-store
 # Remove problematic environment variable
 unset QT_QPA_PLATFORM
 
-exec "$SNAP/bin/desktop-launch" "qmlscene" "--cookie_path=$SNAP_USER_DATA" "$SNAP/ubuntu-personal-store.qml"
+"$SNAP/bin/desktop-launch" "gksudo" "--preserve-env" "-m Ubuntu Personal Store requires administrative privileges:" "$SNAP/authenticate"
+
+if [ $? -eq 0 ]
+then
+  exec "$SNAP/bin/desktop-launch" "qmlscene" "--cookie_path=$SNAP_USER_DATA" "$SNAP/ubuntu-personal-store.qml"
+else
+  echo "Authentication failed."
+fi

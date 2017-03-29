@@ -4,17 +4,19 @@ summary: A beautiful and functional interface for snap management.
 description: This application allows you to browse and install snap packages on your Ubuntu Personal device.
 type: app
 architectures: UNKNOWN_ARCH
+confinement: devmode
+
 apps:
+  ubuntu-personal-store:
+    command: command-ubuntu-personal-store.wrapper
+    plugs:
+      - browser-support
+      - network
+      - opengl
+      - unity7
   snapweb:
     daemon: simple
     command: snapweb
     plugs: [network, network-bind, snapd-control, timeserver-control, timezone-control]
   generate-token:
     command: generate-token
-  ubuntu-personal-store:
-    command: command-ubuntu-personal-store.wrapper
-    plugs:
-    - browser-support
-    - network
-    - opengl
-    - unity7

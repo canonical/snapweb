@@ -1,0 +1,5 @@
+#!/bin/sh
+
+ubuntu-personal-store.generate-token
+cp "$SNAP_DATA/token.txt" "$SNAP_USER_DATA/token.txt"
+chown $SUDO_UID "$SNAP_USER_DATA/token.txt"
