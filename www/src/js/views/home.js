@@ -142,7 +142,7 @@ module.exports = React.createBackboneClass({
           </div>
 
           <div className="row">
-            <div style={{paddingBottom: "100px"}}>
+            <div>
               <table>
                 <thead>
                   <tr>
