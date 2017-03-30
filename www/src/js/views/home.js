@@ -3,6 +3,10 @@ import {
   CardsList,
 } from 'snapweb-toolkit'
 
+import {
+  browserHistory
+} from 'react-router';
+
 var _ = require('lodash')
 var Backbone = require('backbone');
 var React = require('react');
@@ -11,6 +15,9 @@ var ReactBackbone = require('react.backbone');
 var Snap = require('../models/snap.js')
 var Common = require('../common/snaps.js')
 var Config = require('../config.js')
+
+var Radio = require('backbone.radio');
+var snapChannel = Radio.channel('snap');
 
 function snapToCard(snap) {
   return {
@@ -75,9 +82,18 @@ module.exports = React.createBackboneClass({
 
     var self = this;
     var handleSnapClick = function(id, props, component) {
-      // TODO handle navigation
+      // TODO improve bad store handling
+      if (props.action && props.action.toLowerCase() === 'store') {
+        browserHistory.push('/store');
+        return;
+      }
+      browserHistory.push('/snap/'+props.name);
     };
     var handleActionClick = function(id, props, component) {
+      // TODO improve bad store handling
+      if (props.action && props.action.toLowerCase() === 'store') {
+        return;
+      }
       var name = props.name;
       var snap = collection.findWhere({ id: name });
       if (! snap) {
