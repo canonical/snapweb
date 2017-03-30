@@ -39,12 +39,6 @@ function snapToCard(snap) {
 }
 
 module.exports = React.createBackboneClass({
-  componentWillMount: function() {
-  },
-
-  componentWillUnmount: function() {
-  },
-
   getInitialState: function() {
     return {
       snaps: this.props.collection
@@ -60,7 +54,7 @@ module.exports = React.createBackboneClass({
       name: 'Get more apps',
       action: 'Store',
       image: 'add-snap',
-      iconUrl: `/public/images/add-snap.png`,
+      iconUrl: '/public/images/add-snap.png',
     };
 
     const system_snap_types = Config.NON_REMOVABLE_SNAP_TYPES;
