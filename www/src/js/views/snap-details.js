@@ -141,16 +141,28 @@ function SnapActions(props) {
     installerButtonClassName = "col-5";
   }
 
+  var progressBarWrapperStyle = {
+    border: progressBarBorder,
+    borderRadius: progressBarBorderRadius,
+    marginTop: "1em",
+    width: "100%",
+    height: "0.5em"
+  };
+
+  var progressStyle = {
+    backgroundColor: progressBarBackgroundColor,
+    width: progressWidth,
+    height: "0.5em"
+  };
+
   return (
     <div id="installer-button" className={installerButtonClassName}>
       <Installer
          installerClass={installerClass}
          model={model} />
 
-      <div id="progressbarwrapper"
-           style={{border: {progressBarBorder}, borderRadius: {progressBarBorderRadius}, marginTop: "1em", width: "100%", height: "0.5em"}}>
-        <div id="progress"
-             style={{backgroundColor: {progressBarBackgroundColor}, width: {progressWidth}, height: "0.5em"}} />
+      <div id="progressbarwrapper" style={progressBarWrapperStyle}>
+        <div id="progress" style={progressStyle} />
       </div>
 
       <div style={{width: "100%", height: "23px", whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden"}}>
