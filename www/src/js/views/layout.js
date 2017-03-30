@@ -30,7 +30,7 @@ module.exports = Marionette.LayoutView.extend({
   setContent: function(content) {
     var reactElement = content.reactElement || null;
     if (reactElement !== null) {
-      ReactDOM.render(reactElement, $('.App-main').get(0));
+      ReactDOM.render(reactElement, $('.App-content').get(0));
     } else {
         console.log("mainRegion.show?");
         this.mainRegion.show(content.backboneView);
@@ -44,7 +44,7 @@ module.exports = Marionette.LayoutView.extend({
   },
 
   regions: {
-    mainRegion:     '.App-main',
+    mainRegion:     '.App-content',
     alertsRegion:   '.b-layout__alerts'
   }
 });
