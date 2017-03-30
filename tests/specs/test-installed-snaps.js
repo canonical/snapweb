@@ -25,10 +25,8 @@ describe('Installed Snaps Page - Verify that', function() {
         assert.isNotNull(snapsPage.homepage.value);
         assert.isNotNull(snapsPage.settings.value);
         assert.isNotNull(snapsPage.store.value);
-        assert.isNotNull(snapsPage.browsestore.value);
-        assert.isNotNull(snapsPage.addmoresnaps.value);
+        assert.isNotNull(snapsPage.addsnapscard.value);
         assert.isNotNull(snapsPage.snapwebsnap.value);
-
     });
 
     it('installed snaps listed are same as on device', function() {
@@ -45,9 +43,13 @@ describe('Installed Snaps Page - Verify that', function() {
         });
 
         snapslist_device = snapslist_raw.split('\n'); //expecting each snap entry on a new line
-        snapslist_snapweb = snapsPage.installedsnaps;
-        snapslist_snapweb.value.forEach(function(snap) {
-            expect(snapslist_raw).to.include(snap.getText());
+        snapslist_snapweb = snapsPage.installedsnaps.value.slice(-1);
+        snapslist_snapweb.forEach(function(snap) {
+          var n = snap.element('p:first-of-type').getText();
+          if (n.toLowerCase() === 'get more apps') {
+            return
+          }
+          expect(snapslist_raw).to.include(n);
         });
 
         systemsnaps_snapweb = snapsPage.systemsnaps;
@@ -65,7 +67,7 @@ describe('Installed Snaps Page - Verify that', function() {
 
     it('Browse store button takes the user to store', function() {
 
-        snapsPage.browsestore.click();
+        snapsPage.addsnapscard.click();
         storepage = browser.element('h2=Featured snaps')
         storepage.waitForVisible();
         expect(storepage.getText(), "Failed to load store page").to.contain('Featured snaps');
@@ -74,7 +76,7 @@ describe('Installed Snaps Page - Verify that', function() {
 
     it('Add more snaps button takes the user to store', function() {
 
-        snapsPage.addmoresnaps.click();
+        snapsPage.addsnapscard.click();
         storepage = browser.element('h2=Featured snaps')
         storepage.waitForVisible();
         expect(storepage.getText(), "Failed to load store page").to.contain('Featured snaps');

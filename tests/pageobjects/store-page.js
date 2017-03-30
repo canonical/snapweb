@@ -29,7 +29,7 @@ var storePage = Object.create(basepage, {
                 });
             });
             acPage.submit_token(valid_token);
-            loginpage = browser.element(".region-installed");
+            loginpage = browser.element("#systems-snap-list");
             loginpage.waitForVisible();
             browser.url('/store');
         }

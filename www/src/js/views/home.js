@@ -64,10 +64,12 @@ module.exports = React.createBackboneClass({
     };
 
     const system_snap_types = Config.NON_REMOVABLE_SNAP_TYPES;
+    const non_removable_snap_ids = Config.NON_INSTALLABLE_IDS;
 
     const installedSnaps =
           collection.filter(function(snap) {
-            return !_.includes(system_snap_types, snap.get('type'))
+            return !_.includes(system_snap_types, snap.get('type')) &&
+                   !_.includes(non_removable_snap_ids, snap.get('id'));
           });
 
     const cards = [
@@ -77,7 +79,8 @@ module.exports = React.createBackboneClass({
 
     const systemSnaps =
           collection.filter(function(snap) {
-            return _.includes(system_snap_types, snap.get('type'))
+            return _.includes(system_snap_types, snap.get('type')) ||
+                   _.includes(non_removable_snap_ids, snap.get('id'))
           });
 
     var self = this;
