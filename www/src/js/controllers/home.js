@@ -1,10 +1,11 @@
 var $ = require('jquery');
 var Backbone = require('backbone');
 Backbone.$ = $;
-var Marionette = require('backbone.marionette');
 var Radio = require('backbone.radio');
 var Snap = require('../models/snap.js');
 var HomeLayoutView = require('../views/home.js');
+var React = require('react')
+var ReactBackbone = require('react.backbone');
 
 var SnapList = require('../collections/snaplist.js');
 
@@ -20,18 +21,14 @@ module.exports = {
       success: function(snaplist) {
         var c = snaplist.all()
 
-        var installedSnapsView = new HomeLayoutView({
+        var installedSnapsView = React.createElement(HomeLayoutView, {
           model: new Backbone.Model({
             title: 'Installed snaps',
             isHomeActive: true,
           }),
           collection: c
         });
-
-        chan.command('set:content', {backboneView: installedSnapsView});
-      },
-      error: function() {
-	console.log('error')
+        chan.command('set:content', {reactElement: installedSnapsView});
       }
     });
   },

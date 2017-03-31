@@ -2,8 +2,10 @@ var Config = require('../config.js');
 
 module.exports = {
   // TODO: remove dep on DOM event
-  handleInstallEvent: function(event, model) {
-    event.preventDefault();
+  handleInstallEvent: function(event, model, onchange) {
+    if (event) {
+      event.preventDefault();
+    }
 
     var status = model.get('status');
     var isInstallable = model.get('isInstallable');
@@ -22,6 +24,11 @@ module.exports = {
         dataType : 'json',
         silent: true
       });
+
+      if (onchange) {
+        model.on("change:status", onchange)
+        model.on("change:download_progress", onchange)
+      }
     } else if (status === Config.INSTALL_STATE.REMOVED) {
       // install
       model.save({
@@ -41,7 +48,9 @@ module.exports = {
     return false;
   },
   handleEnableEvent: function(event, model) {
-    event.preventDefault();
+    if (event) {
+      event.preventDefault();
+    }
 
     var status = model.get('status');
     var isInstalled = model.get('isInstalled');

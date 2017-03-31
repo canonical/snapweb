@@ -17,6 +17,8 @@ var sourcemaps = require('gulp-sourcemaps');
 var source = require('vinyl-source-stream');
 var uglify = require('gulp-uglify');
 var watchify = require('watchify');
+var insert = require("gulp-insert");
+var fs = require("fs");
 
 gulp.task('js:build', ['js:clean', 'js:lint'], function() {
   if (!process.env.NODE_ENV) {
@@ -86,6 +88,9 @@ gulp.task('styles', ['styles:clean'], function() {
     bemlinter('bem')
   ];
 
+  // Hacky way to put together webpack stuff & local scss
+  var toolkitCss = fs.readFileSync("node_modules/snapweb-toolkit/lib/bundle.css", "utf8");
+
   return gulp.src([
     'www/src/css/styles.scss'
   ])
@@ -97,7 +102,9 @@ gulp.task('styles', ['styles:clean'], function() {
   .pipe(csso())
   .pipe(concat('styles.css'))
   .pipe(sourcemaps.write('./'))
-  .pipe(gulp.dest('www/public/css'));
+  .pipe(gulp.dest('www/public/css'))
+  .pipe(insert.append(toolkitCss))
+  .pipe(gulp.dest('www/public/css'))
 });
 
 gulp.task('styles:clean', function(cb) {
