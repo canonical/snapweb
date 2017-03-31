@@ -174,51 +174,40 @@ function SnapActions(props) {
 
 module.exports = React.createBackboneClass({
   componentWillMount: function() {
-    var model = this.props.model;
-    if (! model) {
-      console.log('Invalid model in snap details view');
-      return;
+    const model = this.props.model;
+    if (model) {
+      model.on('change:download_progress', this.onDownloadProgressChanged.bind(this, null), this);
+      model.on('change:task_summary', this.onTaskSummaryChanged.bind(this, null), this);
+      model.on('change:status', this.onStatusChanged.bind(this, null), this);
     }
-
-    var self = this;
-    model.on('change:download_progress', this.onDownloadProgressChanged.bind(this, null), this);
-    model.on('change:task_summary', this.onTaskSummaryChanged.bind(this, null), this);
-    model.on('change:status', this.onStatusChanged.bind(this, null), this);
   },
 
   onDownloadProgressChanged: function() {
     var model = this.props.model;
-    if (! model) {
-      console.log('Invalid model in snap details view');
-      return;
+    if (model) {
+      this.setState({downloadProgress: model.get('download_progress')});
     }
-    this.setState({downloadProgress: model.get('download_progress')});
   },
 
   onTaskSummaryChanged: function() {
     var model = this.props.model;
-    if (! model) {
-      console.log('Invalid model in snap details view');
-      return;
+    if (model) {
+      this.setState({taskSummary: model.get('task_summary')});
     }
-    this.setState({taskSummary: model.get('task_summary')});
   },
 
   onStatusChanged: function() {
     var model = this.props.model;
-    if (! model) {
-      console.log('Invalid model in snap details view');
-      return;
+    if (model) {
+      this.setState({status: model.get('status')});
     }
-    this.setState({status: model.get('status')});
   },
 
   componentWillUnmount: function() {
     var model = this.props.model;
-    if (! model) {
-      return;
+    if (model) {
+      model.off(null, null, this);
     }
-    model.off(null, null, this);
   },
 
   getInitialState: function() {
@@ -226,7 +215,7 @@ module.exports = React.createBackboneClass({
   },
 
   render: function() {
-    var model = this.props.model;
+    const model = this.props.model;
 
     return (
       <div>
