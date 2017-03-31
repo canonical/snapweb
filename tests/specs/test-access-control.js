@@ -54,9 +54,9 @@ describe('Access Control Page - Verify that', function() {
 
         });
         accessControlPage.submit_token(valid_token);
-        loginpage = browser.element('h2=Installed snaps');
+        loginpage = browser.element('h2=Apps installed');
         loginpage.waitForVisible();
-        expect(loginpage.getText(), "Login Failed with valid token").to.contain('Installed snaps');
+        expect(loginpage.getText(), "Login Failed with valid token").to.contain('Apps installed');
 
     });
 
@@ -77,9 +77,9 @@ describe('Access Control Page - Verify that', function() {
             });
         });
         accessControlPage.submit_token(valid_token);
-        loginpage = browser.element('h2=Installed snaps');
+        loginpage = browser.element('h2=Apps installed');
         loginpage.waitForVisible();
-        expect(loginpage.getText(), "Login Failed with valid token").to.contain('Installed snaps');
+        expect(loginpage.getText(), "Login Failed with valid token").to.contain('Apps installed');
         cookie = browser.getCookie('SM');
         browser.reload();
         browser.url('/');
@@ -87,9 +87,9 @@ describe('Access Control Page - Verify that', function() {
         assert.equal(title, 'Snapweb');
         browser.setCookie(cookie);
         browser.url('/');
-        loginpage = browser.element('h2=Installed snaps');
+        loginpage = browser.element('h2=Apps installed');
         loginpage.waitForVisible();
-        expect(loginpage.getText(), "Login Failed with valid token").to.contain('Installed snaps');
+        expect(loginpage.getText(), "Login Failed with valid token").to.contain('Apps installed');
 
     });
 
@@ -102,9 +102,9 @@ describe('Access Control Page - Verify that', function() {
             });
         });
         accessControlPage.submit_token(valid_token);
-        loginpage = browser.element('h2=Installed snaps');
+        loginpage = browser.element('h2=Apps installed');
         loginpage.waitForVisible();
-        expect(loginpage.getText(), "Login Failed with valid token").to.contain('Installed snaps');
+        expect(loginpage.getText(), "Login Failed with valid token").to.contain('Apps installed');
         cookie = browser.getCookie('SM');
         browser.call(function() {
             return snaputil.getToken().then(function(res) {
