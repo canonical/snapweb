@@ -30,24 +30,14 @@ var installedSnapsPage = Object.create(basepage, {
             return browser.element("div.b-layout__footer a[href*=bugs]");
         }
     },
-    browsestore: {
-        get: function() {
-            return browser.element("a=Store");
-        }
-    },
-    addmoresnaps: {
-        get: function() {
-            return browser.element("a=Add more snaps for this device");
-        }
-    },
     addsnapscard: {
         get: function() {
-            return browser.elements(".p-card h3.p-card__title")
+            return browser.element("div[class^=CardsList_content] > div:last-of-type")
         }
     },
     installedsnaps: {
         get: function() {
-            return browser.elements(".p-card h3.js-snap-title")
+            return browser.elements("div[class^=CardsList_content] > div")
         }
     },
     systemsnaps: {
@@ -69,7 +59,7 @@ var installedSnapsPage = Object.create(basepage, {
                 });
             });
             acPage.submit_token(valid_token);
-            loginpage = browser.element('h2=Installed snaps');
+            loginpage = browser.element('h2=Apps installed');
             loginpage.waitForVisible();
         }
     },
@@ -86,10 +76,14 @@ var installedSnapsPage = Object.create(basepage, {
 
     systemSnapElement: {
         value: function(snap_name) {
-
-            var systemsnaps = browser.element("#systems-snap-list");
-            systemsnaps.waitForVisible();
-            return systemsnaps.element("span=" + snap_name);
+          var systemsnaps = browser.elements("#systems-snap-list span");
+          systemsnaps.waitForVisible();
+          for (var i = 0; i < systemsnaps.value.length; ++i) {
+            if (systemsnaps.value[i].getText() === snap_name) {
+                    return systemsnaps.value[i];
+                }
+            }
+            return null;
 
         }
     },

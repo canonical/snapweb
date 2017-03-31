@@ -1,11 +1,9 @@
-
 var React = require('react');
 var Backbone = require('backbone');
 var ReactBackbone = require('react.backbone');
 var SnapTools = require('../common/snaps.js');
 
 var Installer = require('./installer.js');
-
 
 module.exports = React.createBackboneClass({
   render: function() {
