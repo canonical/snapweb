@@ -28,6 +28,7 @@ module.exports = {
     REMOVING: 'uninstalling',
     ENABLING: 'enabling',
     DISABLING: 'disabling',
+    UPDATING: 'updating',
     ACTIVE: 'active',
     PRICED: 'priced',
     CANCEL: 'cancel',

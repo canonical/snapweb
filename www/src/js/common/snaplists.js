@@ -48,6 +48,11 @@ var updateInstalledStates = function(collection) {
   return collection
 };
 
+var updateSnaps = function(collection) {
+  collection.forEach((snap) => snap.set('status', CONF.INSTALL_STATE.UPDATING));
+  collection.sync('patch', collection);
+};
+
 module.exports = {
   fetchSnapListView: function(title, query, options) {
     var chan = Radio.channel('root');
@@ -89,4 +94,5 @@ module.exports = {
     });
   },
   updateInstalledStates: updateInstalledStates,
+  updateSnaps: updateSnaps,
 };

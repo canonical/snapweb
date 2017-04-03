@@ -37,6 +37,7 @@ import (
 const (
 	installedSnaps = iota
 	availableSnaps
+	updatableSnaps
 )
 
 // SnapState wraps the current state of a snap
@@ -104,6 +105,9 @@ func (h *Handler) allPackages(snapCondition int, query string, private bool, sec
 
 	if snapCondition == installedSnaps {
 		snaps, err = h.snapdClient.List(nil, nil)
+	} else if snapCondition == updatableSnaps {
+		opts := &client.FindOptions{Refresh: true}
+		snaps, _, err = h.snapdClient.Find(opts)
 	} else {
 		opts := &client.FindOptions{
 			Query:   url.QueryEscape(query),
@@ -221,6 +225,37 @@ func (h *Handler) disable(name string) error {
 	if err == nil {
 		h.stateTracker.TrackDisable(changeID, snap)
 	}
+
+	return err
+}
+
+func (h *Handler) refresh(name string) error {
+	snap, err := h.getSnap(name)
+	if err != nil {
+		return err
+	}
+
+	if snap == nil {
+		return fmt.Errorf("Snap not found %s", name)
+	}
+
+	if snap.Status != statetracker.StatusActive {
+		return errors.New("Snap not installed and enabled")
+	}
+
+	var changeID string
+
+	changeID, err = h.snapdClient.Refresh(name)
+	if err == nil {
+		h.stateTracker.TrackRefresh(changeID, snap)
+	}
+
+	return err
+}
+
+// TODO:
+func (h *Handler) refreshMany(names []string) error {
+	_, err := h.snapdClient.RefreshMany(names)
 
 	return err
 }

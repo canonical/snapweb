@@ -48,6 +48,8 @@ type SnapdClient interface {
 	Enable(id string, options *client.SnapOptions) (string, error)
 	Disable(id string, options *client.SnapOptions) (string, error)
 	Abort(id string) (*client.Change, error)
+	Refresh(id string) (string, error)
+	RefreshMany(ids []string) (string, error)
 }
 
 // ClientAdapter adapts our expectations to the snapd client API.
@@ -140,6 +142,16 @@ func (a *ClientAdapter) Disable(name string, options *client.SnapOptions) (strin
 // Abort attempts to abort a change that is in not yet ready.
 func (a *ClientAdapter) Abort(id string) (*client.Change, error) {
 	return a.snapdClient.Abort(id)
+}
+
+// Refresh an installed snap
+func (a *ClientAdapter) Refresh(id string) (string, error) {
+	return a.snapdClient.Refresh(id, nil)
+}
+
+// RefreshMany refresh many installed snaps
+func (a *ClientAdapter) RefreshMany(ids []string) (string, error) {
+	return a.snapdClient.RefreshMany(ids, nil)
 }
 
 // internal

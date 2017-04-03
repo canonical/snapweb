@@ -54,6 +54,8 @@ const (
 	StatusEnabling = "enabling"
 	// StatusDisabling indicates the package is in an disabling state.
 	StatusDisabling = "disabling"
+	// StatusUpdating indicates the package is updating
+	StatusUpdating = "updating"
 )
 
 // TODO: naive approach to track big downloads
@@ -194,6 +196,19 @@ func (s *StateTracker) TrackDisable(changeID string, snap *client.Snap) {
 	}
 
 	s.trackOperation(changeID, snap.Name, StatusDisabling)
+}
+
+// TrackRefresh tracks the refreshing of a given snap
+func (s *StateTracker) TrackRefresh(changeID string, snap *client.Snap) {
+	if !isInstalled(snap) {
+		return
+	}
+
+	if tracked, _ := s.IsTrackedForRunningOperation(snap); tracked {
+		return
+	}
+
+	s.trackOperation(changeID, snap.Name, StatusUpdating)
 }
 
 func (s *StateTracker) trackOperation(changeID, name, operation string) {
