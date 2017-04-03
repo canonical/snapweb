@@ -32,12 +32,13 @@ var installedSnapsPage = Object.create(basepage, {
     },
     addsnapscard: {
         get: function() {
-            return browser.element("div[class^=CardsList_content] > div:last-of-type")
+            var cards = browser.elements("div[role='button']").value
+            return cards[cards.length-1]
         }
     },
     installedsnaps: {
         get: function() {
-            return browser.elements("div[class^=CardsList_content] > div")
+            return browser.elements("div[role='button']")
         }
     },
     systemsnaps: {
