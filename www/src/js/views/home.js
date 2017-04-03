@@ -25,7 +25,12 @@ function snapToCard(snap) {
     name: snap.get('name'),
     author: snap.get('developer'),
     type: snap.get('type') === 'app'? '' : snap.get('type'),
-    action: snap.get('installActionString'),
+    action: (
+      snap.get('status') === Config.INSTALL_STATE.INSTALLING
+        || snap.get('status') === Config.INSTALL_STATE.REMOVING
+        ? snap.get('installActionString')
+        : ''
+    ),
     actions: [snap.get('installActionString')],
     image: snap.get('id'),
     installProgress: (

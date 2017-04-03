@@ -226,6 +226,8 @@ module.exports = React.createBackboneClass({
 
           <div className="row" style={{padding: "0", paddingBottom: "0.5em"}}>
             <div className="col-7">
+            </div>
+            <div className="col-4">
               <SnapActions
                 model={model}
                 downloadProgress={this.state.downloadProgress}

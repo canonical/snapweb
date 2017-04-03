@@ -87,6 +87,7 @@ func (s *HandlersSuite) TestGetAll(c *C) {
 		{"/?installed_only=true", true, ""},
 		{"/?q=foo", false, "foo"},
 		{"/?installed_only=true&q=foo", true, ""},
+		{"/?tracked_snaps=true", false, ""},
 	}
 
 	for _, tt := range tests {
