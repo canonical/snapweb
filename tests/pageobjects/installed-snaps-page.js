@@ -30,10 +30,14 @@ var installedSnapsPage = Object.create(basepage, {
             return browser.element("div.b-layout__footer a[href*=bugs]");
         }
     },
+    addsnapscardSelector: {
+      get: function() {
+            return "div[class^=CardsList_content] > div:last-of-type";
+        }
+    },
     addsnapscard: {
         get: function() {
-            var cards = browser.elements("div[role='button']").value
-            return cards[cards.length-1]
+            return browser.element("div[class^=CardsList_content] > div:last-of-type")
         }
     },
     installedsnaps: {
