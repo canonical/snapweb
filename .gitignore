@@ -6,11 +6,6 @@ prime
 stage
 yarn
 public
-ubuntu-personal-store/parts
-ubuntu-personal-store/prime
-ubuntu-personal-store/stage
-ubuntu-personal-store/snapcraft.yaml
-ubuntu-personal-store/ubuntu-personal-store.qml
 /www/src/css/*.css
 .coverage-go
 .coverage-js
