@@ -32,17 +32,17 @@ var installedSnapsPage = Object.create(basepage, {
     },
     addsnapscardSelector: {
       get: function() {
-            return "div[class^=CardsList_content] > div:last-of-type";
+            return "#installedSnapsList > section > div > div:last-of-type";
         }
     },
     addsnapscard: {
         get: function() {
-            return browser.element("div[class^=CardsList_content] > div:last-of-type")
+            return browser.element("#installedSnapsList > section > div > div:last-of-type")
         }
     },
     installedsnaps: {
         get: function() {
-            return browser.elements("div[role='button']")
+            return browser.elements("#installedSnapsList > section > div > div")
         }
     },
     systemsnaps: {

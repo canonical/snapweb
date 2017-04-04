@@ -128,7 +128,7 @@ module.exports = React.createBackboneClass({
             <h2 className="col-6">Apps installed</h2>
           </div>
 
-          <div className="row">
+          <div className="row" id="installedSnapsList">
               <CardsList
                 title=''
                 cards={cards}
