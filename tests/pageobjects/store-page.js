@@ -5,6 +5,10 @@ var storePage = Object.create(basepage, {
     /**
      * define elements
      */
+    searchField: {
+        value: "input[placeholder='Search']"
+    },
+
     privateSectionElement: {
         value: "a[href*='/store/section/private']"
     },
@@ -47,10 +51,10 @@ var storePage = Object.create(basepage, {
 
     search: {
         value: function(query) {
-            browser.waitForVisible('.p-search__field');
-            var searchfield = browser.element('.p-search__field');
+            browser.waitForVisible(this.searchField);
+            var searchfield = browser.element(this.searchField);
             searchfield.setValue(query);
-            browser.element('.p-search__btn').click();
+            browser.element('.row .col-11 button[type="submit"]').click();
         }
     },
 

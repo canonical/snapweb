@@ -7,7 +7,7 @@ var snapDetailsPage = Object.create(basepage, {
      */
     snapTitleElement: {
         get: function() {
-            return '.b-snap .b-snap__title';
+            return '.b-snap__title';
         }
     },
     snapDetailListElements: {
