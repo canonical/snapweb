@@ -132,15 +132,6 @@ function SnapActions(props) {
     installerClass += " b-installer_thinking";
   }
 
-  var installerButtonClassName = "col-5";
-  if (status === CONF.INSTALL_STATE.INSTALLED ||
-      status === CONF.INSTALL_STATE.ACTIVE) {
-    installerButtonClassName = "col-2";
-  }
-  if (status === CONF.INSTALL_STATE.REMOVED) {
-    installerButtonClassName = "col-5";
-  }
-
   var progressBarWrapperStyle = {
     border: progressBarBorder,
     borderRadius: progressBarBorderRadius,
@@ -156,7 +147,7 @@ function SnapActions(props) {
   };
 
   return (
-    <div id="installer-button" className={installerButtonClassName}>
+    <div id="installer-button">
       <Installer
          installerClass={installerClass}
          model={model} />
