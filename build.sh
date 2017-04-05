@@ -5,12 +5,10 @@
 # Arguments:
 #   [arch ...]: The architectures to build for. By default it will build for
 #               amd64, arm64, armhf and i386.
-#
-#   [--ups]:    Build the ubuntu-personal-store snap as well.
 
 set -e
 
-if [ "$#" -eq 0 ] || ([ "$#" -eq 1 ] && [ "$1" = "--ups" ]); then
+if [ "$#" -eq 0 ]; then
     architectures=( amd64 arm64 armhf i386 )
 else
     architectures=( "$@" )
@@ -46,7 +44,6 @@ get_platform_abi() {
 
 gobuild() {
     arch=$1
-    build_mode=$2
 
     plat_abi=$(get_platform_abi $arch)
 
@@ -56,14 +53,9 @@ gobuild() {
         output_dir="bin/$plat_abi"
     fi
 
-    build_tags=""
-    if [ "${build_mode}" = "ubuntu_personal_store" ]; then
-        build_tags="-tags ubuntu_personal_store"
-    fi
-
     mkdir -p $output_dir
     cd $output_dir
-    GOARCH=$arch GOARM=7 CGO_ENABLED=1 CC=${plat_abi}-gcc go build ${build_tags} github.com/snapcore/snapweb/cmd/snapweb
+    GOARCH=$arch GOARM=7 CGO_ENABLED=1 CC=${plat_abi}-gcc go build -ldflags "-extld=${plat_abi}-gcc" github.com/snapcore/snapweb/cmd/snapweb
     GOARCH=$arch GOARM=7 CGO_ENABLED=1 CC=${plat_abi}-gcc go build -o generate-token -ldflags "-extld=${plat_abi}-gcc" $srcdir/cmd/generate-token/main.go
     cp generate-token ../../
     cd - > /dev/null
@@ -83,10 +75,6 @@ godeps -u dependencies.tsv
 
 # build one snap per arch
 for ARCH in "${architectures[@]}"; do
-    if [ $ARCH = "--ups" ]; then
-        continue
-    fi
-
     echo "Building for ${ARCH}..."
     builddir="${top_builddir}/${ARCH}"
     mkdir -p "$builddir"
@@ -114,27 +102,4 @@ for ARCH in "${architectures[@]}"; do
 
     cd "$orig_pwd"
     snapcraft snap $builddir
-
-    # TODO: We only support amd64 ups builds for now -Need a cross-compile fix for "after: [desktop-qt5]"
-    if [[ $* == *--ups* ]] && [ $ARCH = amd64 ]; then
-        # now build ubuntu-personal-store
-        cd $builddir
-        gobuild $BUILD_ARCH "ubuntu_personal_store"
-
-        cd $orig_pwd/ubuntu-personal-store
-
-        cp snapcraft.yaml.in snapcraft.yaml
-        sed -i "s/\(:\)UNKNOWN_ARCH/\1$ARCH/" snapcraft.yaml
-
-        snapcraft clean
-        snapcraft prime
-
-        cp -r $orig_pwd/ubuntu-personal-store/prime/* $builddir
-        cp -r $orig_pwd/ubuntu-personal-store/pkg/* ${builddir}
-        sed -i "s/\(architectures: \)UNKNOWN_ARCH/\1[$ARCH]/" \
-            $builddir/meta/snap.yaml
-
-        cd $orig_pwd
-        snapcraft snap $builddir
-    fi
 done
