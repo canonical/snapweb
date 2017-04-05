@@ -25,16 +25,20 @@ module.exports = React.createBackboneClass({
 
     return (
       <div>
-        <h2 className="col-4">{this.props.title}</h2>
-        <span className="u-float--right">
-          <ul className="p-inline-list u-float--right">
-            {sections.map(function(section) {
-                              return (
-                                <SectionView key={section} section={section} />
-                              );
-                            })}
-          </ul>
-        </span>
+        <div>
+          <h2 className="col-4">{this.props.title}</h2>
+        </div>
+        <div>
+          <span className="u-float--right">
+            <ul className="p-inline-list u-float--right">
+              {sections.map(function(section) {
+                                return (
+                                  <SectionView key={section} section={section} />
+                                );
+                              })}
+            </ul>
+          </span>
+        </div>
       </div>
     );
   }

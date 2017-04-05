@@ -43,6 +43,17 @@ function snapToCard(snap) {
   }
 }
 
+function snapTypeToString(type) {
+  if (! type) {
+    return "";
+  }
+  var t = snap.get('type');
+  if (t === "os") {
+    return "OS";
+  }
+  return t;
+}
+
 module.exports = React.createBackboneClass({
   getInitialState: function() {
     return {
@@ -170,8 +181,8 @@ module.exports = React.createBackboneClass({
                             </div>
                           </a>
                         </td>
-                        <td>By {snap.get('developer')}</td>
-                        <td>{snap.get('type')}</td>
+                        <td>{snap.get('developer')}</td>
+                        <td>{snapTypeToString(snap.get('type')}</td>
                       </tr>
                   );
                 })}

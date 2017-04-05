@@ -226,6 +226,7 @@ module.exports = React.createBackboneClass({
 
           <div className="row" style={{padding: "0", paddingBottom: "0.5em"}}>
             <div className="col-7">
+              <ul className="p-list--divided"></ul>
             </div>
             <div className="col-4">
               <SnapActions

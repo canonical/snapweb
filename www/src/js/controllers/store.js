@@ -1,30 +1,20 @@
 var $ = require('jquery');
 var SnaplistTools = require('../common/snaplists.js');
 
+// TODO factor code a bit more
+
 module.exports = {
   index: function() {
-    SnaplistTools.fetchSnapListView(
-      'Featured snaps',
-      '',
-      {data: $.param({'section': 'featured'})}
-    );
+    var section = 'featured';
+    SnaplistTools.fetchSnapListView('', section, {data: $.param({'section': section})});
   },
   section: function(s) {
     // Special case for private section which is not a section
     // per se but a specificity of a snap
+    var data = {data: $.param({'section': s})};
     if (s === 'private') {
-      SnaplistTools.fetchSnapListView(
-        'Private snaps',
-        '',
-        {data: $.param({'private_snaps': true})}
-      );
+      data = {data: $.param({'private_snaps': true})};
     }
-    else {
-      SnaplistTools.fetchSnapListView(
-        s,
-        '',
-        {data: $.param({'section': s})}
-      );
-    }
+    SnaplistTools.fetchSnapListView(s, '', data);
   }
 };

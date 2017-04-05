@@ -40,6 +40,7 @@ module.exports = React.createBackboneClass({
           <div className="row">
             <StoreHeaderView
               title={model.get('title')}
+              activeSection={model.get('activeSection')}
               sections={model.get('sections')}
             />
           </div>

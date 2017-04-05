@@ -31,10 +31,7 @@ module.exports = {
         )
       );
       var installedSnapsView = React.createElement(HomeLayoutView, {
-          model: new Backbone.Model({
-            title: 'Installed snaps',
-            isHomeActive: true,
-          }),
+          model: new Backbone.Model({}),
           collection: c
       });
       chan.command('set:content', {reactElement: installedSnapsView});
