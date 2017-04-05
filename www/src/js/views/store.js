@@ -5,8 +5,9 @@ var ReactBackbone = require('react.backbone');
 
 var SearchField = require('../components/search-field.js');
 var DeckStyler = require('../components/deck-styler.js');
-var StoreHeaderView = require('../components/store-header.js');
 var StorelistView = require('../components/storelist.js');
+
+import { StoreSections } from 'snapweb-toolkit';
 
 module.exports = React.createBackboneClass({
   getInitialState: function() {
@@ -38,7 +39,7 @@ module.exports = React.createBackboneClass({
           </div>
 
           <div className="row">
-            <StoreHeaderView
+            <StoreSections
               title={model.get('title')}
               sections={model.get('sections')}
             />
