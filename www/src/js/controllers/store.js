@@ -15,6 +15,6 @@ module.exports = {
     if (s === 'private') {
       data = {data: $.param({'private_snaps': true})};
     }
-    SnaplistTools.fetchSnapListView(s, '', data);
+    SnaplistTools.fetchSnapListView('', s, data);
   }
 };

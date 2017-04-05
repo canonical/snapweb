@@ -47,11 +47,10 @@ function snapTypeToString(type) {
   if (! type) {
     return "";
   }
-  var t = snap.get('type');
-  if (t === "os") {
+  if (type === "os") {
     return "OS";
   }
-  return t;
+  return type;
 }
 
 module.exports = React.createBackboneClass({
@@ -182,7 +181,7 @@ module.exports = React.createBackboneClass({
                           </a>
                         </td>
                         <td>{snap.get('developer')}</td>
-                        <td>{snapTypeToString(snap.get('type')}</td>
+                        <td>{snapTypeToString(snap.get('type'))}</td>
                       </tr>
                   );
                 })}

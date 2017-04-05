@@ -37,9 +37,9 @@ module.exports = React.createBackboneClass({
             </div>
           </div>
 
-          <div className="row">
+          <div className="row" style={{fontSize: "24px", marginBottom: "55px"}}>
+            <h1 style={{fontSize: "24px"}}>{model.get('title')}</h1>
             <StoreSections
-              title={model.get('title')}
               activeSection={model.get('activeSection')}
               sections={model.get('sections')}
             />
