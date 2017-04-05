@@ -73,6 +73,16 @@ func (h *Handler) snapOperationResponse(name string, err error, w http.ResponseW
 	h.jsonResponseOrError(response{Message: msg, Package: name}, w)
 }
 
+func (h *Handler) getUpdates(w http.ResponseWriter, r *http.Request) {
+	payload, err := h.allPackages(updatableSnaps, ".", true, "")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "Error %s", err)
+		return
+	}
+	h.jsonResponseOrError(payload, w)
+}
+
 func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
 	snapCondition := availableSnaps
 	if r.FormValue("installed_only") == "true" {
@@ -102,6 +112,63 @@ func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	h.jsonResponseOrError(payload, w)
+}
+
+func (h *Handler) updateMany(w http.ResponseWriter, r *http.Request) {
+	body, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+
+	var collection []map[string]interface{}
+	err = json.Unmarshal(body, &collection)
+	if err != nil {
+		log.Printf("updateMany: Unmarshal error: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	var result []interface{}
+
+	// XXX: State tracker is not equiped for a multi snap operation ignore the
+	// *Many variants handle individually, this should be fixed
+	for _, snap := range collection {
+		var name string
+		var status string
+		var ok bool
+
+		name, ok = snap["name"].(string)
+		if !ok {
+			log.Println("updateMany: snap information did not contain name!")
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		status, ok = snap["status"].(string)
+		if !ok {
+			log.Println("updateMany: snap information did not contain status!")
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		if status == statetracker.StatusEnabling {
+			err = h.enable(name)
+		} else if status == statetracker.StatusDisabling {
+			err = h.disable(name)
+		} else if status == "cancel" {
+			err = h.abortRunningOperation(name)
+		} else if status == statetracker.StatusUpdating {
+			err = h.refresh(name)
+		}
+
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		result = append(result, response{Message: "Accepted", Package: name})
+	}
+
+	w.WriteHeader(http.StatusAccepted)
+	h.jsonResponseOrError(result, w)
 }
 
 func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
@@ -169,6 +236,8 @@ func (h *Handler) update(w http.ResponseWriter, r *http.Request) {
 		err = h.disable(snapName)
 	} else if status == "cancel" {
 		err = h.abortRunningOperation(snapName)
+	} else if status == statetracker.StatusUpdating {
+		err = h.refresh(snapName)
 	}
 
 	if err != nil {
@@ -183,8 +252,14 @@ func (h *Handler) update(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) MakeMuxer(prefix string, parentRouter *mux.Router) http.Handler {
 	m := parentRouter.PathPrefix(prefix).Subrouter()
 
+	// Get All refreshable packages
+	m.HandleFunc("/", h.getUpdates).Methods("GET").Queries("updatable_only", "true")
+
 	// Get all of packages.
 	m.HandleFunc("/", h.getAll).Methods("GET")
+
+	// Update collection of snaps
+	m.HandleFunc("/", h.updateMany).Methods("PATCH")
 
 	// get specific package
 	m.HandleFunc("/{name}", h.get).Methods("GET")

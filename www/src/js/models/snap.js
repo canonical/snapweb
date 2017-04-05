@@ -38,7 +38,8 @@ module.exports = Backbone.Model.extend({
         status === CONF.INSTALL_STATE.INSTALLING ||
         status === CONF.INSTALL_STATE.REMOVING ||
         status === CONF.INSTALL_STATE.DISABLING ||
-        status === CONF.INSTALL_STATE.ENABLING
+        status === CONF.INSTALL_STATE.ENABLING ||
+        status === CONF.INSTALL_STATE.UPDATING
       ) {
         _.delay(function(model) {
           model.fetch({
@@ -122,7 +123,8 @@ module.exports = Backbone.Model.extend({
         status !== CONF.INSTALL_STATE.INSTALLING &&
         status !== CONF.INSTALL_STATE.REMOVING &&
         status !== CONF.INSTALL_STATE.DISABLING &&
-        status !== CONF.INSTALL_STATE.ENABLING) {
+        status !== CONF.INSTALL_STATE.ENABLING &&
+        status !== CONF.INSTALL_STATE.UPDATING) {
       model.set('download_progress', 0);
       model.set('task_summary', '');
     }
@@ -188,6 +190,9 @@ module.exports = Backbone.Model.extend({
         break;
       case CONF.INSTALL_STATE.REMOVING:
         action = 'Removing';
+        break;
+      case CONF.INSTALL_STATE.UPDATING:
+        action = 'Updating';
         break;
       default:
         // XXX

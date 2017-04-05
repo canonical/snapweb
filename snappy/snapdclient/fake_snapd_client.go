@@ -157,4 +157,14 @@ func (f *FakeSnapdClient) Abort(id string) (*client.Change, error) {
 	return nil, nil
 }
 
+// Refresh (update) an installed snap
+func (f *FakeSnapdClient) Refresh(id string) (string, error) {
+	return "Refreshing", nil
+}
+
+// RefreshMany update many installed snaps
+func (f *FakeSnapdClient) RefreshMany(ids []string) (string, error) {
+	return "Refresh", nil
+}
+
 var _ SnapdClient = (*FakeSnapdClient)(nil)
