@@ -245,7 +245,8 @@ func formatInstallData(d time.Time) string {
 		// store snap
 		return ""
 	}
-	return d.Format(time.UnixDate)
+	const layout = "02 January 2006 15:04:05"
+	return d.Format(layout)
 }
 
 type snapPrices map[string]float64

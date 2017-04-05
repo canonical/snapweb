@@ -301,10 +301,11 @@ func (s *AllPackagesSuite) TestHasSnaps(c *C) {
 
 func (s *AllPackagesSuite) TestFormatInstallDate(c *C) {
 	c.Assert(formatInstallData(time.Time{}), Equals, "")
-	t, _ := time.Parse("2006-Jan-02", "2013-Feb-03")
+	const layout = "2006-Jan-02"
+	t, _ := time.Parse(layout, "2013-Feb-03")
 	c.Assert(formatInstallData(t),
 		Equals,
-		"Sun Feb  3 00:00:00 UTC 2013")
+		"03 February 2013 00:00:00")
 }
 
 func (s *AllPackagesSuite) TestSnapPrices(c *C) {
