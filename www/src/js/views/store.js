@@ -3,11 +3,10 @@ var Marionette = require('backbone.marionette');
 var React = require('react');
 var ReactBackbone = require('react.backbone');
 
-var SearchField = require('../components/search-field.js');
 var DeckStyler = require('../components/deck-styler.js');
 var StorelistView = require('../components/storelist.js');
 
-import { StoreSections } from 'snapweb-toolkit';
+import { SearchField, StoreSections } from 'snapweb-toolkit';
 
 module.exports = React.createBackboneClass({
   getInitialState: function() {

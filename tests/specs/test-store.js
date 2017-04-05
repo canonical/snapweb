@@ -14,7 +14,7 @@ describe('Store Page - Verify that', function() {
     beforeEach(function() {
         // start from the home page for each test
         browser.url('/store');
-        browser.waitForVisible('.p-search__field');
+        browser.waitForVisible(storePage.searchField);
     });
 
     it('front page loads correctly', function() {
