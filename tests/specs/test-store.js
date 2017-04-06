@@ -26,15 +26,14 @@ describe('Store Page - Verify that', function() {
 
         browser.waitForVisible(storePage.sectionSelector('private'));
         storePage.private.click();
-        privatepage = browser.element('h2=Private snaps')
+        privatepage = browser.element('a=private')
         privatepage.waitForVisible();
-        expect(privatepage.getText(), "Failed to load private section page").to.contain('Private snaps');
     });
 
     it('click section brings up associated filtered list', function() {
         browser.waitForVisible(storePage.sectionSelector('featured'));
         storePage.section('featured').click();
-        featuredpage = browser.element('h2=featured')
+        featuredpage = browser.element('a=featured')
         featuredpage.waitForVisible();
         expect(featuredpage.getText(), "Failed to load featured section page").to.contain('featured');
     });
@@ -46,7 +45,7 @@ describe('Store Page - Verify that', function() {
  
         browser.waitForVisible(storePage.sectionSelector('featured'));
         storePage.section('featured').click();
-        featuredpage = browser.element('h2=featured')
+        featuredpage = browser.element('a=featured')
         featuredpage.waitForVisible();
 
         browser.waitForVisible(storePage.sectionSnapListSelector);
