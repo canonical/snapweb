@@ -33,7 +33,6 @@ module.exports = Marionette.ItemView.extend({
       'query': window.decodeURI(window.location.search.slice(3)) || '',
       'name': snapweb.NAME,
       'subname': snapweb.SUBNAME,
-      'isHomeActive': (path === ''),
       'isStoreActive': (path === 'store' || path === 'search'),
       'isSettingsActive': (path === 'settings'),
       'isUPS': (window.location.port !== '4201')

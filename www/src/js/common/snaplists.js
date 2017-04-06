@@ -49,7 +49,7 @@ var updateInstalledStates = function(collection) {
 };
 
 module.exports = {
-  fetchSnapListView: function(title, query, options) {
+  fetchSnapListView: function(query, section, options) {
     var chan = Radio.channel('root');
     var snaplist = new Snaplist();
     var sections = [];
@@ -57,13 +57,12 @@ module.exports = {
     if (localStorage) {
       sections = JSON.parse(localStorage.getItem('storeSections')) || [];
     }
-
     var m = new Backbone.Model({
       query: query,
-      title: title,
+      title: 'App store',
       isGrid: true,
-      isHomeActive: false,
       sections: sections.concat('private'),
+      activeSection: section,
       loading: true
     });
 

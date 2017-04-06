@@ -37,6 +37,7 @@ import (
 const (
 	installedSnaps = iota
 	availableSnaps
+	trackedSnaps
 )
 
 // SnapState wraps the current state of a snap
@@ -104,6 +105,18 @@ func (h *Handler) allPackages(snapCondition int, query string, private bool, sec
 
 	if snapCondition == installedSnaps {
 		snaps, err = h.snapdClient.List(nil, nil)
+	} else if snapCondition == trackedSnaps {
+		names := h.stateTracker.AllTrackedSnaps()
+		sort.Strings(names)
+
+		snaps = make([]*client.Snap, 0, len(names))
+		for n := range names {
+			s, err := h.getSnap(names[n])
+			if err != nil {
+				break
+			}
+			snaps = append(snaps, s)
+		}
 	} else {
 		opts := &client.FindOptions{
 			Query:   url.QueryEscape(query),
@@ -232,7 +245,8 @@ func formatInstallData(d time.Time) string {
 		// store snap
 		return ""
 	}
-	return d.Format(time.UnixDate)
+	const layout = "02 January 2006 15:04:05"
+	return d.Format(layout)
 }
 
 type snapPrices map[string]float64

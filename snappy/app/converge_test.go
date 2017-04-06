@@ -301,10 +301,11 @@ func (s *AllPackagesSuite) TestHasSnaps(c *C) {
 
 func (s *AllPackagesSuite) TestFormatInstallDate(c *C) {
 	c.Assert(formatInstallData(time.Time{}), Equals, "")
-	t, _ := time.Parse("2006-Jan-02", "2013-Feb-03")
+	const layout = "2006-Jan-02"
+	t, _ := time.Parse(layout, "2013-Feb-03")
 	c.Assert(formatInstallData(t),
 		Equals,
-		"Sun Feb  3 00:00:00 UTC 2013")
+		"03 February 2013 00:00:00")
 }
 
 func (s *AllPackagesSuite) TestSnapPrices(c *C) {
@@ -315,6 +316,34 @@ func (s *AllPackagesSuite) TestSnapPrices(c *C) {
 
 	c.Assert(priceStringFromSnapPrice(snapPrices{}), Equals, "")
 	c.Assert(priceStringFromSnapPrice(prices), Equals, "0.1 EUR")
+}
+
+func (s *AllPackagesSuite) TestTrackedSnapsListing(c *C) {
+	s.c.StoreSnaps = []*client.Snap{
+		common.NewSnap("app2"),
+		common.NewSnap("app1"),
+	}
+
+	s.c.StoreSnaps[0].Status = client.StatusAvailable
+	s.c.StoreSnaps[1].Status = client.StatusAvailable
+
+	s.c.Err = errors.New("error")
+	err := s.h.installPackage("app1")
+	c.Assert(err, IsNil)
+	s.c.Err = nil
+
+	s.c.Err = errors.New("error")
+	snaps, err := s.h.allPackages(trackedSnaps, "", false, "")
+
+	c.Assert(err, IsNil)
+	c.Assert(snaps, HasLen, 1)
+	c.Assert(snaps[0].Name, Equals, "app1")
+
+	// s.c.Err = nil
+	s.h.abortRunningOperation("app1")
+	snaps, err = s.h.allPackages(trackedSnaps, "", false, "")
+	c.Assert(snaps, HasLen, 0)
+	c.Assert(err, IsNil)
 }
 
 type SnapOperationTrackingSuite struct {

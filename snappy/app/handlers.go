@@ -77,6 +77,8 @@ func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
 	snapCondition := availableSnaps
 	if r.FormValue("installed_only") == "true" {
 		snapCondition = installedSnaps
+	} else if r.FormValue("tracked_snaps") == "true" {
+		snapCondition = trackedSnaps
 	} else {
 		snapCondition = availableSnaps
 	}

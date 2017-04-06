@@ -25,7 +25,12 @@ function snapToCard(snap) {
     name: snap.get('name'),
     author: snap.get('developer'),
     type: snap.get('type') === 'app'? '' : snap.get('type'),
-    action: snap.get('installActionString'),
+    action: (
+      snap.get('status') === Config.INSTALL_STATE.INSTALLING
+        || snap.get('status') === Config.INSTALL_STATE.REMOVING
+        ? snap.get('installActionString')
+        : ''
+    ),
     actions: [snap.get('installActionString')],
     image: snap.get('id'),
     installProgress: (
@@ -36,6 +41,16 @@ function snapToCard(snap) {
     snap: snap.toJSON(),
     iconUrl: snap.get('icon'),
   }
+}
+
+function snapTypeToString(type) {
+  if (! type) {
+    return "";
+  }
+  if (type === "os") {
+    return "OS";
+  }
+  return type;
 }
 
 module.exports = React.createBackboneClass({
@@ -165,8 +180,8 @@ module.exports = React.createBackboneClass({
                             </div>
                           </a>
                         </td>
-                        <td>By {snap.get('developer')}</td>
-                        <td>{snap.get('type')}</td>
+                        <td>{snap.get('developer')}</td>
+                        <td>{snapTypeToString(snap.get('type'))}</td>
                       </tr>
                   );
                 })}

@@ -132,6 +132,17 @@ func (s *StateTracker) IsTrackedForRunningOperation(snap *client.Snap) (bool, st
 	return !hasOperationCompleted(state.Status, snap), state.ChangeID
 }
 
+// AllTrackedSnaps returns the list of snap names that are currently being tracked
+func (s *StateTracker) AllTrackedSnaps() []string {
+	keys := make([]string, len(s.states))
+	i := 0
+	for k := range s.states {
+		keys[i] = k
+		i++
+	}
+	return keys
+}
+
 // TrackInstall tracks the installation of the given snap
 func (s *StateTracker) TrackInstall(changeID string, snap *client.Snap) {
 	if isInstalled(snap) {
@@ -141,7 +152,6 @@ func (s *StateTracker) TrackInstall(changeID string, snap *client.Snap) {
 	if tracked, _ := s.IsTrackedForRunningOperation(snap); tracked {
 		return
 	}
-
 	s.trackOperation(changeID, snap.Name, StatusInstalling)
 }
 
