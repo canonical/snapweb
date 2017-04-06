@@ -242,7 +242,7 @@ func (s *StateTrackerSuite) TestAllTrackedSnaps(c *C) {
 	s.t.TrackDisable("", snaps[0])
 	s.t.TrackDisable("", snaps[1])
 	s.t.TrackDisable("", snaps[2])
-	c.Assert(s.t.AllTrackedSnaps(), DeepEquals, []string{"name", "name1", "name2"})
+	c.Assert(s.t.AllTrackedSnaps(), DeepEquals, []string{"name2", "name", "name1"})
 	s.t.CancelTrackingFor("name")
 	c.Assert(s.t.AllTrackedSnaps(), DeepEquals, []string{"name1", "name2"})
 	s.t.CancelTrackingFor("name2")
