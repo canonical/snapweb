@@ -1,6 +1,6 @@
 var aliasify = require('aliasify');
 var postcss = require('gulp-postcss');
-var autoprefixer = require('autoprefixer-core');
+var autoprefixer = require('autoprefixer');
 var bemlinter = require('postcss-bem-linter');
 var browserify = require('browserify');
 var buffer = require('vinyl-buffer');
@@ -55,28 +55,30 @@ function createBundler(watch) {
 }
 
 function bundleShared(bundler) {
-    var postCSSPlugins = [
-        'postcss-modules-local-by-default',
-		    'postcss-modules-extract-imports',
-		    'postcss-modules-scope',
-    ];
-    return bundler
-        .plugin('css-modulesify', {
-            o: 'www/public/css/main.css',
-            use: postCSSPlugins
-        })
-        .bundle()
-        .on('error', function(err) {
-            gutil.log(gutil.colors.green('Browserify Error: ' + err));
-            this.emit('end');
-            process.exit(1);
-        })
-        .pipe(source('snapweb.js'))
-        .pipe(buffer())
-        .pipe(sourcemaps.init({loadMaps: true})) // loads map from browserify file
-        .pipe(process.env.NODE_ENV === 'development'? gutil.noop() : uglify())
-        .pipe(sourcemaps.write('./')) // writes .map file
-        .pipe(gulp.dest('www/public/js/'));
+  var postCSSPlugins = [
+    'postcss-modules-local-by-default',
+		'postcss-modules-extract-imports',
+		'postcss-modules-scope',
+  ];
+
+  return bundler
+    .plugin('css-modulesify', {
+      rootDir: 'www/src/js',
+      o: 'www/public/css/main.css',
+      use: postCSSPlugins
+    })
+    .bundle()
+    .on('error', function(err) {
+      gutil.log(gutil.colors.green('Browserify Error: ' + err));
+      this.emit('end');
+      process.exit(1);
+    })
+    .pipe(source('snapweb.js'))
+    .pipe(buffer())
+    .pipe(sourcemaps.init({loadMaps: true})) // loads map from browserify file
+    .pipe(process.env.NODE_ENV === 'development'? gutil.noop() : uglify())
+    .pipe(sourcemaps.write('./')) // writes .map file
+    .pipe(gulp.dest('www/public/js/'));
 }
 
 gulp.task('js:lint', function() {
