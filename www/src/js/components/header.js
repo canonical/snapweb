@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import './header.css'
+import css from './header.css'
 
 import {
   ContentWrapper,
@@ -47,13 +47,13 @@ class Header extends Component {
 
     return (
       <header
-        className='Header'
-        style={styles}
+         className={css.Header}
+         style={styles}
       > 
-        <div className='Header-in'>
+        <div className={css.HeaderIn}>
           <If cond={this.props.hasBack}>
             <div
-              className='Header-back'
+               className={css.HeaderBack}
               role='button'
               tabIndex='0'
               onClick={this.handleBackClick}
@@ -61,31 +61,31 @@ class Header extends Component {
               <span>
                 <Icon name='previous' size='24px' />
               </span>
-              <span className='Header-back-text'>Device</span>
-              <div className='Header-activeOverlay' />
+              <span className={css.HeaderBackText}>Device</span>
+              <div className={css.HeaderActiveOverlay} />
             </div>
           </If>
           <If cond={this.props.signedIn && this.props.hasSignIn}>
             <div
-              className='Header-profile'
-              role='button'
-              tabIndex='0'
-              onClick={this.handleProfileClick}
+               className={css.HeaderProfile}
+               role='button'
+               tabIndex='0'
+               onClick={this.handleProfileClick}
                >
               <img width='24' height='24' src="" alt='' />
               <span>{props.profilename || defaultProfileName}</span>
-              <div className='Header-activeOverlay' />
+              <div className={css.HeaderActiveOverlay} />
             </div>
           </If>
           <If cond={this.props.hasSignIn}>
             <div
-              className='Header-signIn'
+               className={css.HeaderSignIn}
               role='button'
               tabIndex='0'
               onClick={this.handleSignInClick}
             >
               <span>{signedInText}</span>
-              <div className='Header-activeOverlay' />
+              <div className={css.HeaderActiveOverlay} />
             </div>
           </If>
         </div>

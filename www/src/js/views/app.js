@@ -2,7 +2,7 @@
 import $ from 'jquery';
 import React from 'react';
 
-import './app.css';
+import css from './app.css';
 
 import { Footer } from 'snapweb-toolkit';
 import Header from '../components/header';
@@ -43,10 +43,10 @@ export default class App extends React.Component {
     const section = 'home';
 
     return (
-      <div className='App'>
+      <div className='App' >
         <style>{`a { color: ${brandData.color || '#333'} }`}</style>
-        <div className='App-main'>
-          <div className='App-header'>
+        <div className={css.AppMain}>
+          <div className={css.AppHeader}>
             <Header 
                hasBack={section !== 'home'}
                hasSignIn={section === 'home'}
@@ -57,10 +57,10 @@ export default class App extends React.Component {
                onBackClick={this.handleBackClick}
                />
           </div>
-          <main className='App-content'>
+          <main className={css.AppContent}>
             { this.props.children }
           </main>
-          <div className='App-footer'>
+          <div className={css.AppFooter}>
             <Footer 
                name={brandData.brandName}
                copyright={`© ${(new Date()).getFullYear()} ${brandData.brandName}`}

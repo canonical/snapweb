@@ -3,26 +3,26 @@
   font-size: 14px;
   border: none;
 }
-.Header-in {
+.HeaderIn {
   display: flex;
   flex-wrap: nowrap;
   justify-content: space-between;
   height: 48px;
 }
-.Header-activeOverlay {
+.HeaderActiveOverlay {
   position: absolute;
   top: 0;
   right: 0;
   left: 0;
   bottom: 0;
 }
-.Header-logo {
+.HeaderLogo {
   position: absolute;
   top: 0;
   bottom: 0;
   padding: 0;
 }
-.Header-back {
+.HeaderBack {
   position: relative;
   display: flex;
   align-items: center;
@@ -34,17 +34,17 @@
   outline: 0;
   pointer-events: auto;
 }
-.Header-back span:first-child {
+.HeaderBack span:first-child {
   margin-right: 5px;
 }
-.Header-back:focus .Header-activeOverlay,
-.Header-back:active .Header-activeOverlay {
+.HeaderBack:focus .HeaderActiveOverlay,
+.HeaderBack:active .HeaderActiveOverlay {
   background: rgba(0,0,0,0.05);
 }
-.Header-back-text {
+.HeaderBackText {
   font-size: 18px;
 }
-.Header-profile {
+.HeaderProfile {
   position: relative;
   display: flex;
   align-items: center;
@@ -55,15 +55,15 @@
   outline: 0;
   pointer-events: auto;
 }
-.Header-profile img {
+.HeaderProfile img {
   margin-right: 15px;
   pointer-events: auto;
 }
-.Header-profile:focus .Header-activeOverlay,
-.Header-profile:active .Header-activeOverlay {
+.HeaderProfile:focus .HeaderActiveOverlay,
+.HeaderProfile:active .HeaderActiveOverlay {
   background: rgba(0,0,0,0.05);
 }
-.Header-signIn {
+.HeaderSignIn {
   position: relative;
   display: flex;
   align-items: center;
@@ -76,7 +76,7 @@
   pointer-events: auto;
 }
 
-.Header-signIn:focus .Header-activeOverlay,
-.Header-signIn:active .Header-activeOverlay {
+.HeaderSignIn:focus .HeaderActiveOverlay,
+.HeaderSignIn:active .HeaderActiveOverlay {
   background: rgba(0,0,0,0.05);
 }
