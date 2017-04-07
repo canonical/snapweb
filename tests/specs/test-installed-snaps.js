@@ -4,6 +4,11 @@ var expect = require('chai').expect;
 snapDetailsPage = require("../pageobjects/snap-details-page.js");
 snapsPage = require("../pageobjects/installed-snaps-page.js");
 
+var storeHeaderTitle = 'App store';
+function storeHeaderElement() {
+  return browser.element('h1=' + storeHeaderTitle);
+}
+
 describe('Installed Snaps Page - Verify that', function() {
 
     before(function() {
@@ -59,27 +64,27 @@ describe('Installed Snaps Page - Verify that', function() {
     it('clicking store link takes the user to store', function() {
 
         snapsPage.store.click();
-        storepage = browser.element('h2=Featured snaps')
+        storepage = storeHeaderElement()
         storepage.waitForVisible();
-        expect(storepage.getText(), "Failed to load store page").to.contain('Featured snaps');
+        expect(storepage.getText(), "Failed to load store page").to.contain(storeHeaderTitle);
 
     });
 
     it('Browse store button takes the user to store', function() {
 
         snapsPage.addsnapscard.click();
-        storepage = browser.element('h2=Featured snaps')
+        storepage = storeHeaderElement()
         storepage.waitForVisible();
-        expect(storepage.getText(), "Failed to load store page").to.contain('Featured snaps');
+        expect(storepage.getText(), "Failed to load store page").to.contain(storeHeaderTitle);
 
     });
 
     it('Add more snaps button takes the user to store', function() {
 
         snapsPage.addsnapscard.click();
-        storepage = browser.element('h2=Featured snaps')
+        storepage = storeHeaderElement()
         storepage.waitForVisible();
-        expect(storepage.getText(), "Failed to load store page").to.contain('Featured snaps');
+        expect(storepage.getText(), "Failed to load store page").to.contain(storeHeaderTitle);
 
     });
 
