@@ -17,6 +17,7 @@ var sourcemaps = require('gulp-sourcemaps');
 var source = require('vinyl-source-stream');
 var uglify = require('gulp-uglify');
 var watchify = require('watchify');
+var cssmodulesify = require('css-modulesify');
 
 gulp.task('js:build', ['js:clean', 'js:lint'], function() {
   if (!process.env.NODE_ENV) {
@@ -54,18 +55,28 @@ function createBundler(watch) {
 }
 
 function bundleShared(bundler) {
-  return bundler.bundle()
-    .on('error', function(err) {
-      gutil.log(gutil.colors.green('Browserify Error: ' + err));
-      this.emit('end');
-      process.exit(1);
-    })
-    .pipe(source('snapweb.js'))
-      .pipe(buffer())
-      .pipe(sourcemaps.init({loadMaps: true})) // loads map from browserify file
-      .pipe(process.env.NODE_ENV === 'development'? gutil.noop() : uglify())
-      .pipe(sourcemaps.write('./')) // writes .map file
-    .pipe(gulp.dest('www/public/js/'));
+    var postCSSPlugins = [
+        'postcss-modules-local-by-default',
+		    'postcss-modules-extract-imports',
+		    'postcss-modules-scope',
+    ];
+    return bundler
+        .plugin('css-modulesify', {
+            o: 'www/public/css/main.css',
+            use: postCSSPlugins
+        })
+        .bundle()
+        .on('error', function(err) {
+            gutil.log(gutil.colors.green('Browserify Error: ' + err));
+            this.emit('end');
+            process.exit(1);
+        })
+        .pipe(source('snapweb.js'))
+        .pipe(buffer())
+        .pipe(sourcemaps.init({loadMaps: true})) // loads map from browserify file
+        .pipe(process.env.NODE_ENV === 'development'? gutil.noop() : uglify())
+        .pipe(sourcemaps.write('./')) // writes .map file
+        .pipe(gulp.dest('www/public/js/'));
 }
 
 gulp.task('js:lint', function() {
