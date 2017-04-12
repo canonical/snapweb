@@ -1,0 +1,19 @@
+.main {
+  padding: 10px 30px;
+  font-size: 13px;
+  border-top: 1px dotted #D2D2D2;
+}
+.content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 980px;
+  margin: 0 auto;
+}
+.logo {
+  margin-left: 15px;
+  display: block;
+}
+.copyright {
+  font-size: 12px;
+}

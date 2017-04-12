@@ -4,8 +4,9 @@ import React from 'react';
 
 import css from './app.css';
 
-import { Footer } from 'snapweb-toolkit';
+// using local components until changes migrate back to the toolkit version
 import Header from '../components/header';
+import Footer from '../components/footer';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -31,12 +32,10 @@ export default class App extends React.Component {
   }
 
   render() {
+
     const brandData = {
       color: '#333',
-      brandName: 'Ubuntu',
-      logoUrl: 'logo.png',
       website: 'http://www.ubuntu.com/',
-      termsUrl: 'http://www.ubuntu.com/'
     };
 
     // FIXME: get section from router
@@ -61,13 +60,7 @@ export default class App extends React.Component {
             { this.props.children }
           </main>
           <div className={css.AppFooter}>
-            <Footer 
-               name={brandData.brandName}
-               copyright={`© ${(new Date()).getFullYear()} ${brandData.brandName}`}
-               logo={brandData.logoUrl}
-               link={brandData.website}
-               termsUrl={brandData.termsUrl}
-               />
+            <Footer />
           </div>
         </div>
       </div>
