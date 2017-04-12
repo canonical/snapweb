@@ -19,8 +19,13 @@ export default class App extends React.Component {
     });
   }
 
+  goto(path) {
+    const pathname = `/${!path || path === 'home'? '' : path}`
+    this.props.router.push(path);
+  }
+  
   handleMenuItemClick(id) {
-    this.goto(id === 'home'? '' : id);
+    this.goto(id === 'home'? '/' : id);
   }
   
   handleProfileClick() {
@@ -28,7 +33,7 @@ export default class App extends React.Component {
   }
   
   handleBackClick() {
-    this.goto('');
+    this.goto('/');
   }
 
   render() {
@@ -38,9 +43,11 @@ export default class App extends React.Component {
       website: 'http://www.ubuntu.com/',
     };
 
-    // FIXME: get section from router
-    const section = 'home';
-
+    var section = window.location.pathname.split('/')[1];
+    if (section == '') {
+      section = 'home';
+    }
+   
     return (
       <div className='App' >
         <style>{`a { color: ${brandData.color || '#333'} }`}</style>
@@ -51,9 +58,9 @@ export default class App extends React.Component {
                hasSignIn={section === 'home'}
                signedIn={true}
                currentSection={section}
-               onMenuItemClick={this.handleMenuItemClick}
-               onProfileClick={this.handleProfileClick}
-               onBackClick={this.handleBackClick}
+               onMenuItemClick={(id) => this.handleMenuItemClick(id)}
+               onProfileClick={() => this.handleProfileClick()}
+               onBackClick={() => this.handleBackClick()}
                />
           </div>
           <main className={css.AppContent}>

@@ -56,7 +56,7 @@ class Header extends Component {
                className={css.HeaderBack}
               role='button'
               tabIndex='0'
-              onClick={this.handleBackClick}
+               onClick={(event) => this.handleBackClick(event)}
             >
               <span>
                 <Icon name='previous' size='24px' />
@@ -70,7 +70,7 @@ class Header extends Component {
                className={css.HeaderProfile}
                role='button'
                tabIndex='0'
-               onClick={this.handleProfileClick}
+               onClick={(event) => this.handleProfileClick(event)}
                >
               <img width='24' height='24' src="" alt='' />
               <span>{props.profilename || defaultProfileName}</span>
@@ -82,7 +82,7 @@ class Header extends Component {
                className={css.HeaderSignIn}
               role='button'
               tabIndex='0'
-              onClick={this.handleSignInClick}
+               onClick={(event) => this.handleSignInClick(event)}
             >
               <span>{signedInText}</span>
               <div className={css.HeaderActiveOverlay} />
