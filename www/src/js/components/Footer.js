@@ -1,5 +1,5 @@
 import React from 'react'
-import css from './footer.css'
+import css from './Footer.css'
 
 const defaultName = 'Ubuntu'
 const defaultCopyright = '© 2017 Canonical Ltd. Ubuntu and Canonical are registered trademarks of Canonical Ltd.'

@@ -3,6 +3,8 @@ import {
   CardsList,
 } from 'snapweb-toolkit'
 
+import DeviceBanner from '../components/DeviceBanner';
+
 import {
   browserHistory
 } from 'react-router';
@@ -135,28 +137,39 @@ module.exports = React.createBackboneClass({
       )
     };
 
+    var openSettings = function() {
+      browserHistory.push('/settings');
+    };
+    
+    var openDocumentation = function() {
+      window.open('https://snapcraft.io/');
+    };
+    
     return (
-    <div className="b-grey-wrapper">
-       <div className="inner-wrapper p-strip--light" style={{paddingBottom: "5em"}}>
+      <div>
+        <ContentWrapper>
+          <DeviceBanner
+             image={'/public/images/cof_orange_hex.svg'}
+             deviceName={'Device Name'}
+             deviceId={'Device ID'}
+             onSettingsClick={openSettings}
+            onDocumentationClick={openDocumentation}
+          />
+        </ContentWrapper>
 
-          <div className="row">
-            <h2 className="col-6">Apps installed</h2>
-          </div>
-
-          <div className="row" id="installedSnapsList">
-              <CardsList
-                title=''
-                cards={cards}
-                onCardClick={handleSnapClick}
-                onActionClick={handleActionClick}
-              />
-          </div>
+        <ContentWrapper background bordered>
+          <CardsList
+             title='Apps installed'
+             cards={cards}
+             onCardClick={handleSnapClick}
+             onActionClick={handleActionClick}
+             />
 
           <div className="row">
             <h2 className="col-6">System</h2>
           </div>
 
-          <div className="row">
+          <div className="row" style={{ paddingBottom: '100px' }}>
             <div>
               <table>
                 <thead>
@@ -187,13 +200,12 @@ module.exports = React.createBackboneClass({
                 })}
 
                 </tbody>
-
               </table>
             </div>
           </div>
-
+        </ContentWrapper>
         </div>
-      </div>
+        
   )
 
   }

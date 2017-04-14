@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import css from './header.css'
+import css from './Header.css'
 
 import {
   ContentWrapper,

@@ -5,8 +5,8 @@ import React from 'react';
 import css from './app.css';
 
 // using local components until changes migrate back to the toolkit version
-import Header from '../components/header';
-import Footer from '../components/footer';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -56,7 +56,7 @@ export default class App extends React.Component {
             <Header 
                hasBack={section !== 'home'}
                hasSignIn={section === 'home'}
-               signedIn={true}
+               signedIn={false}
                currentSection={section}
                onMenuItemClick={(id) => this.handleMenuItemClick(id)}
                onProfileClick={() => this.handleProfileClick()}
@@ -66,7 +66,7 @@ export default class App extends React.Component {
           <main className={css.AppContent}>
             { this.props.children }
           </main>
-          <div className={css.AppFooter}>
+          <div style={{padding: '10px 30px'}}>
             <Footer />
           </div>
         </div>
