@@ -152,8 +152,6 @@ module.exports = React.createBackboneClass({
       <div>
         <DeviceInfo model={model} />
 
-{/*
-        // Disable the power & factory settings for now
         <hr />
 
         <PowerInfo
@@ -163,6 +161,8 @@ module.exports = React.createBackboneClass({
         />
         <hr />
 
+{/*
+        // Disable the factory settings for now
         <FactorySettings model={model} /> <hr />
 */}
 

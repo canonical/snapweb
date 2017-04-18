@@ -15,6 +15,8 @@ var React = require('react');
 var ReactBackbone = require('react.backbone');
 
 var Snap = require('../models/snap.js')
+var DeviceInfo = require('../models/device-info.js');
+
 var Common = require('../common/snaps.js')
 var Config = require('../config.js')
 
@@ -57,9 +59,12 @@ function snapTypeToString(type) {
 
 module.exports = React.createBackboneClass({
   getInitialState: function() {
+    var deviceInfo = new DeviceInfo;
+    deviceInfo.fetch();
     return {
-      snaps: this.props.collection
-    }
+      snaps: this.props.collection,
+      deviceInfo: deviceInfo
+    };
   },
 
   render: function() {
@@ -144,14 +149,20 @@ module.exports = React.createBackboneClass({
     var openDocumentation = function() {
       window.open('https://snapcraft.io/');
     };
+
+    console.log(self.state.deviceInfo);
+    var deviceName = self.state.deviceInfo.get('deviceName') || 'Device Name';
+    var deviceId = self.state.deviceInfo.get('serial') || ' ';
+    var brandName = self.state.deviceInfo.get('brand') || 'Ubuntu';
     
     return (
       <div>
         <ContentWrapper>
           <DeviceBanner
              image={'/public/images/cof_orange_hex.svg'}
-             deviceName={'Device Name'}
-             deviceId={'Device ID'}
+             deviceName={deviceName}
+             deviceId={deviceId}
+             brandName={brandName}
              onSettingsClick={openSettings}
             onDocumentationClick={openDocumentation}
           />
