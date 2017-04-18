@@ -15,7 +15,6 @@ var React = require('react');
 var ReactBackbone = require('react.backbone');
 
 var Snap = require('../models/snap.js')
-var DeviceInfo = require('../models/device-info.js');
 
 var Common = require('../common/snaps.js')
 var Config = require('../config.js')
@@ -57,13 +56,15 @@ function snapTypeToString(type) {
   return type;
 }
 
+function capitalizeFirstLetter(string) {
+  if (string)
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 module.exports = React.createBackboneClass({
   getInitialState: function() {
-    var deviceInfo = new DeviceInfo;
-    deviceInfo.fetch();
     return {
-      snaps: this.props.collection,
-      deviceInfo: deviceInfo
+      snaps: this.props.collection
     };
   },
 
@@ -149,11 +150,12 @@ module.exports = React.createBackboneClass({
     var openDocumentation = function() {
       window.open('https://snapcraft.io/');
     };
-
-    console.log(self.state.deviceInfo);
-    var deviceName = self.state.deviceInfo.get('deviceName') || 'Device Name';
-    var deviceId = self.state.deviceInfo.get('serial') || ' ';
-    var brandName = self.state.deviceInfo.get('brand') || 'Ubuntu';
+    
+    var devInfo = this.props.deviceInfo;
+    console.log(devInfo);
+    var deviceName = capitalizeFirstLetter(devInfo.get('deviceName')) || 'Device Name';
+    var deviceId = devInfo.get('serial') || ' ';
+    var brandName = capitalizeFirstLetter(devInfo.get('brand')) || capitalizeFirstLetter(devInfo.get('operatingSystem'));
     
     return (
       <div>

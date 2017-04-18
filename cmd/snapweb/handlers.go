@@ -18,6 +18,7 @@
 package main
 
 import (
+	"bufio"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -145,6 +146,31 @@ type deviceInfoResponse struct {
 	Uptime     string   `json:"uptime"`
 }
 
+func readLine(filename string) (string, error) {
+	f, err := os.Open(filename)
+	if err != nil {
+		fmt.Println(err)
+		return "", err
+	}
+	defer f.Close()
+	
+	r := bufio.NewReaderSize(f, 512)
+	line, _, err := r.ReadLine()
+
+	return string(line), err
+}
+
+// this should move to snapd, when running on classic
+func getDeviceNameFromMachineInfo() string {
+	line, _ := readLine("/etc/machine-info")
+	return line[len("PRETTY_HOSTNAME="):len(line)]
+}
+
+func getMachineID() string {
+	id, _ := readLine("/etc/machine-id")
+	return id
+}
+
 func handleDeviceInfo(w http.ResponseWriter, r *http.Request) {
 	c := newSnapdClient()
 
@@ -158,10 +184,15 @@ func handleDeviceInfo(w http.ResponseWriter, r *http.Request) {
 	var info deviceInfoResponse
 	info.Brand = modelInfo["Brand"].(string)
 	info.Model = modelInfo["Model"].(string)
-	info.Serial = modelInfo["Serial"].(string)
+	if modelInfo["Serial"] != "" {
+		info.Serial = modelInfo["Serial"].(string)
+	} else {
+		info.Serial = getMachineID()
+	}
 	info.OS = modelInfo["OS"].(string)
 	info.Interfaces = modelInfo["Interfaces"].([]string)
 	info.Uptime = modelInfo["Uptime"].(string)
+	info.DeviceName = getDeviceNameFromMachineInfo()
 
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(info); err != nil {
