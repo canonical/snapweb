@@ -163,6 +163,8 @@ module.exports = React.createBackboneClass({
 {/*
         <hr />
 
+{/*
+        // Disable the factory settings for now
         <FactorySettings model={model} /> <hr />
 */}
 

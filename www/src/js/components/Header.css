@@ -1,0 +1,82 @@
+.Header {
+  position: relative;
+  font-size: 14px;
+  border: none;
+}
+.HeaderIn {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  height: 48px;
+}
+.HeaderActiveOverlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+}
+.HeaderLogo {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  padding: 0;
+}
+.HeaderBack {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding-right: 15px;
+  padding-left: 20px;
+  margin-left: 30px;
+  white-space: nowrap;
+  outline: 0;
+  pointer-events: auto;
+}
+.HeaderBack span:first-child {
+  margin-right: 5px;
+}
+.HeaderBack:focus .HeaderActiveOverlay,
+.HeaderBack:active .HeaderActiveOverlay {
+  background: rgba(0,0,0,0.05);
+}
+.HeaderBackText {
+  font-size: 18px;
+}
+.HeaderProfile {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding-left: 20px;
+  padding-right: 20px;
+  margin: 0 0 0 auto;
+  white-space: nowrap;
+  outline: 0;
+  pointer-events: auto;
+}
+.HeaderProfile img {
+  margin-right: 15px;
+  pointer-events: auto;
+}
+.HeaderProfile:focus .HeaderActiveOverlay,
+.HeaderProfile:active .HeaderActiveOverlay {
+  background: rgba(0,0,0,0.05);
+}
+.HeaderSignIn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding-left: 20px;
+  padding-right: 20px;
+  margin: 0 0 0 auto;
+  border-left: 1px solid #CDCDCD;
+  white-space: nowrap;
+  outline: 0;
+  pointer-events: auto;
+}
+
+.HeaderSignIn:focus .HeaderActiveOverlay,
+.HeaderSignIn:active .HeaderActiveOverlay {
+  background: rgba(0,0,0,0.05);
+}

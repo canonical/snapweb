@@ -195,9 +195,9 @@ func GetModelInfo(c SnapdClient) (map[string]interface{}, error) {
 	}
 
 	// Model Info
-	brandName := "Unknown"
-	modelName := "Unknown"
-	serialNumber := "Unknown"
+	brandName := ""
+	modelName := ""
+	serialNumber := ""
 
 	serialInfo, err := c.Known("serial", map[string]string{})
 	if err == nil {

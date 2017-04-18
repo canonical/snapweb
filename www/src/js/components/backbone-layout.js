@@ -1,20 +1,17 @@
-
-import $ from 'jquery'
+import $ from 'jquery';
 import React from 'react';
 
 import LayoutView from '../views/layout';
 
-
 export default class BackboneLayout extends React.Component {
-  state = {
-    content: null
-  }
-
   constructor(props) {
     super(props);
     this.layoutView = new LayoutView({
         render: (html) => this.setState({content: html})
       });
+    this.state = {
+      content: null
+    };
   }
 
   componentDidMount() {
@@ -25,15 +22,12 @@ export default class BackboneLayout extends React.Component {
   }
 
   render() {
-    return (
-      <div className="b-layout">
-        <div className="b-layout__alert"></div>
-        <div className="b-layout__banner"></div>
-        <div className="b-layout__main"></div>
-        <div className="b-layout__footer"></div>
-        <div dangerouslySetInnerHTML={{__html: this.state.content}}/>
-      </div>
-    );
+      return (
+        <main className='App-content'>
+          <div dangerouslySetInnerHTML={{__html: this.state.content}} />
+        </main>
+      );
   }
 }
+
 

@@ -7,8 +7,6 @@ var Marionette = require('backbone.marionette');
 var React = require('react');
 var ReactDOM = require('react-dom');
 var Radio = require('backbone.radio');
-var BannerView = require('./layout-banner.js');
-var FooterView = require('./layout-footer.js');
 var NotificationsView = require('./alerts.js');
 var chan = Radio.channel('root');
 
@@ -24,11 +22,6 @@ module.exports = Marionette.LayoutView.extend({
     return '';
   },
 
-  onRender: function() {
-    this.showChildView('bannerRegion', new BannerView());
-    this.showChildView('footerRegion', new FooterView());
-  },
-
   attachElContent: function(html) {
     this.externalRender(html);
     return this;
@@ -37,9 +30,10 @@ module.exports = Marionette.LayoutView.extend({
   setContent: function(content) {
     var reactElement = content.reactElement || null;
     if (reactElement !== null) {
-      ReactDOM.render(reactElement, $('.b-layout__main').get(0));
+      ReactDOM.render(reactElement, $('.App-content').get(0));
     } else {
-      this.mainRegion.show(content.backboneView);
+        console.log("mainRegion.show?");
+        this.mainRegion.show(content.backboneView);
     }
   },
 
@@ -50,9 +44,7 @@ module.exports = Marionette.LayoutView.extend({
   },
 
   regions: {
-    bannerRegion:   '.b-layout__banner',
-    mainRegion:     '.b-layout__main',
-    footerRegion:   '.b-layout__footer',
+    mainRegion:     '.App-content',
     alertsRegion:   '.b-layout__alerts'
   }
 });

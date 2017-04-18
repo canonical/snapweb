@@ -1,0 +1,31 @@
+.AppMain {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-width: 1020px;
+}
+.AppHeader {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding-top: 25px;
+  padding-bottom: 25px;
+  pointer-events: none;
+}
+.AppContent {
+  min-height: calc(100vh - 50px - 89px);
+  flex-grow: 1;
+}
+.AppSnapPage {
+  padding-bottom: 50px;
+}
+@media (max-width: 1260px) {
+  .AppHeader {
+    position: static;
+    padding-top: 5px;
+    padding-bottom: 0px;
+    
+  }
+}

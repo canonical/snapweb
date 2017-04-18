@@ -9,16 +9,19 @@ var ReactBackbone = require('react.backbone');
 var Config = require('../config.js');
 
 var SnapList = require('../collections/snaplist.js');
+var DeviceInfo = require('../models/device-info.js');
 
 module.exports = {
   index: function() {
     var chan = Radio.channel('root');
     var trackedSnapList = new SnapList();
     var installedSnapList = new SnapList();
+    var deviceInfo = new DeviceInfo();
 
     $.when(
       trackedSnapList.fetch({ data: $.param({ 'tracked_snaps': true })}),
-      installedSnapList.fetch({ data: $.param({ 'installed_only': true })})
+      installedSnapList.fetch({ data: $.param({ 'installed_only': true })}),
+      deviceInfo.fetch()
     ).then(function() {
       trackedSnapList = new Backbone.Collection(trackedSnapList.filter(function(s) {
         return s.get('status') === Config.INSTALL_STATE.INSTALLING;
@@ -31,8 +34,9 @@ module.exports = {
         )
       );
       var installedSnapsView = React.createElement(HomeLayoutView, {
-          model: new Backbone.Model({}),
-          collection: c
+        model: new Backbone.Model({}),
+        collection: c,
+        deviceInfo: deviceInfo
       });
       chan.command('set:content', {reactElement: installedSnapsView});
     });
