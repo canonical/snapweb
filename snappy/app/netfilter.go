@@ -26,7 +26,7 @@ import (
 
 // NetFilter manages an IP-based filter to limit access to Snapweb
 type NetFilter struct {
-	allowedNetworks []*net.IPNet
+	allowedNetworks map[string]*net.IPNet
 	acceptCache     net.IP
 }
 
@@ -62,7 +62,7 @@ func (f *NetFilter) IsAllowed(ip net.IP) bool {
 func (f *NetFilter) AllowNetwork(network string) error {
 	// look for a network expression
 	if _, net, err := net.ParseCIDR(network); err == nil {
-		f.allowedNetworks = append(f.allowedNetworks, net)
+		f.allowedNetworks[network] = net
 	} else {
 		log.Println("unable to parse", network, "ignoring it")
 		return fmt.Errorf("Invalid network CIDR %s", network)
@@ -90,6 +90,10 @@ func (f *NetFilter) AddLocalNetworks() {
 // AddLocalNetworkForInterface adds the network for a given interface to the list of allowed
 // networks
 func (f *NetFilter) AddLocalNetworkForInterface(ifname string) {
+	if f.allowedNetworks == nil {
+		f.allowedNetworks = make(map[string]*net.IPNet)
+	}
+
 	intf, err := net.InterfaceByName(ifname)
 	if err != nil {
 		log.Println("Error with interface", ifname, err.Error())
@@ -124,9 +128,18 @@ func (f *NetFilter) FilterHandler(handler http.Handler) http.Handler {
 		host, _, _ := net.SplitHostPort(r.RemoteAddr)
 		ip := net.ParseIP(host)
 		if !f.IsAllowed(ip) {
-			log.Println("Unauthorized access from", r.RemoteAddr)
-			http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
-			return
+			// Before definitively deny access, let's update interfaces connected networks
+			// and re-test if origin host is not allowed. This should prevent the case of
+			// snap service started before some of the local networks gets connected and
+			// the requester is in that lazy network.
+			// First ip check is made before this, for not to penalize allowed requests
+			// checking unnecessary network updates.
+			f.AddLocalNetworks()
+			if !f.IsAllowed(ip) {
+				log.Println("Unauthorized access from", r.RemoteAddr)
+				http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+				return
+			}
 		}
 		handler.ServeHTTP(w, r)
 	})
