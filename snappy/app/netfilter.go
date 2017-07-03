@@ -26,7 +26,7 @@ import (
 
 // NetFilter manages an IP-based filter to limit access to Snapweb
 type NetFilter struct {
-	allowedNetworks map[string]*net.IPNet
+	allowedNetworks []*net.IPNet
 	acceptCache     net.IP
 }
 
@@ -62,7 +62,7 @@ func (f *NetFilter) IsAllowed(ip net.IP) bool {
 func (f *NetFilter) AllowNetwork(network string) error {
 	// look for a network expression
 	if _, net, err := net.ParseCIDR(network); err == nil {
-		f.allowedNetworks[network] = net
+		f.allowedNetworks = append(f.allowedNetworks, net)
 	} else {
 		log.Println("unable to parse", network, "ignoring it")
 		return fmt.Errorf("Invalid network CIDR %s", network)
@@ -90,10 +90,6 @@ func (f *NetFilter) AddLocalNetworks() {
 // AddLocalNetworkForInterface adds the network for a given interface to the list of allowed
 // networks
 func (f *NetFilter) AddLocalNetworkForInterface(ifname string) {
-	if f.allowedNetworks == nil {
-		f.allowedNetworks = make(map[string]*net.IPNet)
-	}
-
 	intf, err := net.InterfaceByName(ifname)
 	if err != nil {
 		log.Println("Error with interface", ifname, err.Error())
