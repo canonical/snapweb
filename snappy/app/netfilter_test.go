@@ -101,8 +101,8 @@ func (s *FilterSuite) TestFilterHandleRequest(c *C) {
 	//NOTE: take care that device where this test is
 	// launched does not have 192.168.30.0 network
 	// connected to any of its  network interfaces.
-	// Otherwise this will be taken as a
-	// valid network and test will fail
+	// Otherwise this will be taken as a valid network
+	// and test will fail
 	req.RemoteAddr = "192.168.30.150:80"
 	http.DefaultServeMux.ServeHTTP(rec2, req)
 	c.Assert(rec2.Code, Equals, http.StatusForbidden)
