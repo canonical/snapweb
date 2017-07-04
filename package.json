@@ -30,7 +30,6 @@
     "vanilla-framework": "1.0.1"
   },
   "devDependencies": {
-    "aliasify": "~1.7.2",
     "autoprefixer-core": "^5.1.11",
     "babel-preset-react-app": "^2.1.0",
     "babelify": "^7.3.0",
