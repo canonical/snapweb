@@ -92,24 +92,37 @@ func (s *FilterSuite) TestFilterHandleRequest(c *C) {
 	req.RemoteAddr = "127.0.0.1:80"
 
 	http.DefaultServeMux.ServeHTTP(rec, req)
-	c.Assert(rec.Code, Equals, http.StatusForbidden)
+	// device connected networks are always authorized.
+	// Thus, loopback is authorized even if not connected
+	// to any
+	c.Assert(rec.Code, Equals, http.StatusOK)
 
 	rec2 := httptest.NewRecorder()
-	f.AllowNetwork("127.0.0.1/8")
+	//NOTE: take care that device where this test is
+	// launched does not have 192.168.30.0 network
+	// connected to any of its  network interfaces.
+	// Otherwise this will be taken as a
+	// valid network and test will fail
+	req.RemoteAddr = "192.168.30.150:80"
 	http.DefaultServeMux.ServeHTTP(rec2, req)
-
-	c.Assert(rec2.Code, Equals, http.StatusOK)
+	c.Assert(rec2.Code, Equals, http.StatusForbidden)
 
 	rec3 := httptest.NewRecorder()
-	req.RemoteAddr = "[fd12:3456:789a:1::1]:80"
+	f.AllowNetwork("192.168.30.1/8")
 	http.DefaultServeMux.ServeHTTP(rec3, req)
-	c.Assert(rec3.Code, Equals, http.StatusForbidden)
+
+	c.Assert(rec3.Code, Equals, http.StatusOK)
+
+	rec4 := httptest.NewRecorder()
+	req.RemoteAddr = "[fd12:3456:789a:1::1]:80"
+	http.DefaultServeMux.ServeHTTP(rec4, req)
+	c.Assert(rec4.Code, Equals, http.StatusForbidden)
 
 	f.AllowNetwork("fd12:3456:789a:1::/64")
 
-	rec4 := httptest.NewRecorder()
-	http.DefaultServeMux.ServeHTTP(rec4, req)
-	c.Assert(rec4.Code, Equals, http.StatusOK)
+	rec5 := httptest.NewRecorder()
+	http.DefaultServeMux.ServeHTTP(rec5, req)
+	c.Assert(rec5.Code, Equals, http.StatusOK)
 }
 
 func (s *FilterSuite) TestAddLocalNetworks(c *C) {
