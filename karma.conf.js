@@ -1,6 +1,7 @@
 // Karma configuration
 // Generated on Fri Mar 27 2015 18:06:02 GMT+0000 (GMT)
 //
+var istanbul = require('browserify-istanbul');
 
 module.exports = function(config) {
   config.set({
@@ -41,7 +42,12 @@ module.exports = function(config) {
         'hbsfy',
         ['babelify', {
           presets: ["es2015", "react"]
-        }]
+        }],
+        ['browserify-istanbul', {
+          instrumenterConfig:  {
+            embedSource: true
+          }}
+        ]
       ]
     },
 
