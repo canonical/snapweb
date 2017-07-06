@@ -142,3 +142,18 @@ func (s *FilterSuite) TestAddSpecificInterface(c *C) {
 	res := f.IsAllowed(net.ParseIP("127.0.0.1"))
 	c.Assert(res, Equals, true)
 }
+
+func (s *FilterSuite) TestIPAllowedAfterNetworkUpdate(c *C) {
+	f := NewFilter()
+	f.AddLocalNetworks()
+
+	res := f.IsAllowed(net.ParseIP("10.40.20.3"))
+	c.Assert(res, Equals, false)
+
+	// allow the network and re-evaluate
+	f.AllowNetwork("10.40.20.0/24")
+
+	res = f.IsAllowed(net.ParseIP("10.40.20.3"))
+	c.Assert(res, Equals, true)
+
+}
