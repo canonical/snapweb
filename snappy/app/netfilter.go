@@ -76,7 +76,7 @@ func (f *NetFilter) AllowNetwork(network string) error {
 // connections originating from any of the local networks are authorized,
 // anything else is refused
 func (f *NetFilter) AddLocalNetworks() {
-	iflist, err := net.Interfaces()
+	iflist, err := networkInterfaces()
 	if err != nil {
 		log.Println("Unable to enumerate network interfaces", err.Error())
 		return
@@ -90,13 +90,13 @@ func (f *NetFilter) AddLocalNetworks() {
 // AddLocalNetworkForInterface adds the network for a given interface to the list of allowed
 // networks
 func (f *NetFilter) AddLocalNetworkForInterface(ifname string) {
-	intf, err := net.InterfaceByName(ifname)
+	intf, err := networkInterfaceByName(ifname)
 	if err != nil {
 		log.Println("Error with interface", ifname, err.Error())
 		return
 	}
 
-	addrs, err := intf.Addrs()
+	addrs, err := networkInterfaceAddresses(intf)
 	if err != nil {
 		log.Println("Error adding interface", intf.Name, err.Error())
 		return
@@ -141,4 +141,17 @@ func (f *NetFilter) FilterHandler(handler http.Handler) http.Handler {
 		handler.ServeHTTP(w, r)
 	})
 
+}
+
+// helper methods. They let us mock network interfaces in unit test, or use here the real ones.
+var networkInterfaceByName = func(ifname string) (*net.Interface, error) {
+	return net.InterfaceByName(ifname)
+}
+
+var networkInterfaceAddresses = func(iface *net.Interface) ([]net.Addr, error) {
+	return iface.Addrs()
+}
+
+var networkInterfaces = func() ([]net.Interface, error) {
+	return net.Interfaces()
 }
