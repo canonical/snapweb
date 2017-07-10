@@ -4,7 +4,7 @@ language: go
 go:
   - 1.6
 node_js:
-  - "5.11"
+  - "6.11.0"
 services: docker
 
 env:
@@ -26,7 +26,7 @@ before_install:
   - if [ $encrypted_527ca8567c65_key ]; then eval "$(ssh-agent)"; ./tests/setup-deploy-key.sh; fi
 
 install:
-  - ./scripts/npm-install.sh
+  - NODE_ENV=development npm install
   - ./scripts/get-go-deps.sh
 
 script:

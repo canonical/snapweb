@@ -11,7 +11,7 @@ module.exports = function(config) {
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ['jasmine-ajax', 'jasmine', 'browserify', 'phantomjs-shim'],
+    frameworks: ['jasmine-ajax', 'browserify', 'jasmine'],
 
     // list of files / patterns to load in the browser
     files: [
@@ -41,7 +41,7 @@ module.exports = function(config) {
       transform: [
         'hbsfy',
         ['babelify', {
-          presets: ["react-app"]
+          presets: ["es2015", "react"]
         }],
         ['browserify-istanbul', {
           instrumenterConfig:  {
@@ -71,14 +71,14 @@ module.exports = function(config) {
     // setting this seems required to run on Travis though possible values have
     // changed for recent versions of karma:
     // https://github.com/karma-runner/karma/blob/2dc4ac8dd39d014a8549e598173f9004b9b2a955/lib/config.js#L267
-    transports: ['xhr-polling', 'jsonp-polling'],
+    transports: ['xhr-polling', 'jsonp-polling', 'polling', 'websocket', 'flashsocket', 'htmlfile'],
 
     // enable / disable colors in the output (reporters and logs)
     colors: true,
 
     // level of logging
     // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
-    logLevel: config.LOG_ERROR,
+    logLevel: config.LOG_WARN,
 
     // enable / disable watching file and executing tests whenever any file changes
     autoWatch: true,
