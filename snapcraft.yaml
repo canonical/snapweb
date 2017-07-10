@@ -32,7 +32,7 @@ parts:
     build-packages: [gcc]
   snapweb-ui:
     plugin: gulp
-    node-engine: 4.7.2
+    node-engine: 6.11.0
     gulp-tasks: ['install']
     source: .
     build-packages:
