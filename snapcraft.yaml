@@ -38,7 +38,7 @@ parts:
     node-engine: 6.11.0
     gulp-tasks: ['install']
     prepare: |
-      sed 's/\"karma-phantom/\/\/\"karma-phantom/g' package.json
+      sed -i '/karma-phantom/d' package.json
     source: .
     build-packages:
       - git
