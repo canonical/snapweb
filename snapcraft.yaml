@@ -39,5 +39,7 @@ parts:
     gulp-tasks: ['install']
     source: .
     build-packages:
-       - git
+      - git
+      - python2.7-dev
+      - phantomjs
 
