@@ -11,7 +11,7 @@ description: |
   - browse the store to install new snappy packages.
 
   Please find the source code for this snap at:
-  https://code.launchpad.net/~snappy-hwe-team/snappy-hwe-snaps/+git/snapweb
+  https://github.com/snapcore/snapweb
 grade: stable # must be 'stable' to release into candidate/stable channels
 confinement: strict
 
