@@ -41,5 +41,4 @@ parts:
     build-packages:
       - git
       - python2.7-dev
-      - phantomjs
 
