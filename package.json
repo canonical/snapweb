@@ -62,8 +62,9 @@
     "karma-firefox-launcher": "^1.0.1",
     "karma-jasmine": "~1.1.0",
     "karma-jasmine-ajax": "^0.1.13",
-    "karma-phantomjs-launcher": "^1.0.4",
-    "karma-phantomjs-shim": "^1.4.0",
+    // TEMPORARY commented out until having a solution for passing armhf tests.
+    // "karma-phantomjs-launcher": "^1.0.4",
+    // "karma-phantomjs-shim": "^1.4.0",
     "node-sass": "^4.5.3",
     "node-ssh": "^4.2.2",
     "optipng-bin": "4.0.0",
