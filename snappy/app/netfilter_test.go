@@ -151,8 +151,6 @@ func (s *FilterSuite) TestFilterHandleRequest(c *C) {
 	http.DefaultServeMux.ServeHTTP(rec, req)
 	c.Assert(rec.Code, Equals, http.StatusForbidden)
 
-	f.AllowNetwork("fd12:3456:789a:1::/64")
-
 	rec = httptest.NewRecorder()
 	http.DefaultServeMux.ServeHTTP(rec, req)
 	c.Assert(rec.Code, Equals, http.StatusOK)
@@ -188,5 +186,4 @@ func (s *FilterSuite) TestIPAllowedAfterNetworkUpdate(c *C) {
 
 	res = f.IsAllowed(net.ParseIP("10.40.20.3"))
 	c.Assert(res, Equals, true)
-
 }
