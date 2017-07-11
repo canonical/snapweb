@@ -124,9 +124,18 @@ func (f *NetFilter) FilterHandler(handler http.Handler) http.Handler {
 		host, _, _ := net.SplitHostPort(r.RemoteAddr)
 		ip := net.ParseIP(host)
 		if !f.IsAllowed(ip) {
-			log.Println("Unauthorized access from", r.RemoteAddr)
-			http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
-			return
+			// Before finally accepting or denying access to an incoming request, let's check current
+			// networks connected to the device and update allowed networks list.
+			// This should prevent the case of the snap service being started before some of
+			// the local networks are connected and the requester is in that lazy network.
+			// First ip check is made before this, as not to penalize allowed requests
+			// executing unnecessary network updates.
+			f.AddLocalNetworks()
+			if !f.IsAllowed(ip) {
+				log.Println("Unauthorized access from", r.RemoteAddr)
+				http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+				return
+			}
 		}
 		handler.ServeHTTP(w, r)
 	})
