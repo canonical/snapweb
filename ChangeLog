@@ -1,0 +1,721 @@
+2017-07-12 snapweb 0.26-10
+
+  [ unknown ]
+  * See more information in merge proposal
+    
+  * Adding templates for sites
+    
+  * Merging trunk and not exposing conn
+    
+  * Listing real click services
+    
+  * merging trunk
+    
+  * Adding restful interface for packages (get only)
+    
+  * merge trunk
+    
+  * Adding an api over http for systemimage
+    
+  * wip commit
+    
+  * wip
+    
+  * wip
+    
+  * fix global bugs
+    
+  * Catchup: updating to take into account recent packaging and security changes
+    
+  * New UI
+    
+  * wip
+    
+  * fix uninstall, change port for xkcd hack
+    
+  * Merging latest UI updates
+    
+  * updates
+    
+  * Add support for more system update functions as well as support more system image signals
+    
+  * Updated UI for Apps and Store.
+    
+  * Update header meta tags and add gulp-image to the build
+    
+  * merge trunk
+    
+  * Add URL routing support.
+    
+  * Updated the header markup and styles
+    
+  * See more information in merge proposal
+    
+  * Tool to watch for changes then push for development.
+    
+  * Main navigation update.
+    
+  * Added search results view
+    
+  * merge trunk, fix conflicts, fix scroll
+    
+  * add views for snaps, with specific routes & views for settings, reviews details
+    
+  * Homepage layout and style.
+    
+  * Styling for store.
+    
+  * style for system info page
+    
+  * App details style for store
+    
+  * Style for settings page.
+    
+  * merge trunk
+    
+  * UI style improvments.
+    
+  * more store style.
+    
+  * Add search API
+    
+  * Add new store API.
+    
+  * Fix: expose ports entry from package data
+    
+  * FAT package support.
+    
+  * wip
+    
+  * Add avahi to framework
+    
+  * merge
+    
+  * Add icon API
+    
+  * merge trunk, fix install
+    
+  * Use real data.  Support install / un-install and store.
+    
+  * More search styling.
+    
+  * Merging trunk
+    
+  * more store search style.
+    
+  * Install button style.
+    
+  * Search result style
+    
+  * Fix for uninstall button
+    
+  * Add support for launching apps in new tabs.
+    
+  * Code cleanup.
+    
+  * add model to all snap sub views
+    
+  * See more information in merge proposal
+    
+  * bug fixes.
+    
+  * merge trunk, fix conflicts
+    
+  * merge trunk again, fix more conflicts
+    
+  * add a basic overlay, for search and whatever else might need it
+    
+  * Hide ubuntu-core from showing in app detail page.
+    
+  * add search close button
+    
+  * merge trunk
+    
+  * add a close button for search
+    
+  * Add an oem api
+    
+  * add icons to settings
+    
+  * Fix for app icons
+    
+  * less fragile namespace stripping
+    
+  * Adding icon download capability.
+    
+  * Added CSS to truncate the package name if it is to long
+    
+  * Merging with trunk
+    
+  * Using templates for OEM
+    
+  * merge trunk
+    
+  * Using local icons
+    
+  * Fixing app opening
+    
+  * Changing port!
+    
+  * merging lp:~ya-bo-ng/clapper/error-installing-reset
+    
+  * merging lp:~stephen-stewart/clapper/ui-loading-state
+    
+  * See more information in merge proposal
+    
+  * See more information in merge proposal
+    
+  * Add avahi-daemon.conf to writable area by sergiusens approved by mvo
+    
+  * Add a snappy config hook for webdm by sergiusens approved by lool,mvo
+    
+  * Support restart the service from the hook by sergiusens approved by sergiusens,mvo
+    
+  * build web assets from build.sh by stephen-stewart approved by sergiusens
+    
+  * add new template for refectored stuff
+    
+  * This is workaround for the data path directory not being available on first boot by sergiusens approved by lool
+    
+  * Merging trunk
+    
+  * See more information in merge proposal
+    
+  * See more information in merge proposal
+    
+  * See more information in merge proposal
+    
+  * See more information in merge proposal
+    
+  * See more information in merge proposal
+    
+  * See more information in merge proposal
+    
+  * See more information in merge proposal
+    
+  * See more information in merge proposal
+    
+  * See more information in merge proposal
+    
+  * See more information in merge proposal
+    
+  * See more information in merge proposal
+    
+  * See more information in merge proposal
+    
+  * See more information in merge proposal
+    
+  * Merging beSnappy into packageListing
+    
+  * See more information in merge proposal
+    
+  * See more information in merge proposal
+    
+  * See more information in merge proposal
+    
+  * See more information in merge proposal
+    
+  * Merging beSnappy into packageListing
+    
+  * See more information in merge proposal
+    
+  * Merging packageSearch into icons
+    
+  * merge icons mp
+    
+  * See more information in merge proposal
+    
+  * See more information in merge proposal
+    
+  * See more information in merge proposal
+    
+  * See more information in merge proposal
+    
+  * See more information in merge proposal
+    
+  * See more information in merge proposal
+    
+  * See more information in merge proposal
+    
+  * See more information in merge proposal
+    
+  * See more information in merge proposal
+    
+  * See more information in merge proposal
+    
+  * See more information in merge proposal
+    
+  * See more information in merge proposal
+    
+  * See more information in merge proposal
+    
+  * See more information in merge proposal
+    
+  * See more information in merge proposal
+    
+  * Don't break on bad ports input. by sergiusens approved by sergiusens
+    
+  * Removing obsolete frameworks entry from package yaml by sergiusens approved by mvo
+    
+  * See more information in merge proposal
+    
+  * See more information in merge proposal
+    
+  * See more information in merge proposal
+    
+  * See more information in merge proposal
+    
+  * See more information in merge proposal
+    
+  * merge latest changes from sergio
+    
+  * See more information in merge proposal
+    
+  * See more information in merge proposal
+    
+  * See more information in merge proposal
+    
+  * See more information in merge proposal
+    
+  * remove webdm/system
+    
+  * merge icons branch
+    
+  * See more information in merge proposal
+    
+  * See more information in merge proposal
+    
+  * See more information in merge proposal
+    
+  * merge queryPackage
+    
+  * merge queryPackage
+    
+  * diverged branch
+    
+  * fix diverged branches
+    
+  * merge lp:~sergiusens/webdm/packageInstall
+    
+  * remerge
+    
+  * Extending setup instructions. by jamesodhunt approved by sergiusens
+    
+  * merge lp:~sergiusens/webdm/packageInstall
+    
+  * See more information in merge proposal
+    
+  * See more information in merge proposal
+    
+  * bzr pump conflict resolve
+    
+  * merge lp:~sergiusens/webdm/packageInstall
+    
+  * make it build for arm again. You'll need arm-linux-gnueabihf-gcc installed now. by chipaca approved by sergiusens
+    
+  * Update the package.yaml to use vendor instead of maintainer, the new ports schema and the .canonical namespace by sergiusens approved by sergiusens,chipaca
+    
+  * Get details of specific package using the snappy golang api by sergiusens approved by sergiusens
+    
+  * Get details of installed packages using the snappy golang api by sergiusens approved by sergiusens
+    
+  * Get details of all installed and store packages using the snappy golang api by sergiusens approved by sergiusens
+    
+  * Adding icon support by sergiusens approved by sergiusens
+    
+  * Remove systemimage handler. by sergiusens approved by sergiusens
+    
+  * Install progress. by sergiusens approved by sergiusens,stephen-stewart
+    
+  * See more information in merge proposal
+    
+  * Stephen Stewart 2015-04-29 [merge] Merged backbone-not-yui into package-install-with-error-reporting
+    
+  * merge trunk
+    
+  * See more information in merge proposal
+    
+  * See more information in merge proposal
+    
+  * See more information in merge proposal
+    
+  * * refactor as marionette app
+    * switch to api/v2
+    * add a test framework
+    * browserify build by stephen-stewart approved by sergiusens
+    
+  * merge trunk
+    
+  * merge trunk
+    
+  * merge lp:~stephen-stewart/webdm/package-install-with-error-reporting
+    
+  * merged lp:~stephen-stewart/webdm/package-install-with-error-reporting
+    
+  * merge lp:~stephen-stewart/webdm/snap-model-default-icon-propery
+    
+  * package install with error reporting ui by stephen-stewart approved by sergiusens
+    
+  * Add a default icon prop value, so we don't have ugly boxes in the ui for sideloading, etc... by stephen-stewart approved by sergiusens
+    
+  * Merging trunk
+    
+  * merge latest trunk
+    
+  * Clear the progress queue for the snap once the operation is done by sergiusens approved by chipaca
+    
+  * Trunk merge
+    
+  * Correct apparmor profile and removing obsolete code and components which also minimizes the apparmor requirements. by sergiusens approved by chipaca
+    
+  * Policies to allow services to be enabled by sergiusens approved by chipaca
+    
+  * Update tests to work with new interfaces introduced in snappy by sergiusens approved by chipaca
+    
+  * Adding testing facilities by sergiusens approved by chipaca
+    
+  * Removing unused oem handler and updating to yaml.v2 to reduce the dependencies. by sergiusens approved by chipaca
+    
+  * Merging trunk
+    
+  * Filter for installed_only by sergiusens approved by chipaca
+    
+  * Tests for merging snaps by sergiusens approved by chipaca
+    
+  * Common copyright headers and COPYING added by sergiusens approved by chipaca
+    
+  * Enabling golint and fixing the issues it found to be able to enable it by sergiusens approved by chipaca
+    
+  * merge lp:~stephen-stewart/webdm/success-and-failure-messaging-view
+    
+  * add some basic unit tests
+    
+  * bzzz
+    
+  * merge success-and-failure-messaging-view
+    
+  * Add size reporting support by sergiusens approved by chipaca,stephen-stewart
+    
+  * refactor CSS to BEM style, remove some uneccessary views as a result by stephen-stewart approved by chipaca
+    
+  * add a failure view by stephen-stewart approved by chipaca
+    
+  * add progress ui for install/downloading by stephen-stewart approved by chipaca
+    
+  * merged trunk
+    
+  * Exposed vendor and description. by chipaca approved by sergiusens
+    
+  * merged trunk
+    
+  * Merging json responses
+    
+  * Return an ordered list of packages. by sergiusens approved by chipaca
+    
+  * merge lp:~chipaca/webdm/json-responses/
+    
+  * See more information in merge proposal
+    
+  * Make all responses application/json. by chipaca approved by sergiusens
+    
+  * Merging json-responses
+    
+  * Fix up js for now more correct content type from server. by stephen-stewart approved by chipaca
+    
+  * Update to API changes, update dependencies add instructions on how to update them by sergiusens approved by chipaca
+    
+  * Merging trunk
+    
+  * Implement package removal by adding DELETE to /v2/packages/ by sergiusens approved by sergiusens,chipaca,stephen-stewart
+    
+  * merge and flubber
+    
+  * merge trunk
+    
+  * nice favicon by stephen-stewart approved by sergiusens
+    
+  * handle 500's, use the response to set the model state by stephen-stewart approved by sergiusens
+    
+  * merge trunk
+    
+  * move npm to project root, run js tests in run-checks, use phantomjs by default by stephen-stewart approved by chipaca
+    
+  * See more information in merge proposal
+    
+  * make install a behavior, use it in snaplist by stephen-stewart approved by chipaca
+    
+  * See more information in merge proposal
+    
+  * See more information in merge proposal
+    
+  * Using package types to determine the resource name (ID) as frameworks and oem packages installed locally contain no origin/namespace by sergiusens approved by chipaca
+    
+  * Using package types to determine the resource name (ID) as frameworks and oem packages installed locally contain no origin/namespace by sergiusens approved by chipaca
+    
+  * Proper way to parametrize queries with gets by sergiusens approved by stephen-stewart,chipaca
+    
+  *  Merged json-responses into filter-by-type.
+    
+  * smaller install button in snaplist view by stephen-stewart approved by sergiusens
+    
+  * allPackages now filters by type. by chipaca approved by sergiusens
+    
+  * the api doesn't always return what we expect, so fail by returning to last known state by stephen-stewart approved by sergiusens
+    
+  * silence the destroy events on model destroy by stephen-stewart approved by sergiusens
+    
+  * merge hide-installer-for-oem
+    
+  * hide install buttons on oem snaps by stephen-stewart approved by sergiusens
+    
+  * merge trunk
+    
+  * missing backslash, installed only works! by stephen-stewart approved by sergiusens
+    
+  * fix snap routing/controller by stephen-stewart approved by sergiusens
+    
+  * merge trunk
+    
+  * allow certain ids to be isInstallable false by stephen-stewart approved by sergiusens
+    
+  * New icon by sergiusens approved by chipaca
+    
+  * Merging trunk
+    
+  * Initial avahi integration by sergiusens approved by sergiusens,chipaca
+    
+  * merge trunk
+    
+  * show only a status (no button) for certain snap type installer actions by stephen-stewart approved by sergiusens
+    
+  * Fix broken oem package detection (removing more code along the way). by sergiusens approved by chipaca
+    
+  * Allow installing frameworks with policies by sergiusens approved by chipaca
+    
+  * postcss bem linter by stephen-stewart approved by chipaca
+    
+  * add more data to grid view
+    
+  * merge trunk
+    
+  * merge show-download-or-installed-size
+    
+  * merge show-download-or-installed-size
+    
+  * Make sure we don't create /tmp/snaps with a mode different from 01777. by chipaca approved by sergiusens
+    
+  * merge trunk
+    
+  * add, but not yet show, a pretty download/installed size attr on the snap model by stephen-stewart approved by mvo
+    
+  * merge trunk
+    
+  * merge lp:~stephen-stewart/webdm/icons-icons-icons
+    
+  * merge lp:~stephen-stewart/webdm/icons-icons-icons
+    
+  * * create a specific default/missing icon, fixing #1456654
+    * make icons a consistent size across screen sizes
+    * remove image background which is pretty but inconvenient... maybe it can come back just off the main body, where it can't be overlaid by an icon by stephen-stewart approved by sergiusens
+    
+  * add a clock as per design doc by stephen-stewart approved by sergiusens
+    
+  * Adding support for package name queries (with some polish along the way). by sergiusens approved by sergiusens,stephen-stewart
+    
+  * build.sh to build using the defined godeps by sergiusens approved by chipaca
+    
+  * Package metadata update by sergiusens approved by chipaca
+    
+  * * give oem, core, and framework (but not app) type snaps a clear label
+    * add a pretty downloaded file size to snap lists
+    * fix some position issues with lists by stephen-stewart approved by sergiusens
+    
+  * * add sorting
+    * allow user to change list style
+    * split out collections by stephen-stewart approved by sergiusens
+    
+  * Allowing snappy unpack to work by not scrubbing the env in the apparmor profile by sergiusens approved by jdstrand
+    
+  * Release 0.8 by sergiusens approved by sergiusens
+    
+  * merge
+    
+  * merge remove-not-uninstall
+    
+  * merge
+    
+  * merge
+    
+  * make banner a bit smaller, and a bit less black by stephen-stewart approved by sergiusens
+    
+  * use 'remove' not 'uninstall' to have parity with cli by stephen-stewart approved by sergiusens
+    
+  * merge trunk
+    
+  * add a link to the service ui by stephen-stewart approved by sergiusens
+    
+  * tidy up the row style listing, making it more small screen friendly by stephen-stewart approved by sergiusens
+    
+  * pkg/meta/snappyd.seccomp: add comment to explain why we are using @unrestricted by jdstrand approved by mvo
+    
+  * merge the postcss linter branch
+    
+  * merge of lp:~stephen-stewart/webdm/use-correct-version-for-post-css-bemlinter and  lp:~stephen-stewart/webdm/do-not-npm-update so things can land again. by chipaca approved by chipaca
+    
+  * Go dependencies are managed in `build.sh` by stevenwilkin approved by sergiusens
+    
+  * Use github.com/ubuntu-core/snappy rather than launchpad.net/snappy by stevenwilkin approved by sergiusens,stevenwilkin
+    
+  * Snaps always have origins by stevenwilkin approved by sergiusens,chipaca
+    
+  * UI Uri is never specified, get rid of it by stevenwilkin approved by sergiusens
+    
+  * Fetch icons from the snapd API by stevenwilkin approved by sergiusens
+    
+  * Fetch services from snapd API by stevenwilkin approved by sergiusens
+    
+  * Fetch individual packages from the snapd API by stevenwilkin approved by sergiusens
+    
+  * add new default package icon from the Design Team by stephen-stewart approved by beuno
+    
+  * Fetch list of all available snaps from the snapd API by stevenwilkin approved by sergiusens
+    
+  * merged  lp:~stevenwilkin/webdm/migrate-to-snap-yaml 
+    
+  * merged lp:~stevenwilkin/webdm/use-app-type
+    
+  * merged ~mvo/webdm/arm64
+    
+  * merged lp:~stevenwilkin/webdm/list-add-remove-snaps-correctly
+    
+  * Use new interfaces syntax in snap.yml and new icon path by stevenwilkin approved by stevenwilkin,zyga
+    
+  * Don't get branding details from the gadget snap.
+    
+    This introduces `getBranding()` which returns mocked information but will soon retrieve the relevant via the snapd API after the upcoming sprint where we'll decide how gadget branding will be handled. by stevenwilkin approved by stevenwilkin,zyga
+    
+  * Use correct API endpoints in README by stevenwilkin approved by zyga,mvo
+    
+  * Build for i386 by stevenwilkin approved by mvo
+    
+  * Add and remove snaps via the snapd API by stevenwilkin approved by beuno
+    
+  * Get WebDM building against Snappy 2.0 by stevenwilkin approved by mvo
+    
+  * Use `snapcraft snap` to package snap by stevenwilkin approved by zyga
+    
+  * merged lp:~stevenwilkin/webdm/pass-query-to-search
+    
+  * merged lp:~stevenwilkin/webdm/use-latest-snappy
+    
+  * Use correct client API by stevenwilkin approved by mvo
+    
+  * Update README by stevenwilkin approved by elopio
+    
+  * Snappy dependencies have been moved by stevenwilkin approved by elopio
+    
+  * Pass snappy server version to front-end application by stevenwilkin approved by chipaca
+    
+  * Remove tabbed content for snap details page by stevenwilkin approved by stevenwilkin,bartoszopka
+    
+  * Navigate to the correct url when clicking on snap from list by stevenwilkin approved by stevenwilkin
+    
+  * Snap configuration is no longer exposed, remove hook by stevenwilkin approved by elopio
+    
+  * Include Vanilla CSS framework by bartoszopka approved by fgimenez
+    
+  * Update the references to the old location
+    
+  * Split the tests in different suites by type.
+    
+  * Add the travis config file.
+    
+  * Add the node unit tests to travis.
+    
+  * Add go coverage reporting
+    
+  * Rename application to Snapweb
+    
+  * Fix typo in coverage generation
+    
+  * Fallback to searching the store if snap not found locally
+    
+  * Add build and coverage status to README
+    
+  * Bump snapd dependency
+    
+  * add coverage reporting
+    
+  * Refactor handlers
+    
+  * Add unit tests for the pretty download size
+    
+  * Redesign
+    
+  * Bump version to 0.20
+    
+  * Fix the version in the yaml
+    
+  * Update the snap.yaml for the new format
+    
+  * Increase test coverage
+    
+  * Shorten button text to "Install" and "Remove" and make bigger
+    
+  * Update date copy for empty search results page
+    
+  * Add "Report a bug" link to footer
+    
+  * Use Snapcraft to build snap
+    
+  * Add missing dependencies to snapcraft. Build the snap in travis.
+    
+  * Patch getting all the snaps
+    
+  * Revert snapcraft
+    
+  * See more information in merge proposal
+    
+  * Prepare a new release, fixes/improvements from loic and elopio
+    
+  * add missing i386 support
+    
+  * Settings page
+    
+  * Add (and use) a snapd client adapter.
+    
+  * Date time
+    
+  * Add tests for time-info; Remove not implemented PATCH time info bits;…
+    
+  * add passthrough handler
+    
+  * See more information in merge proposal
+    
+  * Build
+    
+  * Fix golint by reverting to an older commit
+    
+  * Add support for the create-user API
+    
+  * Preliminary welcome screen; connected to the create-user api
+    
+  * See more information in merge proposal
+    
+  * merge remote
+    
+  * Device info
+    
+  * Access Token
+    
+  * Version 0.21.2
+    
+  * Switch front end styling to Vanilla v1
+    
+  * Disable selenium tests on prs
+    
+  * See more information in merge proposal
+    
+  * Temporarily disable Factory Reset button until snapd supports functio…
+    
+
