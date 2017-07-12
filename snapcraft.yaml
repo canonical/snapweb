@@ -1,5 +1,5 @@
 name: snapweb
-version: 0.26-10
+version: 0.26-11-dev
 summary: Beautiful and functional interface for snap management
 description: |
   This service allows you to manage your Ubuntu Core device from a web interface or REST API.
