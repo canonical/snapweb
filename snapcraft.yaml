@@ -42,5 +42,7 @@ parts:
     source: .
     build-packages:
       - git
-      - python2.7-dev
+      - python
+      - g++
+      - build-essential
 
