@@ -108,10 +108,7 @@ func (f *NetFilter) AddLocalNetworkForInterface(ifname string) {
 				f.AllowNetwork(ipnet.String())
 			} else if ipnet.IP.To4() != nil {
 				// only consider IPv4 networks
-				// only consider class-C networks, ie with 256 hosts max.
-				if ones, _ := ipnet.Mask.Size(); ones >= 24 {
-					f.AllowNetwork(ipnet.String())
-				}
+				f.AllowNetwork(ipnet.String())
 			} // TODO: add proper IPV6 support
 		}
 	}
