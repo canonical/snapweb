@@ -46,6 +46,10 @@ Install:
     # omit the architecture specified below ('amd64') to build for all architectures at once
     ./build.sh amd64
 
+You will also want to run
+
+    snapcraft
+
 # Installing
 
 Once you have a snap built locally, you can test it on your system by doing:
@@ -54,6 +58,13 @@ Once you have a snap built locally, you can test it on your system by doing:
 
 The --dangerous flag is necessary for installing locally built snaps, which
 have not been signed by the store.
+
+     sudo snap connect snapweb:dot-snap-auth-file :personal-files
+     sudo snap connect snapweb:snapd-control :snapd-control
+     sudo snap connect snapweb:etc-passwd :system-files
+     sudo snap connect snapweb:timeserver-control :timeserver-control
+
+Connect the snap up. Ensure that the directory /root/.snap exists.
 
 # Using
 

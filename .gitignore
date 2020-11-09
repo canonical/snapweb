@@ -1,3 +1,5 @@
+yarn.lock
+package-lock.json
 .vscode
 *.snap
 node_modules
