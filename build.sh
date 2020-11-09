@@ -8,6 +8,10 @@
 
 set -e
 
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+nvm use 10
+
 if [ "$#" -eq 0 ]; then
     architectures=( amd64 arm64 armhf i386 )
 else
@@ -62,6 +66,7 @@ gobuild() {
 }
 
 echo "Building web assets with gulp..."
+yarn/yarn-v1.22.5/bin/yarn add gulp@3
 npm run build
 
 orig_pwd="$(pwd)"
@@ -70,8 +75,8 @@ top_builddir="$(mktemp -d)"
 trap 'rm -rf "$top_builddir"' EXIT
 
 echo Obtaining go dependencies
-go get launchpad.net/godeps
-godeps -u dependencies.tsv
+#go get github.com/tools/godep
+#godep -u dependencies.tsv
 
 # build one snap per arch
 for ARCH in "${architectures[@]}"; do

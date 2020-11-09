@@ -1,4 +1,5 @@
 name: snapweb
+base: core
 version: 0.26-11-dev
 summary: Beautiful and functional interface for snap management
 description: |
@@ -15,6 +16,18 @@ description: |
 grade: stable # must be 'stable' to release into candidate/stable channels
 confinement: strict
 
+plugs:
+  dot-snap-auth-file:
+    interface: personal-files
+    read:
+    - $HOME/.snap
+    write:
+    - $HOME/.snap
+  etc-passwd:
+    interface: system-files
+    read:
+      - /etc/passwd
+
 apps:
   snapweb:
     command: bin/snapweb
@@ -22,8 +35,10 @@ apps:
     plugs:
       - network
       - network-bind
-      - snapd-control
       - timeserver-control
+      - dot-snap-auth-file
+      - snapd-control
+      - etc-passwd
   generate-token:
     command: bin/generate-token
 
@@ -35,9 +50,12 @@ parts:
     build-packages: [gcc]
   snapweb-ui:
     plugin: gulp
-    node-engine: 6.11.0
-    gulp-tasks: ['install']
-    prepare: |
+    gulp-tasks:
+      - 'default' 
+      - 'install'
+    gulp-version: 3.9.1
+    node-engine: 10.23.0
+    override-build: |
       sed -i '/karma-phantom/d' package.json
     source: .
     build-packages:
@@ -45,4 +63,5 @@ parts:
       - python
       - g++
       - build-essential
-
+    override-prime: |
+      cp -R $SNAPCRAFT_STAGE/../project/parts/snapweb-ui/install/www $SNAPCRAFT_PRIME/
